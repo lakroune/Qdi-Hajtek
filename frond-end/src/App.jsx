@@ -1,10 +1,11 @@
-import Header from './components/header/Header.jsx';
+
 import LoginPage from './auth/LoginPage.jsx';
+import Header from './components/Header/Header.jsx';
 
 function App() {
   return (
     <div>
-      <Header />
+      {/* <Header /> */}
      <LoginPage />
     </div>
   );
