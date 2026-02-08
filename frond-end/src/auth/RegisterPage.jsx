@@ -1,0 +1,434 @@
+import React, { useState } from 'react';
+import { Mail, Lock, ArrowRight, Eye, EyeOff, Check, Shield, Star, Clock, Award, User, Phone, MapPin } from 'lucide-react';
+
+const RegisterPage = () => {
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [userType, setUserType] = useState('client'); // 'client' ou 'artisan'
+  const [formData, setFormData] = useState({
+    nom: '',
+    prenom: '',
+    email: '',
+    telephone: '',
+    ville: '',
+    password: '',
+    confirmPassword: '',
+    acceptTerms: false
+  });
+
+  const [errors, setErrors] = useState({});
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    
+    // Validation
+    const newErrors = {};
+    if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = 'Les mots de passe ne correspondent pas';
+    }
+    if (formData.password.length < 8) {
+      newErrors.password = 'Le mot de passe doit contenir au moins 8 caractères';
+    }
+    if (!formData.acceptTerms) {
+      newErrors.terms = 'Vous devez accepter les conditions';
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    console.log('Register:', { ...formData, userType });
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
+    // Clear error when user types
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: '' }));
+    }
+  };
+
+  const villes = [
+    'Casablanca', 'Rabat', 'Marrakech', 'Fès', 'Tanger', 
+    'Agadir', 'Oujda', 'Kenitra', 'Tétouan', 'Safi'
+  ];
+
+  return (
+    <div className="min-h-screen flex">
+      
+      {/* Left Side - Image & Content */}
+      <div className="hidden lg:flex lg:w-1/2 relative bg-gray-900">
+        <img 
+          src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200&auto=format&fit=crop&q=80" 
+          alt="Artisan workspace"
+          className="absolute inset-0 w-full h-full object-cover opacity-60"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+        
+        <div className="relative z-10 flex flex-col justify-between p-12 text-white h-full">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center">
+              <span className="text-xl font-bold">Q</span>
+            </div>
+            <span className="text-xl font-semibold">Qdi Hajtek</span>
+          </div>
+
+          <div className="max-w-md">
+            <h1 className="text-5xl font-bold leading-tight mb-6">
+              Rejoignez notre communauté d'artisans et de clients.
+            </h1>
+            <p className="text-gray-300 text-lg leading-relaxed">
+              Créez votre compte en quelques minutes et accédez à des milliers de services 
+              professionnels partout au Maroc.
+            </p>
+
+            <div className="flex gap-8 mt-8">
+              <div>
+                <p className="text-3xl font-bold text-orange-500">10K+</p>
+                <p className="text-sm text-gray-400">Artisans</p>
+              </div>
+              <div>
+                <p className="text-3xl font-bold text-orange-500">50K+</p>
+                <p className="text-sm text-gray-400">Clients</p>
+              </div>
+              <div>
+                <p className="text-3xl font-bold text-orange-500">4.8</p>
+                <p className="text-sm text-gray-400">Note moyenne</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-6 text-sm text-gray-400">
+            <div className="flex items-center gap-2">
+              <Shield className="w-4 h-4 text-orange-500" />
+              <span>Paiement sécurisé</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Check className="w-4 h-4 text-orange-500" />
+              <span>Artisans vérifiés</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Clock className="w-4 h-4 text-orange-500" />
+              <span>24/7 Support</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Right Side - Form */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center bg-white p-8 lg:p-12 overflow-y-auto">
+        <div className="w-full max-w-md py-8">
+          
+          {/* Mobile Logo */}
+          <div className="lg:hidden flex items-center gap-3 mb-8">
+            <div className="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center">
+              <span className="text-xl font-bold text-white">Q</span>
+            </div>
+            <span className="text-xl font-semibold">Qdi Hajtek</span>
+          </div>
+
+          {/* Header */}
+          <div className="mb-6">
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">Créer un compte</h2>
+            <p className="text-gray-500">
+              Commencez votre expérience avec Qdi Hajtek en quelques clics.
+            </p>
+          </div>
+
+          {/* User Type Toggle */}
+          <div className="mb-6">
+            <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-3">
+              Je suis un
+            </label>
+            <div className="grid grid-cols-2 gap-4">
+              <button
+                type="button"
+                onClick={() => setUserType('client')}
+                className={`py-3 px-4 rounded-xl border-2 font-medium transition-all ${
+                  userType === 'client'
+                    ? 'border-orange-500 bg-orange-50 text-orange-700'
+                    : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                }`}
+              >
+                Client
+              </button>
+              <button
+                type="button"
+                onClick={() => setUserType('artisan')}
+                className={`py-3 px-4 rounded-xl border-2 font-medium transition-all ${
+                  userType === 'artisan'
+                    ? 'border-orange-500 bg-orange-50 text-orange-700'
+                    : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                }`}
+              >
+                Artisan
+              </button>
+            </div>
+          </div>
+
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="space-y-4">
+            
+            {/* Nom & Prénom */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-2">
+                  Prénom
+                </label>
+                <div className="relative">
+                  <User className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <input
+                    type="text"
+                    name="prenom"
+                    value={formData.prenom}
+                    onChange={handleInputChange}
+                    className="w-full pl-12 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all"
+                    placeholder="Prénom"
+                    required
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-2">
+                  Nom
+                </label>
+                <div className="relative">
+                  <User className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <input
+                    type="text"
+                    name="nom"
+                    value={formData.nom}
+                    onChange={handleInputChange}
+                    className="w-full pl-12 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all"
+                    placeholder="Nom"
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Email */}
+            <div>
+              <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-2">
+                Adresse Email
+              </label>
+              <div className="relative">
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  className="w-full pl-12 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all"
+                  placeholder="exemple@email.com"
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Téléphone */}
+            <div>
+              <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-2">
+                Téléphone
+              </label>
+              <div className="relative">
+                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <input
+                  type="tel"
+                  name="telephone"
+                  value={formData.telephone}
+                  onChange={handleInputChange}
+                  className="w-full pl-12 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all"
+                  placeholder="+212 6XX XXX XXX"
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Ville */}
+            <div>
+              <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-2">
+                Ville
+              </label>
+              <div className="relative">
+                <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5 z-10" />
+                <select
+                  name="ville"
+                  value={formData.ville}
+                  onChange={handleInputChange}
+                  className="w-full pl-12 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all appearance-none cursor-pointer"
+                  required
+                >
+                  <option value="">Sélectionnez votre ville</option>
+                  {villes.map(ville => (
+                    <option key={ville} value={ville.toLowerCase()}>{ville}</option>
+                  ))}
+                </select>
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                  <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            {/* Password */}
+            <div>
+              <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-2">
+                Mot de passe
+              </label>
+              <div className="relative">
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  name="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  className={`w-full pl-12 pr-12 py-3.5 bg-gray-50 border rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all ${
+                    errors.password ? 'border-red-500' : 'border-gray-200'
+                  }`}
+                  placeholder="••••••••"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
+              </div>
+              {errors.password && (
+                <p className="mt-1 text-sm text-red-500">{errors.password}</p>
+              )}
+              <p className="mt-1 text-xs text-gray-500">
+                Minimum 8 caractères, avec chiffres et lettres
+              </p>
+            </div>
+
+            {/* Confirm Password */}
+            <div>
+              <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-2">
+                Confirmer le mot de passe
+              </label>
+              <div className="relative">
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <input
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleInputChange}
+                  className={`w-full pl-12 pr-12 py-3.5 bg-gray-50 border rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all ${
+                    errors.confirmPassword ? 'border-red-500' : 'border-gray-200'
+                  }`}
+                  placeholder="••••••••"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
+              </div>
+              {errors.confirmPassword && (
+                <p className="mt-1 text-sm text-red-500">{errors.confirmPassword}</p>
+              )}
+            </div>
+
+            {/* Terms Checkbox */}
+            <label className="flex items-start gap-3 cursor-pointer group">
+              <div className="relative mt-0.5">
+                <input
+                  type="checkbox"
+                  name="acceptTerms"
+                  checked={formData.acceptTerms}
+                  onChange={handleInputChange}
+                  className="peer sr-only"
+                />
+                <div className={`w-5 h-5 border-2 rounded transition-all ${
+                  errors.terms ? 'border-red-500' : 'border-gray-300 peer-checked:bg-orange-500 peer-checked:border-orange-500'
+                }`}></div>
+                <Check className="absolute inset-0 w-5 h-5 text-white opacity-0 peer-checked:opacity-100 p-0.5" />
+              </div>
+              <span className={`text-sm leading-relaxed ${
+                errors.terms ? 'text-red-500' : 'text-gray-600 group-hover:text-gray-800'
+              } transition-colors`}>
+                J'accepte les{' '}
+                <a href="#" className="text-orange-600 hover:text-orange-700 font-medium underline">
+                  Conditions d'utilisation
+                </a>{' '}
+                et la{' '}
+                <a href="#" className="text-orange-600 hover:text-orange-700 font-medium underline">
+                  Politique de confidentialité
+                </a>
+              </span>
+            </label>
+            {errors.terms && (
+              <p className="text-sm text-red-500">{errors.terms}</p>
+            )}
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              className="w-full bg-gray-900 hover:bg-gray-800 text-white py-4 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all hover:shadow-lg hover:shadow-gray-900/20 active:scale-[0.98] mt-6"
+            >
+              Créer mon compte
+              <ArrowRight className="w-5 h-5" />
+            </button>
+          </form>
+
+          {/* Divider */}
+          <div className="mt-6 flex items-center gap-4">
+            <div className="flex-1 h-px bg-gray-200"></div>
+            <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">Ou continuer avec</span>
+            <div className="flex-1 h-px bg-gray-200"></div>
+          </div>
+
+          {/* Social Login */}
+          {/* <div className="mt-6 grid grid-cols-2 gap-4">
+            <button className="flex items-center justify-center gap-3 py-3 px-4 border border-gray-200 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all group">
+              <svg className="w-5 h-5" viewBox="0 0 24 24">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+              </svg>
+              <span className="text-sm font-medium text-gray-700 group-hover:text-gray-900">Google</span>
+            </button>
+            <button className="flex items-center justify-center gap-3 py-3 px-4 border border-gray-200 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all group">
+              <svg className="w-5 h-5" fill="#1877F2" viewBox="0 0 24 24">
+                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+              </svg>
+              <span className="text-sm font-medium text-gray-700 group-hover:text-gray-900">Facebook</span>
+            </button>
+          </div> */}
+
+          {/* Login Link */}
+          <p className="mt-6 text-center text-gray-600">
+            Vous avez déjà un compte ?{' '}
+            <a href="#" className="font-semibold text-gray-900 hover:text-orange-600 transition-colors">
+              Se connecter
+            </a>
+          </p>
+
+          {/* Footer Links */}
+          <div className="mt-6 pt-6 border-t border-gray-100 flex items-center justify-center gap-8 text-xs text-gray-400">
+            <a href="#" className="hover:text-gray-600 transition-colors">Confidentialité</a>
+            <a href="#" className="hover:text-gray-600 transition-colors">Conditions</a>
+            <a href="#" className="hover:text-gray-600 transition-colors">Aide</a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default RegisterPage;        
