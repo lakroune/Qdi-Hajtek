@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
 import LoginPage from './auth/LoginPage';
 import Header from './components/Header/Header';
+import RegisterPage from './auth/RegisterPage';
 
 
 function App() {
