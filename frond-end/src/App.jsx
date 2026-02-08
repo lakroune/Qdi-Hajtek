@@ -1,14 +1,16 @@
+import { Routes, Route } from 'react-router-dom';
+import LoginPage from './auth/LoginPage';
+import Header from './components/Header/Header';
 
-import LoginPage from './auth/LoginPage.jsx';
-import Header from './components/Header/Header.jsx';
 
 function App() {
   return (
-    <div>
-      {/* <Header /> */}
-     <LoginPage />
-    </div>
+    <>
+      <Header />
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+      </Routes>
+    </>
   );
 }
-
-export default App;
