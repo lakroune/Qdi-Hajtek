@@ -9,8 +9,7 @@ const Logo = ({ variant = 'default', className = '' }) => {
               <text x="95" y="85" font-family="Inter, system-ui, sans-serif" font-size="28" font-weight="700" fill="#F97316" letter-spacing="2">HAJTEK</text>
               <text x="95" y="105" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="500" fill="#FFF" letter-spacing="1">TROUVEZ VOTRE ARTISAN</text>
             </svg>`,
-        minimal: `<!--  SVG Version 2 -->`,
-        premium: '<!--  SVG Version 1 -->'
+        minimal: ` `
     };
 
     return (
