@@ -2,19 +2,28 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
     Paintbrush, Zap,
-     Droplets,
-    CheckCircle, Clock, Shield, Users
+    Droplets,
 } from 'lucide-react';
 import Header from '../components/Header/Header';
 import CardService from '../components/cards/CardService';
 import Footer from '../components/footer/Footer';
+import SearchBar from '../components/searchs/SearchBar';
 
 const HomePage = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('all');
     const [location, setLocation] = useState('');
 
-    // Données des catégories
+    const [searchResults, setSearchResults] = useState([]);
+
+    const handleSearch = (params) => {
+        console.log('Recherche:', params);
+
+        // Appel API avec filtres
+
+    };
+
+    // Categories
     const categories = [
         { id: 'plomberie', name: 'Plomberie', icon: Droplets, color: 'bg-blue-500' },
         { id: 'electricite', name: 'Électricité', icon: Zap, color: 'bg-yellow-500' },
@@ -155,8 +164,8 @@ const HomePage = () => {
         }
     ];
 
-    
- 
+    const [filters, setFilters] = useState({});
+
     return (
         <div className="min-h-screen bg-gray-50">
             <Header isAuthenticated={true} userType="client" userName="Ahmed" notifications={9} />
@@ -167,6 +176,13 @@ const HomePage = () => {
                 <div className="absolute inset-0 bg-gradient-to-br from-orange-600/20 to-blue-600/20"></div>
             </section>
 
+            <SearchBar
+                onSearch={handleSearch}
+                categories={[
+                    { id: 'plomberie', name: 'Plomberie' },
+                    
+                ]}
+            />
             <section className="py-16 bg-white">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-12">
@@ -213,6 +229,6 @@ const HomePage = () => {
     );
 };
 
- 
+
 
 export default HomePage;
