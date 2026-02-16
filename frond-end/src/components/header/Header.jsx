@@ -110,7 +110,7 @@ const Header = ({ isAuthenticated = false, userType = 'client', userName = '', n
                 <div className="relative">
                   <button
                     onClick={() => setIsProfileOpen(!isProfileOpen)}
-                    className="flex items-center gap-3 pl-2 pr-4 py-2 rounded-full hover:bg-gray-50 transition-all  border-gray-200"
+                    className="flex items-center gap-3 pl-2 pr-4 py-2 rounded-full  transition-all  border-gray-200"
                   >
                     <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
                       <User className="w-4 h-4 text-orange-600" />
