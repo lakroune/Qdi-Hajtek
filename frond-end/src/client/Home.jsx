@@ -8,6 +8,7 @@ import Header from '../components/Header/Header';
 import CardService from '../components/cards/CardService';
 import Footer from '../components/footer/Footer';
 import SearchBar from '../components/searchs/SearchBar';
+import HeroSection from '../components/hero/HeroSection.jsx';
 
 const HomePage = () => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -171,17 +172,12 @@ const HomePage = () => {
             <Header isAuthenticated={true} userType="client" userName="Ahmed" notifications={9} />
 
             {/* Hero Section */}
-            <section className="relative bg-gray-900 pt-32 pb-20 lg:pt-40 lg:pb-32 overflow-hidden">
-                <div className="absolute inset-0 bg-[url('/images/hero-pattern.png')] opacity-10"></div>
-                <div className="absolute inset-0 bg-gradient-to-br from-orange-600/20 to-blue-600/20"></div>
-            </section>
-
-            <SearchBar
+            <HeroSection
+                variant="default"
                 onSearch={handleSearch}
-                categories={[
-                    { id: 'plomberie', name: 'Plomberie' },
-                    
-                ]}
+                categories={categories}
+                showSearch={true}
+                backgroundImage="/images/hero-x.webp"
             />
             <section className="py-16 bg-white">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
