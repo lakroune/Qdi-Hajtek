@@ -15,13 +15,13 @@ const HomePage = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('all');
     const [location, setLocation] = useState('');
-
+    const [filters, setFilters] = useState({});
     const [searchResults, setSearchResults] = useState([]);
 
     const handleSearch = (params) => {
         console.log('Recherche:', params);
 
-        // Appel API avec filtres
+        // Appel API 
 
     };
 
@@ -30,24 +30,7 @@ const HomePage = () => {
         { id: 'plomberie', name: 'Plomberie', icon: Droplets, color: 'bg-blue-500' },
         { id: 'electricite', name: 'Électricité', icon: Zap, color: 'bg-yellow-500' },
         { id: 'peinture', name: 'Peinture', icon: Paintbrush, color: 'bg-red-500' },
-        { id: 'plomberie', name: 'Plomberie', icon: Droplets, color: 'bg-blue-500' },
-        { id: 'electricite', name: 'Électricité', icon: Zap, color: 'bg-yellow-500' },
-        { id: 'electricite', name: 'Électricité', icon: Zap, color: 'bg-yellow-500' },
-        { id: 'electricite', name: 'Électricité', icon: Zap, color: 'bg-yellow-500' },
-        { id: 'electricite', name: 'Électricité', icon: Zap, color: 'bg-yellow-500' },
-        { id: 'electricite', name: 'Électricité', icon: Zap, color: 'bg-yellow-500' },
-        { id: 'electricite', name: 'Électricité', icon: Zap, color: 'bg-yellow-500' },
-        { id: 'electricite', name: 'Électricité', icon: Zap, color: 'bg-yellow-500' },
-        { id: 'electricite', name: 'Électricité', icon: Zap, color: 'bg-yellow-500' },
-        { id: 'electricite', name: 'Électricité', icon: Zap, color: 'bg-yellow-500' },
-        { id: 'electricite', name: 'Électricité', icon: Zap, color: 'bg-yellow-500' },
-        { id: 'electricite', name: 'Électricité', icon: Zap, color: 'bg-yellow-500' },
-        { id: 'electricite', name: 'Électricité', icon: Zap, color: 'bg-yellow-500' },
-        { id: 'electricite', name: 'Électricité', icon: Zap, color: 'bg-yellow-500' },
-        { id: 'electricite', name: 'Électricité', icon: Zap, color: 'bg-yellow-500' },
-        { id: 'electricite', name: 'Électricité', icon: Zap, color: 'bg-yellow-500' },
-        { id: 'electricite', name: 'Électricité', icon: Zap, color: 'bg-yellow-500' },
-        { id: 'peinture', name: 'Peinture', icon: Paintbrush, color: 'bg-red-500' }
+       
     ];
 
     // Services les plus populaires
@@ -139,78 +122,27 @@ const HomePage = () => {
             verified: true,
             services: ['Réparation fuite', 'Installation sanitaire', 'Débouchage'],
             badges: ['Top Rated', 'Urgence 24/7']
-        },
-        {
-            id: 2,
-            name: 'Fatima Zahra',
-            specialty: 'Décoratrice d\'intérieur',
-            rating: 5.0,
-            reviews: 215,
-            completedJobs: 280,
-            image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=400',
-            location: 'Rabat',
-            verified: true,
-            services: ['Conception', 'Peinture', 'Aménagement'],
-            badges: ['Expert', 'Créative']
-        },
-        {
-            id: 3,
-            name: 'Mohamed El Amrani',
-            specialty: 'Menuisier traditionnel',
-            rating: 4.8,
-            reviews: 412,
-            completedJobs: 620,
-            image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400',
-            location: 'Marrakech',
-            verified: true,
-            services: ['Meubles sur mesure', 'Portes', 'Cuisines'],
-            badges: ['Maître Artisan', 'Garantie 5 ans']
-        },
-        {
-            id: 4,
-            name: 'Sanaa Bennani',
-            specialty: 'Électricienne certifiée',
-            rating: 4.9,
-            reviews: 178,
-            completedJobs: 310,
-            image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400',
-            location: 'Tanger',
-            verified: true,
-            services: ['Installation', 'Dépannage', 'Mise aux normes'],
-            badges: ['Certifiée', 'Sécurité']
         }
     ];
 
-    const [filters, setFilters] = useState({});
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-gray-50" style={{ backgroundImage: "url('/images/hero-x.webp')", backgroundSize: '8%' }}>
             <Header isAuthenticated={true} userType="client" userName="Ahmed" notifications={9} />
-
             {/* Hero Section */}
             <HeroSection
                 variant="default"
                 onSearch={handleSearch}
                 categories={categories}
                 showSearch={true}
-                backgroundImage="/images/hero-x.webp"
+                backgroundImage="/images/d.png"
             />
             {/* Categories Section */}
             <CategoriesSection
                 categories={categories}
                 layout="slider"
             />
-            {/* Top Services Section */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {topServices.map((service) => (
-                    <CardService
-                        key={service.id}
-                        service={service}
-                        onFavoriteClick={(id) => console.log('Favorite:', id)}
-                        onRequestClick={(service) => console.log('Request:', service)}
-                    />
-                ))}
-            </div>
+
 
 
             {/* Top Artisans Section */}

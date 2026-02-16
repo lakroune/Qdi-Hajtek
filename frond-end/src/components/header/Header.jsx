@@ -31,7 +31,7 @@ const Header = ({ isAuthenticated = false, userType = 'client', userName = '', n
   const isActive = (path) => location.pathname === path;
 
   return (
-    <header
+    <header  style={{ backgroundImage: "url('/images/hero-x.webp')", backgroundSize: '6%'  , opacity: 0.89 }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
         ? 'bg-white/95 backdrop-blur-md shadow-lg py-3'
         : 'bg-white py-5'
@@ -113,7 +113,7 @@ const Header = ({ isAuthenticated = false, userType = 'client', userName = '', n
                     className="flex items-center gap-3 pl-2 pr-4 py-2 rounded-full  transition-all  border-gray-200"
                   >
                     <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
-                      <User className="w-4 h-4 text-orange-600" />
+                      <User className="w-5 h-5 text-orange-600" />
                     </div>
                     {/* <span className="text-sm font-medium text-gray-700 max-w-[100px] truncate">
                                             {userName || 'Mon compte'}

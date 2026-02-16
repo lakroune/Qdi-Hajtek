@@ -36,7 +36,7 @@ const CardService = ({
     };
 
     return (
-        <div className={`bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all group ${className}`}>
+        <div className={`bg-white rounded-2xl overflow-hidden  m-1 transition-all group ${className}`}>
             {/* Image Container */}
             <div className="relative h-48 overflow-hidden">
                 <img 
@@ -112,7 +112,7 @@ const CardService = ({
                     </div>
                     <button 
                         onClick={handleRequestClick}
-                        className="px-5 py-2.5 bg-gray-900 text-white text-sm font-semibold rounded-xl hover:bg-orange-600 transition-all active:scale-95 shadow-md hover:shadow-lg"
+                        className="px-5 py-2.5 bg-gray-900 text-white text-sm font-semibold rounded-xl hover:bg-orange-600 transition-all active:scale-95  "
                     >
                         Demander
                     </button>
