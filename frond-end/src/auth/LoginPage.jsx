@@ -39,7 +39,7 @@ const LoginPage = () => {
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
 
         <div className="relative z-10 flex flex-col justify-between p-12 text-white h-full">
-          <Logo variant="default" className="flex items-center gap-3 w-full" />
+          <Logo variant="light" className="flex items-center gap-3 w-full" />
 
           <div className="max-w-md">
             <h1 className="text-5xl font-bold leading-tight mb-6">
