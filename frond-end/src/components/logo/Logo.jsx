@@ -1,71 +1,87 @@
-import React from 'react';
+import React from "react";
 
 const Logo = ({
-    variant = 'default',
-    size = 's-3',
-    className = '',
-    showText = true
+    size = "md",
+    className = "",
+    showText = true,
+    variant = "light"
 }) => {
-    const sizeConfig = {
-        's-1': { container: 'h-8 w-12', text: 'text-sm', qhSize: 'text-xs' },   // 32px
-        's-2': { container: 'h-10 w-16', text: 'text-base', qhSize: 'text-sm' }, // 40px
-        's-3': { container: 'h-16 w-24', text: 'text-xl', qhSize: 'text-lg' },   // 64px
-        's-4': { container: 'h-24 w-36', text: 'text-3xl', qhSize: 'text-2xl' }, // 96px
-        's-5': { container: 'h-32 w-48', text: 'text-4xl', qhSize: 'text-3xl' }, // 128px
-        's-6': { container: 'h-40 w-60', text: 'text-5xl', qhSize: 'text-4xl' }  // 160px
+    const sizes = {
+        sm: { box: "w-10 h-10", text: "text-sm" },
+        md: { box: "w-14 h-14", text: "text-base" },
+        lg: { box: "w-20 h-20", text: "text-xl" },
     };
 
-    const currentSize = sizeConfig[size] || sizeConfig['s-3'];
+    const current = sizes[size] || sizes.md;
 
-    const colorVariants = {
-        default: {
-            left: 'bg-[#D35400]',
-            right: 'bg-[#1B4F72]',
-            textPrimary: 'text-gray-900',
-            textSecondary: 'text-[#D35400]'
-        },
-        light: {
-            left: 'bg-white/20',
-            right: 'bg-white/40',
-            textPrimary: 'text-white',
-            textSecondary: 'text-white/80'
-        },
-        dark: {
-            left: 'bg-gray-700',
-            right: 'bg-gray-900',
-            textPrimary: 'text-white',
-            textSecondary: 'text-gray-400'
-        }
-    };
+    if (variant === "light") {
+        return (
+            <div className={`flex items-center gap-4 ${className}`}>
+                {/* LOGO ICON */}
+                <div
+                    className={`relative ${current.box} rotate-45 rounded-xl overflow-hidden`}
+                >
+                    {/* Left */}
+                    <div className="absolute left-0 top-0 h-full w-1/2 bg-[#D35400]" />
+                    {/* Right */}
+                    <div className="absolute right-0 top-0 h-full w-1/2 bg-[#1B4F72]" />
 
-    const colors = colorVariants[variant] || colorVariants.default;
-
-    return (
-        <div className={`flex items-center gap-4 ${className}`}>
-            <div className={`relative ${currentSize.container} flex items-center justify-center overflow-hidden`}>
-                <div className={`absolute left-0 h-full w-1/2 ${colors.left} rounded-l-full transform -skew-x-12`}></div>
-
-                <div className={`absolute right-0 h-full w-1/2 ${colors.right} rounded-r-full transform skew-x-12`}></div>
-
-                <div className={`relative z-10 flex font-black italic tracking-tighter ${currentSize.qhSize} text-white`}>
-                    Q<span className="ml-[-2px]">H</span>
+                    {/* Letters */}
+                    <div className="absolute inset-0 flex items-center justify-center -rotate-45 font-serif font-bold text-white">
+                        <span className="text-lg">Q</span>
+                        <span className="text-lg ml-1">H</span>
+                    </div>
                 </div>
-            </div>
 
-            {showText && (
-                <div className="flex flex-col">
-                    <span className={`${currentSize.text} font-bold leading-none tracking-tight ${colors.textPrimary}`}>
-                        QDI<span className={colors.textSecondary}>HAJTEK</span>
-                    </span>
-                    {size !== 's-1' && (
-                        <span className="text-[10px] text-gray-500 font-medium uppercase tracking-widest mt-1">
+                {/* TEXT */}
+                {showText && (
+                    <div className="flex flex-col leading-none">
+                        <span className="font-bold tracking-tight text-gray-900">
+                            QDI<span className="text-[#D35400]">HAJTEK</span>
+                        </span>
+                        <span className="text-[10px] text-gray-500 uppercase tracking-widest mt-1">
                             TROUVEZ VOTRE ARTISAN
                         </span>
-                    )}
+                    </div>
+                )}
+            </div>
+        );
+    }
+    else if (variant === "dark") {
+        return (
+            <div className={`flex items-center gap-4 ${className}`}>
+                {/* LOGO ICON */}
+                <div
+                    className={`relative ${current.box} rotate-45 rounded-xl overflow-hidden`}
+                >
+                    {/* Left */}
+                    <div className="absolute left-0 top-0 h-full w-1/2 bg-[#D35400]" />
+                    {/* Right */}
+                    <div className="absolute right-0 top-0 h-full w-1/2 bg-[#1B4F72]" />
+
+                    {/* Letters */}
+                    <div className="absolute inset-0 flex items-center justify-center -rotate-45 font-serif font-bold text-white">
+                        <span className="text-lg">Q</span>
+                        <span className="text-lg ml-1">H</span>
+                    </div>
                 </div>
-            )}
-        </div>
-    );
+
+                {/* TEXT */}
+                {showText && (
+                    <div className="flex flex-col leading-none">
+                        <span className="font-bold tracking-tight text-gray-900">
+                            QDI<span className="text-[#D35400]">HAJTEK</span>
+                        </span>
+                        <span className="text-[10px] text-gray-500 uppercase tracking-widest mt-1">
+                            TROUVEZ VOTRE ARTISAN
+                        </span>
+                    </div>
+                )}
+            </div>
+        );
+    }
+    else
+        return null;
 };
 
 export default Logo;

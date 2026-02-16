@@ -42,7 +42,7 @@ const Header = ({ isAuthenticated = false, userType = 'client', userName = '', n
 
           {/* Logo */}
           <Link to="/" className="flex-shrink-0">
-            <Logo variant="default" size="s-2" />
+            <Logo variant="dark" size="sm" />
           </Link>
 
           {/* Navigation Desktop */}

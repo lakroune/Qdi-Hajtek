@@ -3,11 +3,11 @@ import { Link } from 'react-router-dom';
 import { Facebook, Instagram, Twitter, Linkedin, Mail, Phone, MapPin } from 'lucide-react';
 import Logo from '../logo/Logo';
 
-const Footer = ({ 
+const Footer = ({
     variant = 'dark', // 'dark' | 'light'
-    showNewsletter = false,
+
     showSocials = true,
-    showContact = false,
+    showContact = true,
     customLinks = null,
     className = ''
 }) => {
@@ -17,11 +17,8 @@ const Footer = ({
     const defaultLinks = {
         services: [
             { name: 'Plomberie', to: '/services?category=plomberie' },
-            { name: 'Électricité', to: '/services?category=electricite' },
-            { name: 'Menuiserie', to: '/services?category=menuiserie' },
-            { name: 'Peinture', to: '/services?category=peinture' },
-            { name: 'Climatisation', to: '/services?category=climatisation' },
-            { name: 'Jardinage', to: '/services?category=jardinage' },
+            { name: 'Électricité', to: '/services?category=electricite' }
+
         ],
         help: [
             { name: 'FAQ', to: '/faq' },
@@ -36,10 +33,7 @@ const Footer = ({
             { name: 'Mentions légales', to: '/legal' },
         ],
         company: [
-            { name: 'À propos', to: '/about' },
-            { name: 'Carrières', to: '/careers' },
-            { name: 'Presse', to: '/press' },
-            { name: 'Blog', to: '/blog' },
+            { name: 'À propos', to: '/about' }, 
         ]
     };
 
@@ -70,42 +64,20 @@ const Footer = ({
     return (
         <footer className={`${theme.bg} ${theme.text} py-12 ${className}`}>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                
-                {/* Newsletter Section (optionnel) */}
-                {showNewsletter && (
-                    <div className={`mb-12 pb-12 ${theme.border} border-b`}>
-                        <div className="max-w-2xl mx-auto text-center">
-                            <h3 className={`text-2xl font-bold ${theme.heading} mb-3`}>
-                                Restez informé
-                            </h3>
-                            <p className="mb-6">
-                                Recevez nos meilleures offres et nouveautés directement dans votre boîte mail.
-                            </p>
-                            <form className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-                                <input
-                                    type="email"
-                                    placeholder="Votre email"
-                                    className="flex-1 px-4 py-3 rounded-xl bg-white/10 border border-gray-600 text-white placeholder-gray-500 focus:outline-none focus:border-orange-500"
-                                />
-                                <button className="px-6 py-3 bg-orange-600 text-white font-semibold rounded-xl hover:bg-orange-700 transition-colors">
-                                    S'abonner
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                )}
+
+
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-8">
-                    
+
                     {/* Brand Column */}
                     <div className="lg:col-span-2">
-                        <Logo size="s-3" variant={theme.logoVariant} className="mb-4" />
+                        <Logo size="md" variant={theme.logoVariant} className="mb-4" />
                         <p className="text-sm mb-6 max-w-xs">
-                            La plateforme de confiance pour trouver les meilleurs artisans au Maroc. 
+                            La plateforme de confiance pour trouver les meilleurs artisans au Maroc.
                             Des professionnels vérifiés pour tous vos travaux.
                         </p>
-                        
-                        {/* Contact Info (optionnel) */}
+
+                        {/* Contact Info   */}
                         {showContact && (
                             <div className="space-y-3 mb-6">
                                 <a href="mailto:contact@qdihajtek.ma" className={`flex items-center gap-2 text-sm ${theme.textHover} transition-colors`}>
@@ -123,7 +95,7 @@ const Footer = ({
                             </div>
                         )}
 
-                        {/* Social Links (optionnel) */}
+                        {/* Social Links  */}
                         {showSocials && (
                             <div className="flex gap-4">
                                 {[
@@ -187,39 +159,10 @@ const Footer = ({
                         </ul>
                     </div>
                 </div>
-
-                {/* Bottom Bar */}
-                <div className={`${theme.border} border-t pt-8 flex flex-col md:flex-row items-center justify-between gap-4`}>
-                    <p className="text-sm">
-                        © {currentYear} Qdi Hajtek. Tous droits réservés.
-                    </p>
-                    <div className="flex items-center gap-6 text-sm">
-                        <Link to="/terms" className={`${theme.textHover} transition-colors`}>
-                            CGU
-                        </Link>
-                        <Link to="/privacy" className={`${theme.textHover} transition-colors`}>
-                            Confidentialité
-                        </Link>
-                        <Link to="/cookies" className={`${theme.textHover} transition-colors`}>
-                            Cookies
-                        </Link>
-                    </div>
-                </div>
             </div>
         </footer>
     );
 };
 
-// Version simplifiée (minimal)
-export const FooterMinimal = ({ className = '' }) => {
-    return (
-        <footer className={`bg-gray-900 text-gray-400 py-6 ${className}`}>
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
-                <Logo size="s-2" variant="light" />
-                <p className="text-sm">© {new Date().getFullYear()} Qdi Hajtek. Tous droits réservés.</p>
-            </div>
-        </footer>
-    );
-};
 
 export default Footer;

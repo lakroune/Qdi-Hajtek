@@ -219,7 +219,7 @@ const HomePage = () => {
 
 
 
-            <Footer showContact={true} showSocials={true} variant='light' />
+            <Footer showContact={true} showSocials={true}  />
 
         </div>
     );
