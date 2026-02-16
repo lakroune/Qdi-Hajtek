@@ -9,6 +9,7 @@ import CardService from '../components/cards/CardService';
 import Footer from '../components/footer/Footer';
 import SearchBar from '../components/searchs/SearchBar';
 import HeroSection from '../components/hero/HeroSection.jsx';
+import CategoriesSection from '../components/cards/CategoriesSection.jsx';
 
 const HomePage = () => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -30,6 +31,21 @@ const HomePage = () => {
         { id: 'electricite', name: 'Électricité', icon: Zap, color: 'bg-yellow-500' },
         { id: 'peinture', name: 'Peinture', icon: Paintbrush, color: 'bg-red-500' },
         { id: 'plomberie', name: 'Plomberie', icon: Droplets, color: 'bg-blue-500' },
+        { id: 'electricite', name: 'Électricité', icon: Zap, color: 'bg-yellow-500' },
+        { id: 'electricite', name: 'Électricité', icon: Zap, color: 'bg-yellow-500' },
+        { id: 'electricite', name: 'Électricité', icon: Zap, color: 'bg-yellow-500' },
+        { id: 'electricite', name: 'Électricité', icon: Zap, color: 'bg-yellow-500' },
+        { id: 'electricite', name: 'Électricité', icon: Zap, color: 'bg-yellow-500' },
+        { id: 'electricite', name: 'Électricité', icon: Zap, color: 'bg-yellow-500' },
+        { id: 'electricite', name: 'Électricité', icon: Zap, color: 'bg-yellow-500' },
+        { id: 'electricite', name: 'Électricité', icon: Zap, color: 'bg-yellow-500' },
+        { id: 'electricite', name: 'Électricité', icon: Zap, color: 'bg-yellow-500' },
+        { id: 'electricite', name: 'Électricité', icon: Zap, color: 'bg-yellow-500' },
+        { id: 'electricite', name: 'Électricité', icon: Zap, color: 'bg-yellow-500' },
+        { id: 'electricite', name: 'Électricité', icon: Zap, color: 'bg-yellow-500' },
+        { id: 'electricite', name: 'Électricité', icon: Zap, color: 'bg-yellow-500' },
+        { id: 'electricite', name: 'Électricité', icon: Zap, color: 'bg-yellow-500' },
+        { id: 'electricite', name: 'Électricité', icon: Zap, color: 'bg-yellow-500' },
         { id: 'electricite', name: 'Électricité', icon: Zap, color: 'bg-yellow-500' },
         { id: 'peinture', name: 'Peinture', icon: Paintbrush, color: 'bg-red-500' }
     ];
@@ -179,30 +195,12 @@ const HomePage = () => {
                 showSearch={true}
                 backgroundImage="/images/hero-x.webp"
             />
-            <section className="py-16 bg-white">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center mb-12">
-                        <h2 className="text-3xl font-bold text-gray-900 mb-4">Nos catégories de services</h2>
-                        <p className="text-gray-600">Trouvez le professionnel qu'il vous faut parmi nos spécialités</p>
-                    </div>
-
-                    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
-                        {categories.map((cat) => (
-                            <Link
-                                key={cat.id}
-                                to={`/services?category=${cat.id}`}
-                                className="group flex flex-col items-center p-6 rounded-2xl bg-gray-50 hover:bg-orange-50 transition-all hover:scale-105"
-                            >
-                                <div className={`w-14 h-14 ${cat.color} rounded-xl flex items-center justify-center mb-3 group-hover:shadow-lg transition-shadow`}>
-                                    <cat.icon className="w-7 h-7 text-white" />
-                                </div>
-                                <span className="text-sm font-medium text-gray-700 text-center">{cat.name}</span>
-                            </Link>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
+            {/* Categories Section */}
+            <CategoriesSection
+                categories={categories}
+                layout="slider"
+            />
+            {/* Top Services Section */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {topServices.map((service) => (
                     <CardService
@@ -219,7 +217,7 @@ const HomePage = () => {
 
 
 
-            <Footer showContact={true} showSocials={true}  />
+            <Footer showContact={true} showSocials={true} />
 
         </div>
     );
