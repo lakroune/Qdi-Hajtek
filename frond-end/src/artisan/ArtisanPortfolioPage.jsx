@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { 
-    Star, MapPin, Phone, Mail, Clock, CheckCircle, 
+import {
+    Star, MapPin, Phone, Mail, Clock, CheckCircle,
     Award, Briefcase, Heart, Share2, Flag, Calendar,
     ChevronLeft, ChevronRight, Image as ImageIcon,
     MessageCircle, FileText, Shield, ThumbsUp
@@ -149,8 +149,8 @@ const ArtisanPortfolioPage = () => {
 
             {/* Cover Image */}
             <div className="relative h-60 md:h-80 sm:h-45 bg-white-900">
-                <img 
-                    src={artisan.coverImage} 
+                <img
+                    src={artisan.coverImage}
                     alt="Cover"
                     className=" h-full object-cover opacity-60"
                 />
@@ -158,14 +158,14 @@ const ArtisanPortfolioPage = () => {
             </div>
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-20 relative z-10 pb-12" >
-                
+
                 {/* Header Card */}
                 <div className="bg-white  p-6 md:p-8 mb-6">
                     <div className="flex flex-col md:flex-row gap-6">
                         {/* Avatar */}
                         <div className="relative">
-                            <img 
-                                src={artisan.avatar} 
+                            <img
+                                src={artisan.avatar}
                                 alt={artisan.name}
                                 className="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover border-4 border-white shadow-lg"
                             />
@@ -185,7 +185,7 @@ const ArtisanPortfolioPage = () => {
                                 <div>
                                     <h1 className="text-2xl  font-bold text-gray-900">{artisan.name}</h1>
                                     <p className="text-orange-600 text-[12px] font-medium text-lg">{artisan.specialty}</p>
-                                    
+
                                     <div className="flex items-center gap-4 mt-2 text-[12px] text-gray-600">
                                         <span className="flex items-center gap-1">
                                             <Star className="w-4 h-4 text-yellow-400 fill-current" />
@@ -207,18 +207,17 @@ const ArtisanPortfolioPage = () => {
 
                                 {/* Actions */}
                                 <div className="flex gap-3">
-                                    <button 
+                                    <button
                                         onClick={() => setIsLiked(!isLiked)}
-                                        className={`p-3 rounded-xl transition-all ${
-                                            isLiked ? 'bg-red-50 text-red-500' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                                        }`}
+                                        className={`p-3  transition-all ${isLiked ? 'bg-red-50 text-red-500' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                                            }`}
                                     >
                                         <Heart className={`w-6 h-6 ${isLiked ? 'fill-current' : ''}`} />
                                     </button>
-                                    <button className="p-3 bg-gray-100 text-gray-600 rounded-xl hover:bg-gray-200 transition-colors">
+                                    <button className="p-3 bg-gray-100 text-gray-600  hover:bg-gray-200 transition-colors">
                                         <Share2 className="w-6 h-6" />
                                     </button>
-                                    <button className="p-3 bg-gray-100 text-gray-600 rounded-xl hover:bg-gray-200 transition-colors">
+                                    <button className="p-3 bg-gray-100 text-gray-600  hover:bg-gray-200 transition-colors">
                                         <Flag className="w-6 h-6" />
                                     </button>
                                 </div>
@@ -227,7 +226,7 @@ const ArtisanPortfolioPage = () => {
                             {/* Badges */}
                             <div className="flex flex-wrap gap-2 mt-4">
                                 {artisan.badges.map((badge, idx) => (
-                                    <span key={idx} className="px-3 py-1 bg-orange-100 text-orange-700 text-sm font-medium rounded-full flex items-center gap-1">
+                                    <span key={idx} className="px-3 py-1 bg-orange-100 text-orange-700 text-[12px] font-medium rounded-full flex items-center gap-1">
                                         <Award className="w-3.5 h-3.5" />
                                         {badge}
                                     </span>
@@ -235,7 +234,7 @@ const ArtisanPortfolioPage = () => {
                             </div>
 
                             {/* Quick Stats */}
-                            <div className="grid grid-cols-3 gap-4 mt-6 p-4 bg-gray-50 rounded-xl">
+                            <div className="grid grid-cols-3 gap-4 mt-6 p-4 bg-gray-50 ">
                                 <div className="text-center">
                                     <p className="text-2xl font-bold text-gray-900">{artisan.stats.responseTime}</p>
                                     <p className="text-xs text-gray-500">Temps de réponse</p>
@@ -253,15 +252,15 @@ const ArtisanPortfolioPage = () => {
 
                         {/* Contact Card (Desktop) */}
                         <div className="hidden lg:block w-72 space-y-3">
-                            <button className="w-full py-4 bg-orange-600 hover:bg-orange-700 text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2">
+                            <button className="w-full py-4 bg-green-600 hover:bg-orange-700 text-white font-semibold  transition-colors flex items-center justify-center gap-2">
                                 <MessageCircle className="w-5 h-5" />
                                 Contacter
                             </button>
-                            <button className="w-full py-4 bg-gray-900 hover:bg-gray-800 text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2">
+                            <button className="w-full py-4 bg-gray-900 hover:bg-gray-800 text-white font-semibold  transition-colors flex items-center justify-center gap-2">
                                 <Calendar className="w-5 h-5" />
                                 Prendre RDV
                             </button>
-                            <div className="p-4 bg-gray-50 rounded-xl space-y-2">
+                            <div className="p-4 bg-gray-50  space-y-2">
                                 <a href={`tel:${artisan.phone}`} className="flex items-center gap-3 text-gray-700 hover:text-orange-600">
                                     <Phone className="w-5 h-5" />
                                     <span className="text-sm">{artisan.phone}</span>
@@ -271,7 +270,7 @@ const ArtisanPortfolioPage = () => {
                                     <span className="text-sm truncate">{artisan.email}</span>
                                 </a>
                                 <p className="flex items-center gap-3 text-gray-700 text-sm">
-                                    <MapPin className="w-5 h-5 flex-shrink-0" />
+                                    <MapPin className="w-1 h-5 flex-shrink-0" />
                                     <span className="truncate">{artisan.address}</span>
                                 </p>
                             </div>
@@ -280,49 +279,74 @@ const ArtisanPortfolioPage = () => {
 
                     {/* Mobile Contact Buttons */}
                     <div className="flex gap-3 mt-6 lg:hidden">
-                        <button className="flex-1 py-3 bg-orange-600 text-white font-semibold rounded-xl">
+                        <button className="flex-1 py-3 bg-green-600 text-white font-semibold ">
                             Contacter
                         </button>
-                        <button className="flex-1 py-3 bg-gray-900 text-white font-semibold rounded-xl">
+                        <button className="flex-1 py-3 bg-gray-900 text-white font-semibold ">
                             RDV
                         </button>
                     </div>
                 </div>
 
-               
-            </div>
+                {/* Image Lightbox */}
+                {selectedImage && artisan.portfolio.length > 0 && (
+                    <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4">
+                        <button
+                            onClick={() => setSelectedImage(null)}
+                            className="absolute top-4 right-4 p-2 text-white/80 hover:text-white"
+                        >
+                            <span className="text-2xl">×</span>
+                        </button>
+                        <button
+                            onClick={prevImage}
+                            className="absolute left-4 p-2 text-white/80 hover:text-white"
+                        >
+                            <span className="p-2 bg-white/10 rounded-full block"><ChevronLeft className="w-8 h-8" /></span>
+                        </button>
+                        <img
+                            src={artisan.portfolio[currentImageIndex].src}
+                            alt={artisan.portfolio[currentImageIndex].title}
+                            className="max-w-full max-h-[80vh] object-contain rounded-lg"
+                        />
+                        <button
+                            onClick={nextImage}
+                            className="absolute right-4 p-2 text-white/80 hover:text-white"
+                        >
+                            <span className="p-2 bg-white/10 rounded-full block"><ChevronRight className="w-8 h-8" /></span>
+                        </button>
+                        <div className="absolute bottom-4 left-0 right-0 text-center text-white">
+                            <p className="font-medium">{artisan.portfolio[currentImageIndex].title}</p>
+                        </div>
+                    </div>
+                )}
 
-            {/* Image Lightbox */}
-            {selectedImage && artisan.portfolio.length > 0 && (
-                <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4">
-                    <button 
-                        onClick={() => setSelectedImage(null)}
-                        className="absolute top-4 right-4 p-2 text-white/80 hover:text-white"
-                    >
-                        <span className="text-2xl">×</span>
-                    </button>
-                    <button 
-                        onClick={prevImage}
-                        className="absolute left-4 p-2 text-white/80 hover:text-white"
-                    >
-                        <span className="p-2 bg-white/10 rounded-full block"><ChevronLeft className="w-8 h-8" /></span>
-                    </button>
-                    <img 
-                        src={artisan.portfolio[currentImageIndex].src} 
-                        alt={artisan.portfolio[currentImageIndex].title}
-                        className="max-w-full max-h-[80vh] object-contain rounded-lg"
-                    />
-                    <button 
-                        onClick={nextImage}
-                        className="absolute right-4 p-2 text-white/80 hover:text-white"
-                    >
-                        <span className="p-2 bg-white/10 rounded-full block"><ChevronRight className="w-8 h-8" /></span>
-                    </button>
-                    <div className="absolute bottom-4 left-0 right-0 text-center text-white">
-                        <p className="font-medium">{artisan.portfolio[currentImageIndex].title}</p>
+                {/* Tabs Navigation */}
+                <div className="bg-white   mb-6">
+                    <div className="flex overflow-x-auto scrollbar-hide">
+                        {tabs.map((tab) => (
+                            <button
+                                key={tab.id}
+                                onClick={() => setActiveTab(tab.id)}
+                                className={`
+                                    flex-1 px-6 py-4 font-medium text-sm whitespace-nowrap transition-colors
+                                    ${activeTab === tab.id
+                                        ? 'text-blue-600 border-b-2 border-blue-999'
+                                        : 'text-gray-600 hover:text-gray-900'}
+                                `}
+                            >
+                                {tab.label}
+                                {tab.count && (
+                                    <span className="ml-2 px-2 py-0.5 bg-gray-100 text-gray-600 text-xs  ">
+                                        {tab.count}
+                                    </span>
+                                )}
+                            </button>
+                        ))}
                     </div>
                 </div>
-            )}
+
+            </div>
+
 
             <Footer />
         </div>
