@@ -216,7 +216,7 @@ const Header = ({ isAuthenticated = false, userType = 'client', userName = '', n
                     <Settings className="w-5 h-5" />
                     Paramètres
                   </Link>
-                  <button className="flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-xl w-full">
+                  <button  onClick={() => setShowLogoutModal(true)} className="flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-xl w-full">
                     <LogOut className="w-5 h-5" />
                     Déconnexion
                   </button>
