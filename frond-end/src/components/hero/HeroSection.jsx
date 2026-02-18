@@ -30,7 +30,6 @@ const HeroSection = ({
 
     };
 
-    // Variant DEFAULT (Client - Recherche services)
     if (variant === 'default') {
         return (
             <section className={`relative bg-gray-900 pt-32 pb-20 lg:pt-40 lg:pb-32 overflow-hidden ${className}`}>

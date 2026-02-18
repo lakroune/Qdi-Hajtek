@@ -32,10 +32,11 @@ const SearchBar = ({
 
     useEffect(() => {
         if (query.length > 1) {
-            // Simuler API suggestions
             const mockSuggestions = [
                 'Plombier Casablanca',
-                'Électricien Rabat'
+                'Électricien Rabat',
+                'Menuisier Marrakech',
+                'Peintre Tanger'
             ].filter(s => s.toLowerCase().includes(query.toLowerCase()));
             setSuggestions(mockSuggestions);
             setShowSuggestions(true);
@@ -66,34 +67,49 @@ const SearchBar = ({
 
     const hasActiveFilters = Object.values(filters).some(v => v !== '');
 
+    const updateFilter = (key, value) => {
+        setFilters(prev => ({ ...prev, [key]: value }));
+    };
+
     return (
         <div ref={containerRef} className={`w-full max-w-4xl mx-auto ${className}`}>
             <form onSubmit={handleSubmit} className="relative">
                 <div className={`
-                    relative flex items-center bg-white   overflow-hidden
-                    ${showSuggestions || showFilters ? 'ring-2 ring-orange-500' : ''}
-                    transition-all duration-200
+                    relative flex items-center bg-white border border-gray-200 overflow-hidden
+                    ${showSuggestions || showFilters ? 'border-[#D35400]' : 'hover:border-[#1B4F72]'}
+                    transition-colors duration-200
                 `}>
                     {/* Icône recherche */}
-                    <div className="pl-6 pr-4">
-                        <Search className="w-6 h-6 text-orange-600 text" />
+                    <div className="pl-4 pr-3">
+                        <Search className="w-5 h-5 text-[#1B4F72]" />
                     </div>
 
-                    {/* INPUT UNIQUE pour titre, artisan ou localisation */}
+                    {/* INPUT */}
                     <input
                         type="text"
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
                         onFocus={() => query.length > 1 && setShowSuggestions(true)}
                         placeholder="Rechercher par service, artisan ou localisation..."
-                        className="flex-1 py-5 text-lg text-gray-900 placeholder-gray-500 focus:outline-none bg-transparent"
+                        className="flex-1 py-3.5 text-[12px] text-[#1B4F72] placeholder-gray-400 focus:outline-none bg-transparent"
                     />
 
                     {/* Indicateur filtres actifs */}
                     {hasActiveFilters && (
-                        <span className="px-3 py-1 bg-orange-100 text-orange-700 text-sm font-medium    mr-2">
-                            {Object.values(filters).filter(v => v).length} filtre(s)
+                        <span className="px-2 py-1 bg-[#D35400]/10 text-[#D35400] text-[10px] font-medium mr-2">
+                            {Object.values(filters).filter(v => v).length}
                         </span>
+                    )}
+
+                    {/* Bouton effacer */}
+                    {query && (
+                        <button
+                            type="button"
+                            onClick={clearSearch}
+                            className="p-2 mr-1 text-gray-400 hover:text-[#D35400] transition-colors"
+                        >
+                            <X className="w-4 h-4" />
+                        </button>
                     )}
 
                     {/* Bouton filtres */}
@@ -101,33 +117,20 @@ const SearchBar = ({
                         type="button"
                         onClick={() => setShowFilters(!showFilters)}
                         className={`
-                            px-6 py-5 flex items-center gap-2 font-medium transition-colors border-l border-gray-100
-                            ${showFilters ? 'bg-orange-50 text-orange-600' : 'text-gray-600 hover:text-orange-600 hover:bg-gray-50'}
+                            px-4 py-3.5 flex items-center gap-2 text-[11px] font-medium transition-colors border-l border-gray-200
+                            ${showFilters ? 'bg-[#D35400]/10 text-[#D35400]' : 'text-gray-600 hover:text-[#1B4F72] hover:bg-gray-50'}
                         `}
                     >
-                        <SlidersHorizontal className="w-5 h-5" />
+                        <SlidersHorizontal className="w-4 h-4" />
                         <span className="hidden sm:inline">Filtrer</span>
-                        <ChevronDown className={`w-4 h-4 transition-transform ${showFilters ? 'rotate-180' : ''}`} />
+                        <ChevronDown className={`w-3 h-3 transition-transform ${showFilters ? 'rotate-180' : ''}`} />
                     </button>
-
-
-
-                    {/* Bouton effacer recherche */}
-                    {query && (
-                        <button
-                            type="button"
-                            onClick={clearSearch}
-                            className="absolute right-57 top-1/2 -translate-y-1/2 p-2 text-red-400 hover:text-gray-600"
-                        >
-                            <X className="w-5 h-5" />
-                        </button>
-                    )}
                 </div>
 
                 {/* Suggestions */}
                 {showSuggestions && suggestions.length > 0 && (
-                    <div className="absolute top-full left-0 right-0 mt-2 bg-white   border border-gray-100 overflow-hidden z-50">
-                        <div className="px-4 py-2 bg-gray-50 text-xs font-medium text-gray-500 uppercase">
+                    <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 overflow-hidden z-50">
+                        <div className="px-3 py-2 bg-gray-50 text-[10px] font-medium text-gray-500 uppercase">
                             Suggestions
                         </div>
                         {suggestions.map((suggestion, idx) => (
@@ -138,9 +141,9 @@ const SearchBar = ({
                                     setQuery(suggestion);
                                     setShowSuggestions(false);
                                 }}
-                                className="w-full px-5 py-3 text-left hover:bg-orange-50 flex items-center gap-3 text-gray-700 transition-colors"
+                                className="w-full px-4 py-2.5 text-left hover:bg-[#D35400]/5 flex items-center gap-2 text-[11px] text-[#1B4F72] transition-colors"
                             >
-                                <Search className="w-4 h-4 text-gray-400" />
+                                <Search className="w-3.5 h-3.5 text-gray-400" />
                                 {suggestion}
                             </button>
                         ))}
@@ -149,43 +152,42 @@ const SearchBar = ({
 
                 {/* Panel Filtres */}
                 {showFilters && (
-                    <div className="absolute top-full left-0 right-0 mt-2 bg-white    border border-gray-100 p-6 z-50">
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 p-4 z-50">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
 
                             {/* Filtre Catégorie */}
                             <div>
-                                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                <label className="block text-[11px] font-medium text-[#1B4F72] mb-1.5">
                                     Catégorie
                                 </label>
                                 <select
                                     value={filters.category}
-                                    onChange={(e) => setFilters({ ...filters, category: e.target.value })}
-                                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200  focus:outline-none focus:ring-2 focus:ring-orange-500"
+                                    onChange={(e) => updateFilter('category', e.target.value)}
+                                    className="w-full px-3 py-2 text-[11px] border border-gray-200 focus:border-[#D35400] focus:outline-none bg-white"
                                 >
-                                    <option value="">Toutes les catégories</option>
+                                    <option value="">Toutes</option>
                                     {categories.map((cat) => (
                                         <option key={cat.id} value={cat.id}>{cat.name}</option>
                                     ))}
-
                                 </select>
                             </div>
 
                             {/* Filtre Évaluation */}
                             <div>
-                                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                    Évaluation minimum
+                                <label className="block text-[11px] font-medium text-[#1B4F72] mb-1.5">
+                                    Évaluation min
                                 </label>
-                                <div className="flex gap-2">
+                                <div className="flex gap-1">
                                     {[5, 4, 3, 2].map((rating) => (
                                         <button
                                             key={rating}
                                             type="button"
-                                            onClick={() => setFilters({ ...filters, minRating: filters.minRating === rating ? '' : rating })}
+                                            onClick={() => updateFilter('minRating', filters.minRating === rating ? '' : rating)}
                                             className={`
-                                                flex-1 py-2   text-sm font-medium transition-all
+                                                flex-1 py-1.5 text-[10px] font-medium transition-colors border
                                                 ${filters.minRating === rating
-                                                    ? 'bg-orange-600 text-white'
-                                                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}
+                                                    ? 'bg-[#D35400] text-white border-[#D35400]'
+                                                    : 'bg-white text-gray-600 border-gray-200 hover:border-[#1B4F72]'}
                                             `}
                                         >
                                             {rating}★
@@ -196,37 +198,37 @@ const SearchBar = ({
 
                             {/* Filtre Prix */}
                             <div>
-                                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                    Prix maximum
+                                <label className="block text-[11px] font-medium text-[#1B4F72] mb-1.5">
+                                    Prix max
                                 </label>
                                 <select
                                     value={filters.maxPrice}
-                                    onChange={(e) => setFilters({ ...filters, maxPrice: e.target.value })}
-                                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200   focus:outline-none focus:ring-2 focus:ring-orange-500"
+                                    onChange={(e) => updateFilter('maxPrice', e.target.value)}
+                                    className="w-full px-3 py-2 text-[11px] border border-gray-200 focus:border-[#D35400] focus:outline-none bg-white"
                                 >
-                                    <option value="">Tous les prix</option>
-                                    <option value="200">Moins de 200 DH</option>
-                                    <option value="500">Moins de 500 DH</option>
-                                    <option value="1000">Moins de 1000 DH</option>
-                                    <option value="2000">Moins de 2000 DH</option>
+                                    <option value="">Tous</option>
+                                    <option value="200">&lt; 200 DH</option>
+                                    <option value="500">&lt; 500 DH</option>
+                                    <option value="1000">&lt; 1000 DH</option>
+                                    <option value="2000">&lt; 2000 DH</option>
                                 </select>
                             </div>
 
                             {/* Filtre Distance */}
                             <div>
-                                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                <label className="block text-[11px] font-medium text-[#1B4F72] mb-1.5">
                                     Distance
                                 </label>
                                 <select
                                     value={filters.distance}
-                                    onChange={(e) => setFilters({ ...filters, distance: e.target.value })}
-                                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200  focus:outline-none focus:ring-2 focus:ring-orange-500"
+                                    onChange={(e) => updateFilter('distance', e.target.value)}
+                                    className="w-full px-3 py-2 text-[11px] border border-gray-200 focus:border-[#D35400] focus:outline-none bg-white"
                                 >
                                     <option value="">Peu importe</option>
-                                    <option value="5">Moins de 5 km</option>
-                                    <option value="10">Moins de 10 km</option>
-                                    <option value="20">Moins de 20 km</option>
-                                    <option value="50">Moins de 50 km</option>
+                                    <option value="5">&lt; 5 km</option>
+                                    <option value="10">&lt; 10 km</option>
+                                    <option value="20">&lt; 20 km</option>
+                                    <option value="50">&lt; 50 km</option>
                                 </select>
                             </div>
                         </div>
@@ -234,37 +236,37 @@ const SearchBar = ({
                 )}
             </form>
 
-            {/* Affichage des filtres actifs */}
+            {/* Tags des filtres actifs */}
             {hasActiveFilters && (
-                <div className="flex flex-wrap gap-2 mt-3">
+                <div className="flex flex-wrap gap-2 mt-2">
                     {filters.category && (
-                        <span className="inline-flex items-center gap-1 px-3 py-1 bg-orange-100 text-orange-700 text-sm  ">
-                            {categories.find(c => c.id === filters.category)?.name || filters.category}
-                            <button onClick={() => setFilters({ ...filters, category: '' })} className="hover:text-orange-900">
+                        <span className="inline-flex items-center gap-1 px-2 py-1 bg-[#1B4F72]/10 text-[#1B4F72] text-[10px]">
+                            {categories.find(c => c.id === filters.category)?.name}
+                            <button onClick={() => updateFilter('category', '')} className="hover:text-[#D35400]">
                                 <X className="w-3 h-3" />
                             </button>
                         </span>
                     )}
                     {filters.minRating && (
-                        <span className="inline-flex items-center gap-1 px-3 py-1 bg-orange-100 text-orange-700 text-sm  ">
-                            {filters.minRating}+ étoiles
-                            <button onClick={() => setFilters({ ...filters, minRating: '' })} className="hover:text-orange-900">
+                        <span className="inline-flex items-center gap-1 px-2 py-1 bg-[#1B4F72]/10 text-[#1B4F72] text-[10px]">
+                            {filters.minRating}+ ★
+                            <button onClick={() => updateFilter('minRating', '')} className="hover:text-[#D35400]">
                                 <X className="w-3 h-3" />
                             </button>
                         </span>
                     )}
                     {filters.maxPrice && (
-                        <span className="inline-flex items-center gap-1 px-3 py-1 bg-orange-100 text-orange-700 text-sm  ">
+                        <span className="inline-flex items-center gap-1 px-2 py-1 bg-[#1B4F72]/10 text-[#1B4F72] text-[10px]">
                             Max {filters.maxPrice} DH
-                            <button onClick={() => setFilters({ ...filters, maxPrice: '' })} className="hover:text-orange-900">
+                            <button onClick={() => updateFilter('maxPrice', '')} className="hover:text-[#D35400]">
                                 <X className="w-3 h-3" />
                             </button>
                         </span>
                     )}
                     {filters.distance && (
-                        <span className="inline-flex items-center gap-1 px-3 py-1 bg-orange-100 text-orange-700 text-sm ">
+                        <span className="inline-flex items-center gap-1 px-2 py-1 bg-[#1B4F72]/10 text-[#1B4F72] text-[10px]">
                             &lt; {filters.distance} km
-                            <button onClick={() => setFilters({ ...filters, distance: '' })} className="hover:text-orange-900">
+                            <button onClick={() => updateFilter('distance', '')} className="hover:text-[#D35400]">
                                 <X className="w-3 h-3" />
                             </button>
                         </span>

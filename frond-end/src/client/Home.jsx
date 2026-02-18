@@ -25,39 +25,7 @@ const HomePage = () => {
         { id: 'peinture', name: 'Peinture', icon: Paintbrush, color: 'bg-red-500' },
 
     ];
-
-    // Services les plus populaires
-    const topServices = [
-        {
-            id: 1,
-            title: 'Réparation fuite d\'eau',
-            artisan: 'Ahmed Benali',
-            rating: 4.9,
-            reviews: 128,
-            price: '150 DH',
-            image: 'https://images.unsplash.com/photo-1581244277943-fe4a9c777189?auto=format&fit=crop&q=80&w=800',
-            category: 'plomberie',
-            location: 'Casablanca',
-            urgent: true
-        }
-    ];
-
-    const topArtisans = [
-        {
-            id: 1,
-            name: 'Ahmed Benali',
-            specialty: 'Plombier expert',
-            rating: 4.9,
-            reviews: 328,
-            completedJobs: 450,
-            image: 'https://images.unsplash.com/photo-1540561214051-51846b70124a?auto=format&fit=crop&q=80&w=400',
-            location: 'Casablanca',
-            verified: true,
-            services: ['Réparation fuite', 'Installation sanitaire', 'Débouchage'],
-            badges: ['Top Rated', 'Urgence 24/7']
-        }
-    ];
-
+ 
 
     return (
         <div className="min-h-screen bg-gray-50" style={{ backgroundImage: "url('/images/hero-x.webp')", backgroundSize: '8%' }}>
