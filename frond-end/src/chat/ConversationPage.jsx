@@ -58,17 +58,6 @@ const ConversationPage = () => {
 
         setMessages([...messages, msg]);
         setNewMessage('');
-
-        // Simuler réponse
-        setTimeout(() => {
-            setMessages(prev => [...prev, {
-                id: Date.now() + 1,
-                text: 'D\'accord, à demain !',
-                time: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-                isMe: false,
-                status: 'read'
-            }]);
-        }, 2000);
     };
 
     const getStatusIcon = (status) => {
@@ -85,7 +74,7 @@ const ConversationPage = () => {
             <div className="max-w-6xl mx-auto mt-16 h-[calc(100vh-64px)]">
                 <div className="flex h-full border border-gray-200 bg-white">
                     
-                    {/* Sidebar gauche - Navigation retour */}
+                    {/*  Navigation retour */}
                     <div className="w-16 border-r border-gray-200 bg-gray-50 flex flex-col items-center py-4">
                         <Link 
                             to="/messages" 
@@ -217,7 +206,7 @@ const ConversationPage = () => {
                         </div>
                     </div>
 
-                    {/* Sidebar droite - Infos (optionnel) */}
+                    {/* Sidebar droite - Infos */}
                     <div className="w-64 border-l border-gray-200 bg-gray-50 p-4 hidden lg:block">
                         <div className="text-center mb-4">
                             <div className="w-20 h-20 bg-[#1B4F72]/10 flex items-center justify-center mx-auto mb-2">
