@@ -16,6 +16,7 @@ import ServicesJobsManagement from './admin/ServicesManagement';
 import AccountsManagement from './admin/AccountsManagement';
 import ServicesManagement from './admin/ServicesManagement';
 import JobsManagement from './admin/JobsManagement';
+import ClientAddJob from './client/ClientAddJob';
 
 
 function App() {
@@ -23,16 +24,24 @@ function App() {
     <>
       {/* <Header /> */}
       <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
 
-        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-        <Route path="/reset-password" element={<ForgotPasswordPage />} />
-        <Route path="/settings" element={<SettingsPage />} />
-        <Route path="/messages" element={<MessagesPage />} />
-        <Route path="/messages/:conversationId" element={<ConversationPage />} />
-
+       
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password" element={<ForgotPasswordPage />} />
+        
+ 
+          <Route path="/" element={<HomePage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password" element={<ForgotPasswordPage />} />
+          <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/messages" element={<MessagesPage />} />
+          <Route path="/messages/:conversationId" element={<ConversationPage />} />
+          <Route path="/s" element={<ClientAddJob />} />
+      
 
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<DashboardHome />} />
