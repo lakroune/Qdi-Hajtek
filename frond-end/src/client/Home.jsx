@@ -11,12 +11,11 @@ import CategoriesSection from '../components/cards/CategoriesSection.jsx';
 import LogoutModal from '../components/models/LogoutModal.jsx';
 
 const HomePage = () => {
-    const [showLogoutModal, setShowLogoutModal] = useState(false);
-    const [isLoggingOut, setIsLoggingOut] = useState(false);
+
     const handleSearch = (params) => {
         console.log('Recherche:', params);
 
-
+        // api
     };
 
     // Categories
@@ -58,15 +57,7 @@ const HomePage = () => {
             badges: ['Top Rated', 'Urgence 24/7']
         }
     ];
-    const handleLogout = async () => {
 
-        // api 
-        setIsLoggingOut(true);
-        setShowLogoutModal(false);
-        setTimeout(() => {
-            window.location.href = '/login';
-        }, 1000);
-    };
 
     return (
         <div className="min-h-screen bg-gray-50" style={{ backgroundImage: "url('/images/hero-x.webp')", backgroundSize: '8%' }}>
@@ -83,19 +74,6 @@ const HomePage = () => {
             <CategoriesSection
                 categories={categories}
                 layout="slider"
-            />
-            <button onClick={() => setShowLogoutModal(true)}>
-                Déconnexion
-            </button>
-
-
-            <LogoutModal
-                isOpen={showLogoutModal}
-                onClose={() => setShowLogoutModal(false)}
-                onConfirm={handleLogout}
-                isLoading={isLoggingOut}
-                userName="Ahmed Benali"
-                variant="default"
             />
 
 
