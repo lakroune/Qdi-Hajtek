@@ -74,11 +74,10 @@ const AdminLayout = () => {
                 </div>
             </aside>
 
-            {/* Main Content */}
             <div className="flex-1 flex flex-col min-w-0">
                 {/* Header */}
-                <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 lg:px-6">
-                    <div className="flex items-center gap-4">
+                <header className=" bg-white border-b border-gray-200 flex items-center lg:justify-between px-4 lg:px-6 justify-end">
+                    <div className="flex items-center gap-4 ">
                         <button
                             onClick={() => setSidebarOpen(!sidebarOpen)}
                             className="lg:hidden p-2 text-gray-600 hover:text-[#1B4F72]"
@@ -93,6 +92,9 @@ const AdminLayout = () => {
                         </button>
                     </div>
                 </header>
+                <main className="flex-1 overflow-auto p-4 lg:p-6">
+                    <Outlet />
+                </main>
             </div>
         </div>
     );
