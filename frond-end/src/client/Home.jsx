@@ -5,23 +5,17 @@ import {
     Droplets,
 } from 'lucide-react';
 import Header from '../components/Header/Header';
-import CardService from '../components/cards/CardService';
 import Footer from '../components/footer/Footer';
-import SearchBar from '../components/searchs/SearchBar';
 import HeroSection from '../components/hero/HeroSection.jsx';
 import CategoriesSection from '../components/cards/CategoriesSection.jsx';
+import LogoutModal from '../components/models/LogoutModal.jsx';
 
 const HomePage = () => {
-    const [searchQuery, setSearchQuery] = useState('');
-    const [selectedCategory, setSelectedCategory] = useState('all');
-    const [location, setLocation] = useState('');
-    const [filters, setFilters] = useState({});
-    const [searchResults, setSearchResults] = useState([]);
-
+    const [showLogoutModal, setShowLogoutModal] = useState(false);
+    const [isLoggingOut, setIsLoggingOut] = useState(false);
     const handleSearch = (params) => {
         console.log('Recherche:', params);
 
-        // Appel API 
 
     };
 
@@ -30,7 +24,7 @@ const HomePage = () => {
         { id: 'plomberie', name: 'Plomberie', icon: Droplets, color: 'bg-blue-500' },
         { id: 'electricite', name: 'Électricité', icon: Zap, color: 'bg-yellow-500' },
         { id: 'peinture', name: 'Peinture', icon: Paintbrush, color: 'bg-red-500' },
-       
+
     ];
 
     // Services les plus populaires
@@ -45,66 +39,6 @@ const HomePage = () => {
             image: 'https://images.unsplash.com/photo-1581244277943-fe4a9c777189?auto=format&fit=crop&q=80&w=800',
             category: 'plomberie',
             location: 'Casablanca',
-            urgent: true
-        },
-        {
-            id: 2,
-            title: 'Installation électrique complète',
-            artisan: 'Karim Fassi',
-            rating: 4.8,
-            reviews: 96,
-            price: '800 DH',
-            image: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&q=80&w=800',
-            category: 'electricite',
-            location: 'Rabat',
-            urgent: false
-        },
-        {
-            id: 3,
-            title: 'Fabrication meuble sur mesure',
-            artisan: 'Youssef Amrani',
-            rating: 5.0,
-            reviews: 74,
-            price: '2500 DH',
-            image: 'https://images.unsplash.com/photo-1533090161767-e6ffed986c88?auto=format&fit=crop&q=80&w=800',
-            category: 'menuiserie',
-            location: 'Marrakech',
-            urgent: false
-        },
-        {
-            id: 4,
-            title: 'Peinture intérieure appartement',
-            artisan: 'Hassan Moussaoui',
-            rating: 4.7,
-            reviews: 203,
-            price: '1200 DH',
-            image: 'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&q=80&w=800',
-            category: 'peinture',
-            location: 'Tanger',
-            urgent: true
-        },
-        {
-            id: 5,
-            title: 'Installation climatisation split',
-            artisan: 'Omar Idrissi',
-            rating: 4.9,
-            reviews: 156,
-            price: '600 DH',
-            image: 'https://images.unsplash.com/photo-1631545729918-46c9d54e4139?auto=format&fit=crop&q=80&w=800',
-            category: 'climatisation',
-            location: 'Agadir',
-            urgent: false
-        },
-        {
-            id: 6,
-            title: 'Réparation voiture à domicile',
-            artisan: 'Mehdi Tazi',
-            rating: 4.6,
-            reviews: 89,
-            price: '300 DH',
-            image: 'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?auto=format&fit=crop&q=80&w=800',
-            category: 'automobile',
-            location: 'Fès',
             urgent: true
         }
     ];
@@ -124,7 +58,15 @@ const HomePage = () => {
             badges: ['Top Rated', 'Urgence 24/7']
         }
     ];
+    const handleLogout = async () => {
 
+        // api 
+        setIsLoggingOut(true);
+        setShowLogoutModal(false);
+        setTimeout(() => {
+            window.location.href = '/login';
+        }, 1000);
+    };
 
     return (
         <div className="min-h-screen bg-gray-50" style={{ backgroundImage: "url('/images/hero-x.webp')", backgroundSize: '8%' }}>
@@ -142,11 +84,19 @@ const HomePage = () => {
                 categories={categories}
                 layout="slider"
             />
+            <button onClick={() => setShowLogoutModal(true)}>
+                Déconnexion
+            </button>
 
 
-
-            {/* Top Artisans Section */}
-
+            <LogoutModal
+                isOpen={showLogoutModal}
+                onClose={() => setShowLogoutModal(false)}
+                onConfirm={handleLogout}
+                isLoading={isLoggingOut}
+                userName="Ahmed Benali"
+                variant="default"
+            />
 
 
             <Footer showContact={true} showSocials={true} />
