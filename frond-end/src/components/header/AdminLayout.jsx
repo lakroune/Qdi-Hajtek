@@ -91,22 +91,8 @@ const AdminLayout = () => {
                         >
                             {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
                         </button>
-
-                        {/* Search */}
-                        <div className="hidden md:flex items-center relative">
-                            <Search className="absolute left-3 w-4 h-4 text-gray-400" />
-                            <input
-                                type="text"
-                                placeholder="Rechercher..."
-                                className="pl-9 pr-4 py-2 text-[12px] border border-gray-200 focus:border-[#1B4F72] focus:outline-none w-64"
-                            />
-                        </div>
                     </div>
-
-                  
                 </header>
-
-                 
             </div>
         </div>
     );
