@@ -15,6 +15,7 @@ import ArtisanRequests from './admin/ArtisanRequests';
 import ServicesJobsManagement from './admin/ServicesManagement';
 import AccountsManagement from './admin/AccountsManagement';
 import ServicesManagement from './admin/ServicesManagement';
+import JobsManagement from './admin/JobsManagement';
 
 
 function App() {
@@ -40,6 +41,7 @@ function App() {
           <Route path='artisan-requests' element={<ArtisanRequests />} />
           <Route path='services' element={<ServicesManagement />} />
           <Route path='accounts' element={<AccountsManagement />} />
+          <Route path='jobs' element={<JobsManagement />} />
         </Route>
       </Routes>
     </>
