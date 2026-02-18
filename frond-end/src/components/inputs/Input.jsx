@@ -16,7 +16,7 @@ const Input = ({ label, type, name, value, onChange, placeholder, Icon, required
           onChange={onChange} 
           placeholder={placeholder}
           required={required}
-          className="w-full pl-12 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all"
+          className="w-full pl-12 pr-4 py-3.5 bg-gray-50 border border-gray-200   text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all"
         />
       </div>
     </div>

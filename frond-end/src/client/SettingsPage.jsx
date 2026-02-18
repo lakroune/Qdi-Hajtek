@@ -10,6 +10,7 @@ import Footer from '../components/footer/Footer';
 import FileUpload from '../components/inputs/FileUpload ';
 import Input from '../components/inputs/Input';
 import Select from '../components/selects/Select';
+import AvatarUpload from '../components/inputs/AvatarUpload';
 
 const SettingsPage = () => {
     const [activeTab, setActiveTab] = useState('profile');
@@ -121,7 +122,7 @@ const SettingsPage = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-gray-50" style={{ backgroundImage: "url('/images/hero-x.webp')", backgroundSize: '10%' }}>
             <Header isAuthenticated={true} userType="client" userName="Ahmed" />
 
             <div className="pt-24 pb-12">
@@ -132,7 +133,7 @@ const SettingsPage = () => {
                     </div>
 
                     {successMessage && (
-                        <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl flex items-center gap-3 text-green-700">
+                        <div className="mb-6 p-4 bg-green-50 border border-green-200 flex items-center gap-3 text-green-700">
                             <CheckCircle className="w-5 h-5" />
                             {successMessage}
                         </div>
@@ -141,7 +142,7 @@ const SettingsPage = () => {
                     <div className="grid lg:grid-cols-4 gap-8">
                         {/* Sidebar */}
                         <div className="lg:col-span-1">
-                            <nav className="bg-white rounded-2xl shadow-sm overflow-hidden">
+                            <nav className="bg-white   overflow-hidden">
                                 {tabs.map((tab) => (
                                     <button
                                         key={tab.id}
@@ -163,29 +164,18 @@ const SettingsPage = () => {
                         {/* Content */}
                         <div className="lg:col-span-3 space-y-6">
 
-                            {/* TAB: PROFIL */}
+                            {/*   PROFIL */}
                             {activeTab === 'profile' && (
-                                <div className="bg-white rounded-2xl shadow-sm p-6 md:p-8">
+                                <div className="bg-white p-6 md:p-8">
                                     <h2 className="text-xl font-bold text-gray-900 mb-6">Informations personnelles</h2>
 
                                     {/* Avatar */}
-                                    <div className="flex items-center gap-6 mb-8">
-                                        <div className="relative">
-                                            <img
-                                                src={userData.avatar}
-                                                alt="Avatar"
-                                                className="w-24 h-24 rounded-full object-cover border-4 border-gray-100"
-                                            />
-                                            <label className="absolute bottom-0 right-0 p-2 bg-orange-600 text-white rounded-full cursor-pointer hover:bg-orange-700 transition-colors shadow-lg">
-                                                <Camera className="w-4 h-4" />
-                                                <input type="file" accept="image/*" className="hidden" />
-                                            </label>
-                                        </div>
-                                        <div>
-                                            <h3 className="font-semibold text-gray-900">Photo de profil</h3>
-                                            <p className="text-sm text-gray-500">JPG, PNG. Max 2MB.</p>
-                                        </div>
-                                    </div>
+                                    <AvatarUpload
+                                        size=""
+                                        src={userData.avatar}
+                                        // onChange={handleAvatarChange}
+                                    />
+
                                     {/* prenom, nom, email, phone */}
                                     <div className="grid md:grid-cols-2 gap-6">
                                         <Input
@@ -244,10 +234,10 @@ const SettingsPage = () => {
                                         <button
                                             onClick={handleSave}
                                             disabled={isLoading}
-                                            className="flex items-center gap-2 px-6 py-3 bg-gray-900 hover:bg-orange-600 text-white font-semibold rounded-xl transition-colors disabled:opacity-50"
+                                            className="flex items-center gap-2 px-6 py-3 bg-gray-900 hover:bg-orange-600 text-white font-semibold  transition-colors disabled:opacity-50"
                                         >
                                             {isLoading ? (
-                                                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                                <div className="w-5 h-5 border-2 border-white border-t-transparent  animate-spin" />
                                             ) : (
                                                 <Save className="w-5 h-5" />
                                             )}
@@ -260,7 +250,7 @@ const SettingsPage = () => {
                             {/* Security */}
                             {activeTab === 'security' && (
                                 <div className="space-y-6">
-                                    <div className="bg-white rounded-2xl shadow-sm p-6 md:p-8">
+                                    <div className="bg-white shadow-sm p-6 md:p-8">
                                         <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
                                             <Lock className="w-6 h-6 text-orange-600" />
                                             Mot de passe
@@ -314,41 +304,20 @@ const SettingsPage = () => {
                                         <div className="mt-6">
                                             <button
                                                 onClick={handleSave}
-                                                className="px-6 py-3 bg-gray-900 hover:bg-orange-600 text-white font-semibold rounded-xl transition-colors"
+                                                className="px-6 py-3 bg-gray-900 hover:bg-orange-600 text-white font-semibold  transition-colors"
                                             >
                                                 Mettre à jour le mot de passe
                                             </button>
                                         </div>
                                     </div>
 
-                                    <div className="bg-white rounded-2xl shadow-sm p-6 md:p-8">
-                                        <div className="flex items-center justify-between">
-                                            <div>
-                                                <h3 className="font-semibold text-gray-900 flex items-center gap-2">
-                                                    <Shield className="w-5 h-5 text-orange-600" />
-                                                    Authentification à deux facteurs
-                                                </h3>
-                                                <p className="text-sm text-gray-500 mt-1">
-                                                    Sécurisez votre compte avec une vérification supplémentaire
-                                                </p>
-                                            </div>
-                                            <button
-                                                onClick={() => setSecurityData({ ...securityData, twoFactorEnabled: !securityData.twoFactorEnabled })}
-                                                className={`px-4 py-2 rounded-lg font-medium transition-colors ${securityData.twoFactorEnabled
-                                                    ? 'bg-green-100 text-green-700'
-                                                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                                                    }`}
-                                            >
-                                                {securityData.twoFactorEnabled ? 'Activé' : 'Activer'}
-                                            </button>
-                                        </div>
-                                    </div>
+
                                 </div>
                             )}
 
                             {/* FORMULAIRE DEVENIR ARTISAN */}
                             {activeTab === 'become-artisan' && (
-                                <div className="bg-white rounded-2xl shadow-sm p-6 md:p-8">
+                                <div className="bg-white shadow-sm p-6 md:p-8">
                                     <div className="mb-8">
                                         <h2 className="text-2xl font-bold text-gray-900 mb-2">Devenir Artisan</h2>
                                         <p className="text-gray-600">
@@ -406,7 +375,7 @@ const SettingsPage = () => {
                                                         value={artisanForm.description}
                                                         onChange={(e) => setArtisanForm({ ...artisanForm, description: e.target.value })}
                                                         placeholder="Décrivez votre expertise, vos services, vos zones d'intervention..."
-                                                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-500 resize-none"
+                                                        className="w-full px-4 py-3  border border-gray-200 focus:ring-2 focus:ring-orange-500 resize-none"
                                                     />
                                                 </div>
                                             </div>
@@ -512,7 +481,7 @@ const SettingsPage = () => {
 
                                         {/* Submit */}
                                         <div className="pt-6 border-t border-gray-200">
-                                            <div className="flex items-start gap-3 mb-6 p-4 bg-blue-50 rounded-xl">
+                                            <div className="flex items-start gap-3 mb-6 p-4 bg-blue-50 ">
                                                 <AlertTriangle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
                                                 <p className="text-sm text-blue-700">
                                                     En soumettant ce formulaire, vous acceptez que nos équipes vérifient vos documents.
@@ -523,11 +492,11 @@ const SettingsPage = () => {
                                             <button
                                                 type="submit"
                                                 disabled={isLoading}
-                                                className="w-full md:w-auto flex items-center justify-center gap-2 px-8 py-4 bg-orange-600 hover:bg-orange-700 text-white font-semibold rounded-xl transition-colors disabled:opacity-50"
+                                                className="w-full md:w-auto flex items-center justify-center gap-2 px-8 py-4 bg-orange-600 hover:bg-orange-700 text-white font-semibold  transition-colors disabled:opacity-50"
                                             >
                                                 {isLoading ? (
                                                     <>
-                                                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                                        <div className="w-5 h-5 border-2 border-white border-t-transparent  animate-spin" />
                                                         Envoi en cours...
                                                     </>
                                                 ) : (
