@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import {
-    User, Mail, Phone, MapPin, Camera, Lock,
-    Shield, FileText, CheckCircle, AlertTriangle,
-    ArrowRight, Building, Award, Briefcase,
-    GraduationCap, IdCard, Save, Eye, EyeOff
+    User, Mail, Phone, MapPin, Lock, Shield, FileText,
+    CheckCircle, AlertTriangle, ArrowRight, Building,
+    Award, Briefcase, GraduationCap, IdCard, Save,
+    Eye, EyeOff
 } from 'lucide-react';
 import Header from '../components/Header/Header';
 import Footer from '../components/footer/Footer';
-import FileUpload from '../components/inputs/FileUpload ';
-import Input from '../components/inputs/Input';
-import Select from '../components/selects/Select';
 import AvatarUpload from '../components/inputs/AvatarUpload';
+import Input from '../components/inputs/Input';
+import FileUpload from '../components/inputs/FileUpload';
+import Submit from '../components/buttons/Submit';
 
 const SettingsPage = () => {
     const [activeTab, setActiveTab] = useState('profile');
@@ -19,7 +19,7 @@ const SettingsPage = () => {
     const [showPassword, setShowPassword] = useState({});
     const [cities, setCities] = useState([]);
 
-    // Données client
+    // Données utilisateur
     const [userData, setUserData] = useState({
         firstName: 'Ahmed',
         lastName: 'Benali',
@@ -38,7 +38,7 @@ const SettingsPage = () => {
         twoFactorEnabled: false
     });
 
-    // Formulaire conversion Artisan
+    // Formulaire Artisan
     const [artisanForm, setArtisanForm] = useState({
         companyName: '',
         siretNumber: '',
@@ -56,13 +56,13 @@ const SettingsPage = () => {
     });
 
     const tabs = [
-        { id: 'profile', label: 'Mon profil', icon: User },
-        { id: 'security', label: 'Sécurité', icon: Shield },
-        { id: 'become-artisan', label: 'Devenir Artisan', icon: Award },
+        { id: 'profile', label: 'Mon profil' },
+        { id: 'security', label: 'Sécurité' },
+        { id: 'become-artisan', label: 'Devenir Artisan' },
     ];
 
     const specialties = [
-        { value: '', label: 'Sélectionnez une spécialité' },
+        { value: '', label: 'Sélectionnez' },
         { value: 'plomberie', label: 'Plomberie' },
         { value: 'electricite', label: 'Électricité' },
         { value: 'menuiserie', label: 'Menuiserie' },
@@ -81,16 +81,12 @@ const SettingsPage = () => {
         { value: '10+', label: 'Plus de 10 ans' }
     ];
 
-    // Fetch cities from API
+    // Fetch cities
     useEffect(() => {
         fetch('https://countriesnow.space/api/v0.1/countries/cities', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                "country": "Morocco"
-            })
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ country: "Morocco" })
         })
             .then(res => res.json())
             .then(data => {
@@ -102,7 +98,15 @@ const SettingsPage = () => {
                     setCities(formattedCities);
                 }
             })
-            .catch(err => console.error("Une erreur s'est produite lors de la recherche des villes de Maroc", err));
+            .catch(() => {
+                setCities([
+                    { value: 'casablanca', label: 'Casablanca' },
+                    { value: 'rabat', label: 'Rabat' },
+                    { value: 'marrakech', label: 'Marrakech' },
+                    { value: 'tanger', label: 'Tanger' },
+                    { value: 'agadir', label: 'Agadir' }
+                ]);
+            });
     }, []);
 
     const handleSave = async () => {
@@ -118,399 +122,424 @@ const SettingsPage = () => {
         setIsLoading(true);
         await new Promise(r => setTimeout(r, 1500));
         setIsLoading(false);
-        setSuccessMessage('Votre demande a été envoyée ! Vérification en cours...');
+        setSuccessMessage('Votre demande a été envoyée !');
+    };
+
+    // Helper pour mettre à jour les nested objects
+    const updateField = (setter, obj, field, value) => {
+        setter({ ...obj, [field]: value });
     };
 
     return (
-        <div className="min-h-screen bg-gray-50" style={{ backgroundImage: "url('/images/hero-x.webp')", backgroundSize: '10%' }}>
+        <div className="min-h-screen bg-white">
             <Header isAuthenticated={true} userType="client" userName="Ahmed" />
 
-            <div className="pt-24 pb-12">
-                <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="mb-8">
-                        <h1 className="text-3xl font-bold text-gray-900">Paramètres</h1>
-                        <p className="text-gray-600 mt-2">Gérez votre compte et devenez artisan</p>
+            <div className="max-w-6xl mt-12 mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-12">
+                {/* Header */}
+                <div className="border border-gray-200 p-4 mb-4">
+                    <h1 className="text-[15px] font-bold text-[#1B4F72]">Paramètres du compte</h1>
+                    <p className="text-[11px] text-gray-500 mt-1">Gérez vos informations et devenez artisan</p>
+                </div>
+
+                {/* Success Message */}
+                {successMessage && (
+                    <div className="mb-4 p-3 border border-green-200 bg-green-50 flex items-center gap-2 text-green-700 text-[12px]">
+                        <CheckCircle className="w-4 h-4" />
+                        {successMessage}
+                    </div>
+                )}
+
+                <div className="grid lg:grid-cols-4 gap-4">
+                    {/* Sidebar */}
+                    <div className="lg:col-span-1">
+                        <div className="border border-gray-200">
+                            {tabs.map((tab) => (
+                                <button
+                                    key={tab.id}
+                                    onClick={() => setActiveTab(tab.id)}
+                                    className={`w-full flex items-center gap-2 px-4 py-3 text-left text-[12px] font-medium transition-colors border-b border-gray-100 last:border-0 ${activeTab === tab.id
+                                        ? 'bg-[#D35400]/10 text-[#D35400] border-l-4 border-l-[#D35400]'
+                                        : 'text-[#1B4F72] hover:bg-gray-50'
+                                        }`}
+                                >
+                                    {tab.label}
+                                </button>
+                            ))}
+                        </div>
                     </div>
 
-                    {successMessage && (
-                        <div className="mb-6 p-4 bg-green-50 border border-green-200 flex items-center gap-3 text-green-700">
-                            <CheckCircle className="w-5 h-5" />
-                            {successMessage}
-                        </div>
-                    )}
+                    {/* Content */}
+                    <div className="lg:col-span-3">
 
-                    <div className="grid lg:grid-cols-4 gap-8">
-                        {/* Sidebar */}
-                        <div className="lg:col-span-1">
-                            <nav className="bg-white   overflow-hidden">
-                                {tabs.map((tab) => (
-                                    <button
-                                        key={tab.id}
-                                        onClick={() => setActiveTab(tab.id)}
-                                        className={`
-                                            w-full flex items-center gap-3 px-6 py-4 text-left transition-all
-                                            ${activeTab === tab.id
-                                                ? 'bg-orange-50 text-orange-600 border-r-4 border-orange-600'
-                                                : 'text-gray-600 hover:bg-gray-50'}
-                                        `}
-                                    >
-                                        <tab.icon className="w-5 h-5" />
-                                        <span className="font-medium">{tab.label}</span>
-                                    </button>
-                                ))}
-                            </nav>
-                        </div>
+                        {/* TAB: PROFIL */}
+                        {activeTab === 'profile' && (
+                            <div className="border border-gray-200 p-4">
+                                <h2 className="text-[13px] font-bold text-[#1B4F72] mb-4 pb-2 border-b border-gray-100">
+                                    Informations personnelles
+                                </h2>
 
-                        {/* Content */}
-                        <div className="lg:col-span-3 space-y-6">
-
-                            {/*   PROFIL */}
-                            {activeTab === 'profile' && (
-                                <div className="bg-white p-6 md:p-8">
-                                    <h2 className="text-xl font-bold text-gray-900 mb-6">Informations personnelles</h2>
-
-                                    {/* Avatar */}
+                                {/* Avatar */}
+                                <div className="flex items-center gap-4 mb-6 pb-4 border-b border-gray-100">
                                     <AvatarUpload
-                                        size=""
                                         src={userData.avatar}
-                                        // onChange={handleAvatarChange}
+                                        onChange={(file) => updateField(setUserData, userData, 'avatar', file)}
+                                        onRemove={() => updateField(setUserData, userData, 'avatar', null)}
+                                        size="lg"
                                     />
+                                </div>
 
-                                    {/* prenom, nom, email, phone */}
-                                    <div className="grid md:grid-cols-2 gap-6">
+                                {/* Formulaire avec composant Input */}
+                                <div className="grid md:grid-cols-2 gap-4">
+                                    <Input
+                                        label="Prénom"
+                                        name="firstName"
+                                        value={userData.firstName}
+                                        onChange={(e) => updateField(setUserData, userData, 'firstName', e.target.value)}
+                                        Icon={User}
+                                        required
+                                    />
+                                    <Input
+                                        label="Nom"
+                                        name="lastName"
+                                        value={userData.lastName}
+                                        onChange={(e) => updateField(setUserData, userData, 'lastName', e.target.value)}
+                                        Icon={User}
+                                        required
+                                    />
+                                    <Input
+                                        label="Email"
+                                        name="email"
+                                        type="email"
+                                        value={userData.email}
+                                        onChange={(e) => updateField(setUserData, userData, 'email', e.target.value)}
+                                        Icon={Mail}
+                                        required
+                                    />
+                                    <Input
+                                        label="Téléphone"
+                                        name="phone"
+                                        type="tel"
+                                        value={userData.phone}
+                                        onChange={(e) => updateField(setUserData, userData, 'phone', e.target.value)}
+                                        Icon={Phone}
+                                        required
+                                    />
+                                    <div className="md:col-span-2">
                                         <Input
-                                            label="Prénom"
-                                            name="firstName"
-                                            value={userData.firstName}
-                                            onChange={(e) => setUserData({ ...userData, firstName: e.target.value })}
-                                            required
-                                            Icon={User}
-                                        />
-                                        <Input
-                                            label="Nom"
-                                            name="lastName"
-                                            value={userData.lastName}
-                                            onChange={(e) => setUserData({ ...userData, lastName: e.target.value })}
-                                            required
-                                            Icon={User}
-                                        />
-                                        <Input
-                                            label="Email"
-                                            name="email"
-                                            type="email"
-                                            value={userData.email}
-                                            onChange={(e) => setUserData({ ...userData, email: e.target.value })}
-                                            required
-                                            Icon={Mail}
-                                        />
-                                        <Input
-                                            label="Téléphone"
-                                            name="phone"
-                                            type="tel"
-                                            value={userData.phone}
-                                            onChange={(e) => setUserData({ ...userData, phone: e.target.value })}
-                                            required
-                                            Icon={Phone}
-                                        />
-                                        <div className="md:col-span-2">
-                                            <Input
-                                                label="Adresse"
-                                                name="address"
-                                                value={userData.address}
-                                                onChange={(e) => setUserData({ ...userData, address: e.target.value })}
-                                                Icon={MapPin}
-                                            />
-                                        </div>
-                                        <Select
-                                            label="Ville"
-                                            name="city"
-                                            value={userData.city}
-                                            onChange={(name, value) => setUserData({ ...userData, city: value })}
-                                            options={cities}
+                                            label="Adresse"
+                                            name="address"
+                                            value={userData.address}
+                                            onChange={(e) => updateField(setUserData, userData, 'address', e.target.value)}
+                                            Icon={MapPin}
                                         />
                                     </div>
-
-                                    <div className="mt-8 flex justify-end">
-                                        <button
-                                            onClick={handleSave}
-                                            disabled={isLoading}
-                                            className="flex items-center gap-2 px-6 py-3 bg-gray-900 hover:bg-orange-600 text-white font-semibold  transition-colors disabled:opacity-50"
+                                    <div className="md:col-span-2">
+                                        <label className="block text-[11px] font-medium text-[#1B4F72] mb-1.5">Ville</label>
+                                        <select
+                                            value={userData.city}
+                                            onChange={(e) => updateField(setUserData, userData, 'city', e.target.value)}
+                                            className="w-full px-3 py-2 text-[12px] border border-gray-200 focus:border-[#D35400] focus:outline-none bg-white"
                                         >
-                                            {isLoading ? (
-                                                <div className="w-5 h-5 border-2 border-white border-t-transparent  animate-spin" />
-                                            ) : (
-                                                <Save className="w-5 h-5" />
-                                            )}
-                                            Enregistrer
-                                        </button>
+                                            {cities.map(city => (
+                                                <option key={city.value} value={city.label}>{city.label}</option>
+                                            ))}
+                                        </select>
                                     </div>
                                 </div>
-                            )}
 
-                            {/* Security */}
-                            {activeTab === 'security' && (
-                                <div className="space-y-6">
-                                    <div className="bg-white shadow-sm p-6 md:p-8">
-                                        <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                                            <Lock className="w-6 h-6 text-orange-600" />
-                                            Mot de passe
-                                        </h2>
+                                <div className="mt-6 pt-4 border-t border-gray-100 flex justify-end">
+                                    <Submit
+                                        text="Enregistrer"
+                                        onClick={handleSave}
+                                        isLoading={isLoading}
+                                        icon={Save}
+                                        size="md"
+                                        className="w-auto"
+                                    />
+                                </div>
+                            </div>
+                        )}
 
-                                        <div className="space-y-4 max-w-md">
-                                            <div className="relative">
-                                                <Input
-                                                    label="Mot de passe actuel"
-                                                    name="currentPassword"
-                                                    type={showPassword.current ? 'text' : 'password'}
-                                                    value={securityData.currentPassword}
-                                                    onChange={(e) => setSecurityData({ ...securityData, currentPassword: e.target.value })}
-                                                    Icon={Lock}
-                                                />
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setShowPassword({ ...showPassword, current: !showPassword.current })}
-                                                    className="absolute right-4 top-[38px] text-gray-400"
-                                                >
-                                                    {showPassword.current ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                                                </button>
-                                            </div>
-                                            <div className="relative">
-                                                <Input
-                                                    label="Nouveau mot de passe"
-                                                    name="newPassword"
-                                                    type={showPassword.new ? 'text' : 'password'}
-                                                    value={securityData.newPassword}
-                                                    onChange={(e) => setSecurityData({ ...securityData, newPassword: e.target.value })}
-                                                    Icon={Lock}
-                                                />
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setShowPassword({ ...showPassword, new: !showPassword.new })}
-                                                    className="absolute right-4 top-[38px] text-gray-400"
-                                                >
-                                                    {showPassword.new ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                                                </button>
-                                            </div>
+                        {/* TAB: SÉCURITÉ */}
+                        {activeTab === 'security' && (
+                            <div className="space-y-4">
+                                {/* Mot de passe */}
+                                <div className="border border-gray-200 p-4">
+                                    <h2 className="text-[13px] font-bold text-[#1B4F72] mb-4 pb-2 border-b border-gray-100 flex items-center gap-2">
+                                        <Lock className="w-4 h-4 text-[#D35400]" />
+                                        Mot de passe
+                                    </h2>
+
+                                    <div className="space-y-4 max-w-md">
+                                        <div className="relative">
                                             <Input
-                                                label="Confirmer le mot de passe"
-                                                name="confirmPassword"
-                                                type="password"
-                                                value={securityData.confirmPassword}
-                                                onChange={(e) => setSecurityData({ ...securityData, confirmPassword: e.target.value })}
+                                                label="Mot de passe actuel"
+                                                name="currentPassword"
+                                                type={showPassword.current ? 'text' : 'password'}
+                                                value={securityData.currentPassword}
+                                                onChange={(e) => updateField(setSecurityData, securityData, 'currentPassword', e.target.value)}
                                                 Icon={Lock}
                                             />
-                                        </div>
-
-                                        <div className="mt-6">
                                             <button
-                                                onClick={handleSave}
-                                                className="px-6 py-3 bg-gray-900 hover:bg-orange-600 text-white font-semibold  transition-colors"
+                                                type="button"
+                                                onClick={() => setShowPassword({ ...showPassword, current: !showPassword.current })}
+                                                className="absolute right-3 top-[26px] text-gray-400 hover:text-[#D35400]"
                                             >
-                                                Mettre à jour le mot de passe
+                                                {showPassword.current ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                                             </button>
                                         </div>
+
+                                        <div className="relative">
+                                            <Input
+                                                label="Nouveau mot de passe"
+                                                name="newPassword"
+                                                type={showPassword.new ? 'text' : 'password'}
+                                                value={securityData.newPassword}
+                                                onChange={(e) => updateField(setSecurityData, securityData, 'newPassword', e.target.value)}
+                                                Icon={Lock}
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowPassword({ ...showPassword, new: !showPassword.new })}
+                                                className="absolute right-3 top-[26px] text-gray-400 hover:text-[#D35400]"
+                                            >
+                                                {showPassword.new ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                            </button>
+                                        </div>
+
+                                        <Input
+                                            label="Confirmer le mot de passe"
+                                            name="confirmPassword"
+                                            type="password"
+                                            value={securityData.confirmPassword}
+                                            onChange={(e) => updateField(setSecurityData, securityData, 'confirmPassword', e.target.value)}
+                                            Icon={Lock}
+                                        />
                                     </div>
 
-
+                                    <div className="mt-4 pt-4 border-t border-gray-100">
+                                        <Submit
+                                            text="Mettre à jour"
+                                            onClick={handleSave}
+                                            isLoading={isLoading}
+                                            size="md"
+                                            className="w-auto"
+                                        />
+                                    </div>
                                 </div>
-                            )}
 
-                            {/* FORMULAIRE DEVENIR ARTISAN */}
-                            {activeTab === 'become-artisan' && (
-                                <div className="bg-white shadow-sm p-6 md:p-8">
-                                    <div className="mb-8">
-                                        <h2 className="text-2xl font-bold text-gray-900 mb-2">Devenir Artisan</h2>
-                                        <p className="text-gray-600">
-                                            Remplissez ce formulaire pour transformer votre compte client en compte artisan.
-                                            Votre demande sera examinée par notre équipe sous 48h.
-                                        </p>
-                                    </div>
+                              
+                                
+                            </div>
+                        )}
 
-                                    <form onSubmit={handleSubmitArtisan} className="space-y-8">
-                                        {/* Infos professionnelles */}
-                                        <div>
-                                            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                                                <Briefcase className="w-5 h-5 text-orange-600" />
-                                                Informations professionnelles
-                                            </h3>
-                                            <div className="grid md:grid-cols-2 gap-6">
-                                                <Input
-                                                    label="Nom de l'entreprise (si applicable)"
-                                                    name="companyName"
-                                                    value={artisanForm.companyName}
-                                                    onChange={(e) => setArtisanForm({ ...artisanForm, companyName: e.target.value })}
-                                                    placeholder="Ex: Benali Plomberie"
-                                                    Icon={Building}
-                                                />
-                                                <Input
-                                                    label="Numéro SIRET (si applicable)"
-                                                    name="siretNumber"
-                                                    value={artisanForm.siretNumber}
-                                                    onChange={(e) => setArtisanForm({ ...artisanForm, siretNumber: e.target.value })}
-                                                    placeholder="123 456 789 00012"
-                                                />
-                                                <Select
-                                                    label="Spécialité principale"
-                                                    name="specialty"
+                        {/* TAB: DEVENIR ARTISAN */}
+                        {activeTab === 'become-artisan' && (
+                            <div className="border border-gray-200 p-4">
+                                <div className="mb-6 pb-4 border-b border-gray-100">
+                                    <h2 className="text-[15px] font-bold text-[#1B4F72] mb-1">Devenir Artisan</h2>
+                                    <p className="text-[11px] text-gray-500">
+                                        Remplissez ce formulaire. Votre demande sera examinée sous 48h.
+                                    </p>
+                                </div>
+
+                                <form onSubmit={handleSubmitArtisan} className="space-y-6">
+                                    {/* Infos professionnelles */}
+                                    <div>
+                                        <h3 className="text-[12px] font-bold text-[#1B4F72] mb-3 flex items-center gap-2">
+                                            <Briefcase className="w-4 h-4 text-[#D35400]" />
+                                            Informations professionnelles
+                                        </h3>
+                                        <div className="grid md:grid-cols-2 gap-4">
+                                            <Input
+                                                label="Nom de l'entreprise"
+                                                name="companyName"
+                                                value={artisanForm.companyName}
+                                                onChange={(e) => updateField(setArtisanForm, artisanForm, 'companyName', e.target.value)}
+                                                placeholder="Ex: Benali Plomberie"
+                                                Icon={Building}
+                                            />
+                                            <Input
+                                                label="Numéro SIRET"
+                                                name="siretNumber"
+                                                value={artisanForm.siretNumber}
+                                                onChange={(e) => updateField(setArtisanForm, artisanForm, 'siretNumber', e.target.value)}
+                                                placeholder="123 456 789 00012"
+                                            />
+
+                                            {/* Select Spécialité */}
+                                            <div>
+                                                <label className="block text-[11px] font-medium text-[#1B4F72] mb-1.5">
+                                                    Spécialité <span className="text-[#D35400]">*</span>
+                                                </label>
+                                                <select
+                                                    required
                                                     value={artisanForm.specialty}
-                                                    onChange={(name, value) => setArtisanForm({ ...artisanForm, specialty: value })}
-                                                    options={specialties}
+                                                    onChange={(e) => updateField(setArtisanForm, artisanForm, 'specialty', e.target.value)}
+                                                    className="w-full px-3 py-2 text-[12px] border border-gray-200 focus:border-[#D35400] focus:outline-none bg-white"
+                                                >
+                                                    {specialties.map(s => (
+                                                        <option key={s.value} value={s.value}>{s.label}</option>
+                                                    ))}
+                                                </select>
+                                            </div>
+
+                                            {/* Select Expérience */}
+                                            <div>
+                                                <label className="block text-[11px] font-medium text-[#1B4F72] mb-1.5">
+                                                    Expérience <span className="text-[#D35400]">*</span>
+                                                </label>
+                                                <select
                                                     required
-                                                />
-                                                <Select
-                                                    label="Années d'expérience"
-                                                    name="experience"
                                                     value={artisanForm.experience}
-                                                    onChange={(name, value) => setArtisanForm({ ...artisanForm, experience: value })}
-                                                    options={experiences}
-                                                    required
-                                                />
-                                                <div className="md:col-span-2">
-                                                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                                                        Description de vos services *
-                                                    </label>
-                                                    <textarea
-                                                        required
-                                                        rows={4}
-                                                        value={artisanForm.description}
-                                                        onChange={(e) => setArtisanForm({ ...artisanForm, description: e.target.value })}
-                                                        placeholder="Décrivez votre expertise, vos services, vos zones d'intervention..."
-                                                        className="w-full px-4 py-3  border border-gray-200 focus:ring-2 focus:ring-orange-500 resize-none"
-                                                    />
-                                                </div>
+                                                    onChange={(e) => updateField(setArtisanForm, artisanForm, 'experience', e.target.value)}
+                                                    className="w-full px-3 py-2 text-[12px] border border-gray-200 focus:border-[#D35400] focus:outline-none bg-white"
+                                                >
+                                                    {experiences.map(e => (
+                                                        <option key={e.value} value={e.value}>{e.label}</option>
+                                                    ))}
+                                                </select>
                                             </div>
-                                        </div>
 
-                                        {/* Documents */}
-                                        <div>
-                                            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                                                <FileText className="w-5 h-5 text-orange-600" />
-                                                Documents requis
-                                            </h3>
-                                            <div className="grid md:grid-cols-2 gap-6">
-                                                <FileUpload
-                                                    id="cin-front"
-                                                    label="CNI (Recto)"
-                                                    sublabel="Carte d'identité nationale - Face avant"
-                                                    icon={IdCard}
-                                                    accept="image/*,.pdf"
+                                            <div className="md:col-span-2">
+                                                <label className="block text-[11px] font-medium text-[#1B4F72] mb-1.5">
+                                                    Description <span className="text-[#D35400]">*</span>
+                                                </label>
+                                                <textarea
                                                     required
-                                                    maxSize={5}
-                                                    value={artisanForm.cinFront}
-                                                    onChange={(file) => setArtisanForm({ ...artisanForm, cinFront: file })}
-                                                />
-                                                <FileUpload
-                                                    id="cin-back"
-                                                    label="CNI (Verso)"
-                                                    sublabel="Carte d'identité nationale - Face arrière"
-                                                    icon={IdCard}
-                                                    accept="image/*,.pdf"
-                                                    required
-                                                    maxSize={5}
-                                                    value={artisanForm.cinBack}
-                                                    onChange={(file) => setArtisanForm({ ...artisanForm, cinBack: file })}
-                                                />
-                                                <FileUpload
-                                                    id="diplomas"
-                                                    label="Diplômes / Certificats"
-                                                    sublabel="CAP, BEP, ou formations professionnelles"
-                                                    icon={GraduationCap}
-                                                    accept="image/*,.pdf"
-                                                    multiple
-                                                    maxFiles={5}
-                                                    maxSize={10}
-                                                    value={artisanForm.diplomas}
-                                                    onChange={(files) => setArtisanForm({ ...artisanForm, diplomas: files })}
-                                                />
-                                                <FileUpload
-                                                    id="certificates"
-                                                    label="Attestations d'expérience"
-                                                    sublabel="Attestations de travail, recommandations..."
-                                                    icon={Award}
-                                                    accept="image/*,.pdf"
-                                                    multiple
-                                                    maxFiles={3}
-                                                    value={artisanForm.certificates}
-                                                    onChange={(files) => setArtisanForm({ ...artisanForm, certificates: files })}
+                                                    rows={3}
+                                                    value={artisanForm.description}
+                                                    onChange={(e) => updateField(setArtisanForm, artisanForm, 'description', e.target.value)}
+                                                    placeholder="Décrivez votre expertise..."
+                                                    className="w-full px-3 py-2 text-[12px] border border-gray-200 focus:border-[#D35400] focus:outline-none resize-none"
                                                 />
                                             </div>
                                         </div>
+                                    </div>
 
-                                        {/* Coordonnées pro */}
-                                        <div>
-                                            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                                                <IdCard className="w-5 h-5 text-orange-600" />
-                                                Coordonnées professionnelles
-                                            </h3>
-                                            <div className="grid md:grid-cols-2 gap-6">
-                                                <Input
-                                                    label="Téléphone professionnel"
-                                                    name="proPhone"
-                                                    type="tel"
-                                                    value={artisanForm.proPhone}
-                                                    onChange={(e) => setArtisanForm({ ...artisanForm, proPhone: e.target.value })}
+                                    {/* Documents avec FileUpload */}
+                                    <div className="pt-4 border-t border-gray-100">
+                                        <h3 className="text-[12px] font-bold text-[#1B4F72] mb-3 flex items-center gap-2">
+                                            <FileText className="w-4 h-4 text-[#D35400]" />
+                                            Documents requis
+                                        </h3>
+                                        <div className="grid md:grid-cols-2 gap-4">
+                                            <FileUpload
+                                                id="cin-front"
+                                                label="CNI (Recto)"
+                                                icon={IdCard}
+                                                accept="image/*,.pdf"
+                                                required
+                                                maxSize={5}
+                                                value={artisanForm.cinFront}
+                                                onChange={(file) => updateField(setArtisanForm, artisanForm, 'cinFront', file)}
+                                            />
+                                            <FileUpload
+                                                id="cin-back"
+                                                label="CNI (Verso)"
+                                                icon={IdCard}
+                                                accept="image/*,.pdf"
+                                                required
+                                                maxSize={5}
+                                                value={artisanForm.cinBack}
+                                                onChange={(file) => updateField(setArtisanForm, artisanForm, 'cinBack', file)}
+                                            />
+                                            <FileUpload
+                                                id="diplomas"
+                                                label="Diplômes"
+                                                icon={GraduationCap}
+                                                accept="image/*,.pdf"
+                                                multiple
+                                                maxFiles={5}
+                                                value={artisanForm.diplomas}
+                                                onChange={(files) => updateField(setArtisanForm, artisanForm, 'diplomas', files)}
+                                            />
+                                            <FileUpload
+                                                id="certificates"
+                                                label="Attestations"
+                                                icon={Award}
+                                                accept="image/*,.pdf"
+                                                multiple
+                                                maxFiles={3}
+                                                value={artisanForm.certificates}
+                                                onChange={(files) => updateField(setArtisanForm, artisanForm, 'certificates', files)}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* Coordonnées pro */}
+                                    <div className="pt-4 border-t border-gray-100">
+                                        <h3 className="text-[12px] font-bold text-[#1B4F72] mb-3 flex items-center gap-2">
+                                            <IdCard className="w-4 h-4 text-[#D35400]" />
+                                            Coordonnées professionnelles
+                                        </h3>
+                                        <div className="grid md:grid-cols-2 gap-4">
+                                            <Input
+                                                label="Téléphone pro"
+                                                name="proPhone"
+                                                type="tel"
+                                                value={artisanForm.proPhone}
+                                                onChange={(e) => updateField(setArtisanForm, artisanForm, 'proPhone', e.target.value)}
+                                                Icon={Phone}
+                                                required
+                                            />
+                                            <Input
+                                                label="Email pro"
+                                                name="proEmail"
+                                                type="email"
+                                                value={artisanForm.proEmail}
+                                                onChange={(e) => updateField(setArtisanForm, artisanForm, 'proEmail', e.target.value)}
+                                                Icon={Mail}
+                                            />
+                                            <Input
+                                                label="Adresse"
+                                                name="workAddress"
+                                                value={artisanForm.workAddress}
+                                                onChange={(e) => updateField(setArtisanForm, artisanForm, 'workAddress', e.target.value)}
+                                                Icon={MapPin}
+                                                required
+                                            />
+                                            <div>
+                                                <label className="block text-[11px] font-medium text-[#1B4F72] mb-1.5">
+                                                    Ville <span className="text-[#D35400]">*</span>
+                                                </label>
+                                                <select
                                                     required
-                                                    Icon={Phone}
-                                                />
-                                                <Input
-                                                    label="Email professionnel"
-                                                    name="proEmail"
-                                                    type="email"
-                                                    value={artisanForm.proEmail}
-                                                    onChange={(e) => setArtisanForm({ ...artisanForm, proEmail: e.target.value })}
-                                                    Icon={Mail}
-                                                />
-                                                <Input
-                                                    label="Adresse de l'entreprise"
-                                                    name="workAddress"
-                                                    value={artisanForm.workAddress}
-                                                    onChange={(e) => setArtisanForm({ ...artisanForm, workAddress: e.target.value })}
-                                                    required
-                                                    Icon={MapPin}
-                                                />
-                                                <Select
-                                                    label="Ville de l'entreprise"
-                                                    name="workCity"
                                                     value={artisanForm.workCity}
-                                                    onChange={(name, value) => setArtisanForm({ ...artisanForm, workCity: value })}
-                                                    options={cities}
-                                                    required
-                                                />
+                                                    onChange={(e) => updateField(setArtisanForm, artisanForm, 'workCity', e.target.value)}
+                                                    className="w-full px-3 py-2 text-[12px] border border-gray-200 focus:border-[#D35400] focus:outline-none bg-white"
+                                                >
+                                                    <option value="">Sélectionnez</option>
+                                                    {cities.map(city => (
+                                                        <option key={city.value} value={city.label}>{city.label}</option>
+                                                    ))}
+                                                </select>
                                             </div>
                                         </div>
+                                    </div>
 
-                                        {/* Submit */}
-                                        <div className="pt-6 border-t border-gray-200">
-                                            <div className="flex items-start gap-3 mb-6 p-4 bg-blue-50 ">
-                                                <AlertTriangle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                                                <p className="text-sm text-blue-700">
-                                                    En soumettant ce formulaire, vous acceptez que nos équipes vérifient vos documents.
-                                                    La validation peut prendre jusqu'à 48 heures ouvrées.
-                                                </p>
-                                            </div>
-
-                                            <button
-                                                type="submit"
-                                                disabled={isLoading}
-                                                className="w-full md:w-auto flex items-center justify-center gap-2 px-8 py-4 bg-orange-600 hover:bg-orange-700 text-white font-semibold  transition-colors disabled:opacity-50"
-                                            >
-                                                {isLoading ? (
-                                                    <>
-                                                        <div className="w-5 h-5 border-2 border-white border-t-transparent  animate-spin" />
-                                                        Envoi en cours...
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        Soumettre ma candidature
-                                                        <ArrowRight className="w-5 h-5" />
-                                                    </>
-                                                )}
-                                            </button>
+                                    {/* Submit avec composant Submit */}
+                                    <div className="pt-6 border-t border-gray-100">
+                                        <div className="flex items-start gap-2 mb-4 p-3 bg-blue-50">
+                                            <AlertTriangle className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
+                                            <p className="text-[10px] text-blue-700">
+                                                En soumettant ce formulaire, vous acceptez la vérification de vos documents.
+                                                Validation sous 48h.
+                                            </p>
                                         </div>
-                                    </form>
-                                </div>
-                            )}
-                        </div>
+
+                                        <Submit
+                                            text="Soumettre ma candidature"
+                                            onClick={handleSubmitArtisan}
+                                            isLoading={isLoading}
+                                            variant="secondary"
+                                            size="lg"
+                                            icon={ArrowRight}
+                                        />
+                                    </div>
+                                </form>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

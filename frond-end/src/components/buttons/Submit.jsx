@@ -1,4 +1,3 @@
-import React from 'react';
 import { ArrowRight, Loader2 } from 'lucide-react';
 
 const Submit = ({ 
@@ -56,23 +55,6 @@ const Submit = ({
     );
 };
 
-export const SubmitSmall = ({ onClick, text, isLoading }) => (
-    <Submit 
-        text={text} 
-        onClick={onClick} 
-        isLoading={isLoading}
-        size="sm"
-        className="w-auto"
-    />
-);
 
-export const SubmitOutline = ({ onClick, text, isLoading }) => (
-    <Submit 
-        text={text} 
-        onClick={onClick} 
-        isLoading={isLoading}
-        variant="outline"
-    />
-);
 
 export default Submit;

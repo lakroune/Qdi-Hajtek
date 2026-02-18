@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import  { useState, useRef } from 'react';
 import { Upload, X, File, AlertCircle } from 'lucide-react';
 
 const FileUpload = ({

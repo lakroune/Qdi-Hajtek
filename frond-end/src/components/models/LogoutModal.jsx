@@ -10,9 +10,9 @@ const LogoutModal = ({
     onConfirm,
     isLoading = false,
     userName = '',
-    variant = 'default' // 'default' | 'simple' | 'danger'
+    variant = 'default' 
 }) => {
-    // Fermer avec Escape
+     
     useEffect(() => {
         const handleEscape = (e) => {
             if (e.key === 'Escape' && isOpen) {
@@ -114,10 +114,6 @@ const LogoutModal = ({
         );
     }
 
-    // Variant SIMPLE 
-
-
-    // Variant DANGER  
     return null;
 };
 
