@@ -4,6 +4,8 @@ import RegisterPage from './auth/RegisterPage';
 import ForgotPasswordPage from './auth/ForgotPasswordPage';
 import HomePage from './client/Home';
 import SettingsPage from './client/SettingsPage';
+import MessagesPage from './chat/MessagesPage';
+import ConversationPage from './chat/ConversationPage';
 
 
 function App() {
@@ -18,6 +20,9 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/reset-password" element={<ForgotPasswordPage />} />
         <Route path="/settings" element={<SettingsPage />} />
+        // App.jsx ou routes
+        <Route path="/messages" element={<MessagesPage />} />
+        <Route path="/messages/:conversationId" element={<ConversationPage />} />
       </Routes>
     </>
   );

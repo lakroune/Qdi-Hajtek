@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import {
     Paintbrush, Zap,
     Droplets,
@@ -8,7 +7,6 @@ import Header from '../components/Header/Header';
 import Footer from '../components/footer/Footer';
 import HeroSection from '../components/hero/HeroSection.jsx';
 import CategoriesSection from '../components/cards/CategoriesSection.jsx';
-import LogoutModal from '../components/models/LogoutModal.jsx';
 
 const HomePage = () => {
 
@@ -25,10 +23,10 @@ const HomePage = () => {
         { id: 'peinture', name: 'Peinture', icon: Paintbrush, color: 'bg-red-500' },
 
     ];
- 
+
 
     return (
-        <div className="min-h-screen bg-gray-50" style={{ backgroundImage: "url('/images/hero-x.webp')", backgroundSize: '8%' }}>
+        <div className="min-h-screen bg-gray-50" >
             <Header isAuthenticated={true} userType="client" userName="Ahmed" notifications={9} />
             {/* Hero Section */}
             <HeroSection
@@ -43,7 +41,6 @@ const HomePage = () => {
                 categories={categories}
                 layout="slider"
             />
-
 
             <Footer showContact={true} showSocials={true} />
 

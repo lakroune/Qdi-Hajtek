@@ -1,66 +1,59 @@
-import React from 'react';
 import { Star, TrendingUp, Users, Award } from 'lucide-react';
 import SearchBar from '../searchs/SearchBar';
 
 const HeroSection = ({
-    variant = 'default', // 'default' | 'minimal'  
+    variant = 'default',
     title,
     subtitle,
     highlightText,
-
     showSearch = true,
-    backgroundImage = '/images/hero-pattern.png',
-    overlayGradient = 'from-orange-600/20 to-blue-600/20',
+    backgroundImage = '/images/d.png',
+    overlayGradient = 'from-[#1b4f721a]/90 to-[#1B4F72]/70',
     categories = [],
     onSearch,
     className = ''
 }) => {
-    // Contenu par défaut
     const defaultContent = {
         title: 'Trouvez le meilleur artisan',
         highlightText: 'près de chez vous',
-        subtitle: 'Des professionnels vérifiés pour tous vos travaux. Devis gratuit, intervention rapide, garantie satisfait ou refait.',
-
+        subtitle: 'Des professionnels vérifiés pour tous vos travaux. Devis gratuit, intervention rapide.',
     };
 
     const content = {
         title: title || defaultContent.title,
         highlightText: highlightText || defaultContent.highlightText,
         subtitle: subtitle || defaultContent.subtitle,
-
     };
 
     if (variant === 'default') {
         return (
-            <section className={`relative bg-gray-900 pt-32 pb-20 lg:pt-40 lg:pb-32 overflow-hidden ${className}`}>
-                {/* Background Pattern */}
+            <section className={`relative bg-[#1b4f7296] pt-20 pb-12 overflow-hidden ${className}`}>
                 <div
-                    className="absolute inset-0 opacity-10"
-                    style={{ backgroundImage: `url(${backgroundImage})`, backgroundSize: 'cover' }}
+                    className="absolute inset-0 opacity-5"
+                    style={{ 
+                        backgroundImage: `url(${backgroundImage})`, 
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center'
+                    }}
                 ></div>
 
-                {/* Gradient Overlay */}
                 <div className={`absolute inset-0 bg-gradient-to-br ${overlayGradient}`}></div>
 
-                {/* Content */}
-                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-
-                    {/* Title */}
-                    <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
+                <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                    
+                    <h1 className="text-[24px] md:text-[28px] lg:text-[32px] font-bold text-white mb-3 leading-tight">
                         {content.title}<br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-yellow-400">
+                        <span className="text-[#D35400]">
                             {content.highlightText}
                         </span>
                     </h1>
 
-                    {/* Subtitle */}
-                    <p className="text-xl text-gray-300 mb-10 max-w-2xl mx-auto">
+                    <p className="text-[11px] text-gray-200 mb-8 max-w-xl mx-auto leading-relaxed">
                         {content.subtitle}
                     </p>
 
-                    {/* Search Bar */}
                     {showSearch && (
-                        <div className="mb-12">
+                        <div className="mb-8 max-w-2xl mx-auto">
                             <SearchBar
                                 onSearch={onSearch}
                                 categories={categories}
@@ -68,7 +61,21 @@ const HeroSection = ({
                         </div>
                     )}
 
-
+                    {/* Stats minimalistes */}
+                    <div className="flex items-center justify-center gap-8 text-white/80">
+                        <div className="flex items-center gap-2">
+                            <Users className="w-4 h-4 text-[#D35400]" />
+                            <span className="text-[11px]">500+ Artisans</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <Star className="w-4 h-4 text-[#D35400]" />
+                            <span className="text-[11px]">4.8/5 Moyenne</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <Award className="w-4 h-4 text-[#D35400]" />
+                            <span className="text-[11px]">Vérifiés</span>
+                        </div>
+                    </div>
                 </div>
             </section>
         );
@@ -76,19 +83,19 @@ const HeroSection = ({
 
     if (variant === 'minimal') {
         return (
-            <section className={`relative bg-gray-900 pt-24 pb-12 overflow-hidden ${className}`}>
+            <section className={`relative bg-[#1B4F72] pt-12 pb-8 overflow-hidden ${className}`}>
                 <div
                     className="absolute inset-0 opacity-5"
                     style={{ backgroundImage: `url(${backgroundImage})` }}
                 ></div>
-                <div className={`absolute inset-0 bg-gradient-to-r ${overlayGradient}`}></div>
+                <div className="absolute inset-0 bg-[#1B4F72]/90"></div>
 
-                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center">
-                        <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">
+                        <h1 className="text-[18px] md:text-[22px] font-bold text-white mb-2">
                             {content.title}
                         </h1>
-                        <p className="text-gray-400 max-w-xl mx-auto">
+                        <p className="text-[11px] text-gray-300 max-w-md mx-auto">
                             {content.subtitle}
                         </p>
                     </div>
