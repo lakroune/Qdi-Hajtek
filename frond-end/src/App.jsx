@@ -10,7 +10,8 @@ import ArtisanPortfolioPage from './artisan/ArtisanPortfolioPage';
 import AdminLayout from './components/header/AdminLayout';
 import DashboardHome from './admin/DashboardHome';
 import ReportsManagement from './admin/ReportsManagement';
-import ReviewsManagement from './admin/ReviewsManagement ';
+import ReviewsManagement from './admin/ReviewsManagement';
+import ArtisanRequests from './admin/ArtisanRequests';
 
 
 function App() {
@@ -33,7 +34,7 @@ function App() {
           <Route index element={<DashboardHome />} />
           <Route path='reports' element={<ReportsManagement />} />
           <Route path='reviews' element={<ReviewsManagement />} />
-          <Route path='reports' element={<ReportsManagement />} />
+          <Route path='artisan-requests' element={<ArtisanRequests />} />
           <Route path='reports' element={<ReportsManagement />} />
         </Route>
       </Routes>
