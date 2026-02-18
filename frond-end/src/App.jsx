@@ -9,6 +9,7 @@ import ConversationPage from './chat/ConversationPage';
 import ArtisanPortfolioPage from './artisan/ArtisanPortfolioPage';
 import AdminLayout from './components/header/AdminLayout';
 import DashboardHome from './admin/DashboardHome';
+import ReportsManagement from './admin/ReportsManagement';
 
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
 
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<DashboardHome />} />
+          <Route path='reports' element={<ReportsManagement />} />
         </Route>
       </Routes>
     </>
