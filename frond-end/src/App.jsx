@@ -10,6 +10,7 @@ import ArtisanPortfolioPage from './artisan/ArtisanPortfolioPage';
 import AdminLayout from './components/header/AdminLayout';
 import DashboardHome from './admin/DashboardHome';
 import ReportsManagement from './admin/ReportsManagement';
+import ReviewsManagement from './admin/ReviewsManagement ';
 
 
 function App() {
@@ -30,6 +31,9 @@ function App() {
 
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<DashboardHome />} />
+          <Route path='reports' element={<ReportsManagement />} />
+          <Route path='reviews' element={<ReviewsManagement />} />
+          <Route path='reports' element={<ReportsManagement />} />
           <Route path='reports' element={<ReportsManagement />} />
         </Route>
       </Routes>
