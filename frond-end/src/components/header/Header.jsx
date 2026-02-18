@@ -249,7 +249,7 @@ const Header = ({ isAuthenticated = false, userType = 'client', userName = '', n
         onConfirm={handleLogout}
         isLoading={isLoggingOut}
         userName={userName}
-        variant="default"
+        variant="simple"
       />
     </>
   );
