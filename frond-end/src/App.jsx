@@ -17,6 +17,7 @@ import AccountsManagement from './admin/AccountsManagement';
 import ServicesManagement from './admin/ServicesManagement';
 import JobsManagement from './admin/JobsManagement';
 import ClientAddJob from './client/ClientAddJob';
+import ArtisanAddService from './artisan/ArtisanAddService';
 
 
 function App() {
@@ -41,6 +42,9 @@ function App() {
           <Route path="/messages" element={<MessagesPage />} />
           <Route path="/messages/:conversationId" element={<ConversationPage />} />
           <Route path="/s" element={<ClientAddJob />} />
+          <Route path="/a" element={<ArtisanAddService />} />
+          <Route path="/z" element={<ClientAddJob />} />
+          <Route path="/e" element={<ClientAddJob />} />
       
 
         <Route path="/admin" element={<AdminLayout />}>
