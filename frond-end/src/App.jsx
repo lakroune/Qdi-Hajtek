@@ -12,8 +12,9 @@ import DashboardHome from './admin/DashboardHome';
 import ReportsManagement from './admin/ReportsManagement';
 import ReviewsManagement from './admin/ReviewsManagement';
 import ArtisanRequests from './admin/ArtisanRequests';
-import ServicesJobsManagement from './admin/ServicesJobsManagement';
+import ServicesJobsManagement from './admin/ServicesManagement';
 import AccountsManagement from './admin/AccountsManagement';
+import ServicesManagement from './admin/ServicesManagement';
 
 
 function App() {
@@ -37,7 +38,7 @@ function App() {
           <Route path='reports' element={<ReportsManagement />} />
           <Route path='reviews' element={<ReviewsManagement />} />
           <Route path='artisan-requests' element={<ArtisanRequests />} />
-          <Route path='services' element={<ServicesJobsManagement />} />
+          <Route path='services' element={<ServicesManagement />} />
           <Route path='accounts' element={<AccountsManagement />} />
         </Route>
       </Routes>
