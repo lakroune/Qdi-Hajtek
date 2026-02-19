@@ -22,6 +22,7 @@ import NotFoundPage from './auth/NotFoundPage';
 import Footer from './components/footer/Footer';
 import Header from './components/Header/Header';
 import ConfirmEmailPage from './auth/ConfirmEmailPage';
+import ResetPasswordPage from './auth/ResetPasswordPage';
 
 
 function App() {
@@ -41,7 +42,7 @@ function App() {
           <Route path="login" element={<LoginPage />} />
           <Route path="register" element={<RegisterPage />} />
           <Route path="forgot-password" element={<ForgotPasswordPage />} />
-          <Route path="reset-password" element={<ForgotPasswordPage />} />
+          <Route path="reset-password" element={<ResetPasswordPage />} />
           <Route path="c" element={<ConfirmEmailPage />} />
         </Route>
 
