@@ -1,77 +1,120 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import Logo from '../components/logo/Logo';
-import { Mail, ArrowRight, Check, Shield, Clock, ArrowLeft } from 'lucide-react';
-import Divider from '../components/border/Divider';
-import LinkFooter from '../components/links/LinkFooter';
+import {
+  Mail, ArrowRight, ArrowLeft, Check, Shield,
+  Clock, AlertCircle, CheckCircle
+} from 'lucide-react';
 import Input from '../components/inputs/Input';
+import Logo from '../components/logo/Logo';
 
 const ForgotPasswordPage = () => {
-  const [email, setEmail] = useState('');
-  const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const [error, setError] = useState('');
+
+  const [formData, setFormData] = useState({
+    email: ''
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    if (error) setError('');
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setError('Veuillez entrer un email valide');
+
+    if (!formData.email) {
+      setError('Veuillez entrer votre adresse email');
       return;
     }
 
     setIsLoading(true);
 
-    setTimeout(() => {
-      console.log('Demande de réinitialisation pour:', email);
-      setIsSubmitted(true);
-      setIsLoading(false);
-    }, 1500);
+    // Simulation API
+    await new Promise(r => setTimeout(r, 1500));
+
+    console.log('Reset password request:', formData.email);
+    setIsLoading(false);
+    setIsSubmitted(true);
   };
 
   return (
     <div className="min-h-screen flex">
-      <div className="hidden lg:flex lg:w-1/2 relative bg-gray-900">
-        <img
-          src="/images/artisan-workspace.png"
-          alt="Artisan workspace"
-          className="absolute inset-0 w-full h-full object-cover opacity-60"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+
+      {/* Left Side - Image & Info */}
+      <div className="hidden lg:flex lg:w-1/2 relative bg-[#1B4F72]">
+        <div className="fixed z-10 flex flex-col justify-between p-12 w-1/2 text-white h-full bg-gray-900/60 bg-blend-overlay"
+          style={{
+            backgroundImage: `url("/images/artisan-workspace.png")`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center'
+          }}></div>
+
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0F172A]/90 via-[#1B4F72]/50 to-transparent"></div>
 
         <div className="relative z-10 flex flex-col justify-between p-12 text-white h-full">
-          <Logo className='flex items-center gap-3' variant='light' />
+          <Link to="/" className="flex items-center gap-3">
+            <Logo />
+          </Link>
 
           <div className="max-w-md">
-            <h1 className="text-5xl font-bold leading-tight mb-6">
-              Réinitialisez votre mot de passe en toute sécurité.
+            <h1 className="text-[28px] font-bold leading-tight mb-4 text-white">
+              Récupérez l'accès à votre compte
             </h1>
-            <p className="text-gray-300 text-lg leading-relaxed mb-8">
-              Ne vous inquiétez pas, nous vous aidons à retrouver l'accès à votre compte rapidement et en toute sécurité.
+            <p className="text-[13px] text-white/80 leading-relaxed">
+              Ne vous inquiétez pas, nous vous enverrons les instructions pour réinitialiser votre mot de passe en toute sécurité.
             </p>
-
-            <div className="flex gap-8 mt-8">
-              <div><p className="text-3xl font-bold text-orange-500">10K+</p><p className="text-sm text-gray-400">Artisans</p></div>
-              <div><p className="text-3xl font-bold text-orange-500">50K+</p><p className="text-sm text-gray-400">Clients</p></div>
-              <div><p className="text-3xl font-bold text-orange-500">4.8</p><p className="text-sm text-gray-400">Note moyenne</p></div>
-            </div>
           </div>
 
-          <div className="flex items-center gap-6 text-sm text-gray-400">
-            <div className="flex items-center gap-2"><Shield className="w-4 h-4 text-orange-500" /><span>Sécurisé</span></div>
-            <div className="flex items-center gap-2"><Check className="w-4 h-4 text-orange-500" /><span>Vérifié</span></div>
-            <div className="flex items-center gap-2"><Clock className="w-4 h-4 text-orange-500" /><span>24/7 Support</span></div>
+          <div className="space-y-3">
+            <div className="flex items-center gap-3 text-[12px] text-white/90">
+              <div className="w-8 h-8 bg-white/10 flex items-center justify-center">
+                <Shield className="w-4 h-4 text-[#D35400]" />
+              </div>
+              <span>Lien sécurisé et crypté</span>
+            </div>
+            <div className="flex items-center gap-3 text-[12px] text-white/90">
+              <div className="w-8 h-8 bg-white/10 flex items-center justify-center">
+                <Clock className="w-4 h-4 text-[#D35400]" />
+              </div>
+              <span>Validité du lien : 24 heures</span>
+            </div>
+            <div className="flex items-center gap-3 text-[12px] text-white/90">
+              <div className="w-8 h-8 bg-white/10 flex items-center justify-center">
+                <Check className="w-4 h-4 text-[#D35400]" />
+              </div>
+              <span>Support disponible 24h/24</span>
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="w-full lg:w-1/2 flex items-center justify-center bg-white p-8 lg:p-12 overflow-y-auto">
-        <div className="w-full max-w-md py-8">
-          <Logo className='lg:hidden flex items-center gap-3 mb-8' variant='default' />
+      {/* Right Side - Form */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center bg-white p-6 lg:p-12">
+        <div className="w-full max-w-md">
 
-          <Link
-            to="/login"
-            className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-orange-600 transition-colors mb-6"
+          {/* Mobile Logo */}
+          <div className="lg:hidden mb-8 text-center">
+            <Link to="/" className="inline-flex items-center gap-3">
+              <div className="w-10 h-10 bg-[#D35400] flex items-center justify-center">
+                <span className="text-white font-bold text-[18px]">9</span>
+              </div>
+              <div className="text-left">
+                <span className="font-bold text-[#1B4F72] text-[16px]">di Hajtek</span>
+                <p className="text-[10px] text-gray-500">Services artisanaux</p>
+              </div>
+            </Link>
+          </div>
+
+          {/* Back Link */}
+          <Link 
+            to="/auth/login" 
+            className="inline-flex items-center gap-2 text-[11px] text-gray-500 hover:text-[#D35400] transition-colors mb-6"
           >
             <ArrowLeft className="w-4 h-4" />
             Retour à la connexion
@@ -79,89 +122,79 @@ const ForgotPasswordPage = () => {
 
           {!isSubmitted ? (
             <>
-              <div className="mb-6">
-                <h2 className="text-3xl font-bold text-gray-900 mb-2">Mot de passe oublié ?</h2>
-                <p className="text-gray-500 font-light">
-                  Entrez votre email et nous vous enverrons un lien pour réinitialiser votre mot de passe.
+              {/* Header */}
+              <div className="mb-8">
+                <h2 className="text-[20px] font-bold text-[#1B4F72] mb-2">Mot de passe oublié ?</h2>
+                <p className="text-[12px] text-gray-500">
+                  Entrez votre adresse email et nous vous enverrons un lien pour réinitialiser votre mot de passe.
                 </p>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div>
-                  <Input
-                    label="Email"
-                    type="email"
-                    name="email"
-                    value={email}
-                    onChange={(e) => {
-                      setEmail(e.target.value);
-                      setError('');
-                    }}
-                    placeholder="votre@email.com"
-                    Icon={Mail}
-                  />
-                  {error && <p className="text-xs text-red-500 mt-2">{error}</p>}
+              {/* Error */}
+              {error && (
+                <div className="mb-4 p-3 bg-red-50 border border-red-200 flex items-center gap-2 text-[11px] text-red-600">
+                  <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                  {error}
                 </div>
+              )}
+
+              {/* Form */}
+              <form onSubmit={handleSubmit} className="space-y-5">
+                <Input
+                  label="Adresse Email"
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="exemple@email.com"
+                  Icon={Mail}
+                  required
+                />
 
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full bg-gray-900 hover:bg-orange-600 disabled:bg-gray-400 text-white py-4 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all active:scale-[0.98] shadow-md"
+                  className="w-full bg-[#1B4F72] hover:bg-[#D35400] text-white py-3 text-[13px] font-semibold flex items-center justify-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isLoading ? (
                     <>
-                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      Envoi en cours...
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent animate-spin" />
+                      Envoi...
                     </>
                   ) : (
                     <>
                       Envoyer le lien
-                      <ArrowRight className="w-5 h-5" />
+                      <ArrowRight className="w-4 h-4" />
                     </>
                   )}
                 </button>
               </form>
-
-              <Divider text="Ou" />
-
-              <p className="text-center text-gray-600">
-                Vous vous souvenez de votre mot de passe ?{' '}
-                <Link to="/login" className="font-bold text-orange-600 hover:text-orange-700 transition-colors">
-                  Se connecter
-                </Link>
-              </p>
             </>
           ) : (
+            /* Success State */
             <div className="text-center py-8">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Check className="w-8 h-8 text-green-600" />
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <CheckCircle className="w-8 h-8 text-green-600" />
               </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">Email envoyé !</h2>
-              <p className="text-gray-600 mb-8">
-                Nous avons envoyé un lien de réinitialisation à <strong>{email}</strong>.
-                Vérifiez votre boîte de réception et suivez les instructions.
+              <h3 className="text-[18px] font-bold text-[#1B4F72] mb-2">
+                Email envoyé !
+              </h3>
+              <p className="text-[12px] text-gray-600 mb-6 leading-relaxed">
+                Si un compte existe avec <strong>{formData.email}</strong>, vous recevrez un email avec les instructions pour réinitialiser votre mot de passe.
               </p>
-              <div className="space-y-3">
-                <Link
-                  to="/login"
-                  className="block w-full bg-gray-900 hover:bg-orange-600 text-white py-4 rounded-xl font-semibold transition-all"
-                >
-                  Retour à la connexion
-                </Link>
-                <button
-                  onClick={() => {
-                    setIsSubmitted(false);
-                    setEmail('');
-                  }}
-                  className="block w-full py-3 text-gray-600 hover:text-orange-600 font-medium transition-colors"
-                >
-                  Renvoyer l'email
-                </button>
-              </div>
+              <p className="text-[11px] text-gray-500 mb-6">
+                Vérifiez votre dossier spam si vous ne trouvez pas l'email.
+              </p>
+              <Link
+                to="/auth/login"
+                className="inline-flex items-center gap-2 text-[12px] font-semibold text-[#D35400] hover:text-[#A04000] transition-colors"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Retour à la connexion
+              </Link>
             </div>
           )}
 
-          <LinkFooter array={[{ name: 'Terms', link: '#' }, { name: 'Privacy', link: '#' }]} />
         </div>
       </div>
     </div>

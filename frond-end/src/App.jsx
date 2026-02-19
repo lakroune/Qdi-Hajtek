@@ -21,6 +21,7 @@ import ArtisanAddService from './artisan/ArtisanAddService';
 import NotFoundPage from './auth/NotFoundPage';
 import Footer from './components/footer/Footer';
 import Header from './components/Header/Header';
+import ConfirmEmailPage from './auth/ConfirmEmailPage';
 
 
 function App() {
@@ -41,6 +42,7 @@ function App() {
           <Route path="register" element={<RegisterPage />} />
           <Route path="forgot-password" element={<ForgotPasswordPage />} />
           <Route path="reset-password" element={<ForgotPasswordPage />} />
+          <Route path="c" element={<ConfirmEmailPage />} />
         </Route>
 
         <Route path="/client" element={<div className="auth-layout"><Header /><Outlet /> <Footer /></div>}>
