@@ -18,7 +18,7 @@ import ServicesManagement from './admin/ServicesManagement';
 import JobsManagement from './admin/JobsManagement';
 import ClientAddJob from './client/ClientAddJob';
 import ArtisanAddService from './artisan/ArtisanAddService';
-import NotFoundPage from './auth/NotFoundPage';
+import NotFoundPage from './errors/NotFoundPage';
 import Footer from './components/footer/Footer';
 import Header from './components/Header/Header';
 import ConfirmEmailPage from './auth/ConfirmEmailPage';

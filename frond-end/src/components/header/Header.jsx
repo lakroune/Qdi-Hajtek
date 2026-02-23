@@ -193,7 +193,7 @@ const Header = ({
                   <div className="relative">
                     <button
                       onClick={() => setIsProfileOpen(!isProfileOpen)}
-                      className="flex items-center gap-2 pl-2 pr-3 py-1.5 border border-gray-200 hover:border-[#D35400] rounded-lg transition-all"
+                      className="flex items-center gap-2 pl-2 pr-3 py-1.5     transition-all"
                     >
                       <div className={`w-7 h-7 rounded-full flex items-center justify-center ${
                         userType === 'artisan' ? 'bg-[#D35400]/10' : 'bg-[#1B4F72]/10'
@@ -202,9 +202,7 @@ const Header = ({
                           userType === 'artisan' ? 'text-[#D35400]' : 'text-[#1B4F72]'
                         }`} />
                       </div>
-                      <ChevronDown className={`w-3 h-3 text-gray-400 transition-transform ${
-                        isProfileOpen ? 'rotate-180' : ''
-                      }`} />
+                      
                     </button>
 
                     {/* Menu Profil */}
