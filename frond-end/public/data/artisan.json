@@ -1,0 +1,56 @@
+{
+  "tabs": [
+    { "id": "profile", "label": "Mon profil" },
+    { "id": "security", "label": "Sécurité" },
+    { "id": "become-artisan", "label": "Devenir Artisan" }
+  ],
+  "userData": {
+    "firstName": "Ahmed",
+    "lastName": "Benali",
+    "email": "ahmed.benali@email.com",
+    "phone": "+212 6 12 34 56 78",
+    "address": "123 Rue Mohammed V",
+    "city": "Casablanca",
+    "avatar": "/images/avatars/client.jpg"
+  },
+  "securityData": {
+    "currentPassword": "",
+    "newPassword": "",
+    "confirmPassword": "",
+    "twoFactorEnabled": false
+  },
+  "artisanForm": {
+    "companyName": "",
+    "siretNumber": "",
+    "specialty": "",
+    "experience": "",
+    "description": "",
+    "cinFront": null,
+    "cinBack": null,
+    "diplomas": [],
+    "certificates": [],
+    "proPhone": "",
+    "proEmail": "",
+    "workAddress": "",
+    "workCity": ""
+  },
+  "specialties": [
+    { "value": "", "label": "Sélectionnez" },
+    { "value": "plomberie", "label": "Plomberie" },
+    { "value": "electricite", "label": "Électricité" },
+    { "value": "menuiserie", "label": "Menuiserie" },
+    { "value": "peinture", "label": "Peinture" },
+    { "value": "climatisation", "label": "Climatisation" },
+    { "value": "jardinage", "label": "Jardinage" },
+    { "value": "maconnerie", "label": "Maçonnerie" },
+    { "value": "serrurerie", "label": "Serrurerie" }
+  ],
+  "experiences": [
+    { "value": "", "label": "Sélectionnez" },
+    { "value": "0-2", "label": "Moins de 2 ans" },
+    { "value": "2-5", "label": "2 à 5 ans" },
+    { "value": "5-10", "label": "5 à 10 ans" },
+    { "value": "10+", "label": "Plus de 10 ans" }
+  ],
+  "cities": []
+}
