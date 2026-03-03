@@ -11,13 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('documents', function (Blueprint $table) {
-            $table->id();
+        Schema::create('portofolios', function (Blueprint $table) {
+            $table->id(); // 
             $table->foreignId('artisan_id')->constrained('artisans')->onDelete('cascade');
-            $table->enum('type_document', ['cin', 'diplome', 'certificat', 'autre']);
-            $table->string('titre_document'); // 
-            $table->string('file_path'); // 
-            $table->enum('statut_verification', ['en_attente', 'valide', 'rejete'])->default('en_attente');
+            $table->string('titre');
+            $table->text('description');
             $table->timestamps();
         });
     }
@@ -27,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('documents');
+        Schema::dropIfExists('portofolios');
     }
 };

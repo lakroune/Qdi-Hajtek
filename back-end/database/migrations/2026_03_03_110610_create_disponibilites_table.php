@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('disponibilites', function (Blueprint $table) {
-            $table->id('id');
+            $table->id();
             $table->foreignId('artisan_id')->constrained('artisans')->onDelete('cascade');
             $table->enum('jour_semaine', [
                 'lundi',
