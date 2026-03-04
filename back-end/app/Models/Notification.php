@@ -9,4 +9,10 @@ class Notification extends Model
 {
     /** @use HasFactory<\Database\Factories\NotificationFactory> */
     use HasFactory;
+    protected $table = 'notifications';
+
+    public function notifiable()
+    {
+        return $this->morphTo();
+    }
 }

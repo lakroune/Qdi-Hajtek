@@ -9,4 +9,17 @@ class Proposition extends Model
 {
     /** @use HasFactory<\Database\Factories\PropositionFactory> */
     use HasFactory;
+
+    protected $table = 'propositions';
+
+
+    public function offreTravail()
+    {
+        return $this->belongsTo(OffreTravail::class);
+    }
+
+    public function  notfication()
+    {
+        return $this->morphOne(Notification::class, 'notifiable');
+    }
 }
