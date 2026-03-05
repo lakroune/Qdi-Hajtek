@@ -7,13 +7,14 @@ import {
 import Input from '../components/inputs/Input';
 import Logo from '../components/logo/Logo';
 import axiosClient from "../api/axios-client";
-
+import { useNavigate } from 'react-router-dom';
 
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     email: '',
@@ -34,7 +35,7 @@ const LoginPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    setError('error message here');
+  
 
     try {
       const { data } = await axiosClient.post('/login', {
@@ -45,8 +46,11 @@ const LoginPage = () => {
       localStorage.setItem('ACCESS_TOKEN', data.token);
       localStorage.setItem('USER_DATA', JSON.stringify(data.user));
 
-      // navigate('/dashboard'); 
-
+      if (data.user.role === 'artisan') {
+        navigate('/artisan/dashboard');
+      } else {
+        navigate('/client/dashboard');
+      }
     } catch (err) {
       if (err.response && err.response.data.message) {
         setError(err.response.data.message);

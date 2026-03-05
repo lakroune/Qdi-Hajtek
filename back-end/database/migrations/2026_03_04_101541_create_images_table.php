@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('url');
             $table->string('titre');
-            $table->mprphs('imageable');
+            $table->morphs('imageable');
             $table->timestamps();
         });
     }

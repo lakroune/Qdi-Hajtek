@@ -12,10 +12,22 @@ class AuthController extends Controller
 {
     public function login(Request $request)
     {
-        $credentials = $request->validate([
-            'email' => 'required|email|exists:users,email',
-            'password' => 'required|string|min:8',
-        ]);
+        $credentials = $request->validate(
+            [
+                'email' => 'required|email|exists:users,email',
+                'password' => 'required|string|min:8',
+            ],
+            [
+                'email.required'  => 'Email est requis ',
+                'email.exists'  => 'Email n\'existe pas ',
+                'password.required'  => 'Mot de passe est requis ',
+                'password.min'  => 'Mot de passe doit contenir au moins 8 caractères',
+                
+            ]
+        );
+
+
+
 
         if (!Auth::attempt($credentials)) {
             return response()->json([
@@ -35,6 +47,7 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
+
         $data = $request->validate([
             'nom' => 'required|string|max:255',
             'prenom' => 'required|string|max:255',

@@ -19,8 +19,12 @@ class OffreTravail extends Model
         return $this->hasMany(Proposition::class);
     }
 
-    public function categorie   ()
+    public function categorie()
     {
         return $this->belongsTo(Categorie::class);
+    }
+    public function images()
+    {
+        return $this->morphMany(Image::class, 'imageable');
     }
 }
