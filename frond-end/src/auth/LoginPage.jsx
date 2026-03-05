@@ -6,6 +6,9 @@ import {
 } from 'lucide-react';
 import Input from '../components/inputs/Input';
 import Logo from '../components/logo/Logo';
+import axiosClient from "../api/axios-client";
+
+
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -24,35 +27,40 @@ const LoginPage = () => {
       ...prev,
       [name]: type === 'checkbox' ? checked : value
     }));
-    // Clear error on type
+
     if (error) setError('');
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Validation
-    if (!formData.email || !formData.password) {
-      setError('Veuillez remplir tous les champs');
-      return;
-    }
-
     setIsLoading(true);
+    setError('error message here');
 
-    // Simulation API
-    await new Promise(r => setTimeout(r, 1500));
+    try {
+      const { data } = await axiosClient.post('/login', {
+        email: formData.email,
+        password: formData.password
+      });
 
-    console.log('Connexion:', formData);
-    setIsLoading(false);
-    // Redirection vers dashboard
+      localStorage.setItem('ACCESS_TOKEN', data.token);
+      localStorage.setItem('USER_DATA', JSON.stringify(data.user));
+
+      // navigate('/dashboard'); 
+
+    } catch (err) {
+      if (err.response && err.response.data.message) {
+        setError(err.response.data.message);
+      } else {
+        setError('Error connecting to server');
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
-
   return (
     <div className="min-h-screen flex">
 
-      {/* Left Side - Image & Info */}
       <div className="hidden lg:flex lg:w-1/2 relative bg-[#1B4F72]">
-        {/* Background Pattern */}
         <div className="fixed z-10 flex flex-col justify-between p-12 w-1/2 text-white h-full bg-gray-900/60 bg-blend-overlay"
           style={{
             backgroundImage: `url("/images/artisan-workspace.png")`,
@@ -63,12 +71,10 @@ const LoginPage = () => {
         <div className="absolute inset-0 bg-gradient-to-t from-[#0F172A]/90 via-[#1B4F72]/50 to-transparent"></div>
 
         <div className="relative z-10 flex flex-col justify-between p-12 text-white h-full">
-          {/* Logo */}
           <Link to="/" className="flex items-center gap-3">
             <Logo />
           </Link>
 
-          {/* Content */}
           <div className="max-w-md">
             <h1 className="text-[28px] font-bold leading-tight mb-4 text-white">
               Trouvez les meilleurs artisans près de chez vous
@@ -79,7 +85,6 @@ const LoginPage = () => {
             </p>
           </div>
 
-          {/* Features */}
           <div className="space-y-3">
             <div className="flex items-center gap-3 text-[12px] text-white/90">
               <div className="w-8 h-8 bg-white/10 flex items-center justify-center">
@@ -103,11 +108,9 @@ const LoginPage = () => {
         </div>
       </div>
 
-      {/* Right Side - Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center bg-white p-6 lg:p-12">
         <div className="w-full max-w-md">
 
-          {/* Mobile Logo */}
           <div className="lg:hidden mb-8 text-center">
             <Link to="/" className="inline-flex items-center gap-3">
               <div className="w-10 h-10 bg-[#D35400] flex items-center justify-center">
@@ -120,7 +123,6 @@ const LoginPage = () => {
             </Link>
           </div>
 
-          {/* Header */}
           <div className="mb-8">
             <h2 className="text-[20px] font-bold text-[#1B4F72] mb-2">Connexion</h2>
             <p className="text-[12px] text-gray-500">
@@ -128,7 +130,6 @@ const LoginPage = () => {
             </p>
           </div>
 
-          {/* Error */}
           {error && (
             <div className="mb-4 p-3 bg-red-50 border border-red-200 flex items-center gap-2 text-[11px] text-red-600">
               <AlertCircle className="w-4 h-4 flex-shrink-0" />
@@ -136,10 +137,8 @@ const LoginPage = () => {
             </div>
           )}
 
-          {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-5">
 
-            {/* Email */}
             <Input
               label="Adresse Email"
               type="email"
@@ -151,7 +150,6 @@ const LoginPage = () => {
               required
             />
 
-            {/* Password */}
             <div className="relative">
               <Input
                 label="Mot de passe"
@@ -172,7 +170,6 @@ const LoginPage = () => {
               </button>
             </div>
 
-            {/* Remember & Forgot */}
             <div className="flex items-center justify-between">
               <label className="flex items-center gap-2 cursor-pointer group">
                 <input
@@ -194,7 +191,6 @@ const LoginPage = () => {
               </Link>
             </div>
 
-            {/* Submit */}
             <button
               type="submit"
               disabled={isLoading}
@@ -214,7 +210,6 @@ const LoginPage = () => {
             </button>
           </form>
 
-          {/* Divider */}
           <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-gray-200"></div>
@@ -226,7 +221,6 @@ const LoginPage = () => {
             </div>
           </div>
 
-          {/* Social Login */}
           <div className="grid grid-cols-2 gap-3">
             <button
               type="button"
@@ -251,7 +245,6 @@ const LoginPage = () => {
             </button>
           </div>
 
-          {/* Register Link */}
           <p className="mt-8 text-center text-[12px] text-gray-600">
             Vous n'avez pas de compte ?{' '}
             <Link

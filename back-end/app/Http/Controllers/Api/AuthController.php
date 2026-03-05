@@ -63,6 +63,6 @@ class AuthController extends Controller
     {
         $request->user()->currentAccessToken()->delete();
 
-        return response()->json(['message' => 'T-deconnectiti b naja7']);
+        return response()->json(['message' => 'Déconnexion réussie']);
     }
 }
