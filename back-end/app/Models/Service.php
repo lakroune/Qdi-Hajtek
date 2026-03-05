@@ -11,9 +11,14 @@ class Service extends Model
     use HasFactory;
     protected $table = 'services';
 
-    public function client()
+    public function clients()
     {
         return $this->belongsToMany(Client::class, 'favoris', 'service_id', 'client_id');
+    }
+
+    public function portofolio()
+    {
+        return $this->belongsTo(Portofolio::class);
     }
 
     public function dommandeDerictes()

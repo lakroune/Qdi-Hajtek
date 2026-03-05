@@ -22,7 +22,7 @@ class Client extends Model
         return $this->belongsToMany(Artisan::class, 'aimers', 'client_id', 'artisan_id');
     }
 
-    public function favoris()
+    public function services()
     {
         return $this->belongsToMany(Service::class, 'favoris', 'client_id', 'service_id');
     }

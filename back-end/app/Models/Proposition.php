@@ -22,4 +22,5 @@ class Proposition extends Model
     {
         return $this->morphOne(Notification::class, 'notifiable');
     }
+    
 }

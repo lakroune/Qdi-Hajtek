@@ -15,9 +15,13 @@ class Artisan extends Model
     {
         return $this->belongsTo(User::class);
     }
-
-    public function client()
+    public function portofolio()
     {
-        return $this->belongsToMany(Client::class, 'favoris', 'artisan_id', 'client_id');
+        return $this->hasOne(Portofolio::class);
+    }
+
+    public function clients()
+    {
+        return $this->belongsToMany(Client::class, 'aimers', 'artisan_id', 'client_id');
     }
 }
