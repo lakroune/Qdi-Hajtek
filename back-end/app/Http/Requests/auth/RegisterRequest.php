@@ -26,8 +26,8 @@ class RegisterRequest extends FormRequest
             'prenom' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:8|confirmed',
-            'telephone' => 'nullable|string|unique:users,telephone',
-            'city' => 'nullable|string|max:255',
+            'telephone' => 'required|string|unique:users,telephone',
+            'ville' => 'required|string|max:255',
         ];
     }
     public function messages()
@@ -46,8 +46,8 @@ class RegisterRequest extends FormRequest
             'prenom.string' => 'Le prénom doit être une chaîne de caractères',
             'nom.string' => 'Le nom doit être une chaîne de caractères',
             'telephone.string' => 'Le téléphone doit être une chaîne de caractères',
-            'city.string' => 'La ville doit être une chaîne de caractères',
-            
+            'ville.string' => 'La ville doit être une chaîne de caractères',
+
         ];
     }
 }
