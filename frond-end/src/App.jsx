@@ -27,13 +27,13 @@ function App() {
   return (
     <>
       {/* <Header /> */}
-      <Routes>
+    <Routes>
 
 
 
 
 
-        <Route path="/" element={<HomePage />} />
+      <Route path="/" element={<HomePage />} />
 
         <Route path="/auth" element={<div className="auth-layout"><Outlet /></div>}>
           <Route index element={<LoginPage />} />
