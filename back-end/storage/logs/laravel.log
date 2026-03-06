@@ -1234,3 +1234,33 @@ LINE 1: update \"users\" set \"code\" = $1, \"updated_at\" = $2 where \"id\"...
 #47 C:/Users/youco/Desktop/Qdi-Hajtek/back-end/vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php(23): require_once('C://Users//youco//...')
 #48 {main}
 "} 
+[2026-03-06 21:47:41] local.ERROR: A `creer offre` permission already exists for guard `web`. {"exception":"[object] (Spatie\\Permission\\Exceptions\\PermissionAlreadyExists(code: 0): A `creer offre` permission already exists for guard `web`. at C:/Users/youco/Desktop/Qdi-Hajtek/back-end/vendor/spatie/laravel-permission/src/Exceptions/PermissionAlreadyExists.php:11)
+[stacktrace]
+#0 C:/Users/youco/Desktop/Qdi-Hajtek/back-end/vendor/spatie/laravel-permission/src/Models/Permission.php(49): Spatie/Permission/Exceptions/PermissionAlreadyExists::create('creer offre', 'web')
+#1 C:/Users/youco/Desktop/Qdi-Hajtek/back-end/database/seeders/RolePermissionSeeder.php(47): Spatie/Permission/Models/Permission::create(Array)
+#2 C:/Users/youco/Desktop/Qdi-Hajtek/back-end/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Database/Seeders/RolePermissionSeeder->run()
+#3 C:/Users/youco/Desktop/Qdi-Hajtek/back-end/vendor/laravel/framework/src/Illuminate/Container/Util.php(43): Illuminate/Container/BoundMethod::Illuminate/Container/{closure}()
+#4 C:/Users/youco/Desktop/Qdi-Hajtek/back-end/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(96): Illuminate/Container/Util::unwrapIfClosure(Object(Closure))
+#5 C:/Users/youco/Desktop/Qdi-Hajtek/back-end/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate/Container/BoundMethod::callBoundMethod(Object(Illuminate/Foundation/Application), Array, Object(Closure))
+#6 C:/Users/youco/Desktop/Qdi-Hajtek/back-end/vendor/laravel/framework/src/Illuminate/Container/Container.php(799): Illuminate/Container/BoundMethod::call(Object(Illuminate/Foundation/Application), Array, Array, NULL)
+#7 C:/Users/youco/Desktop/Qdi-Hajtek/back-end/vendor/laravel/framework/src/Illuminate/Database/Seeder.php(184): Illuminate/Container/Container->call(Array, Array)
+#8 C:/Users/youco/Desktop/Qdi-Hajtek/back-end/vendor/laravel/framework/src/Illuminate/Database/Seeder.php(193): Illuminate/Database/Seeder->Illuminate/Database/{closure}()
+#9 C:/Users/youco/Desktop/Qdi-Hajtek/back-end/vendor/laravel/framework/src/Illuminate/Database/Console/Seeds/SeedCommand.php(71): Illuminate/Database/Seeder->__invoke()
+#10 C:/Users/youco/Desktop/Qdi-Hajtek/back-end/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Concerns/GuardsAttributes.php(157): Illuminate/Database/Console/Seeds/SeedCommand->Illuminate/Database/Console/Seeds/{closure}()
+#11 C:/Users/youco/Desktop/Qdi-Hajtek/back-end/vendor/laravel/framework/src/Illuminate/Database/Console/Seeds/SeedCommand.php(70): Illuminate/Database/Eloquent/Model::unguarded(Object(Closure))
+#12 C:/Users/youco/Desktop/Qdi-Hajtek/back-end/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Illuminate/Database/Console/Seeds/SeedCommand->handle()
+#13 C:/Users/youco/Desktop/Qdi-Hajtek/back-end/vendor/laravel/framework/src/Illuminate/Container/Util.php(43): Illuminate/Container/BoundMethod::Illuminate/Container/{closure}()
+#14 C:/Users/youco/Desktop/Qdi-Hajtek/back-end/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(96): Illuminate/Container/Util::unwrapIfClosure(Object(Closure))
+#15 C:/Users/youco/Desktop/Qdi-Hajtek/back-end/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate/Container/BoundMethod::callBoundMethod(Object(Illuminate/Foundation/Application), Array, Object(Closure))
+#16 C:/Users/youco/Desktop/Qdi-Hajtek/back-end/vendor/laravel/framework/src/Illuminate/Container/Container.php(799): Illuminate/Container/BoundMethod::call(Object(Illuminate/Foundation/Application), Array, Array, NULL)
+#17 C:/Users/youco/Desktop/Qdi-Hajtek/back-end/vendor/laravel/framework/src/Illuminate/Console/Command.php(211): Illuminate/Container/Container->call(Array)
+#18 C:/Users/youco/Desktop/Qdi-Hajtek/back-end/vendor/symfony/console/Command/Command.php(341): Illuminate/Console/Command->execute(Object(Symfony/Component/Console/Input/ArgvInput), Object(Illuminate/Console/OutputStyle))
+#19 C:/Users/youco/Desktop/Qdi-Hajtek/back-end/vendor/laravel/framework/src/Illuminate/Console/Command.php(180): Symfony/Component/Console/Command/Command->run(Object(Symfony/Component/Console/Input/ArgvInput), Object(Illuminate/Console/OutputStyle))
+#20 C:/Users/youco/Desktop/Qdi-Hajtek/back-end/vendor/symfony/console/Application.php(1102): Illuminate/Console/Command->run(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#21 C:/Users/youco/Desktop/Qdi-Hajtek/back-end/vendor/symfony/console/Application.php(356): Symfony/Component/Console/Application->doRunCommand(Object(Illuminate/Database/Console/Seeds/SeedCommand), Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#22 C:/Users/youco/Desktop/Qdi-Hajtek/back-end/vendor/symfony/console/Application.php(195): Symfony/Component/Console/Application->doRun(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#23 C:/Users/youco/Desktop/Qdi-Hajtek/back-end/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(198): Symfony/Component/Console/Application->run(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#24 C:/Users/youco/Desktop/Qdi-Hajtek/back-end/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1235): Illuminate/Foundation/Console/Kernel->handle(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#25 C:/Users/youco/Desktop/Qdi-Hajtek/back-end/artisan(16): Illuminate/Foundation/Application->handleCommand(Object(Symfony/Component/Console/Input/ArgvInput))
+#26 {main}
+"} 
