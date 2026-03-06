@@ -3,14 +3,14 @@ import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, User, Bell, ChevronDown, LogOut, Settings, Heart, MessageCircle, Briefcase, Calendar } from 'lucide-react';
 import Logo from '../logo/Logo';
 import LogoutModal from '../models/LogoutModal';
-
-const Header = ({ 
-  isAuthenticated = false, 
+import { useNavigate } from 'react-router-dom';
+const Header = ({
+  isAuthenticated = false,
   userType = 'client', // 'client' | 'artisan'
-  userName = '', 
-  notifications = 0, 
+  userName = '',
+  notifications = 0,
   messages = 0,
-  pendingBookings = 0  
+  pendingBookings = 0
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -18,7 +18,7 @@ const Header = ({
   const location = useLocation();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-
+  const navigate = useNavigate();
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
@@ -32,14 +32,12 @@ const Header = ({
     setIsProfileOpen(false);
   }, [location]);
 
-  // Links dial site (commun)
   const publicLinks = [
     { name: 'Accueil', path: '/' },
     { name: 'Services', path: '/services' },
     { name: 'Artisans', path: '/artisans' },
   ];
 
-  // Links bach ybano ghir l'Artisan
   const artisanLinks = [
     { name: 'Tableau de bord', path: '/artisan/dashboard' },
     { name: 'Mes services', path: '/artisan/services' },
@@ -47,17 +45,15 @@ const Header = ({
     { name: 'Disponibilités', path: '/artisan/availability' },
   ];
 
-  // Links bach ybano ghir l'Client
   const clientLinks = [
     { name: 'Mes réservations', path: '/client/bookings' },
     { name: 'Favoris', path: '/client/favorites' },
   ];
 
-  // Khali navLinks yetbadlo 7sab type
   const getNavLinks = () => {
     if (!isAuthenticated) return publicLinks;
     if (userType === 'artisan') return artisanLinks;
-    return [...publicLinks, ...clientLinks]; // Client ychof public + li m3a9din
+    return [...publicLinks, ...clientLinks];
   };
 
   const navLinks = getNavLinks();
@@ -66,13 +62,24 @@ const Header = ({
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
-    setShowLogoutModal(false);
-    setTimeout(() => {
-      window.location.href = '/login';
-    }, 1000);
+    try {
+      await axiosClient.post('/logout');
+
+      localStorage.removeItem('ACCESS_TOKEN');
+      localStorage.removeItem('USER_ROLE');
+
+      navigate('/login');
+    } catch (err) {
+      console.error("Erreur déconnexion", err);
+      localStorage.removeItem('ACCESS_TOKEN');
+      navigate('/auth/login');
+    } finally {
+      setIsLoggingOut(false);
+      setShowLogoutModal(false);
+    }
   };
 
-  // Menu items dial profile - yetbadlo 7sab type
+
   const getProfileMenuItems = () => {
     if (userType === 'artisan') {
       return [
@@ -95,11 +102,10 @@ const Header = ({
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          isScrolled
-            ? 'bg-white/95 backdrop-blur-md shadow-sm py-2'
-            : 'bg-white py-3'
-        }`}
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
+          ? 'bg-white/95 backdrop-blur-md shadow-sm py-2'
+          : 'bg-white py-3'
+          }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
@@ -115,16 +121,14 @@ const Header = ({
                 <Link
                   key={link.path}
                   to={link.path}
-                  className={`text-[11px] font-medium transition-colors relative group uppercase tracking-wide ${
-                    isActive(link.path)
-                      ? 'text-[#D35400]'
-                      : 'text-[#1B4F72] hover:text-[#D35400]'
-                  }`}
+                  className={`text-[11px] font-medium transition-colors relative group uppercase tracking-wide ${isActive(link.path)
+                    ? 'text-[#D35400]'
+                    : 'text-[#1B4F72] hover:text-[#D35400]'
+                    }`}
                 >
                   {link.name}
-                  <span className={`absolute -bottom-1 left-0 h-0.5 bg-[#D35400] transition-all duration-300 ${
-                    isActive(link.path) ? 'w-full' : 'w-0 group-hover:w-full'
-                  }`} />
+                  <span className={`absolute -bottom-1 left-0 h-0.5 bg-[#D35400] transition-all duration-300 ${isActive(link.path) ? 'w-full' : 'w-0 group-hover:w-full'
+                    }`} />
                 </Link>
               ))}
             </nav>
@@ -170,14 +174,14 @@ const Header = ({
                     )}
                   </button>
 
-                  {/* Favoris - ghir Client */}
+                  {/* Favoris */}
                   {userType === 'client' && (
                     <button className="p-2 text-[#1B4F72] hover:text-[#D35400] hover:bg-[#D35400]/10 rounded-full transition-all">
                       <Heart className="w-4 h-4" />
                     </button>
                   )}
 
-                  {/* Réservations en attente - ghir Artisan */}
+                  {/*  */}
                   {userType === 'artisan' && (
                     <button className="relative p-2 text-[#1B4F72] hover:text-[#D35400] hover:bg-[#D35400]/10 rounded-full transition-all">
                       <Calendar className="w-4 h-4" />
@@ -195,14 +199,12 @@ const Header = ({
                       onClick={() => setIsProfileOpen(!isProfileOpen)}
                       className="flex items-center gap-2 pl-2 pr-3 py-1.5     transition-all"
                     >
-                      <div className={`w-7 h-7 rounded-full flex items-center justify-center ${
-                        userType === 'artisan' ? 'bg-[#D35400]/10' : 'bg-[#1B4F72]/10'
-                      }`}>
-                        <User className={`w-4 h-4 ${
-                          userType === 'artisan' ? 'text-[#D35400]' : 'text-[#1B4F72]'
-                        }`} />
+                      <div className={`w-7 h-7 rounded-full flex items-center justify-center ${userType === 'artisan' ? 'bg-[#D35400]/10' : 'bg-[#1B4F72]/10'
+                        }`}>
+                        <User className={`w-4 h-4 ${userType === 'artisan' ? 'text-[#D35400]' : 'text-[#1B4F72]'
+                          }`} />
                       </div>
-                      
+
                     </button>
 
                     {/* Menu Profil */}
@@ -253,20 +255,18 @@ const Header = ({
         </div>
 
         {/* Mobile Menu */}
-        <div className={`lg:hidden absolute top-full left-0 right-0 bg-white border-t border-gray-100 shadow-xl transition-all duration-300 ${
-          isMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
-        }`}>
+        <div className={`lg:hidden absolute top-full left-0 right-0 bg-white border-t border-gray-100 shadow-xl transition-all duration-300 ${isMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
+          }`}>
           <div className="px-4 py-4 space-y-2">
             <nav className="space-y-1">
               {navLinks.map((link) => (
                 <Link
                   key={link.path}
                   to={link.path}
-                  className={`block px-4 py-2.5 rounded-lg text-[12px] font-medium transition-colors ${
-                    isActive(link.path)
-                      ? 'bg-[#D35400]/10 text-[#D35400]'
-                      : 'text-[#1B4F72] hover:bg-gray-50'
-                  }`}
+                  className={`block px-4 py-2.5 rounded-lg text-[12px] font-medium transition-colors ${isActive(link.path)
+                    ? 'bg-[#D35400]/10 text-[#D35400]'
+                    : 'text-[#1B4F72] hover:bg-gray-50'
+                    }`}
                 >
                   {link.name}
                 </Link>
@@ -301,7 +301,7 @@ const Header = ({
                       <span className="text-[12px]">{item.label}</span>
                     </Link>
                   ))}
-                  
+
                   <Link to="/messages" className="flex items-center gap-3 px-4 py-2.5 text-[#1B4F72] hover:bg-[#D35400]/10 rounded-lg">
                     <MessageCircle className="w-4 h-4" />
                     <span className="text-[12px]">Messages</span>
@@ -327,12 +327,12 @@ const Header = ({
       </header>
 
       <LogoutModal
-        isOpen={showLogoutModal}
-        onClose={() => setShowLogoutModal(false)}
-        onConfirm={handleLogout}
-        isLoading={isLoggingOut}
-        userName={userName}
-        variant="simple"
+        estOuvert={showLogoutModal}
+        surFermeture={() => setShowLogoutModal(false)}
+        surConfirmation={handleLogout}
+        estEnChargement={isLoggingOut}
+        nomUtilisateur={userName}
+        variante="simple"
       />
     </>
   );

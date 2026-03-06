@@ -81,7 +81,7 @@ const SettingsPage = () => {
         { value: '10+', label: 'Plus de 10 ans' }
     ];
 
-    // Fetch cities
+     
     useEffect(() => {
         fetch('https://countriesnow.space/api/v0.1/countries/cities', {
             method: 'POST',
@@ -99,12 +99,7 @@ const SettingsPage = () => {
                 }
             })
             .catch(() => {
-                setCities([
-                    { value: 'casablanca', label: 'Casablanca' },
-                    { value: 'rabat', label: 'Rabat' },
-                    { value: 'marrakech', label: 'Marrakech' },
-                    { value: 'tanger', label: 'Tanger' },
-                    { value: 'agadir', label: 'Agadir' }
+                setCities([ 
                 ]);
             });
     }, []);

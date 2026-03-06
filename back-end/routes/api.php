@@ -9,11 +9,15 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/verifierEmail', [AuthController::class, 'verifierEmail']);
 Route::post('/gererRenvoi', [AuthController::class, 'gererRenvoi']);
 
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout']);
 
-// Route::middleware('auth:sanctum')->group(function () {
-//     Route::get('/user', function (Request $request) {
-//         return $request->user();
-//     });
-//     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::middleware('role:artisan')->group(function () {
+        // Route::post('/services', [ServiceController::class, 'store']);
+        // Route::post('/portfolio', [PortfolioController::class, 'add']);
+    });
 
-// });
+    Route::middleware('role:client')->group(function () {
+        // Route::post('/offres', [OffreController::class, 'store']);
+    });
+});
