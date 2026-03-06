@@ -6,13 +6,11 @@ import HomePage from './client/Home';
 import SettingsPage from './client/SettingsPage';
 import MessagesPage from './chat/MessagesPage';
 import ConversationPage from './chat/ConversationPage';
-import ArtisanPortfolioPage from './artisan/ArtisanPortfolioPage';
 import AdminLayout from './components/header/AdminLayout';
 import DashboardHome from './admin/DashboardHome';
 import ReportsManagement from './admin/ReportsManagement';
 import ReviewsManagement from './admin/ReviewsManagement';
 import ArtisanRequests from './admin/ArtisanRequests';
-import ServicesJobsManagement from './admin/ServicesManagement';
 import AccountsManagement from './admin/AccountsManagement';
 import ServicesManagement from './admin/ServicesManagement';
 import JobsManagement from './admin/JobsManagement';
@@ -43,7 +41,7 @@ function App() {
           <Route path="register" element={<RegisterPage />} />
           <Route path="forgot-password" element={<ForgotPasswordPage />} />
           <Route path="reset-password" element={<ResetPasswordPage />} />
-          <Route path="c" element={<ConfirmEmailPage />} />
+          <Route path="confirme-email" element={<ConfirmEmailPage />} />
         </Route>
 
         <Route path="/client" element={<div className="auth-layout"><Header /><Outlet /> <Footer /></div>}>

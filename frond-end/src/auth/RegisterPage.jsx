@@ -81,8 +81,7 @@ const RegisterPage = () => {
             localStorage.setItem('ACCESS_TOKEN', data.token);
             localStorage.setItem('USER_DATA', JSON.stringify(data.user));
 
-            navigate('/auth/login');
-
+            navigate('/auth/confirme-email');
         } catch (err) {
             if (err.response && err.response.data.errors) {
                 const erreursServeur = err.response.data.errors;

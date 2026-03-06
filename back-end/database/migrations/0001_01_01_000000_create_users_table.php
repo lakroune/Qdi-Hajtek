@@ -22,6 +22,7 @@ return new class extends Migration
             $table->enum('role', ['client', 'artisan', 'admin'])->default('client');
             $table->string('ville')->nullable();
             $table->timestamp('email_verified_at')->nullable();
+            $table->string('code_verification')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
