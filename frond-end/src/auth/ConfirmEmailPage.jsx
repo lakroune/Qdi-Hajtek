@@ -14,6 +14,7 @@ const EmailConfirmationPage = () => {
   const [code, setCode] = useState(['', '', '', '']);
   const [statut, setStatut] = useState('saisie');
   const [erreur, setErreur] = useState('');
+  const [success, setSuccess] = useState('');
   const [estEnTrainDeRenvoyer, setEstEnTrainDeRenvoyer] = useState(false);
   const [compteARebours, setCompteARebours] = useState(0);
 
@@ -78,9 +79,11 @@ const EmailConfirmationPage = () => {
   };
 
   const gererRenvoi = async () => {
-    const emailStocke = localStorage.getItem('TEMP_EMAIL');
-    
-    if (!emailStocke) {
+    const emailStocke = JSON.parse(localStorage.getItem('USER_DATA')).email;
+    const tokenStocke = localStorage.getItem('ACCESS_TOKEN');
+
+
+    if (!emailStocke || !tokenStocke) {
       setErreur("Session expirée, veuillez vous réinscrire.");
       return;
     }
@@ -89,11 +92,14 @@ const EmailConfirmationPage = () => {
     setErreur('');
 
     try {
-      await axiosClient.post('/gererRenvoi', { email: emailStocke });
-      
+      await axiosClient.post('/gererRenvoi', {
+        email: emailStocke,
+        token: tokenStocke
+      });
+
       setCompteARebours(60);
-      alert("Un nouveau code a été envoyé à " + emailStocke);
-      
+      setSuccess("Un nouveau code a été envoyé à " + emailStocke);
+
     } catch (err) {
       setErreur(err.response?.data?.message || "Erreur lors du renvoi du code.");
     } finally {
@@ -177,6 +183,12 @@ const EmailConfirmationPage = () => {
                 <XCircle className="w-4 h-4" /> {erreur}
               </div>
             )}
+            {(success && statut !== 'en_cours') && (
+              <div className="p-3 bg-green-50 text-green-600 text-[11px] flex items-center justify-center gap-2">
+                <CheckCircle className="w-4 h-4" /> {success}
+              </div>
+            )}
+
 
             <button
               type="submit"
