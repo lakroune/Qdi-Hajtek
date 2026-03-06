@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Client;
 use App\Http\Requests\StoreClientRequest;
 use App\Http\Requests\UpdateClientRequest;
+use Laravel\Sanctum\PersonalAccessToken;
+use Symfony\Component\HttpFoundation\Request;
 
 class ClientController extends Controller
 {
@@ -43,9 +45,16 @@ class ClientController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Client $client)
+
+    public function getInfo(Request $request)
     {
-        //
+        $tokenString = $request->token;
+        $token = PersonalAccessToken::findToken($tokenString);
+        if (!$token) {
+            return response()->json(['message' => 'Token invalide'], 401);
+        }
+        $user = $token->tokenable;
+        return response()->json($user);
     }
 
     /**

@@ -12,117 +12,113 @@ import Input from '../components/inputs/Input';
 import FileUpload from '../components/inputs/FileUpload';
 import Submit from '../components/buttons/Submit';
 
-const SettingsPage = () => {
-    const [activeTab, setActiveTab] = useState('profile');
-    const [isLoading, setIsLoading] = useState(false);
-    const [successMessage, setSuccessMessage] = useState('');
-    const [showPassword, setShowPassword] = useState({});
-    const [cities, setCities] = useState([]);
+const PageParametres = () => {
+    const [ongletActif, setOngletActif] = useState('profil');
+    const [chargement, setChargement] = useState(false);
+    const [messageSucces, setMessageSucces] = useState('');
+    const [afficherMotDePasse, setAfficherMotDePasse] = useState({});
+    const [villes, setVilles] = useState([]);
 
-    // Données utilisateur
-    const [userData, setUserData] = useState({
-        firstName: 'Ahmed',
-        lastName: 'Benali',
+    const [donneesUtilisateur, setDonneesUtilisateur] = useState({
+        prenom: 'Ahmed',
+        nom: 'Benali',
         email: 'ahmed.benali@email.com',
-        phone: '+212 6 12 34 56 78',
-        address: '123 Rue Mohammed V',
-        city: 'Casablanca',
+        telephone: '+212 6 12 34 56 78',
+        adresse: '123 Rue Mohammed V',
+        ville: 'Casablanca',
         avatar: '/images/avatars/client.jpg'
     });
 
-    // Sécurité
-    const [securityData, setSecurityData] = useState({
-        currentPassword: '',
-        newPassword: '',
-        confirmPassword: '',
-        twoFactorEnabled: false
+    const [donneesSécurité, setDonneesSécurité] = useState({
+        motDePasseActuel: '',
+        nouveauMotDePasse: '',
+        confirmerMotDePasse: '',
+        doubleAuthentificationActive: false
     });
 
-    // Formulaire Artisan
-    const [artisanForm, setArtisanForm] = useState({
-        companyName: '',
-        siretNumber: '',
-        specialty: '',
+    const [formulaireArtisan, setFormulaireArtisan] = useState({
+        nomEntreprise: '',
+        numeroSiret: '',
+        specialite: '',
         experience: '',
         description: '',
-        cinFront: null,
-        cinBack: null,
-        diplomas: [],
-        certificates: [],
-        proPhone: '',
-        proEmail: '',
-        workAddress: '',
-        workCity: '',
+        cniRecto: null,
+        cniVerso: null,
+        diplomes: [],
+        attestations: [],
+        telephonePro: '',
+        emailPro: '',
+        adresseTravail: '',
+        villeTravail: '',
     });
 
-    const tabs = [
-        { id: 'profile', label: 'Mon profil' },
-        { id: 'security', label: 'Sécurité' },
-        { id: 'become-artisan', label: 'Devenir Artisan' },
+    const onglets = [
+        { id: 'profil', libelle: 'Mon profil' },
+        { id: 'securite', libelle: 'Sécurité' },
+        { id: 'devenir-artisan', libelle: 'Devenir Artisan' },
     ];
 
-    const specialties = [
-        { value: '', label: 'Sélectionnez' },
-        { value: 'plomberie', label: 'Plomberie' },
-        { value: 'electricite', label: 'Électricité' },
-        { value: 'menuiserie', label: 'Menuiserie' },
-        { value: 'peinture', label: 'Peinture' },
-        { value: 'climatisation', label: 'Climatisation' },
-        { value: 'jardinage', label: 'Jardinage' },
-        { value: 'maconnerie', label: 'Maçonnerie' },
-        { value: 'serrurerie', label: 'Serrurerie' }
+    const specialites = [
+        { valeur: '', libelle: 'Sélectionnez' },
+        { valeur: 'plomberie', libelle: 'Plomberie' },
+        { valeur: 'electricite', libelle: 'Électricité' },
+        { valeur: 'menuiserie', libelle: 'Menuiserie' },
+        { valeur: 'peinture', libelle: 'Peinture' },
+        { valeur: 'climatisation', libelle: 'Climatisation' },
+        { valeur: 'jardinage', libelle: 'Jardinage' },
+        { valeur: 'maconnerie', libelle: 'Maçonnerie' },
+        { valeur: 'serrurerie', libelle: 'Serrurerie' }
     ];
 
     const experiences = [
-        { value: '', label: 'Sélectionnez' },
-        { value: '0-2', label: 'Moins de 2 ans' },
-        { value: '2-5', label: '2 à 5 ans' },
-        { value: '5-10', label: '5 à 10 ans' },
-        { value: '10+', label: 'Plus de 10 ans' }
+        { valeur: '', libelle: 'Sélectionnez' },
+        { valeur: '0-2', libelle: 'Moins de 2 ans' },
+        { valeur: '2-5', libelle: '2 à 5 ans' },
+        { valeur: '5-10', libelle: '5 à 10 ans' },
+        { valeur: '10+', libelle: 'Plus de 10 ans' }
     ];
 
-     
     useEffect(() => {
         fetch('https://countriesnow.space/api/v0.1/countries/cities', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ country: "Morocco" })
         })
-            .then(res => res.json())
-            .then(data => {
-                if (!data.error) {
-                    const formattedCities = data.data.map(cityName => ({
-                        value: cityName.toLowerCase().replace(/\s+/g, '_'),
-                        label: cityName
+            .then(reponse => reponse.json())
+            .then(donnees => {
+                if (!donnees.error) {
+                    const villesFormatees = donnees.data.map(nomVille => ({
+                        valeur: nomVille.toLowerCase().replace(/\s+/g, '_'),
+                        libelle: nomVille
                     }));
-                    setCities(formattedCities);
+                    setVilles(villesFormatees);
                 }
             })
             .catch(() => {
-                setCities([ 
+                setVilles([
+                    { valeur: 'casablanca', libelle: 'Casablanca' },
                 ]);
             });
     }, []);
 
-    const handleSave = async () => {
-        setIsLoading(true);
+    const enregistrerModifications = async () => {
+        setChargement(true);
         await new Promise(r => setTimeout(r, 1000));
-        setIsLoading(false);
-        setSuccessMessage('Modifications enregistrées !');
-        setTimeout(() => setSuccessMessage(''), 3000);
+        setChargement(false);
+        setMessageSucces('Modifications enregistrées !');
+        setTimeout(() => setMessageSucces(''), 3000);
     };
 
-    const handleSubmitArtisan = async (e) => {
+    const soumettreFormulaireArtisan = async (e) => {
         e.preventDefault();
-        setIsLoading(true);
+        setChargement(true);
         await new Promise(r => setTimeout(r, 1500));
-        setIsLoading(false);
-        setSuccessMessage('Votre demande a été envoyée !');
+        setChargement(false);
+        setMessageSucces('Votre demande a été envoyée !');
     };
 
-    // Helper pour mettre à jour les nested objects
-    const updateField = (setter, obj, field, value) => {
-        setter({ ...obj, [field]: value });
+    const mettreAJourChamp = (modificateur, objet, champ, valeur) => {
+        modificateur({ ...objet, [champ]: valeur });
     };
 
     return (
@@ -130,44 +126,39 @@ const SettingsPage = () => {
             <Header isAuthenticated={true} userType="client" userName="Ahmed" />
 
             <div className="max-w-6xl mt-12 mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-12">
-                {/* Header */}
                 <div className="border border-gray-200 p-4 mb-4">
                     <h1 className="text-[15px] font-bold text-[#1B4F72]">Paramètres du compte</h1>
                     <p className="text-[11px] text-gray-500 mt-1">Gérez vos informations et devenez artisan</p>
                 </div>
 
-                {/* Success Message */}
-                {successMessage && (
+                {messageSucces && (
                     <div className="mb-4 p-3 border border-green-200 bg-green-50 flex items-center gap-2 text-green-700 text-[12px]">
                         <CheckCircle className="w-4 h-4" />
-                        {successMessage}
+                        {messageSucces}
                     </div>
                 )}
 
                 <div className="grid lg:grid-cols-4 gap-4">
-                    {/* Sidebar */}
                     <div className="lg:col-span-1">
                         <div className="border border-gray-200">
-                            {tabs.map((tab) => (
+                            {onglets.map((onglet) => (
                                 <button
-                                    key={tab.id}
-                                    onClick={() => setActiveTab(tab.id)}
-                                    className={`w-full flex items-center gap-2 px-4 py-3 text-left text-[12px] font-medium transition-colors border-b border-gray-100 last:border-0 ${activeTab === tab.id
+                                    key={onglet.id}
+                                    onClick={() => setOngletActif(onglet.id)}
+                                    className={`w-full flex items-center gap-2 px-4 py-3 text-left text-[12px] font-medium transition-colors border-b border-gray-100 last:border-0 ${ongletActif === onglet.id
                                         ? 'bg-[#D35400]/10 text-[#D35400] border-l-4 border-l-[#D35400]'
                                         : 'text-[#1B4F72] hover:bg-gray-50'
                                         }`}
                                 >
-                                    {tab.label}
+                                    {onglet.libelle}
                                 </button>
                             ))}
                         </div>
                     </div>
 
-                    {/* Content */}
                     <div className="lg:col-span-3">
 
-                        {/* TAB: PROFIL */}
-                        {activeTab === 'profile' && (
+                        {ongletActif === 'profil' && (
                             <div className="border border-gray-200 p-4">
                                 <h2 className="text-[13px] font-bold text-[#1B4F72] mb-4 pb-2 border-b border-gray-100">
                                     Informations personnelles
@@ -176,28 +167,27 @@ const SettingsPage = () => {
                                 {/* Avatar */}
                                 <div className="flex items-center gap-4 mb-6 pb-4 border-b border-gray-100">
                                     <AvatarUpload
-                                        src={userData.avatar}
-                                        onChange={(file) => updateField(setUserData, userData, 'avatar', file)}
-                                        onRemove={() => updateField(setUserData, userData, 'avatar', null)}
+                                        src={donneesUtilisateur.avatar}
+                                        onChange={(fichier) => mettreAJourChamp(setDonneesUtilisateur, donneesUtilisateur, 'avatar', fichier)}
+                                        onRemove={() => mettreAJourChamp(setDonneesUtilisateur, donneesUtilisateur, 'avatar', null)}
                                         size="lg"
                                     />
                                 </div>
 
-                                {/* Formulaire avec composant Input */}
                                 <div className="grid md:grid-cols-2 gap-4">
                                     <Input
                                         label="Prénom"
-                                        name="firstName"
-                                        value={userData.firstName}
-                                        onChange={(e) => updateField(setUserData, userData, 'firstName', e.target.value)}
+                                        name="prenom"
+                                        value={donneesUtilisateur.prenom}
+                                        onChange={(e) => mettreAJourChamp(setDonneesUtilisateur, donneesUtilisateur, 'prenom', e.target.value)}
                                         Icon={User}
                                         required
                                     />
                                     <Input
                                         label="Nom"
-                                        name="lastName"
-                                        value={userData.lastName}
-                                        onChange={(e) => updateField(setUserData, userData, 'lastName', e.target.value)}
+                                        name="nom"
+                                        value={donneesUtilisateur.nom}
+                                        onChange={(e) => mettreAJourChamp(setDonneesUtilisateur, donneesUtilisateur, 'nom', e.target.value)}
                                         Icon={User}
                                         required
                                     />
@@ -205,38 +195,38 @@ const SettingsPage = () => {
                                         label="Email"
                                         name="email"
                                         type="email"
-                                        value={userData.email}
-                                        onChange={(e) => updateField(setUserData, userData, 'email', e.target.value)}
+                                        value={donneesUtilisateur.email}
+                                        onChange={(e) => mettreAJourChamp(setDonneesUtilisateur, donneesUtilisateur, 'email', e.target.value)}
                                         Icon={Mail}
                                         required
                                     />
                                     <Input
                                         label="Téléphone"
-                                        name="phone"
+                                        name="telephone"
                                         type="tel"
-                                        value={userData.phone}
-                                        onChange={(e) => updateField(setUserData, userData, 'phone', e.target.value)}
+                                        value={donneesUtilisateur.telephone}
+                                        onChange={(e) => mettreAJourChamp(setDonneesUtilisateur, donneesUtilisateur, 'telephone', e.target.value)}
                                         Icon={Phone}
                                         required
                                     />
                                     <div className="md:col-span-2">
                                         <Input
                                             label="Adresse"
-                                            name="address"
-                                            value={userData.address}
-                                            onChange={(e) => updateField(setUserData, userData, 'address', e.target.value)}
+                                            name="adresse"
+                                            value={donneesUtilisateur.adresse}
+                                            onChange={(e) => mettreAJourChamp(setDonneesUtilisateur, donneesUtilisateur, 'adresse', e.target.value)}
                                             Icon={MapPin}
                                         />
                                     </div>
                                     <div className="md:col-span-2">
                                         <label className="block text-[11px] font-medium text-[#1B4F72] mb-1.5">Ville</label>
                                         <select
-                                            value={userData.city}
-                                            onChange={(e) => updateField(setUserData, userData, 'city', e.target.value)}
+                                            value={donneesUtilisateur.ville}
+                                            onChange={(e) => mettreAJourChamp(setDonneesUtilisateur, donneesUtilisateur, 'ville', e.target.value)}
                                             className="w-full px-3 py-2 text-[12px] border border-gray-200 focus:border-[#D35400] focus:outline-none bg-white"
                                         >
-                                            {cities.map(city => (
-                                                <option key={city.value} value={city.label}>{city.label}</option>
+                                            {villes.map(ville => (
+                                                <option key={ville.valeur} value={ville.libelle}>{ville.libelle}</option>
                                             ))}
                                         </select>
                                     </div>
@@ -245,8 +235,8 @@ const SettingsPage = () => {
                                 <div className="mt-6 pt-4 border-t border-gray-100 flex justify-end">
                                     <Submit
                                         text="Enregistrer"
-                                        onClick={handleSave}
-                                        isLoading={isLoading}
+                                        onClick={enregistrerModifications}
+                                        isLoading={chargement}
                                         icon={Save}
                                         size="md"
                                         className="w-auto"
@@ -255,10 +245,8 @@ const SettingsPage = () => {
                             </div>
                         )}
 
-                        {/* TAB: SÉCURITÉ */}
-                        {activeTab === 'security' && (
+                        {ongletActif === 'securite' && (
                             <div className="space-y-4">
-                                {/* Mot de passe */}
                                 <div className="border border-gray-200 p-4">
                                     <h2 className="text-[13px] font-bold text-[#1B4F72] mb-4 pb-2 border-b border-gray-100 flex items-center gap-2">
                                         <Lock className="w-4 h-4 text-[#D35400]" />
@@ -269,45 +257,45 @@ const SettingsPage = () => {
                                         <div className="relative">
                                             <Input
                                                 label="Mot de passe actuel"
-                                                name="currentPassword"
-                                                type={showPassword.current ? 'text' : 'password'}
-                                                value={securityData.currentPassword}
-                                                onChange={(e) => updateField(setSecurityData, securityData, 'currentPassword', e.target.value)}
+                                                name="motDePasseActuel"
+                                                type={afficherMotDePasse.actuel ? 'text' : 'password'}
+                                                value={donneesSécurité.motDePasseActuel}
+                                                onChange={(e) => mettreAJourChamp(setDonneesSécurité, donneesSécurité, 'motDePasseActuel', e.target.value)}
                                                 Icon={Lock}
                                             />
                                             <button
                                                 type="button"
-                                                onClick={() => setShowPassword({ ...showPassword, current: !showPassword.current })}
+                                                onClick={() => setAfficherMotDePasse({ ...afficherMotDePasse, actuel: !afficherMotDePasse.actuel })}
                                                 className="absolute right-3 top-[26px] text-gray-400 hover:text-[#D35400]"
                                             >
-                                                {showPassword.current ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                                {afficherMotDePasse.actuel ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                                             </button>
                                         </div>
 
                                         <div className="relative">
                                             <Input
                                                 label="Nouveau mot de passe"
-                                                name="newPassword"
-                                                type={showPassword.new ? 'text' : 'password'}
-                                                value={securityData.newPassword}
-                                                onChange={(e) => updateField(setSecurityData, securityData, 'newPassword', e.target.value)}
+                                                name="nouveauMotDePasse"
+                                                type={afficherMotDePasse.nouveau ? 'text' : 'password'}
+                                                value={donneesSécurité.nouveauMotDePasse}
+                                                onChange={(e) => mettreAJourChamp(setDonneesSécurité, donneesSécurité, 'nouveauMotDePasse', e.target.value)}
                                                 Icon={Lock}
                                             />
                                             <button
                                                 type="button"
-                                                onClick={() => setShowPassword({ ...showPassword, new: !showPassword.new })}
+                                                onClick={() => setAfficherMotDePasse({ ...afficherMotDePasse, nouveau: !afficherMotDePasse.nouveau })}
                                                 className="absolute right-3 top-[26px] text-gray-400 hover:text-[#D35400]"
                                             >
-                                                {showPassword.new ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                                {afficherMotDePasse.nouveau ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                                             </button>
                                         </div>
 
                                         <Input
                                             label="Confirmer le mot de passe"
-                                            name="confirmPassword"
+                                            name="confirmerMotDePasse"
                                             type="password"
-                                            value={securityData.confirmPassword}
-                                            onChange={(e) => updateField(setSecurityData, securityData, 'confirmPassword', e.target.value)}
+                                            value={donneesSécurité.confirmerMotDePasse}
+                                            onChange={(e) => mettreAJourChamp(setDonneesSécurité, donneesSécurité, 'confirmerMotDePasse', e.target.value)}
                                             Icon={Lock}
                                         />
                                     </div>
@@ -315,21 +303,17 @@ const SettingsPage = () => {
                                     <div className="mt-4 pt-4 border-t border-gray-100">
                                         <Submit
                                             text="Mettre à jour"
-                                            onClick={handleSave}
-                                            isLoading={isLoading}
+                                            onClick={enregistrerModifications}
+                                            isLoading={chargement}
                                             size="md"
                                             className="w-auto"
                                         />
                                     </div>
                                 </div>
-
-                              
-                                
                             </div>
                         )}
 
-                        {/* TAB: DEVENIR ARTISAN */}
-                        {activeTab === 'become-artisan' && (
+                        {ongletActif === 'devenir-artisan' && (
                             <div className="border border-gray-200 p-4">
                                 <div className="mb-6 pb-4 border-b border-gray-100">
                                     <h2 className="text-[15px] font-bold text-[#1B4F72] mb-1">Devenir Artisan</h2>
@@ -338,8 +322,7 @@ const SettingsPage = () => {
                                     </p>
                                 </div>
 
-                                <form onSubmit={handleSubmitArtisan} className="space-y-6">
-                                    {/* Infos professionnelles */}
+                                <form onSubmit={soumettreFormulaireArtisan} className="space-y-6">
                                     <div>
                                         <h3 className="text-[12px] font-bold text-[#1B4F72] mb-3 flex items-center gap-2">
                                             <Briefcase className="w-4 h-4 text-[#D35400]" />
@@ -348,50 +331,48 @@ const SettingsPage = () => {
                                         <div className="grid md:grid-cols-2 gap-4">
                                             <Input
                                                 label="Nom de l'entreprise"
-                                                name="companyName"
-                                                value={artisanForm.companyName}
-                                                onChange={(e) => updateField(setArtisanForm, artisanForm, 'companyName', e.target.value)}
+                                                name="nomEntreprise"
+                                                value={formulaireArtisan.nomEntreprise}
+                                                onChange={(e) => mettreAJourChamp(setFormulaireArtisan, formulaireArtisan, 'nomEntreprise', e.target.value)}
                                                 placeholder="Ex: Benali Plomberie"
                                                 Icon={Building}
                                             />
                                             <Input
                                                 label="Numéro SIRET"
-                                                name="siretNumber"
-                                                value={artisanForm.siretNumber}
-                                                onChange={(e) => updateField(setArtisanForm, artisanForm, 'siretNumber', e.target.value)}
+                                                name="numeroSiret"
+                                                value={formulaireArtisan.numeroSiret}
+                                                onChange={(e) => mettreAJourChamp(setFormulaireArtisan, formulaireArtisan, 'numeroSiret', e.target.value)}
                                                 placeholder="123 456 789 00012"
                                             />
 
-                                            {/* Select Spécialité */}
                                             <div>
                                                 <label className="block text-[11px] font-medium text-[#1B4F72] mb-1.5">
                                                     Spécialité <span className="text-[#D35400]">*</span>
                                                 </label>
                                                 <select
                                                     required
-                                                    value={artisanForm.specialty}
-                                                    onChange={(e) => updateField(setArtisanForm, artisanForm, 'specialty', e.target.value)}
+                                                    value={formulaireArtisan.specialite}
+                                                    onChange={(e) => mettreAJourChamp(setFormulaireArtisan, formulaireArtisan, 'specialite', e.target.value)}
                                                     className="w-full px-3 py-2 text-[12px] border border-gray-200 focus:border-[#D35400] focus:outline-none bg-white"
                                                 >
-                                                    {specialties.map(s => (
-                                                        <option key={s.value} value={s.value}>{s.label}</option>
+                                                    {specialites.map(s => (
+                                                        <option key={s.valeur} value={s.valeur}>{s.libelle}</option>
                                                     ))}
                                                 </select>
                                             </div>
 
-                                            {/* Select Expérience */}
                                             <div>
                                                 <label className="block text-[11px] font-medium text-[#1B4F72] mb-1.5">
                                                     Expérience <span className="text-[#D35400]">*</span>
                                                 </label>
                                                 <select
                                                     required
-                                                    value={artisanForm.experience}
-                                                    onChange={(e) => updateField(setArtisanForm, artisanForm, 'experience', e.target.value)}
+                                                    value={formulaireArtisan.experience}
+                                                    onChange={(e) => mettreAJourChamp(setFormulaireArtisan, formulaireArtisan, 'experience', e.target.value)}
                                                     className="w-full px-3 py-2 text-[12px] border border-gray-200 focus:border-[#D35400] focus:outline-none bg-white"
                                                 >
-                                                    {experiences.map(e => (
-                                                        <option key={e.value} value={e.value}>{e.label}</option>
+                                                    {experiences.map(exp => (
+                                                        <option key={exp.valeur} value={exp.valeur}>{exp.libelle}</option>
                                                     ))}
                                                 </select>
                                             </div>
@@ -403,8 +384,8 @@ const SettingsPage = () => {
                                                 <textarea
                                                     required
                                                     rows={3}
-                                                    value={artisanForm.description}
-                                                    onChange={(e) => updateField(setArtisanForm, artisanForm, 'description', e.target.value)}
+                                                    value={formulaireArtisan.description}
+                                                    onChange={(e) => mettreAJourChamp(setFormulaireArtisan, formulaireArtisan, 'description', e.target.value)}
                                                     placeholder="Décrivez votre expertise..."
                                                     className="w-full px-3 py-2 text-[12px] border border-gray-200 focus:border-[#D35400] focus:outline-none resize-none"
                                                 />
@@ -412,7 +393,6 @@ const SettingsPage = () => {
                                         </div>
                                     </div>
 
-                                    {/* Documents avec FileUpload */}
                                     <div className="pt-4 border-t border-gray-100">
                                         <h3 className="text-[12px] font-bold text-[#1B4F72] mb-3 flex items-center gap-2">
                                             <FileText className="w-4 h-4 text-[#D35400]" />
@@ -420,49 +400,48 @@ const SettingsPage = () => {
                                         </h3>
                                         <div className="grid md:grid-cols-2 gap-4">
                                             <FileUpload
-                                                id="cin-front"
+                                                id="cni-recto"
                                                 label="CNI (Recto)"
                                                 icon={IdCard}
                                                 accept="image/*,.pdf"
                                                 required
                                                 maxSize={5}
-                                                value={artisanForm.cinFront}
-                                                onChange={(file) => updateField(setArtisanForm, artisanForm, 'cinFront', file)}
+                                                value={formulaireArtisan.cniRecto}
+                                                onChange={(fichier) => mettreAJourChamp(setFormulaireArtisan, formulaireArtisan, 'cniRecto', fichier)}
                                             />
                                             <FileUpload
-                                                id="cin-back"
+                                                id="cni-verso"
                                                 label="CNI (Verso)"
                                                 icon={IdCard}
                                                 accept="image/*,.pdf"
                                                 required
                                                 maxSize={5}
-                                                value={artisanForm.cinBack}
-                                                onChange={(file) => updateField(setArtisanForm, artisanForm, 'cinBack', file)}
+                                                value={formulaireArtisan.cniVerso}
+                                                onChange={(fichier) => mettreAJourChamp(setFormulaireArtisan, formulaireArtisan, 'cniVerso', fichier)}
                                             />
                                             <FileUpload
-                                                id="diplomas"
+                                                id="diplomes"
                                                 label="Diplômes"
                                                 icon={GraduationCap}
                                                 accept="image/*,.pdf"
                                                 multiple
                                                 maxFiles={5}
-                                                value={artisanForm.diplomas}
-                                                onChange={(files) => updateField(setArtisanForm, artisanForm, 'diplomas', files)}
+                                                value={formulaireArtisan.diplomes}
+                                                onChange={(fichiers) => mettreAJourChamp(setFormulaireArtisan, formulaireArtisan, 'diplomes', fichiers)}
                                             />
                                             <FileUpload
-                                                id="certificates"
+                                                id="attestations"
                                                 label="Attestations"
                                                 icon={Award}
                                                 accept="image/*,.pdf"
                                                 multiple
                                                 maxFiles={3}
-                                                value={artisanForm.certificates}
-                                                onChange={(files) => updateField(setArtisanForm, artisanForm, 'certificates', files)}
+                                                value={formulaireArtisan.attestations}
+                                                onChange={(fichiers) => mettreAJourChamp(setFormulaireArtisan, formulaireArtisan, 'attestations', fichiers)}
                                             />
                                         </div>
                                     </div>
 
-                                    {/* Coordonnées pro */}
                                     <div className="pt-4 border-t border-gray-100">
                                         <h3 className="text-[12px] font-bold text-[#1B4F72] mb-3 flex items-center gap-2">
                                             <IdCard className="w-4 h-4 text-[#D35400]" />
@@ -471,26 +450,26 @@ const SettingsPage = () => {
                                         <div className="grid md:grid-cols-2 gap-4">
                                             <Input
                                                 label="Téléphone pro"
-                                                name="proPhone"
+                                                name="telephonePro"
                                                 type="tel"
-                                                value={artisanForm.proPhone}
-                                                onChange={(e) => updateField(setArtisanForm, artisanForm, 'proPhone', e.target.value)}
+                                                value={formulaireArtisan.telephonePro}
+                                                onChange={(e) => mettreAJourChamp(setFormulaireArtisan, formulaireArtisan, 'telephonePro', e.target.value)}
                                                 Icon={Phone}
                                                 required
                                             />
                                             <Input
                                                 label="Email pro"
-                                                name="proEmail"
+                                                name="emailPro"
                                                 type="email"
-                                                value={artisanForm.proEmail}
-                                                onChange={(e) => updateField(setArtisanForm, artisanForm, 'proEmail', e.target.value)}
+                                                value={formulaireArtisan.emailPro}
+                                                onChange={(e) => mettreAJourChamp(setFormulaireArtisan, formulaireArtisan, 'emailPro', e.target.value)}
                                                 Icon={Mail}
                                             />
                                             <Input
                                                 label="Adresse"
-                                                name="workAddress"
-                                                value={artisanForm.workAddress}
-                                                onChange={(e) => updateField(setArtisanForm, artisanForm, 'workAddress', e.target.value)}
+                                                name="adresseTravail"
+                                                value={formulaireArtisan.adresseTravail}
+                                                onChange={(e) => mettreAJourChamp(setFormulaireArtisan, formulaireArtisan, 'adresseTravail', e.target.value)}
                                                 Icon={MapPin}
                                                 required
                                             />
@@ -500,20 +479,19 @@ const SettingsPage = () => {
                                                 </label>
                                                 <select
                                                     required
-                                                    value={artisanForm.workCity}
-                                                    onChange={(e) => updateField(setArtisanForm, artisanForm, 'workCity', e.target.value)}
+                                                    value={formulaireArtisan.villeTravail}
+                                                    onChange={(e) => mettreAJourChamp(setFormulaireArtisan, formulaireArtisan, 'villeTravail', e.target.value)}
                                                     className="w-full px-3 py-2 text-[12px] border border-gray-200 focus:border-[#D35400] focus:outline-none bg-white"
                                                 >
                                                     <option value="">Sélectionnez</option>
-                                                    {cities.map(city => (
-                                                        <option key={city.value} value={city.label}>{city.label}</option>
+                                                    {villes.map(ville => (
+                                                        <option key={ville.valeur} value={ville.libelle}>{ville.libelle}</option>
                                                     ))}
                                                 </select>
                                             </div>
                                         </div>
                                     </div>
 
-                                    {/* Submit avec composant Submit */}
                                     <div className="pt-6 border-t border-gray-100">
                                         <div className="flex items-start gap-2 mb-4 p-3 bg-blue-50">
                                             <AlertTriangle className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
@@ -525,8 +503,8 @@ const SettingsPage = () => {
 
                                         <Submit
                                             text="Soumettre ma candidature"
-                                            onClick={handleSubmitArtisan}
-                                            isLoading={isLoading}
+                                            onClick={soumettreFormulaireArtisan}
+                                            isLoading={chargement}
                                             variant="secondary"
                                             size="lg"
                                             icon={ArrowRight}
@@ -544,4 +522,4 @@ const SettingsPage = () => {
     );
 };
 
-export default SettingsPage;
+export default PageParametres;
