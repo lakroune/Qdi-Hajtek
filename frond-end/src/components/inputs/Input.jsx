@@ -1,14 +1,15 @@
 import React from 'react';
-
-const Input = ({ 
-    label, 
-    type = 'text', 
-    name, 
-    value, 
-    onChange, 
-    placeholder, 
-    Icon, 
+import { AlertCircle } from 'lucide-react';
+const Input = ({
+    label,
+    type = 'text',
+    name,
+    value,
+    onChange,
+    placeholder,
+    Icon,
     required = false,
+    error = false,
     className = ''
 }) => {
     return (
@@ -17,7 +18,7 @@ const Input = ({
                 {label}
                 {required && <span className="text-[#D35400] ml-1">*</span>}
             </label>
-            
+
             <div className="relative">
                 {Icon && (
                     <Icon className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -44,7 +45,13 @@ const Input = ({
                         transition-colors
                     `}
                 />
+                {error !== false && (
+                    <p className="mt-1 text-[10px] text-red-500 flex items-center gap-1">
+                        <AlertCircle className="w-3 h-3" /> {error}
+                    </p>
+                )}
             </div>
+
         </div>
     );
 };

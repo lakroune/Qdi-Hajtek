@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\auth\LoginRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -10,26 +11,11 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
-        $credentials = $request->validate(
-            [
-                'email' => 'required|email|exists:users,email',
-                'password' => 'required|string|min:8',
-            ],
-            [
-                'email.required'  => 'Email est requis ',
-                'email.exists'  => 'Email n\'existe pas ',
-                'password.required'  => 'Mot de passe est requis ',
-                'password.min'  => 'Mot de passe doit contenir au moins 8 caractères',
-                
-            ]
-        );
+        $dataFormLogin = $request->validated();
 
-
-
-
-        if (!Auth::attempt($credentials)) {
+        if (!Auth::attempt($dataFormLogin)) {
             return response()->json([
                 'message' => 'Identifiant incorrect (Email or Password)'
             ], 401);

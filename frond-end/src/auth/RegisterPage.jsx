@@ -8,6 +8,10 @@ import {
 import Input from '../components/inputs/Input';
 import Logo from '../components/logo/Logo';
 
+import axiosClient from "../api/axios-client";
+import { useNavigate } from 'react-router-dom';
+
+
 const RegisterPage = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [userType, setUserType] = useState('client'); // client | artisan
@@ -69,13 +73,46 @@ const RegisterPage = () => {
         if (!validateForm()) return;
 
         setIsLoading(true);
-        await new Promise(r => setTimeout(r, 1500));
-        setIsLoading(false);
+        setErrors({});
 
-        // Redirection vers confirmation email
-        window.location.href = '/confirm-email';
+        try {
+            const payload = {
+                nom: formData.lastName,
+                prenom: formData.firstName,
+                email: formData.email,
+                phone: formData.phone,
+                city: formData.city,
+                password: formData.password,
+                password_confirmation: formData.confirmPassword,
+                role: userType
+            };
+
+            const { data } = await axiosClient.post('/register', payload);
+
+            localStorage.setItem('ACCESS_TOKEN', data.token);
+            localStorage.setItem('USER_DATA', JSON.stringify(data.user));
+
+            navigate('/confirm-email');
+
+        } catch (err) {
+            if (err.response && err.response.data.errors) {
+
+                const serverErrors = err.response.data.errors;
+                const formattedErrors = {};
+
+                if (serverErrors.email) formattedErrors.email = serverErrors.email[0];
+                if (serverErrors.password) formattedErrors.password = serverErrors.password[0];
+                if (serverErrors.nom) formattedErrors.lastName = serverErrors.nom[0];
+                if (serverErrors.prenom) formattedErrors.firstName = serverErrors.prenom[0];
+
+                setErrors(formattedErrors);
+            } else {
+                console.error("Erreur :", err);
+            }
+        } finally {
+            setIsLoading(false);
+        }
     };
-
     return (
         <div className="min-h-screen flex">
             {/* Left Side */}
@@ -258,15 +295,13 @@ const RegisterPage = () => {
                             )}
                         </div>
 
-                        {/* Submit */}
+                        {/* submit */}
                         <button
                             type="submit"
                             disabled={isLoading}
                             className={`
                                 w-full py-3 text-[13px] font-semibold flex items-center justify-center gap-2 transition-colors
-                                ${userType === 'client'
-                                    ? 'bg-[#1B4F72] hover:bg-[#D35400]'
-                                    : 'bg-[#D35400] hover:bg-[#A04000]'}
+                                     bg-[#1B4F72] hover:bg-[#D35400]
                                 text-white disabled:opacity-50 disabled:cursor-not-allowed
                             `}
                         >
@@ -323,7 +358,7 @@ const RegisterPage = () => {
                         </Link>
                     </p>
 
-                   
+
                 </div>
             </div>
         </div>
