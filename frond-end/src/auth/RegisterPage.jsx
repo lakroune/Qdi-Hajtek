@@ -76,18 +76,18 @@ const RegisterPage = () => {
         setErrors({});
 
         try {
-            const payload = {
+            const dataForm = {
                 nom: formData.lastName,
                 prenom: formData.firstName,
                 email: formData.email,
-                phone: formData.phone,
+                telephone: formData.phone,
                 city: formData.city,
                 password: formData.password,
                 password_confirmation: formData.confirmPassword,
-                role: userType
+
             };
 
-            const { data } = await axiosClient.post('/register', payload);
+            const { data } = await axiosClient.post('/register', dataForm);
 
             localStorage.setItem('ACCESS_TOKEN', data.token);
             localStorage.setItem('USER_DATA', JSON.stringify(data.user));
