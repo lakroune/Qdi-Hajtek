@@ -3,7 +3,6 @@ import {
     Paintbrush, Zap,
     Droplets,
 } from 'lucide-react';
-import Header from '../components/Header/Header';
 import Footer from '../components/footer/Footer';
 import HeroSection from '../components/hero/HeroSection.jsx';
 import CategoriesSection from '../components/cards/CategoriesSection.jsx';
@@ -13,7 +12,7 @@ const HomePage = () => {
     const handleSearch = (params) => {
         console.log('Recherche:', params);
 
-        // api
+        // 
     };
 
     // Categories
@@ -27,8 +26,6 @@ const HomePage = () => {
 
     return (
         <div className="min-h-screen bg-gray-50" >
-            <Header isAuthenticated={true} userType="client" userName="Ahmed" notifications={9} />
-            {/* Hero Section */}
             <HeroSection
                 variant="default"
                 onSearch={handleSearch}
@@ -36,13 +33,10 @@ const HomePage = () => {
                 showSearch={true}
                 backgroundImage="/images/d.png"
             />
-            {/* Categories Section */}
             <CategoriesSection
                 categories={categories}
                 layout="slider"
             />
-
-            <Footer showContact={true} showSocials={true} />
 
         </div>
     );

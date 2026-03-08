@@ -4,105 +4,102 @@ import { Menu, X, User, Bell, ChevronDown, LogOut, Settings, Heart, MessageCircl
 import Logo from '../logo/Logo';
 import LogoutModal from '../models/LogoutModal';
 import { useNavigate } from 'react-router-dom';
+
 const Header = ({
-  isAuthenticated = false,
-  userType = 'client', // 'client' | 'artisan'
-  userName = '',
+  estAuthentifie = false,
+  typeUtilisateur = 'client',
+  nomUtilisateur = '',
   notifications = 0,
   messages = 0,
-  pendingBookings = 0
+  reservationsEnAttente = 0
 }) => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const location = useLocation();
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const navigate = useNavigate();
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  const [estMenuOuvert, setEstMenuOuvert] = useState(false);
+  const [estDefileVers, setEstDefileVers] = useState(false);
+  const [estProfilOuvert, setEstProfilOuvert] = useState(false);
+  const emplacement = useLocation();
+  const [afficherModalDeconnexion, setAfficherModalDeconnexion] = useState(false);
+  const [estEnDeconnexion, setEstEnDeconnexion] = useState(false);
+  const naviguer = useNavigate();
+
+  // useEffect(() => {
+  //   const gererDefilement = () => {
+  //     setEstDefileVers(window.scrollY > 20);
+  //   };
+  //   window.addEventListener('scroll', gererDefilement);
+  //   return () => window.removeEventListener('scroll', gererDefilement);
+  // }, []);
 
   useEffect(() => {
-    setIsMenuOpen(false);
-    setIsProfileOpen(false);
-  }, [location]);
+    setEstMenuOuvert(false);
+    setEstProfilOuvert(false);
+  }, [emplacement]);
 
-  const publicLinks = [
-    { name: 'Accueil', path: '/' },
-    { name: 'Services', path: '/services' },
-    { name: 'Artisans', path: '/artisans' },
+  const liensPublics = [
+    { nom: 'Accueil', chemin: '/' },
+    { nom: 'Services', chemin: '/services' },
+    { nom: 'Artisans', chemin: '/artisans' },
   ];
 
-  const artisanLinks = [
-    { name: 'Tableau de bord', path: '/artisan/dashboard' },
-    { name: 'Mes services', path: '/artisan/services' },
-    { name: 'Réservations', path: '/artisan/bookings' },
-    { name: 'Disponibilités', path: '/artisan/availability' },
+  const liensArtisan = [
+    { nom: 'Tableau de bord', chemin: '/artisan/dashboard' },
+    { nom: 'Mes services', chemin: '/artisan/services' },
   ];
 
-  const clientLinks = [
-    { name: 'Mes réservations', path: '/client/bookings' },
-    { name: 'Favoris', path: '/client/favorites' },
+  const liensClient = [
+    { nom: 'Favoris', chemin: '/client/favorites' },
   ];
 
-  const getNavLinks = () => {
-    if (!isAuthenticated) return publicLinks;
-    if (userType === 'artisan') return artisanLinks;
-    return [...publicLinks, ...clientLinks];
+  const obtenirLiensNav = () => {
+    if (!estAuthentifie) return liensPublics;
+    if (typeUtilisateur === 'artisan') return liensArtisan;
+    return [...liensPublics, ...liensClient];
   };
 
-  const navLinks = getNavLinks();
+  const liensNav = obtenirLiensNav();
 
-  const isActive = (path) => location.pathname === path;
+  const estActif = (chemin) => emplacement.pathname === chemin;
 
-  const handleLogout = async () => {
-    setIsLoggingOut(true);
+  const gererDeconnexion = async () => {
+    setEstEnDeconnexion(true);
     try {
       await axiosClient.post('/logout');
-
       localStorage.removeItem('ACCESS_TOKEN');
       localStorage.removeItem('USER_ROLE');
-
-      navigate('/login');
-    } catch (err) {
-      console.error("Erreur déconnexion", err);
+      naviguer('/login');
+    } catch (erreur) {
+      console.error("Erreur déconnexion", erreur);
       localStorage.removeItem('ACCESS_TOKEN');
-      navigate('/auth/login');
+      naviguer('/auth/login');
     } finally {
-      setIsLoggingOut(false);
-      setShowLogoutModal(false);
+      setEstEnDeconnexion(false);
+      setAfficherModalDeconnexion(false);
     }
   };
 
-
-  const getProfileMenuItems = () => {
-    if (userType === 'artisan') {
+  const obtenirElementsMenuProfil = () => {
+    if (typeUtilisateur === 'artisan') {
       return [
-        { to: '/artisan/dashboard', icon: User, label: 'Mon atelier' },
-        { to: '/artisan/services', icon: Briefcase, label: 'Mes services' },
-        { to: '/artisan/bookings', icon: Calendar, label: 'Réservations' },
-        { to: '/artisan/settings', icon: Settings, label: 'Paramètres' },
+        { vers: '/artisan/dashboard', icone: User, libelle: 'Mon atelier' },
+        { vers: '/artisan/services', icone: Briefcase, libelle: 'Mes services' },
+        { vers: '/artisan/bookings', icone: Calendar, libelle: 'Réservations' },
+        { vers: '/artisan/settings', icone: Settings, libelle: 'Paramètres' },
       ];
     }
     return [
-      { to: '/client/dashboard', icon: User, label: 'Mon compte' },
-      { to: '/client/bookings', icon: Calendar, label: 'Mes réservations' },
-      { to: '/client/favorites', icon: Heart, label: 'Favoris' },
-      { to: '/client/settings', icon: Settings, label: 'Paramètres' },
+      { vers: '/client/dashboard', icone: User, libelle: 'Mon compte' },
+      { vers: '/client/bookings', icone: Calendar, libelle: 'Mes réservations' },
+      { vers: '/client/favorites', icone: Heart, libelle: 'Favoris' },
+      { vers: '/client/settings', icone: Settings, libelle: 'Paramètres' },
     ];
   };
 
-  const profileMenuItems = getProfileMenuItems();
+  const elementsMenuProfil = obtenirElementsMenuProfil();
+
 
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${estDefileVers
           ? 'bg-white/95 backdrop-blur-md shadow-sm py-2'
           : 'bg-white py-3'
           }`}
@@ -115,28 +112,25 @@ const Header = ({
               <Logo size="sm" />
             </Link>
 
-            {/* Navigation Desktop */}
             <nav className="hidden lg:flex items-center gap-6">
-              {navLinks.map((link) => (
+              {liensNav.map((lien) => (
                 <Link
-                  key={link.path}
-                  to={link.path}
-                  className={`text-[11px] font-medium transition-colors relative group uppercase tracking-wide ${isActive(link.path)
+                  key={lien.chemin}
+                  to={lien.chemin}
+                  className={`text-[11px] font-medium transition-colors relative group uppercase tracking-wide ${estActif(lien.chemin)
                     ? 'text-[#D35400]'
                     : 'text-[#1B4F72] hover:text-[#D35400]'
                     }`}
                 >
-                  {link.name}
-                  <span className={`absolute -bottom-1 left-0 h-0.5 bg-[#D35400] transition-all duration-300 ${isActive(link.path) ? 'w-full' : 'w-0 group-hover:w-full'
+                  {lien.nom}
+                  <span className={`absolute -bottom-1 left-0 h-0.5 bg-[#D35400] transition-all duration-300 ${estActif(lien.chemin) ? 'w-full' : 'w-0 group-hover:w-full'
                     }`} />
                 </Link>
               ))}
             </nav>
 
-            {/* Actions Desktop */}
             <div className="hidden lg:flex items-center gap-3">
-              {!isAuthenticated ? (
-                // Non connecté
+              {!estAuthentifie ? (
                 <div className="flex items-center gap-2">
                   <Link
                     to="/login"
@@ -152,9 +146,7 @@ const Header = ({
                   </Link>
                 </div>
               ) : (
-                // Connecté
                 <>
-                  {/* Messages */}
                   <button className="relative p-2 text-[#1B4F72] hover:text-[#D35400] hover:bg-[#D35400]/10 rounded-full transition-all">
                     <MessageCircle className="w-4 h-4" />
                     {messages > 0 && (
@@ -164,7 +156,6 @@ const Header = ({
                     )}
                   </button>
 
-                  {/* Notifications */}
                   <button className="relative p-2 text-[#1B4F72] hover:text-[#D35400] hover:bg-[#D35400]/10 rounded-full transition-all">
                     <Bell className="w-4 h-4" />
                     {notifications > 0 && (
@@ -174,63 +165,58 @@ const Header = ({
                     )}
                   </button>
 
-                  {/* Favoris */}
-                  {userType === 'client' && (
+                  {typeUtilisateur === 'client' && (
                     <button className="p-2 text-[#1B4F72] hover:text-[#D35400] hover:bg-[#D35400]/10 rounded-full transition-all">
                       <Heart className="w-4 h-4" />
                     </button>
                   )}
 
-                  {/*  */}
-                  {userType === 'artisan' && (
+                  {typeUtilisateur === 'artisan' && (
                     <button className="relative p-2 text-[#1B4F72] hover:text-[#D35400] hover:bg-[#D35400]/10 rounded-full transition-all">
                       <Calendar className="w-4 h-4" />
-                      {pendingBookings > 0 && (
+                      {reservationsEnAttente > 0 && (
                         <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-green-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center">
-                          {pendingBookings > 9 ? '9+' : pendingBookings}
+                          {reservationsEnAttente > 9 ? '9+' : reservationsEnAttente}
                         </span>
                       )}
                     </button>
                   )}
 
-                  {/* Dropdown Profil */}
                   <div className="relative">
                     <button
-                      onClick={() => setIsProfileOpen(!isProfileOpen)}
-                      className="flex items-center gap-2 pl-2 pr-3 py-1.5     transition-all"
+                      onClick={() => setEstProfilOuvert(!estProfilOuvert)}
+                      className="flex items-center gap-2 pl-2 pr-3 py-1.5 transition-all"
                     >
-                      <div className={`w-7 h-7 rounded-full flex items-center justify-center ${userType === 'artisan' ? 'bg-[#D35400]/10' : 'bg-[#1B4F72]/10'
+                      <div className={`w-7 h-7 rounded-full flex items-center justify-center ${typeUtilisateur === 'artisan' ? 'bg-[#D35400]/10' : 'bg-[#1B4F72]/10'
                         }`}>
-                        <User className={`w-4 h-4 ${userType === 'artisan' ? 'text-[#D35400]' : 'text-[#1B4F72]'
+                        <User className={`w-4 h-4 ${typeUtilisateur === 'artisan' ? 'text-[#D35400]' : 'text-[#1B4F72]'
                           }`} />
                       </div>
-
                     </button>
 
-                    {/* Menu Profil */}
-                    {isProfileOpen && (
+                    {estProfilOuvert && (
                       <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-100 py-2">
                         <div className="px-4 py-2 border-b border-gray-100">
-                          <p className="text-[12px] font-semibold text-[#1B4F72]">{userName}</p>
+                          <p className="text-[12px] font-semibold text-[#1B4F72]">{nomUtilisateur}</p>
                           <p className="text-[10px] text-gray-500 capitalize">
-                            {userType === 'artisan' ? 'Artisan' : 'Client'}
+                            {typeUtilisateur === 'artisan' ? 'Artisan' : 'Client'}
                           </p>
                         </div>
 
-                        {profileMenuItems.map((item) => (
+                        {elementsMenuProfil.map((element) => (
                           <Link
-                            key={item.to}
-                            to={item.to}
+                            key={element.vers}
+                            to={element.vers}
                             className="flex items-center gap-3 px-4 py-2.5 text-[11px] text-gray-700 hover:bg-[#D35400]/10 hover:text-[#D35400] transition-colors"
                           >
-                            <item.icon className="w-3.5 h-3.5" />
-                            {item.label}
+                            <element.icone className="w-3.5 h-3.5" />
+                            {element.libelle}
                           </Link>
                         ))}
 
                         <div className="border-t border-gray-100 mt-1 pt-1">
                           <button
-                            onClick={() => setShowLogoutModal(true)}
+                            onClick={() => setAfficherModalDeconnexion(true)}
                             className="flex items-center gap-3 px-4 py-2.5 text-[11px] text-red-600 hover:bg-red-50 w-full transition-colors"
                           >
                             <LogOut className="w-3.5 h-3.5" />
@@ -244,37 +230,35 @@ const Header = ({
               )}
             </div>
 
-            {/* Mobile Menu Button */}
             <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              onClick={() => setEstMenuOuvert(!estMenuOuvert)}
               className="lg:hidden p-2 text-[#1B4F72] hover:text-[#D35400] rounded-lg transition-all"
             >
-              {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              {estMenuOuvert ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
 
-        {/* Mobile Menu */}
-        <div className={`lg:hidden absolute top-full left-0 right-0 bg-white border-t border-gray-100 shadow-xl transition-all duration-300 ${isMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
+        <div className={`lg:hidden absolute top-full left-0 right-0 bg-white border-t border-gray-100 shadow-xl transition-all duration-300 ${estMenuOuvert ? 'opacity-100 visible' : 'opacity-0 invisible'
           }`}>
           <div className="px-4 py-4 space-y-2">
             <nav className="space-y-1">
-              {navLinks.map((link) => (
+              {liensNav.map((lien) => (
                 <Link
-                  key={link.path}
-                  to={link.path}
-                  className={`block px-4 py-2.5 rounded-lg text-[12px] font-medium transition-colors ${isActive(link.path)
+                  key={lien.chemin}
+                  to={lien.chemin}
+                  className={`block px-4 py-2.5 rounded-lg text-[12px] font-medium transition-colors ${estActif(lien.chemin)
                     ? 'bg-[#D35400]/10 text-[#D35400]'
                     : 'text-[#1B4F72] hover:bg-gray-50'
                     }`}
                 >
-                  {link.name}
+                  {lien.nom}
                 </Link>
               ))}
             </nav>
 
             <div className="border-t border-gray-100 pt-3 mt-3">
-              {!isAuthenticated ? (
+              {!estAuthentifie ? (
                 <div className="space-y-2">
                   <Link
                     to="/login"
@@ -291,14 +275,14 @@ const Header = ({
                 </div>
               ) : (
                 <div className="space-y-1">
-                  {profileMenuItems.map((item) => (
+                  {elementsMenuProfil.map((element) => (
                     <Link
-                      key={item.to}
-                      to={item.to}
+                      key={element.vers}
+                      to={element.vers}
                       className="flex items-center gap-3 px-4 py-2.5 text-[#1B4F72] hover:bg-[#D35400]/10 rounded-lg"
                     >
-                      <item.icon className="w-4 h-4" />
-                      <span className="text-[12px]">{item.label}</span>
+                      <element.icone className="w-4 h-4" />
+                      <span className="text-[12px]">{element.libelle}</span>
                     </Link>
                   ))}
 
@@ -313,7 +297,7 @@ const Header = ({
                   </Link>
 
                   <button
-                    onClick={() => setShowLogoutModal(true)}
+                    onClick={() => setAfficherModalDeconnexion(true)}
                     className="flex items-center gap-3 px-4 py-2.5 text-red-600 hover:bg-red-50 rounded-lg w-full"
                   >
                     <LogOut className="w-4 h-4" />
@@ -327,11 +311,11 @@ const Header = ({
       </header>
 
       <LogoutModal
-        estOuvert={showLogoutModal}
-        surFermeture={() => setShowLogoutModal(false)}
-        surConfirmation={handleLogout}
-        estEnChargement={isLoggingOut}
-        nomUtilisateur={userName}
+        estOuvert={afficherModalDeconnexion}
+        surFermeture={() => setAfficherModalDeconnexion(false)}
+        surConfirmation={gererDeconnexion}
+        estEnChargement={estEnDeconnexion}
+        nomUtilisateur={nomUtilisateur}
         variante="simple"
       />
     </>

@@ -123,7 +123,6 @@ const PageParametres = () => {
 
     return (
         <div className="min-h-screen bg-white">
-            <Header isAuthenticated={true} userType="client" userName="Ahmed" />
 
             <div className="max-w-6xl mt-12 mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-12">
                 <div className="border border-gray-200 p-4 mb-4">
@@ -517,7 +516,7 @@ const PageParametres = () => {
                 </div>
             </div>
 
-            <Footer />
+           
         </div>
     );
 };

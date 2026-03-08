@@ -27,13 +27,13 @@ function App() {
   return (
     <>
       {/* <Header /> */}
-    <Routes>
+      <Routes>
 
 
 
 
 
-      <Route path="/" element={<HomePage />} />
+        <Route path="/" element={<HomePage />} />
 
         <Route path="/auth" element={<div className="auth-layout"><Outlet /></div>}>
           <Route index element={<LoginPage />} />
@@ -44,7 +44,7 @@ function App() {
           <Route path="confirme-email" element={<ConfirmEmailPage />} />
         </Route>
 
-        <Route path="/client" element={<div className="auth-layout"><Header /><Outlet /> <Footer /></div>}>
+        <Route path="/client" element={<div className="auth-layout"><Header estAuthentifie={true} /><Outlet /> <Footer /></div>}>
           <Route index element={<HomePage />} />
           <Route path="settings" element={<SettingsPage />} />
           <Route path="messages" element={<MessagesPage />} />
