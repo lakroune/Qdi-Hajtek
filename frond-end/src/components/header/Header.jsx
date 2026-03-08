@@ -133,13 +133,13 @@ const Header = ({
               {!estAuthentifie ? (
                 <div className="flex items-center gap-2">
                   <Link
-                    to="/login"
+                    to="/auth/login"
                     className="px-4 py-2 text-[11px] font-semibold text-[#1B4F72] hover:text-[#D35400] transition-colors"
                   >
                     Se connecter
                   </Link>
                   <Link
-                    to="/register"
+                    to="/auth/register"
                     className="px-4 py-2 text-[11px] font-semibold bg-[#1B4F72] hover:bg-[#D35400] text-white transition-all"
                   >
                     S'inscrire
