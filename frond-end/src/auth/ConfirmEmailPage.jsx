@@ -63,7 +63,7 @@ const EmailConfirmationPage = () => {
 
       setStatut('succes');
 
-      setTimeout(() => navigate('/auth/login'), 1000);
+      // setTimeout(() => navigate('/auth/login'), 1000);
     } catch (err) {
       setStatut('saisie');
 

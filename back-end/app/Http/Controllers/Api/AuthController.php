@@ -19,14 +19,24 @@ class AuthController extends Controller
     {
         $dataFormLogin = $request->validated();
 
+
+        $user = Auth::user();
+        if (!$user->email_verified_at and Auth::attempt($dataFormLogin)) {
+            $code = str_pad(random_int(0, 9999), 4, '0', STR_PAD_LEFT);
+            $user->code_verification = $code;
+            $user->save();
+            Mail::to($user->email)->send(new VerificationCodeMail($user->code_verification, $user));
+            return response()->json([
+                'message' => 'Veuillez verifier votre email'
+            ]);
+        }
+        
         if (!Auth::attempt($dataFormLogin)) {
             return response()->json([
                 'message' => 'Identifiant incorrect (Email or Password)'
             ], 401);
         }
 
-        // 3. Generate Token
-        $user = Auth::user();
         $token = $user->createToken('main')->plainTextToken;
 
         return response()->json([
@@ -100,7 +110,7 @@ class AuthController extends Controller
 
         $user->currentAccessToken()->delete();
 
-         $user->tokens()->delete();
+        $user->tokens()->delete();
         return response()->json([
             'message' => 'Déconnecté avec succès'
         ], 200);
