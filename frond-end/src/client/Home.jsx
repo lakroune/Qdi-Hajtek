@@ -12,10 +12,8 @@ const HomePage = () => {
     const handleSearch = (params) => {
         console.log('Recherche:', params);
 
-        // 
     };
 
-    // Categories
     const categories = [
         { id: 'plomberie', name: 'Plomberie', icon: Droplets, color: 'bg-blue-500' },
         { id: 'electricite', name: 'Électricité', icon: Zap, color: 'bg-yellow-500' },
