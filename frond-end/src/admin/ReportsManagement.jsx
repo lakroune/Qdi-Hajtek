@@ -79,7 +79,7 @@ const ReportsManagement = () => {
                     { label: 'En cours', value: 8, color: 'bg-blue-500' },
                     { label: 'Résolus', value: 136, color: 'bg-green-500' },
                 ].map((stat) => (
-                    <div key={stat.label} className="bg-white border border-orange-700 p-3 flex items-center gap-3">
+                    <div key={stat.label} className="bg-white border border-gray-200 p-3 flex items-center gap-3">
                         <div className={`w-10 h-10 ${stat.color} flex rounded-full items-center justify-center`}>
                             <Flag className="w-5 h-5 text-white" />
                         </div>
@@ -94,7 +94,7 @@ const ReportsManagement = () => {
             <div className="bg-white border border-gray-200">
                 <div className="overflow-x-auto">
                     <table className="w-full">
-                        <thead className="bg-gray-50 border-b border-orange-700">
+                        <thead className="bg-gray-50 border-b border-gray-200">
                             <tr>
                                 <th className="px-4 py-3 text-left text-[11px] font-semibold text-gray-600">ID</th>
                                 <th className="px-4 py-3 text-left text-[11px] font-semibold text-gray-600">Type</th>

@@ -43,7 +43,7 @@ const AdminLayout = () => {
                             className={`
                                 flex items-center gap-3 px-3 py-2.5 text-[12px] font-medium transition-colors
                                 ${isActive(item.path)
-                                    ? 'bg-[#f4ce75] text-white '
+                                    ? ' text-[#D35400] '
                                     : 'text-gray-400 hover:bg-gray-800 hover:text-white'}
                                 ${!sidebarOpen && 'lg:justify-center lg:px-2'}
                             `}

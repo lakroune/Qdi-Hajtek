@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { 
-    ArrowRightLeft, Search, Filter, Eye, 
+import {
+    ArrowRightLeft, Search, Filter, Eye,
     User, Briefcase, DollarSign, Calendar,
     CheckCircle, Clock, XCircle, Download
 } from 'lucide-react';
@@ -9,143 +9,39 @@ const AccountsManagement = () => {
     const [filter, setFilter] = useState('all');
     const [selectedTransaction, setSelectedTransaction] = useState(null);
 
-    // Transactions Client → Admin → Artisan
     const transactions = [
         {
             id: 'TRX-001',
             type: 'service', // service | job
             serviceName: 'Réparation fuite d\'eau',
-            
-            // Client (payeur)
+
             client: {
                 id: 101,
                 name: 'Ahmed Benali',
                 avatar: null,
                 city: 'Casablanca'
             },
-            
-            // Artisan (receveur)
+
             artisan: {
                 id: 201,
                 name: 'Karim Plombier',
                 specialty: 'Plomberie',
                 avatar: null
             },
-            
-            // Montants
-            amountTotal: 850,      // Ce que le client paie
-            adminCommission: 85,   // 10% pour la plateforme
-            artisanNet: 765,       // 90% pour l'artisan
-            
-            // Statuts
-            status: 'completed',   // completed | pending | disputed | refunded
-            paymentStatus: 'released', // held | released | refunded
-            
-            // Dates
+
+            amountTotal: 850,
+            adminCommission: 85,
+            artisanNet: 765,
+
+            status: 'completed',
+            paymentStatus: 'released',
+
             createdAt: '2024-01-15 09:30',
             paidAt: '2024-01-15 09:35',
             completedAt: '2024-01-15 14:00',
             releasedAt: '2024-01-15 16:30',
-            
-            // Détails
+
             description: 'Intervention urgente fuite sous évier cuisine'
-        },
-        {
-            id: 'TRX-002',
-            type: 'job',
-            serviceName: 'Installation électrique complète',
-            
-            client: {
-                id: 102,
-                name: 'Sofia Alaoui',
-                city: 'Rabat'
-            },
-            
-            artisan: {
-                id: 202,
-                name: 'Youssef Élec',
-                specialty: 'Électricité'
-            },
-            
-            amountTotal: 3200,
-            adminCommission: 320,
-            artisanNet: 2880,
-            
-            status: 'in_progress',
-            paymentStatus: 'held', // Argent encore chez admin
-            
-            createdAt: '2024-01-14 10:00',
-            paidAt: '2024-01-14 10:05',
-            completedAt: null,
-            releasedAt: null,
-            
-            description: 'Tableau électrique + 12 prises + 5 luminaires'
-        },
-        {
-            id: 'TRX-003',
-            type: 'service',
-            serviceName: 'Peinture salon 40m²',
-            
-            client: {
-                id: 103,
-                name: 'Mehdi Tazi',
-                city: 'Marrakech'
-            },
-            
-            artisan: {
-                id: 203,
-                name: 'Hassan Peintre',
-                specialty: 'Peinture'
-            },
-            
-            amountTotal: 2800,
-            adminCommission: 280,
-            artisanNet: 2520,
-            
-            status: 'disputed',
-            paymentStatus: 'held',
-            
-            createdAt: '2024-01-13 11:00',
-            paidAt: '2024-01-13 11:15',
-            completedAt: '2024-01-13 18:00',
-            releasedAt: null,
-            
-            disputeReason: 'Qualité insuffisante, traces visibles',
-            
-            description: 'Peinture murs + plafond, blanc cassé'
-        },
-        {
-            id: 'TRX-004',
-            type: 'service',
-            serviceName: 'Débouchage canalisation',
-            
-            client: {
-                id: 104,
-                name: 'Fatima Benani',
-                city: 'Tanger'
-            },
-            
-            artisan: {
-                id: 204,
-                name: 'Omar Plombier',
-                specialty: 'Plomberie'
-            },
-            
-            amountTotal: 450,
-            adminCommission: 45,
-            artisanNet: 405,
-            
-            status: 'refunded',
-            paymentStatus: 'refunded',
-            
-            createdAt: '2024-01-12 08:00',
-            paidAt: '2024-01-12 08:10',
-            completedAt: null,
-            releasedAt: null,
-            refundedAt: '2024-01-12 10:30',
-            refundReason: 'Artisan non disponible, annulation client',
-            
-            description: 'Canalisation cuisine bouchée'
         }
     ];
 
@@ -158,15 +54,14 @@ const AccountsManagement = () => {
         return t.status === filter;
     });
 
-    // Calculs totaux
     const totalHeld = transactions
         .filter(t => t.paymentStatus === 'held')
         .reduce((sum, t) => sum + t.amountTotal, 0);
-    
+
     const totalReleased = transactions
         .filter(t => t.paymentStatus === 'released')
         .reduce((sum, t) => sum + t.artisanNet, 0);
-    
+
     const totalCommission = transactions
         .reduce((sum, t) => sum + t.adminCommission, 0);
 
@@ -192,9 +87,9 @@ const AccountsManagement = () => {
 
     const getPaymentBadge = (status) => {
         const styles = {
-            held: 'bg-yellow-100 text-yellow-700 border-yellow-200',
-            released: 'bg-green-100 text-green-700 border-green-200',
-            refunded: 'bg-red-100 text-red-700 border-red-200'
+            held: '  text-yellow-700 border-yellow-200',
+            released: ' text-green-700 border-green-200',
+            refunded: '  text-red-700 border-red-200'
         };
         const labels = {
             held: 'En garantie',
@@ -213,108 +108,94 @@ const AccountsManagement = () => {
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-[18px] font-bold text-[#1B4F72]">Transactions Client-Artisan</h1>
-                    <p className="text-[11px] text-gray-500">
-                        Suivi des paiements et commissions plateforme
-                    </p>
+
                 </div>
-                <button className="flex items-center gap-2 px-3 py-2 border border-gray-200 hover:border-[#1B4F72] text-[11px] text-gray-600 hover:text-[#1B4F72] transition-colors">
-                    <Download className="w-4 h-4" />
-                    Exporter
-                </button>
+                <div className="flex items-center gap-2">
+                    <div className="relative">
+                        <Search className="absolute left-3 top-1/2 -translate-x-1/2 w-4 h-4 text-gray-400" />
+                        <input
+                            type="text"
+                            placeholder="Rechercher transaction..."
+                            className="pl-9 pr-4 py-2 text-[12px] border border-gray-200 focus:border-[#1B4F72] focus:outline-none w-56"
+                        />
+                    </div>
+                    <select
+                        value={filter}
+                        onChange={(e) => setFilter(e.target.value)}
+                        className="px-3 py-2 text-[12px] border border-gray-200 focus:border-[#1B4F72] focus:outline-none bg-white"
+                    >
+                        <option value="all">Toutes les transactions</option>
+                        <option value="held">En garantie</option>
+                        <option value="released">Terminées</option>
+                        <option value="disputed">En litige</option>
+                        <option value="refunded">Remboursées</option>
+                    </select>
+                </div>
             </div>
 
-            {/* Stats Cards - Flux d'argent */}
             <div className="grid grid-cols-4 gap-4">
                 <div className="bg-white border border-gray-200 p-4">
                     <div className="flex items-center gap-3 mb-2">
-                        <div className="w-10 h-10 bg-blue-100 flex items-center justify-center">
+                        <div className="w-10 h-10 bg-blue-100 flex items-center justify-center rounded-full ">
                             <User className="w-5 h-5 text-blue-600" />
                         </div>
                         <div>
                             <p className="text-[10px] text-gray-500">Client a payé</p>
                             <p className="text-[18px] font-bold text-[#1B4F72]">
-                                {transactions.reduce((sum, t) => sum + t.amountTotal, 0).toLocaleString()} DH
+                                0001 DH
                             </p>
                         </div>
                     </div>
-                    <p className="text-[10px] text-gray-400">{transactions.length} transactions</p>
                 </div>
 
                 <div className="bg-white border border-gray-200 p-4">
                     <div className="flex items-center gap-3 mb-2">
-                        <div className="w-10 h-10 bg-yellow-100 flex items-center justify-center">
+                        <div className="w-10 h-10 bg-yellow-100 flex items-center justify-center rounded-full ">
                             <Clock className="w-5 h-5 text-yellow-600" />
                         </div>
                         <div>
                             <p className="text-[10px] text-gray-500">En garantie (Admin)</p>
                             <p className="text-[18px] font-bold text-[#D35400]">
-                                {totalHeld.toLocaleString()} DH
+                                1 DH
                             </p>
                         </div>
                     </div>
-                    <p className="text-[10px] text-gray-400">
-                        {transactions.filter(t => t.paymentStatus === 'held').length} transactions
-                    </p>
+
                 </div>
 
                 <div className="bg-white border border-gray-200 p-4">
                     <div className="flex items-center gap-3 mb-2">
-                        <div className="w-10 h-10 bg-green-100 flex items-center justify-center">
+                        <div className="w-10 h-10 bg-green-100 flex items-center justify-center rounded-full ">
                             <Briefcase className="w-5 h-5 text-green-600" />
                         </div>
                         <div>
                             <p className="text-[10px] text-gray-500">Artisan reçu</p>
                             <p className="text-[18px] font-bold text-green-600">
-                                {totalReleased.toLocaleString()} DH
+                                2 DH
                             </p>
                         </div>
                     </div>
-                    <p className="text-[10px] text-gray-400">
-                        {transactions.filter(t => t.paymentStatus === 'released').length} libérations
-                    </p>
+
                 </div>
 
                 <div className="bg-white border border-gray-200 p-4">
                     <div className="flex items-center gap-3 mb-2">
-                        <div className="w-10 h-10 bg-[#1B4F72]/10 flex items-center justify-center">
+                        <div className="w-10 h-10 bg-[#1B4F72]/10 flex items-center justify-center rounded-full ">
                             <DollarSign className="w-5 h-5 text-[#1B4F72]" />
                         </div>
                         <div>
                             <p className="text-[10px] text-gray-500">Commission (10%)</p>
                             <p className="text-[18px] font-bold text-[#1B4F72]">
-                                {totalCommission.toLocaleString()} DH
+                                3 DH
                             </p>
                         </div>
                     </div>
-                    <p className="text-[10px] text-green-600">Revenu plateforme</p>
                 </div>
             </div>
 
-         
-            {/* Filtres */}
-            <div className="flex items-center gap-2">
-                <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-x-1/2 w-4 h-4 text-gray-400" />
-                    <input 
-                        type="text" 
-                        placeholder="Rechercher transaction..."
-                        className="pl-9 pr-4 py-2 text-[12px] border border-gray-200 focus:border-[#1B4F72] focus:outline-none w-56"
-                    />
-                </div>
-                <select 
-                    value={filter}
-                    onChange={(e) => setFilter(e.target.value)}
-                    className="px-3 py-2 text-[12px] border border-gray-200 focus:border-[#1B4F72] focus:outline-none bg-white"
-                >
-                    <option value="all">Toutes les transactions</option>
-                    <option value="held">En garantie</option>
-                    <option value="released">Terminées</option>
-                    <option value="disputed">En litige</option>
-                    <option value="refunded">Remboursées</option>
-                </select>
-            </div>
 
-            {/* Table des transactions */}
+
+
             <div className="bg-white border border-gray-200">
                 <div className="overflow-x-auto">
                     <table className="w-full">
@@ -351,7 +232,7 @@ const AccountsManagement = () => {
                                         </div>
                                     </td>
                                     <td className="px-4 py-3 text-center">
-                                        <div className="bg-[#1B4F72]/10 px-3 py-2 border border-[#1B4F72]/20 inline-block">
+                                        <div className=" px-3 py-2   inline-block">
                                             <p className="text-[12px] font-bold text-[#1B4F72]">{trx.adminCommission} DH</p>
                                             {getPaymentBadge(trx.paymentStatus)}
                                         </div>
@@ -381,23 +262,22 @@ const AccountsManagement = () => {
                                     </td>
                                     <td className="px-4 py-3">
                                         <div className="flex items-center gap-1">
-                                            <button 
+                                            <button
                                                 onClick={() => setSelectedTransaction(trx)}
                                                 className="p-1.5 text-gray-400 hover:text-[#1B4F72] hover:bg-[#1B4F72]/10"
                                             >
                                                 <Eye className="w-4 h-4" />
                                             </button>
-                                            
-                                            {/* Actions selon statut */}
+
                                             {trx.paymentStatus === 'held' && trx.status !== 'disputed' && (
                                                 <>
-                                                    <button 
+                                                    <button
                                                         className="p-1.5 text-green-500 hover:bg-green-50"
                                                         title="Libérer paiement artisan"
                                                     >
                                                         <CheckCircle className="w-4 h-4" />
                                                     </button>
-                                                    <button 
+                                                    <button
                                                         className="p-1.5 text-red-500 hover:bg-red-50"
                                                         title="Rembourser client"
                                                     >
@@ -414,7 +294,6 @@ const AccountsManagement = () => {
                 </div>
             </div>
 
-            {/* Modal Détail Transaction */}
             {selectedTransaction && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
                     <div className="bg-white w-full max-w-2xl border border-gray-200">
@@ -423,7 +302,7 @@ const AccountsManagement = () => {
                                 <h3 className="text-[16px] font-bold text-[#1B4F72]">{selectedTransaction.serviceName}</h3>
                                 <p className="text-[11px] text-gray-500">{selectedTransaction.id}</p>
                             </div>
-                            <button 
+                            <button
                                 onClick={() => setSelectedTransaction(null)}
                                 className="text-gray-400 hover:text-[#D35400]"
                             >
@@ -435,11 +314,11 @@ const AccountsManagement = () => {
                             {/* Schéma visuel de la transaction */}
                             <div className="bg-gray-50 p-4 border border-gray-200">
                                 <h4 className="text-[12px] font-bold text-[#1B4F72] mb-4 text-center">Répartition des fonds</h4>
-                                
+
                                 <div className="relative">
                                     {/* Ligne de progression */}
                                     <div className="absolute top-8 left-0 right-0 h-1 bg-gray-200"></div>
-                                    
+
                                     <div className="flex justify-between relative">
                                         {/* Étape 1: Client */}
                                         <div className="text-center w-1/3">
@@ -456,8 +335,8 @@ const AccountsManagement = () => {
                                         <div className="text-center w-1/3">
                                             <div className={`
                                                 w-16 h-16 border-2 flex items-center justify-center mx-auto mb-2 relative z-10
-                                                ${selectedTransaction.paymentStatus === 'held' 
-                                                    ? 'bg-[#D35400] border-[#D35400]' 
+                                                ${selectedTransaction.paymentStatus === 'held'
+                                                    ? 'bg-[#D35400] border-[#D35400]'
                                                     : 'bg-[#1B4F72] border-[#1B4F72]'}
                                             `}>
                                                 <DollarSign className="w-8 h-8 text-white" />
