@@ -30,27 +30,7 @@ function App() {
   const [user, setUser] = useState(null);
   const [estAuthentifie, setAuthChecked] = useState(false);
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const token = localStorage.getItem('ACCESS_TOKEN');
-        if (token) {
-          const { data } = await axiosClient.post('/utilisateur', {
-            token: token
-          });
-          setUser(data);
-          setAuthChecked(true);
-        }
-      } catch (e) {
-        console.error(" Erreur lors de la récupération de l'utilisateur :", e);
-        localStorage.removeItem('ACCESS_TOKEN');
-        setUser(null);
-      } finally {
-        setAuthChecked(false);
-      }
-    };
-    fetchUser();
-  }, []);
+  
   return (
     <>
       {/* <Header /> */}
@@ -71,7 +51,7 @@ function App() {
           <Route path="confirme-email" element={<ConfirmEmailPage />} />
         </Route>
 
-        <Route path="/client" element={<div className="auth-layout"><Header estAuthentifie={estAuthentifie} nomUtilisateur={"nom"} /><Outlet /> <Footer /></div>}>
+        <Route path="/client" element={<div className="auth-layout"><Header estAuthentifie={true} nomUtilisateur={"nom"} notifications={4} messages={3}  /><Outlet /> <Footer /></div>}>
           <Route index element={<HomePage />} />
           <Route path="settings" element={<SettingsPage />} />
           <Route path="messages" element={<MessagesPage />} />

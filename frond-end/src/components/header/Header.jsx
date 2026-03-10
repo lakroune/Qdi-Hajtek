@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, User, Bell, ChevronDown, LogOut, Settings, Heart, MessageCircle, Briefcase, Calendar } from 'lucide-react';
+import { Menu, X, User, Bell, LogOut, Settings, Heart, MessageCircle, Briefcase, Calendar } from 'lucide-react';
 import Logo from '../logo/Logo';
 import LogoutModal from '../models/LogoutModal';
 import { useNavigate } from 'react-router-dom';
@@ -11,7 +11,7 @@ const Header = ({
   nomUtilisateur = '',
   notifications = 0,
   messages = 0,
-  reservationsEnAttente = 0
+  dommandesEnAttente = 0
 }) => {
   const [estMenuOuvert, setEstMenuOuvert] = useState(false);
   const [estDefileVers, setEstDefileVers] = useState(false);
@@ -21,13 +21,6 @@ const Header = ({
   const [estEnDeconnexion, setEstEnDeconnexion] = useState(false);
   const naviguer = useNavigate();
 
-  // useEffect(() => {
-  //   const gererDefilement = () => {
-  //     setEstDefileVers(window.scrollY > 20);
-  //   };
-  //   window.addEventListener('scroll', gererDefilement);
-  //   return () => window.removeEventListener('scroll', gererDefilement);
-  // }, []);
 
   useEffect(() => {
     setEstMenuOuvert(false);
@@ -36,8 +29,6 @@ const Header = ({
 
   const liensPublics = [
     { nom: 'Accueil', chemin: '/' },
-    { nom: 'Services', chemin: '/services' },
-    { nom: 'Artisans', chemin: '/artisans' },
   ];
 
   const liensArtisan = [
@@ -79,17 +70,14 @@ const Header = ({
   const obtenirElementsMenuProfil = () => {
     if (typeUtilisateur === 'artisan') {
       return [
-        { vers: '/artisan/dashboard', icone: User, libelle: 'Mon atelier' },
-        { vers: '/artisan/services', icone: Briefcase, libelle: 'Mes services' },
-        { vers: '/artisan/bookings', icone: Calendar, libelle: 'Réservations' },
-        { vers: '/artisan/settings', icone: Settings, libelle: 'Paramètres' },
+        { vers: '/artisan/dashboard', icone: User, libelle: '' },
+        { vers: '/artisan/services', icone: Briefcase, libelle: '' },
       ];
     }
     return [
       { vers: '/client/dashboard', icone: User, libelle: 'Mon compte' },
-      { vers: '/client/bookings', icone: Calendar, libelle: 'Mes réservations' },
       { vers: '/client/favorites', icone: Heart, libelle: 'Favoris' },
-      { vers: '/client/settings', icone: Settings, libelle: 'Paramètres' },
+      { vers: '/client/settings', icone: Settings, libelle: 'profil' },
     ];
   };
 
@@ -99,15 +87,12 @@ const Header = ({
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${estDefileVers
-          ? 'bg-white/95 backdrop-blur-md shadow-sm py-2'
-          : 'bg-white py-3'
-          }`}
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300  bg-white/95 backdrop-blur-md shadow-sm py-2
+          `}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
 
-            {/* Logo */}
             <Link to="/" className="flex-shrink-0">
               <Logo size="sm" />
             </Link>
@@ -147,7 +132,7 @@ const Header = ({
                 </div>
               ) : (
                 <>
-                  <button className="relative p-2 text-[#1B4F72] hover:text-[#D35400] hover:bg-[#D35400]/10 rounded-full transition-all">
+                  <button className="relative p-2 text-[#1B4F72] hover:text-[#D35400]   rounded-full transition-all">
                     <MessageCircle className="w-4 h-4" />
                     {messages > 0 && (
                       <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-[#D35400] text-white text-[9px] font-bold rounded-full flex items-center justify-center">
@@ -156,7 +141,7 @@ const Header = ({
                     )}
                   </button>
 
-                  <button className="relative p-2 text-[#1B4F72] hover:text-[#D35400] hover:bg-[#D35400]/10 rounded-full transition-all">
+                  <button className="relative p-2 text-[#1B4F72] hover:text-[#D35400]  rounded-full transition-all">
                     <Bell className="w-4 h-4" />
                     {notifications > 0 && (
                       <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-[#D35400] text-white text-[9px] font-bold rounded-full flex items-center justify-center">
@@ -166,7 +151,7 @@ const Header = ({
                   </button>
 
                   {typeUtilisateur === 'client' && (
-                    <button className="p-2 text-[#1B4F72] hover:text-[#D35400] hover:bg-[#D35400]/10 rounded-full transition-all">
+                    <button className="p-2 text-[#1B4F72] hover:text-[#D35400] rounded-full transition-all">
                       <Heart className="w-4 h-4" />
                     </button>
                   )}
@@ -174,9 +159,9 @@ const Header = ({
                   {typeUtilisateur === 'artisan' && (
                     <button className="relative p-2 text-[#1B4F72] hover:text-[#D35400] hover:bg-[#D35400]/10 rounded-full transition-all">
                       <Calendar className="w-4 h-4" />
-                      {reservationsEnAttente > 0 && (
+                      {dommandesEnAttente > 0 && (
                         <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-green-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center">
-                          {reservationsEnAttente > 9 ? '9+' : reservationsEnAttente}
+                          {dommandesEnAttente > 9 ? '9+' : dommandesEnAttente}
                         </span>
                       )}
                     </button>
@@ -195,7 +180,7 @@ const Header = ({
                     </button>
 
                     {estProfilOuvert && (
-                      <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-100 py-2">
+                      <div className="absolute right-0 top-full mt-2 w-56 bg-white  border border-gray-100 py-2">
                         <div className="px-4 py-2 border-b border-gray-100">
                           <p className="text-[12px] font-semibold text-[#1B4F72]">{nomUtilisateur}</p>
                           <p className="text-[10px] text-gray-500 capitalize">
@@ -261,13 +246,13 @@ const Header = ({
               {!estAuthentifie ? (
                 <div className="space-y-2">
                   <Link
-                    to="/login"
+                    to="/auth/login"
                     className="block w-full px-4 py-2.5 text-center text-[12px] font-semibold text-[#1B4F72] bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
                   >
                     Se connecter
                   </Link>
                   <Link
-                    to="/register"
+                    to="/auth/register"
                     className="block w-full px-4 py-2.5 text-center text-[12px] font-semibold text-white bg-[#1B4F72] hover:bg-[#D35400] rounded-lg transition-colors"
                   >
                     S'inscrire
