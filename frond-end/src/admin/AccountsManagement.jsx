@@ -210,7 +210,6 @@ const AccountsManagement = () => {
 
     return (
         <div className="space-y-4">
-            {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-[18px] font-bold text-[#1B4F72]">Transactions Client-Artisan</h1>

@@ -13,14 +13,14 @@ const ArtisanRequests = () => {
     const requests = [
         {
             id: 1,
-            firstName: 'Youssef',
-            lastName: 'Alaoui',
-            email: 'youssef.alaoui@email.com',
+            firstName: 'Smail',
+            lastName: 'lakhdhar',
+            email: 'smail@email.com',
             phone: '+212 6 12 34 56 78',
             specialty: 'Électricité',
             experience: '5-10 ans',
-            city: 'Casablanca',
-            submittedAt: '2024-01-15 09:30',
+            city: 'Safi',
+            submittedAt: '2026-03-15 09:30',
             status: 'pending',
             documents: {
                 cinFront: 'cin_front.pdf',
@@ -29,45 +29,8 @@ const ArtisanRequests = () => {
                 certificates: ['attestation_1.pdf', 'attestation_2.pdf']
             },
             bio: 'Électricien professionnel avec plus de 7 ans d\'expérience dans le bâtiment et l\'industrie.'
-        },
-        {
-            id: 2,
-            firstName: 'Fatima',
-            lastName: 'Benali',
-            email: 'fatima.benali@email.com',
-            phone: '+212 6 23 45 67 89',
-            specialty: 'Coiffure à domicile',
-            experience: '2-5 ans',
-            city: 'Rabat',
-            submittedAt: '2024-01-14 14:15',
-            status: 'approved',
-            documents: {
-                cinFront: 'cin_front.pdf',
-                cinBack: 'cin_back.pdf',
-                diplomas: [],
-                certificates: ['formation.pdf']
-            },
-            bio: 'Coiffeuse professionnelle spécialisée dans les mariages et événements.'
-        },
-        {
-            id: 3,
-            firstName: 'Karim',
-            lastName: 'Tazi',
-            email: 'karim.tazi@email.com',
-            phone: '+212 6 34 56 78 90',
-            specialty: 'Menuiserie',
-            experience: '10+ ans',
-            city: 'Marrakech',
-            submittedAt: '2024-01-13 11:00',
-            status: 'rejected',
-            documents: {
-                cinFront: 'cin_front.pdf',
-                cinBack: 'cin_back.pdf',
-                diplomas: ['cap_menuiserie.pdf'],
-                certificates: []
-            },
-            bio: 'Menuisier traditionnel expert en bois ancien et restauration.'
-        }
+        } 
+        
     ];
 
     const getStatusBadge = (status) => {
@@ -90,11 +53,9 @@ const ArtisanRequests = () => {
 
     return (
         <div className="space-y-4">
-            {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-[18px] font-bold text-[#1B4F72]">Demandes Artisan</h1>
-                    <p className="text-[11px] text-gray-500">Validez les nouveaux artisans</p>
                 </div>
                 <div className="flex items-center gap-2">
                     <div className="relative">
@@ -127,7 +88,7 @@ const ArtisanRequests = () => {
                     { label: 'Rejetées', value: 5, color: 'bg-red-500' },
                 ].map((stat) => (
                     <div key={stat.label} className="bg-white border border-gray-200 p-3 flex items-center gap-3">
-                        <div className={`w-10 h-10 ${stat.color} flex items-center justify-center`}>
+                        <div className={`w-10 h-10 ${stat.color} flex items-center justify-center rounded-full`}>
                             <User className="w-5 h-5 text-white" />
                         </div>
                         <div>
@@ -138,13 +99,12 @@ const ArtisanRequests = () => {
                 ))}
             </div>
 
-            {/* Table */}
             <div className="bg-white border border-gray-200">
                 <div className="overflow-x-auto">
                     <table className="w-full">
                         <thead className="bg-gray-50 border-b border-gray-200">
                             <tr>
-                                <th className="px-4 py-3 text-left text-[11px] font-semibold text-gray-600">Candidat</th>
+                                <th className="px-4 py-3 text-left text-[11px] font-semibold text-gray-600">Utilisateyr</th>
                                 <th className="px-4 py-3 text-left text-[11px] font-semibold text-gray-600">Spécialité</th>
                                 <th className="px-4 py-3 text-left text-[11px] font-semibold text-gray-600">Expérience</th>
                                 <th className="px-4 py-3 text-left text-[11px] font-semibold text-gray-600">Ville</th>

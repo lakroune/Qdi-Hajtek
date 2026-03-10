@@ -93,18 +93,17 @@ const JobsManagement = () => {
 
     return (
         <div className="space-y-4">
-            {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-[18px] font-bold text-[#1B4F72]">Gestion des Offres</h1>
-                    <p className="text-[11px] text-gray-500">
+                    {/* <p className="text-[11px] text-gray-500">
                         {jobs.filter(j => j.status === 'pending').length} offre(s) en attente d'approbation
                         {jobs.filter(j => j.urgency === 'urgent' && j.status === 'pending').length > 0 && (
                             <span className="text-red-500 ml-2">
                                 ({jobs.filter(j => j.urgency === 'urgent' && j.status === 'pending').length} urgente(s))
                             </span>
                         )}
-                    </p>
+                    </p> */}
                 </div>
                 <div className="flex items-center gap-2">
                     <div className="relative">

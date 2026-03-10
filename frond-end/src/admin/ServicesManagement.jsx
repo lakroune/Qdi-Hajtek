@@ -126,13 +126,10 @@ const ServicesManagement = () => {
 
     return (
         <div className="space-y-4">
-            {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-[18px] font-bold text-[#1B4F72]">Gestion des Services</h1>
-                    <p className="text-[11px] text-gray-500">
-                        {services.filter(s => s.status === 'pending').length} service(s) en attente d'approbation
-                    </p>
+                    
                 </div>
                 <div className="flex items-center gap-2">
                     <div className="relative">
@@ -170,7 +167,6 @@ const ServicesManagement = () => {
                 </div>
             </div>
 
-            {/* Stats */}
             <div className="grid grid-cols-4 gap-4">
                 {[
                     { label: 'En attente', value: services.filter(s => s.status === 'pending').length, color: 'bg-yellow-500', icon: 'pending' },
@@ -179,7 +175,7 @@ const ServicesManagement = () => {
                     { label: 'Total', value: services.length, color: 'bg-[#1B4F72]', icon: 'total' }
                 ].map((stat) => (
                     <div key={stat.label} className="bg-white border border-gray-200 p-4 flex items-center gap-3">
-                        <div className={`w-10 h-10 ${stat.color} flex items-center justify-center`}>
+                        <div className={`w-10 h-10 ${stat.color} flex items-center justify-center  rounded-full `}>
                             <Briefcase className="w-5 h-5 text-white" />
                         </div>
                         <div>
@@ -190,7 +186,6 @@ const ServicesManagement = () => {
                 ))}
             </div>
 
-            {/* Services Grid/List */}
             {viewMode === 'grid' ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {filteredServices.map((service) => (
@@ -219,11 +214,9 @@ const ServicesManagement = () => {
                 </div>
             )}
 
-            {/* Detail Modal */}
             {selectedService && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 overflow-y-auto">
                     <div className="bg-white w-full max-w-4xl my-8 border border-gray-200">
-                        {/* Modal content - similar to previous but with full details */}
                         <div className="p-4 border-b border-gray-200 flex items-center justify-between sticky top-0 bg-white">
                             <div>
                                 <h3 className="text-[16px] font-bold text-[#1B4F72]">{selectedService.title}</h3>
@@ -238,9 +231,7 @@ const ServicesManagement = () => {
                         </div>
 
                         <div className="grid lg:grid-cols-2 gap-0">
-                            {/* Left: Images & Basic Info */}
                             <div className="p-4 space-y-4 border-r border-gray-200">
-                                {/* Image gallery */}
                                 <div className="space-y-2">
                                     <div className="h-64 bg-gray-100 relative">
                                         {selectedService.images?.[0] ? (
@@ -266,7 +257,6 @@ const ServicesManagement = () => {
                                     )}
                                 </div>
 
-                                {/* Price & Details */}
                                 <div className="grid grid-cols-2 gap-3">
                                     <div className="bg-[#D35400]/10 p-3 border border-[#D35400]/20">
                                         <p className="text-[10px] text-gray-500">Tarif</p>
@@ -295,9 +285,7 @@ const ServicesManagement = () => {
                                 </div>
                             </div>
 
-                            {/* Right: Artisan & Approval */}
                             <div className="p-4 space-y-4">
-                                {/* Status */}
                                 <div className={`
                                     p-3 border
                                     ${selectedService.status === 'pending' ? 'bg-yellow-50 border-yellow-200' : ''}
@@ -321,7 +309,6 @@ const ServicesManagement = () => {
                                     )}
                                 </div>
 
-                                {/* Artisan Profile */}
                                 <div className="border border-gray-200 p-4">
                                     <h4 className="text-[13px] font-bold text-[#1B4F72] mb-3">Profil Artisan</h4>
                                     <div className="flex items-start gap-3 mb-3">
@@ -376,7 +363,6 @@ const ServicesManagement = () => {
                                     </div>
                                 </div>
 
-                                {/* Description */}
                                 <div className="border border-gray-200 p-4">
                                     <h4 className="text-[12px] font-bold text-[#1B4F72] mb-2">Description du service</h4>
                                     <p className="text-[12px] text-gray-700 leading-relaxed">
@@ -384,7 +370,6 @@ const ServicesManagement = () => {
                                     </p>
                                 </div>
 
-                                {/* Actions */}
                                 {selectedService.status === 'pending' && (
                                     <div className="flex gap-3">
                                         <button 
