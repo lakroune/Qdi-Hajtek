@@ -28,10 +28,8 @@ const JobCard = ({
     if (layout === 'list') {
         return (
             <div className={`flex items-center gap-4 p-4 bg-white border border-gray-200 hover:border-[#D35400] transition-colors ${job.urgency === 'urgent' && job.status === 'pending' ? 'bg-red-50/50' : ''}`}>
-                {/* Urgency indicator */}
                 <div className={`w-2 h-24 flex-shrink-0 ${getUrgencyColor(job.urgency)}`}></div>
 
-                {/* Content */}
                 <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between">
                         <div>
@@ -65,7 +63,6 @@ const JobCard = ({
                     </div>
                 </div>
 
-                {/* Actions */}
                 {showActions && job.status === 'pending' && (
                     <div className="flex items-center gap-1 flex-shrink-0">
                         <button 
@@ -95,7 +92,6 @@ const JobCard = ({
         );
     }
 
-    // Grid layout
     return (
         <div className={`bg-white border border-gray-200 hover:border-[#D35400] transition-all group ${job.urgency === 'urgent' && job.status === 'pending' ? 'ring-2 ring-red-200' : ''}`}>
             {/* Header with urgency */}

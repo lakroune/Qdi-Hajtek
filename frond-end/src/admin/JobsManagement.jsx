@@ -141,15 +141,14 @@ const JobsManagement = () => {
                 </div>
             </div>
 
-            {/* Alert Urgences */}
-            {jobs.filter(j => j.urgency === 'urgent' && j.status === 'pending').length > 0 && (
+            {/* {jobs.filter(j => j.urgency === 'urgent' && j.status === 'pending').length > 0 && (
                 <div className="bg-red-50 border border-red-200 p-3 flex items-center gap-2">
                     <AlertTriangle className="w-5 h-5 text-red-600" />
                     <p className="text-[12px] text-red-700">
                         <strong>Attention:</strong> {jobs.filter(j => j.urgency === 'urgent' && j.status === 'pending').length} offre(s) urgente(s) nécessitent une approbation rapide
                     </p>
                 </div>
-            )}
+            )} */}
 
             {/* Stats */}
             <div className="grid grid-cols-5 gap-3">
@@ -161,7 +160,7 @@ const JobsManagement = () => {
                     { label: 'Total', value: jobs.length, color: 'bg-[#1B4F72]' }
                 ].map((stat) => (
                     <div key={stat.label} className="bg-white border border-gray-200 p-3 flex items-center gap-3">
-                        <div className={`w-10 h-10 ${stat.color} flex items-center justify-center`}>
+                        <div className={`w-10 h-10 ${stat.color} flex items-center justify-center  rounded-full `}>
                             <FileText className="w-5 h-5 text-white" />
                         </div>
                         <div>
@@ -172,7 +171,6 @@ const JobsManagement = () => {
                 ))}
             </div>
 
-            {/* Jobs Grid/List */}
             {viewMode === 'grid' ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {filteredJobs.map((job) => (
@@ -201,7 +199,6 @@ const JobsManagement = () => {
                 </div>
             )}
 
-            {/* Detail Modal - Similar structure to ServicesManagement */}
             {selectedJob && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 overflow-y-auto">
                     <div className="bg-white w-full max-w-3xl my-8 border border-gray-200">
@@ -232,7 +229,6 @@ const JobsManagement = () => {
                         </div>
 
                         <div className="p-6 space-y-6">
-                            {/* Status & Budget */}
                             <div className="grid grid-cols-2 gap-4">
                                 <div className={`
                                     p-4 border
@@ -258,7 +254,6 @@ const JobsManagement = () => {
                                 </div>
                             </div>
 
-                            {/* Client Info */}
                             <div className="border border-gray-200 p-4">
                                 <h4 className="text-[13px] font-bold text-[#1B4F72] mb-4">Informations Client</h4>
                                 <div className="flex items-start gap-4">
