@@ -19,29 +19,7 @@ const ReportsManagement = () => {
             date: '2024-01-15 14:30',
             status: 'pending',
             priority: 'high'
-        },
-        { 
-            id: 1235, 
-            type: 'client', 
-            subject: 'Ahmed Benali',
-            reporter: 'Karim Plombier',
-            reason: 'Non paiement',
-            description: 'Le client refuse de payer la totalité du devis convenu',
-            date: '2024-01-15 10:15',
-            status: 'resolved',
-            priority: 'medium'
-        },
-        { 
-            id: 1236, 
-            type: 'service', 
-            subject: 'Intervention #4567',
-            reporter: 'Sofia Menuiserie',
-            reason: 'Litige qualité',
-            description: 'Le client n\'est pas satisfait de la qualité des matériaux',
-            date: '2024-01-14 16:45',
-            status: 'investigating',
-            priority: 'low'
-        },
+        } 
     ];
 
     const getStatusBadge = (status) => {
@@ -68,11 +46,9 @@ const ReportsManagement = () => {
 
     return (
         <div className="space-y-4">
-            {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-[18px] font-bold text-[#1B4F72]">Signalements</h1>
-                    <p className="text-[11px] text-gray-500">Gérez les plaintes et litiges</p>
                 </div>
                 <div className="flex items-center gap-2">
                     <div className="relative">
@@ -96,16 +72,15 @@ const ReportsManagement = () => {
                 </div>
             </div>
 
-            {/* Stats */}
-            <div className="grid grid-cols-4 gap-4">
+            <div className="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1  gap-4">
                 {[
                     { label: 'Total', value: 156, color: 'bg-[#1B4F72]' },
                     { label: 'En attente', value: 12, color: 'bg-yellow-500' },
                     { label: 'En cours', value: 8, color: 'bg-blue-500' },
                     { label: 'Résolus', value: 136, color: 'bg-green-500' },
                 ].map((stat) => (
-                    <div key={stat.label} className="bg-white border border-gray-200 p-3 flex items-center gap-3">
-                        <div className={`w-10 h-10 ${stat.color} flex items-center justify-center`}>
+                    <div key={stat.label} className="bg-white border border-orange-700 p-3 flex items-center gap-3">
+                        <div className={`w-10 h-10 ${stat.color} flex rounded-full items-center justify-center`}>
                             <Flag className="w-5 h-5 text-white" />
                         </div>
                         <div>
@@ -116,11 +91,10 @@ const ReportsManagement = () => {
                 ))}
             </div>
 
-            {/* Table */}
             <div className="bg-white border border-gray-200">
                 <div className="overflow-x-auto">
                     <table className="w-full">
-                        <thead className="bg-gray-50 border-b border-gray-200">
+                        <thead className="bg-gray-50 border-b border-orange-700">
                             <tr>
                                 <th className="px-4 py-3 text-left text-[11px] font-semibold text-gray-600">ID</th>
                                 <th className="px-4 py-3 text-left text-[11px] font-semibold text-gray-600">Type</th>
@@ -177,7 +151,6 @@ const ReportsManagement = () => {
                 </div>
             </div>
 
-            {/* Detail Modal */}
             {selectedReport && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
                     <div className="bg-white w-full max-w-lg border border-gray-200">
