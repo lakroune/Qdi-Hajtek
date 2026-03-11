@@ -24,13 +24,14 @@ import ResetPasswordPage from './auth/ResetPasswordPage';
 
 import axiosClient from './api/axios-client';
 import { useState, useEffect } from 'react';
+import ArtisanPortfolioPage from './artisan/ArtisanPortfolioPage';
 
 function App() {
 
   const [user, setUser] = useState(null);
   const [estAuthentifie, setAuthChecked] = useState(false);
 
-  
+
   return (
     <>
       {/* <Header /> */}
@@ -40,7 +41,6 @@ function App() {
 
 
 
-        <Route path="/" element={<HomePage />} />
 
         <Route path="/auth" element={<div className="auth-layout"><Outlet /></div>}>
           <Route index element={<LoginPage />} />
@@ -51,20 +51,20 @@ function App() {
           <Route path="confirme-email" element={<ConfirmEmailPage />} />
         </Route>
 
-        <Route path="/client" element={<div className="auth-layout"><Header estAuthentifie={true} nomUtilisateur={"nom"} notifications={4} messages={3}  /><Outlet /> <Footer /></div>}>
+        <Route path="/" element={<div className="auth-layout"><Header estAuthentifie={true} nomUtilisateur={"nom"} notifications={4} messages={3} /><Outlet /> <Footer /></div>}>
           <Route index element={<HomePage />} />
           <Route path="settings" element={<SettingsPage />} />
           <Route path="messages" element={<MessagesPage />} />
           <Route path="messages/:conversationId" element={<ConversationPage />} />
           <Route path="s" element={<ClientAddJob />} />
-        </Route>
-
-
-        <Route path="artisan" element={<div className="auth-layout"><Outlet /></div>}>
+          <Route path="p" element={<ArtisanPortfolioPage />} />
           <Route path="a" element={<ArtisanAddService />} />
           <Route path="z" element={<ClientAddJob />} />
           <Route path="e" element={<ClientAddJob />} />
         </Route>
+
+
+
 
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<DashboardHome />} />

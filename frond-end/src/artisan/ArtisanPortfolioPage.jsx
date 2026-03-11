@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { 
+import {
     Star, MapPin, Phone, Mail, Clock, CheckCircle,
     Award, Briefcase, Heart, Share2, Flag, Calendar,
     ChevronLeft, ChevronRight, MessageCircle
@@ -27,8 +27,6 @@ const ArtisanPortfolioPage = () => {
         address: '123 Boulevard Mohammed V, Casablanca',
         phone: '+212 6 12 34 56 78',
         email: 'ahmed.benali@email.com',
-        isVerified: true,
-        isOnline: true,
         about: `Plombier professionnel avec plus de 15 ans d'expérience dans la réparation et l'installation sanitaire.`,
         badges: ['Top Rated 2024', 'Urgence 24/7', 'Garantie 2 ans'],
         services: [
@@ -124,30 +122,25 @@ const ArtisanPortfolioPage = () => {
 
     return (
         <div className="min-h-screen bg-white">
-            <Header isAuthenticated={true} userType="client" userName="Client" notifications={8} messages={2} />
-
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-24 pt-6 pb-12">
-                
                 
                 <div className="border border-gray-200 p-4 mb-4">
                     <div className="flex gap-4">
-                        <div className="relative flex-shrink-0">
+                        <div className="relative flex-shrink-0 ">
                             <img
                                 src={artisan.avatar}
                                 alt={artisan.name}
-                                className="w-20 h-20 object-cover border border-gray-200"
+                                className="w-25 h-25 object-cover border border-gray-200"
                             />
-                            {artisan.isOnline && (
-                                <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></span>
-                            )}
+
                         </div>
 
                         <div className="flex-1 min-w-0">
                             <div className="flex items-start justify-between gap-2">
                                 <div>
                                     <h1 className="text-[15px] font-bold text-[#1B4F72] truncate">{artisan.name}</h1>
-                                    <p className="text-[12px] text-[#D35400] font-medium">{artisan.specialty}</p>
-                                    
+                                    <p className="text-[11px] text-[#D35400] font-medium">{artisan.specialty}</p>
+
                                     <div className="flex items-center gap-2 mt-1 text-[11px] text-gray-600">
                                         <span className="flex items-center gap-0.5">
                                             <Star className="w-3 h-3 text-[#D35400] fill-current" />
@@ -180,13 +173,7 @@ const ArtisanPortfolioPage = () => {
                                 </div>
                             </div>
 
-                            <div className="flex flex-wrap gap-1.5 mt-2">
-                                {artisan.badges.map((badge, idx) => (
-                                    <span key={idx} className="px-2 py-0.5 bg-[#1B4F72]/10 text-[#1B4F72] text-[10px] font-medium border border-[#1B4F72]/20">
-                                        {badge}
-                                    </span>
-                                ))}
-                            </div>
+
                         </div>
                     </div>
 
@@ -202,34 +189,10 @@ const ArtisanPortfolioPage = () => {
                         </a>
                     </div>
 
-                    <div className="flex gap-6 mt-3 pt-3 border-t border-gray-100">
-                        <div>
-                            <p className="text-[14px] font-bold text-[#1B4F72]">{artisan.stats.responseTime}</p>
-                            <p className="text-[10px] text-gray-500">Réponse</p>
-                        </div>
-                        <div>
-                            <p className="text-[14px] font-bold text-[#1B4F72]">{artisan.stats.completionRate}</p>
-                            <p className="text-[10px] text-gray-500">Terminés</p>
-                        </div>
-                        <div>
-                            <p className="text-[14px] font-bold text-[#1B4F72]">{artisan.stats.repeatCustomers}</p>
-                            <p className="text-[10px] text-gray-500">Fidèles</p>
-                        </div>
-                    </div>
 
-                    <div className="flex gap-2 mt-3">
-                        <button className="flex-1 py-2.5 bg-[#D35400] hover:bg-[#A04000] text-white text-[12px] font-semibold transition-colors flex items-center justify-center gap-1.5">
-                            <MessageCircle className="w-3.5 h-3.5" />
-                            Contacter
-                        </button>
-                        <button className="flex-1 py-2.5 bg-[#1B4F72] hover:bg-[#154360] text-white text-[12px] font-semibold transition-colors flex items-center justify-center gap-1.5">
-                            <Calendar className="w-3.5 h-3.5" />
-                            Prendre RDV
-                        </button>
-                    </div>
                 </div>
 
-                {/* Tabs */}
+                {/* navigation  de entren services et avis */}
                 <div className="border-b border-gray-200 mb-4">
                     <div className="flex">
                         {tabs.map((tab) => (
@@ -254,15 +217,13 @@ const ArtisanPortfolioPage = () => {
                     </div>
                 </div>
 
-                {/* PORTFOLIO & SERVICES  */}
                 {activeTab === 'portfolio' && (
-                    <div className="grid md:grid-cols-2 gap-4">
+                    <div className="grid xl:grid-cols-3 md:grid-cols-2  grid gap-4 ">
                         {artisan.services.map((service) => (
                             <div key={service.id} className="border border-gray-200">
-                                {/* Grande image principale */}
-                                <div className="aspect-[4/3] relative overflow-hidden bg-gray-100">
-                                    <img 
-                                        src={service.images[0]} 
+                                <div className="aspect-[4/2] relative overflow-hidden bg-gray-100">
+                                    <img
+                                        src={service.images[0]}
                                         alt={service.title}
                                         className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                                     />
@@ -273,15 +234,14 @@ const ArtisanPortfolioPage = () => {
                                     )}
                                 </div>
 
-                                {/* les images */}
                                 {service.images.length > 1 && (
                                     <div className="flex gap-1 p-2 border-t border-gray-100">
                                         {service.images.slice(1, 4).map((img, idx) => (
                                             <div key={idx} className="w-16 h-16 flex-shrink-0 border border-gray-200 overflow-hidden">
-                                                <img 
-                                                    src={img} 
+                                                <img
+                                                    src={img}
                                                     alt=""
-                                                    className="w-full h-full object-cover hover:opacity-80 transition-opacity cursor-pointer"
+                                                    className="w-16 h-full object-cover hover:opacity-80 transition-opacity cursor-pointer"
                                                     onClick={() => {
                                                         setCurrentImageIndex(idx);
                                                         setSelectedImage({ src: img, title: service.title });
@@ -292,11 +252,10 @@ const ArtisanPortfolioPage = () => {
                                     </div>
                                 )}
 
-                                {/* Info service */}
                                 <div className="p-3 border-t border-gray-100">
                                     <h3 className="text-[13px] font-bold text-[#1B4F72] mb-1">{service.title}</h3>
                                     <p className="text-[11px] text-gray-600 line-clamp-2 mb-2">{service.description}</p>
-                                    
+
                                     <div className="flex items-center gap-3 text-[10px] text-gray-500 mb-3">
                                         <span className="flex items-center gap-0.5">
                                             <Clock className="w-3 h-3" />
@@ -332,9 +291,9 @@ const ArtisanPortfolioPage = () => {
                                         </div>
                                         <div className="flex items-center gap-0.5 my-1">
                                             {[...Array(5)].map((_, i) => (
-                                                <Star 
-                                                    key={i} 
-                                                    className={`w-3 h-3 ${i < review.rating ? 'text-[#D35400] fill-current' : 'text-gray-200'}`} 
+                                                <Star
+                                                    key={i}
+                                                    className={`w-3 h-3 ${i < review.rating ? 'text-[#D35400] fill-current' : 'text-gray-200'}`}
                                                 />
                                             ))}
                                         </div>
