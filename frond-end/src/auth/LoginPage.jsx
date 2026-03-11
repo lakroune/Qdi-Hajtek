@@ -91,24 +91,7 @@ const LoginPage = () => {
           </div>
 
           <div className="space-y-3">
-            <div className="flex items-center gap-3 text-[12px] text-white/90">
-              <div className="w-8 h-8 bg-white/10 flex items-center justify-center">
-                <Shield className="w-4 h-4 text-[#D35400]" />
-              </div>
-              <span>Paiement sécurisé et garanti</span>
-            </div>
-            <div className="flex items-center gap-3 text-[12px] text-white/90">
-              <div className="w-8 h-8 bg-white/10 flex items-center justify-center">
-                <Check className="w-4 h-4 text-[#D35400]" />
-              </div>
-              <span>Artisans vérifiés et notés</span>
-            </div>
-            <div className="flex items-center gap-3 text-[12px] text-white/90">
-              <div className="w-8 h-8 bg-white/10 flex items-center justify-center">
-                <Check className="w-4 h-4 text-[#D35400]" />
-              </div>
-              <span>Intervention rapide 24h/24</span>
-            </div>
+            
           </div>
         </div>
       </div>

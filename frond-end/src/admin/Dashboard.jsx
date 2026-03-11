@@ -7,17 +7,14 @@ import {
   Bell, 
   Search, 
   Menu, 
-  X, 
   TrendingUp, 
   TrendingDown, 
   MoreVertical,
   ChevronRight,
   Download,
   Filter,
-  Plus
 } from 'lucide-react';
 
-// Composant Card pour les métriques
 const MetricCard = ({ title, value, change, trend, icon: Icon }) => (
   <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
     <div className="flex justify-between items-start mb-4">
@@ -34,7 +31,6 @@ const MetricCard = ({ title, value, change, trend, icon: Icon }) => (
   </div>
 );
 
-// Composant pour le graphique simple (simulation visuelle)
 const ChartSection = () => (
   <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 mb-6">
     <div className="flex justify-between items-center mb-6">
@@ -52,7 +48,6 @@ const ChartSection = () => (
       </div>
     </div>
     
-    {/* Simulation de graphique avec barres */}
     <div className="h-64 flex items-end justify-between gap-2 px-4">
       {[40, 65, 45, 80, 55, 90, 70, 85, 60, 75, 50, 95].map((height, index) => (
         <div key={index} className="flex-1 flex flex-col items-center gap-2 group cursor-pointer">
@@ -71,7 +66,6 @@ const ChartSection = () => (
   </div>
 );
 
-// Données du tableau
 const recentUsers = [
   { id: 1, name: "Ahmed Benali", email: "ahmed@example.com", status: "Active", role: "Admin", lastActive: "2 min ago" },
   { id: 2, name: "Sara Alami", email: "sara@example.com", status: "Active", role: "Editor", lastActive: "1 hour ago" },
@@ -93,11 +87,9 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex font-sans">
-      {/* Sidebar */}
       <aside 
         className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-[#1B4F72] text-white transition-all duration-300 flex flex-col fixed h-full z-20`}
       >
-        {/* Logo */}
         <div className="h-16 flex items-center justify-center border-b border-white/10">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-[#D35400] rounded-lg flex items-center justify-center shadow-lg">
@@ -107,7 +99,6 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Navigation */}
         <nav className="flex-1 py-6 px-3">
           <ul className="space-y-2">
             {menuItems.map((item) => (
@@ -128,7 +119,6 @@ const Dashboard = () => {
           </ul>
         </nav>
 
-        {/* User Profile Mini */}
         <div className="p-4 border-t border-white/10">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#D35400] to-orange-400 flex items-center justify-center text-white font-bold">
@@ -144,9 +134,7 @@ const Dashboard = () => {
         </div>
       </aside>
 
-      {/* Main Content */}
       <main className={`flex-1 transition-all duration-300 ${sidebarOpen ? 'ml-64' : 'ml-20'}`}>
-        {/* Header */}
         <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-8 sticky top-0 z-10">
           <div className="flex items-center gap-4">
             <button 
@@ -176,15 +164,12 @@ const Dashboard = () => {
           </div>
         </header>
 
-        {/* Dashboard Content */}
         <div className="p-8">
-          {/* Page Title */}
           <div className="mb-8">
             <h1 className="text-2xl font-bold text-gray-900 mb-2">Dashboard Overview</h1>
             <p className="text-gray-500">Welcome back! Here's what's happening with your projects.</p>
           </div>
 
-          {/* Metrics Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <MetricCard 
               title="Total Users" 
@@ -216,10 +201,8 @@ const Dashboard = () => {
             />
           </div>
 
-          {/* Chart Section */}
           <ChartSection />
 
-          {/* Recent Activity Table */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
             <div className="p-6 border-b border-gray-100 flex justify-between items-center">
               <div>

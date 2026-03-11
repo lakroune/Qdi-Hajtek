@@ -117,24 +117,7 @@ const RegisterPage = () => {
                     </div>
 
                     <div className="space-y-3 flex gap-2">
-                        <div className="flex items-center gap-3 text-[12px] text-white/90">
-                            <div className="w-8 h-8 bg-white/10 flex items-center justify-center">
-                                <Shield className="w-4 h-4 text-[#D35400]" />
-                            </div>
-                            <span>Paiement sécurisé</span>
-                        </div>
-                        <div className="flex items-center gap-3 text-[12px] text-white/90">
-                            <div className="w-8 h-8 bg-white/10 flex items-center justify-center">
-                                <Check className="w-4 h-4 text-[#D35400]" />
-                            </div>
-                            <span>Profils vérifiés</span>
-                        </div>
-                        <div className="flex items-center gap-3 text-[12px] text-white/90">
-                            <div className="w-8 h-8 bg-white/10 flex items-center justify-center">
-                                <Clock className="w-4 h-4 text-[#D35400]" />
-                            </div>
-                            <span>Support 24/7</span>
-                        </div>
+
                     </div>
                 </div>
             </div>

@@ -25,7 +25,7 @@ const DashboardHome = () => {
                         className="bg-white border border-gray-200 p-4 hover:border-[#D35400] transition-colors"
                     >
                         <div className="flex items-center justify-between mb-3">
-                            <div className={`w-10 h-10 ${stat.color} flex items-center justify-center`}>
+                            <div className={`w-10 h-10 ${stat.color} flex items-center justify-center rounded-full `}>
                                 <stat.icon className="w-5 h-5" />
                             </div>
                             <span className="text-[20px] font-bold text-[#1B4F72]">{stat.value}</span>
