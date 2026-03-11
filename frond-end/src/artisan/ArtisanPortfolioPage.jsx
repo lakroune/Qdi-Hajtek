@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import {
-    Star, MapPin, Phone, Mail, Clock, CheckCircle,
-    Award, Briefcase, Heart, Share2, Flag, Calendar,
-    ChevronLeft, ChevronRight, MessageCircle
+    Star, MapPin, Phone, Mail, Clock,
+    Briefcase, Heart, Share2,
+    ChevronLeft, ChevronRight
 } from 'lucide-react';
-import Header from '../components/Header/Header';
-import Footer from '../components/footer/Footer';
 
 const ArtisanPortfolioPage = () => {
     const [activeTab, setActiveTab] = useState('portfolio');
@@ -123,7 +121,7 @@ const ArtisanPortfolioPage = () => {
     return (
         <div className="min-h-screen bg-white">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-24 pt-6 pb-12">
-                
+
                 <div className="border border-gray-200 p-4 mb-4">
                     <div className="flex gap-4">
                         <div className="relative flex-shrink-0 ">
@@ -192,7 +190,6 @@ const ArtisanPortfolioPage = () => {
 
                 </div>
 
-                {/* navigation  de entren services et avis */}
                 <div className="border-b border-gray-200 mb-4">
                     <div className="flex">
                         {tabs.map((tab) => (
@@ -275,7 +272,6 @@ const ArtisanPortfolioPage = () => {
                     </div>
                 )}
 
-                {/* AVIS */}
                 {activeTab === 'reviews' && (
                     <div className="space-y-3">
                         {artisan.reviews.map((review) => (
@@ -298,12 +294,7 @@ const ArtisanPortfolioPage = () => {
                                             ))}
                                         </div>
                                         <p className="text-[11px] text-gray-600">{review.comment}</p>
-                                        {review.verified && (
-                                            <span className="inline-flex items-center gap-0.5 mt-1 text-[9px] text-green-600">
-                                                <CheckCircle className="w-3 h-3" />
-                                                Achat vérifié
-                                            </span>
-                                        )}
+
                                     </div>
                                 </div>
                             </div>
@@ -312,7 +303,6 @@ const ArtisanPortfolioPage = () => {
                 )}
             </div>
 
-            {/* Lightbox */}
             {selectedImage && (
                 <div className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4">
                     <button
@@ -344,7 +334,6 @@ const ArtisanPortfolioPage = () => {
                 </div>
             )}
 
-            <Footer />
         </div>
     );
 };
