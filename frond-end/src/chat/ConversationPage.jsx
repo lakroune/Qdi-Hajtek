@@ -1,15 +1,13 @@
 import { useState, useRef, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import {   Link } from 'react-router-dom';
 import {
-    ArrowLeft, Phone, MoreHorizontal,
+    ArrowLeft,
     Send, Smile, Paperclip,
     Check, CheckCheck, Clock, PhoneCall
 } from 'lucide-react';
-import Header from '../components/Header/Header';
 import FileUpload from '../components/inputs/FileUpload';
 
 const ConversationPage = () => {
-    const { conversationId } = useParams();
     const messagesEndRef = useRef(null);
     const [newMessage, setNewMessage] = useState('');
     const [showAttachment, setShowAttachment] = useState(false);
@@ -72,7 +70,7 @@ const ConversationPage = () => {
             <div className="max-w-6xl mx-auto mt-16 h-[calc(100vh-64px)]">
                 <div className="flex h-full border border-gray-200 bg-white">
 
-                    <div className="w-16 md:flex-none border-r border-gray-200 bg-gray-50 flex flex-col items-center py-4">
+                    <div className="w-16 hidden md:flex border-r border-gray-200 bg-gray-50 flex flex-col items-center py-4">
                         <Link
                             to="/messages"
                             className="p-2 text-gray-400 hover:text-[#D35400] hover:bg-[#D35400]/10 transition-colors"
@@ -85,7 +83,14 @@ const ConversationPage = () => {
 
                         <div className="flex items-center justify-between p-3 border-b border-gray-200 bg-white">
                             <div className="flex items-center gap-3">
+                                <Link
+                                    to="/messages"
+                                    className="p-2 text-gray-400 hover:text-[#D35400] hover:bg-[#D35400]/10 transition-colors md:hidden"
+                                >
+                                    <ArrowLeft className="w-5 h-5" />
+                                </Link>
                                 <div className="relative">
+
                                     <div className="w-10 h-10 bg-[#1B4F72]/10 flex items-center justify-center rounded-full ">
                                         <span className="text-[14px] font-bold text-[#1B4F72]">
                                             {conversation.user.name.charAt(0)}
