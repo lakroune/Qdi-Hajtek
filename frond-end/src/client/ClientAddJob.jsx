@@ -147,7 +147,7 @@ const ClientAddJob = () => {
 
                  
 
-                {step === 2 && (
+                {step === 1 && (
                     <div className="bg-white border border-gray-200 p-6 space-y-6">
                         <div>
                             <Input
@@ -329,7 +329,7 @@ const ClientAddJob = () => {
                     </div>
                 )}
 
-                {step === 1 && (
+                {step === 2 && (
                     <div className="bg-white border border-gray-200 p-6 space-y-6">
                         <div className="text-center mb-6">
                             <div className="w-12 h-12 bg-[#1B4F72]/10 flex items-center justify-center mx-auto mb-3">

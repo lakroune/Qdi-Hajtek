@@ -89,13 +89,13 @@ const ArtisanAddService = () => {
         return Object.keys(newErrors).length === 0;
     };
 
-    const handleNext = () => {
+    const btnNextStep = () => {
         if (validateStep(step)) {
             setStep(step + 1);
         }
     };
 
-    const handleBack = () => {
+    const btnBackStep = () => {
         setStep(step - 1);
     };
 
@@ -160,41 +160,18 @@ const ArtisanAddService = () => {
         <div className="min-h-screen bg-gray-50">
 
 
-            <div className="max-w-3xl mx-auto px-4 py-8">
+            <div className="md:w-[90%] mx-auto px-4 py-8">
 
-                <div className="mb-6">
+                <div className="mt-6 mb-4">
                     <h1 className="text-[20px] font-bold text-[#1B4F72]">Ajouter un service</h1>
                     <p className="text-[12px] text-gray-500 mt-1">
                         Décrivez votre prestation pour attirer des clients
                     </p>
                 </div>
 
-                <div className="flex items-center mb-8">
-                    {[1, 2, 3].map((s) => (
-                        <React.Fragment key={s}>
-                            <div className={`
-                                w-8 h-8 flex items-center justify-center text-[12px] font-bold
-                                ${step >= s ? 'bg-[#D35400] text-white' : 'bg-gray-200 text-gray-500'}
-                            `}>
-                                {s}
-                            </div>
-                            {s < 3 && (
-                                <div className={`
-                                    flex-1 h-1 mx-2
-                                    ${step > s ? 'bg-[#D35400]' : 'bg-gray-200'}
-                                `} />
-                            )}
-                        </React.Fragment>
-                    ))}
-                    <div className="ml-4 text-[11px] text-gray-500">
-                        Étape {step}/3: {
-                            step === 1 ? 'Description' :
-                                step === 2 ? 'Photos' : 'Validation'
-                        }
-                    </div>
-                </div>
 
-                {step === 1 && (
+
+                {step === 2 && (
                     <div className="bg-white border border-gray-200 p-6 space-y-6">
                         <div>
                             <Input
@@ -379,15 +356,15 @@ const ArtisanAddService = () => {
                         <div className="bg-[#1B4F72]/5 border border-[#1B4F72]/20 p-3 flex items-start gap-2">
                             <Info className="w-4 h-4 text-[#1B4F72] flex-shrink-0 mt-0.5" />
                             <p className="text-[11px] text-[#1B4F72]">
-                                Une commission de <strong>10%</strong> sera prélevée sur chaque transaction.
-                                Ex: pour un service à 500 DH, vous recevrez 450 DH.
+                                Une commission de <strong>5%</strong> sera prélevée sur chaque transaction.
+                                Ex: pour un service à 500 DH, vous recevrez 470 DH.
                             </p>
                         </div>
 
                         <div className="pt-4 border-t border-gray-100">
                             <Submit
                                 text="Continuer"
-                                onClick={handleNext}
+                                onClick={btnNextStep}
                                 icon={ArrowRight}
                                 size="md"
                             />
@@ -395,7 +372,7 @@ const ArtisanAddService = () => {
                     </div>
                 )}
 
-                {step === 2 && (
+                {step ===1 && (
                     <div className="bg-white border border-gray-200 p-6 space-y-6">
                         <div className="text-center mb-6">
                             <div className="w-12 h-12 bg-[#1B4F72]/10 flex items-center justify-center mx-auto mb-3">
@@ -457,31 +434,18 @@ const ArtisanAddService = () => {
                                 ))}
                             </div>
                         )}
-
-                        <div className="pt-4 border-t border-gray-100">
-                            <FileUpload
-                                id="service-docs"
-                                label="Documents complémentaires (optionnel)"
-                                accept=".pdf,.doc,.docx"
-                                multiple
-                                maxFiles={3}
-                                maxSize={10}
-                                value={formData.documents}
-                                onChange={(files) => updateField('documents', files)}
-                                sublabel="Devis type, catalogues, certificats... PDF, DOC"
-                            />
-                        </div>
+ 
 
                         <div className="flex gap-3 pt-4">
                             <button
-                                onClick={handleBack}
+                                onClick={btnBackStep}
                                 className="flex-1 py-3 border border-gray-200 hover:border-[#1B4F72] text-[12px] text-gray-600 hover:text-[#1B4F72] transition-colors"
                             >
                                 Retour
                             </button>
                             <Submit
                                 text="Continuer"
-                                onClick={handleNext}
+                                onClick={btnNextStep}
                                 icon={ArrowRight}
                                 size="md"
                                 className="flex-1"
@@ -582,7 +546,7 @@ const ArtisanAddService = () => {
 
                         <div className="flex gap-3 pt-4 border-t border-gray-100">
                             <button
-                                onClick={handleBack}
+                                onClick={btnBackStep}
                                 className="flex-1 py-3 border border-gray-200 hover:border-[#1B4F72] text-[12px] text-gray-600 hover:text-[#1B4F72] transition-colors"
                             >
                                 Modifier
