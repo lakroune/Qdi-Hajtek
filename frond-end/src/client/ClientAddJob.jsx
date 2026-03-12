@@ -19,7 +19,7 @@ const ClientAddJob = () => {
         description: '',
         budgetMin: '',
         budgetMax: '',
-        urgency: 'standard', // urgent | standard | planned
+        urgency: 'standard',
         preferredDate: '',
         location: '',
         address: '',
@@ -70,13 +70,13 @@ const ClientAddJob = () => {
         return Object.keys(newErrors).length === 0;
     };
 
-    const handleNext = () => {
+    const BtnNextStep = () => {
         if (validateStep(step)) {
             setStep(step + 1);
         }
     };
 
-    const handleBack = () => {
+    const BtnBackStep = () => {
         setStep(step - 1);
     };
 
@@ -137,7 +137,7 @@ const ClientAddJob = () => {
     return (
         <div className="min-h-screen bg-gray-50">
 
-            <div className="max-w-3xl mx-auto px-4 py-8 ">
+            <div className=" w-[90%] mx-auto px-4 py-8 ">
                 <div className="mt-6">
                     <h1 className="text-[20px] font-bold text-[#1B4F72]">Publier une offre de travail</h1>
                     <p className="text-[12px] text-gray-500 mt-1">
@@ -145,32 +145,9 @@ const ClientAddJob = () => {
                     </p>
                 </div>
 
-                <div className="flex items-center mb-8">
-                    {[1, 2, 3].map((s) => (
-                        <React.Fragment key={s}>
-                            <div className={`
-                                w-8 h-8 flex items-center justify-center text-[12px] font-bold
-                                ${step >= s ? 'bg-[#D35400] text-white' : 'bg-gray-200 text-gray-500'}
-                            `}>
-                                {s}
-                            </div>
-                            {s < 3 && (
-                                <div className={`
-                                    flex-1 h-1 mx-2
-                                    ${step > s ? 'bg-[#D35400]' : 'bg-gray-200'}
-                                `} />
-                            )}
-                        </React.Fragment>
-                    ))}
-                    <div className="ml-4 text-[11px] text-gray-500">
-                        Étape {step}/3: {
-                            step === 1 ? 'Informations' :
-                                step === 2 ? 'Photos' : 'Confirmation'
-                        }
-                    </div>
-                </div>
+                 
 
-                {step === 1 && (
+                {step === 2 && (
                     <div className="bg-white border border-gray-200 p-6 space-y-6">
                         <div>
                             <Input
@@ -295,7 +272,6 @@ const ClientAddJob = () => {
                             )}
                         </div>
 
-                        {/* Date souhaitée */}
                         <div>
                             <Input
                                 label="Date souhaitée d'intervention"
@@ -313,7 +289,6 @@ const ClientAddJob = () => {
                             )}
                         </div>
 
-                        {/* Localisation */}
                         <div className="grid grid-cols-2 gap-4">
                             <div>
                                 <Input
@@ -332,7 +307,7 @@ const ClientAddJob = () => {
                                 )}
                             </div>
                             <div>
-                                <Input
+                                <Input 
                                     label="Adresse complète"
                                     name="address"
                                     value={formData.address}
@@ -343,11 +318,10 @@ const ClientAddJob = () => {
                             </div>
                         </div>
 
-                        {/* Next Button */}
                         <div className="pt-4 border-t border-gray-100">
                             <Submit
                                 text="Continuer"
-                                onClick={handleNext}
+                                onClick={BtnNextStep}
                                 icon={ArrowRight}
                                 size="md"
                             />
@@ -355,8 +329,7 @@ const ClientAddJob = () => {
                     </div>
                 )}
 
-                {/* Step 2: Photos */}
-                {step === 2 && (
+                {step === 1 && (
                     <div className="bg-white border border-gray-200 p-6 space-y-6">
                         <div className="text-center mb-6">
                             <div className="w-12 h-12 bg-[#1B4F72]/10 flex items-center justify-center mx-auto mb-3">
@@ -375,12 +348,11 @@ const ClientAddJob = () => {
                             multiple
                             maxFiles={5}
                             maxSize={5}
-                            sublabel="JPG, PNG • Max 5MB par photo • 5 photos max"
+                            sublabel="JPG, PNG • Max 5MB par photo • Max 5 photos"
                             value={formData.photos}
                             onChange={(files) => updateField('photos', files)}
                         />
 
-                        {/* Preview des photos */}
                         {formData.photos.length > 0 && (
                             <div className="grid grid-cols-5 gap-2">
                                 {formData.photos.map((photo, idx) => (
@@ -411,17 +383,16 @@ const ClientAddJob = () => {
                             </div>
                         )}
 
-                        {/* Navigation */}
                         <div className="flex gap-3 pt-4 border-t border-gray-100">
                             <button
-                                onClick={handleBack}
+                                onClick={BtnBackStep}
                                 className="flex-1 py-3 border border-gray-200 hover:border-[#1B4F72] text-[12px] text-gray-600 hover:text-[#1B4F72] transition-colors"
                             >
                                 Retour
                             </button>
                             <Submit
                                 text="Continuer"
-                                onClick={handleNext}
+                                onClick={BtnNextStep}
                                 icon={ArrowRight}
                                 size="md"
                                 className="flex-1"
@@ -545,7 +516,7 @@ const ClientAddJob = () => {
                         {/* Submit */}
                         <div className="flex gap-3 pt-4 border-t border-gray-100">
                             <button
-                                onClick={handleBack}
+                                onClick={BtnBackStep}
                                 className="flex-1 py-3 border border-gray-200 hover:border-[#1B4F72] text-[12px] text-gray-600 hover:text-[#1B4F72] transition-colors"
                             >
                                 Modifier
