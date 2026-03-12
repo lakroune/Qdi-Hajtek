@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { 
-    User, Search, CheckCircle, XCircle, Eye, 
+import {
+    User, Search, CheckCircle, XCircle, Eye,
     FileText, Star, Clock, MapPin, Phone, Mail,
     Download, MoreHorizontal
 } from 'lucide-react';
@@ -29,8 +29,8 @@ const ArtisanRequests = () => {
                 certificates: ['attestation_1.pdf', 'attestation_2.pdf']
             },
             bio: 'Électricien professionnel avec plus de 7 ans d\'expérience dans le bâtiment et l\'industrie.'
-        } 
-        
+        }
+
     ];
 
     const getStatusBadge = (status) => {
@@ -60,13 +60,13 @@ const ArtisanRequests = () => {
                 <div className="flex items-center gap-2">
                     <div className="relative">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                        <input 
-                            type="text" 
+                        <input
+                            type="text"
                             placeholder="Rechercher..."
                             className="pl-9 pr-4 py-2 text-[12px] border border-gray-200 focus:border-[#1B4F72] focus:outline-none w-48"
                         />
                     </div>
-                    <select 
+                    <select
                         value={filter}
                         onChange={(e) => setFilter(e.target.value)}
                         className="px-3 py-2 text-[12px] border border-gray-200 focus:border-[#1B4F72] focus:outline-none bg-white"
@@ -80,20 +80,20 @@ const ArtisanRequests = () => {
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-4 gap-4">
+            <div className="grid grid-cols-4 bg-amber-50 rounded-lg gap-4">
                 {[
                     { label: 'Total', value: 48, color: 'bg-[#1B4F72]' },
                     { label: 'En attente', value: 5, color: 'bg-yellow-500' },
                     { label: 'Approuvées', value: 38, color: 'bg-green-500' },
                     { label: 'Rejetées', value: 5, color: 'bg-red-500' },
                 ].map((stat) => (
-                    <div key={stat.label} className="bg-white border border-gray-200 p-3 flex items-center gap-3">
+                    <div key={stat.label} className="bg-white border rounded-lg border-gray-200 p-3 flex items-center gap-3">
                         <div className={`w-10 h-10 ${stat.color} flex items-center justify-center rounded-full`}>
                             <User className="w-5 h-5 text-white" />
                         </div>
                         <div>
                             <p className="text-[18px] font-bold text-[#1B4F72]">{stat.value}</p>
-                            <p className="text-[10px] text-gray-500">{stat.label}</p>
+                            <p className=" hidden lg:block text-[10px] text-gray-500">{stat.label}</p>
                         </div>
                     </div>
                 ))}
@@ -138,7 +138,7 @@ const ArtisanRequests = () => {
                                     <td className="px-4 py-3">{getStatusBadge(req.status)}</td>
                                     <td className="px-4 py-3">
                                         <div className="flex items-center gap-1">
-                                            <button 
+                                            <button
                                                 onClick={() => setSelectedRequest(req)}
                                                 className="p-1.5 text-gray-400 hover:text-[#1B4F72] hover:bg-[#1B4F72]/10 transition-colors"
                                             >
@@ -171,7 +171,7 @@ const ArtisanRequests = () => {
                             <h3 className="text-[14px] font-bold text-[#1B4F72]">
                                 Demande #{selectedRequest.id}
                             </h3>
-                            <button 
+                            <button
                                 onClick={() => setSelectedRequest(null)}
                                 className="text-gray-400 hover:text-[#D35400]"
                             >

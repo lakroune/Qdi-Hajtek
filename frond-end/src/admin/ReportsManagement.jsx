@@ -72,20 +72,20 @@ const ReportsManagement = () => {
                 </div>
             </div>
 
-            <div className="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1  gap-4">
+            <div className="grid  grid-cols-4   rounded-lg bg-white  gap-4">
                 {[
                     { label: 'Total', value: 156, color: 'bg-[#1B4F72]' },
                     { label: 'En attente', value: 12, color: 'bg-yellow-500' },
                     { label: 'En cours', value: 8, color: 'bg-blue-500' },
                     { label: 'Résolus', value: 136, color: 'bg-green-500' },
                 ].map((stat) => (
-                    <div key={stat.label} className="bg-white border border-gray-200 p-3 flex items-center gap-3">
+                    <div key={stat.label} className="bg-white border border-gray-200 rounded-lg p-3 flex items-center gap-3">
                         <div className={`w-10 h-10 ${stat.color} flex rounded-full items-center justify-center`}>
                             <Flag className="w-5 h-5 text-white" />
                         </div>
                         <div>
                             <p className="text-[18px] font-bold text-[#1B4F72]">{stat.value}</p>
-                            <p className="text-[10px] text-gray-500">{stat.label}</p>
+                            <p className=" hidden lg:block text-[10px] text-gray-500">{stat.label}</p>
                         </div>
                     </div>
                 ))}
