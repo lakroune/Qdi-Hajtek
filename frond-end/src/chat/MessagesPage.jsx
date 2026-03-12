@@ -33,7 +33,7 @@ const MessagesPage = () => {
             <div className="max-w-6xl mx-auto mt-16 h-[calc(100vh-64px)]">
                 <div className="flex h-full border border-gray-200 bg-white">
 
-                    <div className="w-80 border-r border-gray-200 flex flex-col">
+                    <div className="w-full md:w-1/4 border-r border-gray-200 flex flex-col">
                         <div className="p-4 border-b border-gray-200">
                             <h1 className="text-[15px] font-bold text-[#1B4F72] mb-3">Messages</h1>
                             <div className="relative">
@@ -99,7 +99,7 @@ const MessagesPage = () => {
                         </div>
                     </div>
 
-                    <div className="flex-1 flex items-center justify-center bg-gray-50">
+                    <div className=" hidden  md:flex flex-1 flex items-center justify-center bg-gray-50">
                         <div className="text-center">
                             <div className="w-16 h-16 bg-[#1B4F72]/10 flex items-center justify-center mx-auto mb-4">
                                 <Send className="w-8 h-8 text-[#1B4F72]" />
