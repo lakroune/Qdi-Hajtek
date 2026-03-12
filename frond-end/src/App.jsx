@@ -75,6 +75,10 @@ function App() {
           <Route path='accounts' element={<AccountsManagement />} />
           <Route path='jobs' element={<JobsManagement />} />
         </Route>
+
+
+
+        
         <Route path="*" element={<NotFoundPage />} />
 
 

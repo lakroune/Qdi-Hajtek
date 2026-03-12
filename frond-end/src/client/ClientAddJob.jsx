@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
-import { 
-    Briefcase, MapPin, DollarSign, Calendar, 
+import {
+    Briefcase, MapPin, DollarSign, Calendar,
     Clock, Camera, X, CheckCircle,
     AlertCircle, ArrowRight, Loader2
 } from 'lucide-react';
-import Header from '../components/Header/Header';
-import Footer from '../components/footer/Footer';
 import Input from '../components/inputs/Input';
 import FileUpload from '../components/inputs/FileUpload';
 import Submit from '../components/buttons/Submit';
@@ -54,7 +52,7 @@ const ClientAddJob = () => {
 
     const validateStep = (currentStep) => {
         const newErrors = {};
-        
+
         if (currentStep === 1) {
             if (!formData.title.trim()) newErrors.title = 'Titre requis';
             if (!formData.category) newErrors.category = 'Catégorie requise';
@@ -89,7 +87,6 @@ const ClientAddJob = () => {
         }
 
         setIsLoading(true);
-        // Simulation API
         await new Promise(r => setTimeout(r, 1500));
         setIsLoading(false);
         setSuccess(true);
@@ -97,7 +94,6 @@ const ClientAddJob = () => {
 
     const updateField = (field, value) => {
         setFormData({ ...formData, [field]: value });
-        // Clear error when typing
         if (errors[field]) {
             setErrors({ ...errors, [field]: null });
         }
@@ -106,8 +102,7 @@ const ClientAddJob = () => {
     if (success) {
         return (
             <div className="min-h-screen bg-gray-50">
-                <Header isAuthenticated={true} userType="client" userName="Ahmed" />
-                
+
                 <div className="max-w-2xl mx-auto mt-20 px-4">
                     <div className="bg-white border border-gray-200 p-8 text-center">
                         <div className="w-16 h-16 bg-green-100 flex items-center justify-center mx-auto mb-4">
@@ -115,18 +110,18 @@ const ClientAddJob = () => {
                         </div>
                         <h2 className="text-[18px] font-bold text-[#1B4F72] mb-2">Offre publiée avec succès !</h2>
                         <p className="text-[12px] text-gray-500 mb-6">
-                            Votre demande est en attente d'approbation par notre équipe. 
+                            Votre demande est en attente d'approbation par notre équipe.
                             Vous serez notifié dès qu'un artisan vous contactera.
                         </p>
                         <div className="flex gap-3 justify-center">
-                            <a 
-                                href="/client/jobs" 
+                            <a
+                                href="/client/jobs"
                                 className="px-6 py-2.5 bg-[#1B4F72] hover:bg-[#D35400] text-white text-[12px] font-medium transition-colors"
                             >
                                 Voir mes offres
                             </a>
-                            <a 
-                                href="/" 
+                            <a
+                                href="/"
                                 className="px-6 py-2.5 border border-gray-200 hover:border-[#1B4F72] text-[12px] text-gray-600 hover:text-[#1B4F72] transition-colors"
                             >
                                 Retour à l'accueil
@@ -134,26 +129,22 @@ const ClientAddJob = () => {
                         </div>
                     </div>
                 </div>
-                
-                <Footer />
+
             </div>
         );
     }
 
     return (
         <div className="min-h-screen bg-gray-50">
-            <Header isAuthenticated={true} userType="client" userName="Ahmed" />
 
-            <div className="max-w-3xl mx-auto px-4 py-8">
-                {/* Header */}
-                <div className="mb-6">
+            <div className="max-w-3xl mx-auto px-4 py-8 ">
+                <div className="mt-6">
                     <h1 className="text-[20px] font-bold text-[#1B4F72]">Publier une offre de travail</h1>
                     <p className="text-[12px] text-gray-500 mt-1">
                         Décrivez votre besoin pour recevoir des propositions d'artisans qualifiés
                     </p>
                 </div>
 
-                {/* Progress Steps */}
                 <div className="flex items-center mb-8">
                     {[1, 2, 3].map((s) => (
                         <React.Fragment key={s}>
@@ -174,15 +165,13 @@ const ClientAddJob = () => {
                     <div className="ml-4 text-[11px] text-gray-500">
                         Étape {step}/3: {
                             step === 1 ? 'Informations' :
-                            step === 2 ? 'Photos' : 'Confirmation'
+                                step === 2 ? 'Photos' : 'Confirmation'
                         }
                     </div>
                 </div>
 
-                {/* Step 1: Informations */}
                 {step === 1 && (
                     <div className="bg-white border border-gray-200 p-6 space-y-6">
-                        {/* Titre */}
                         <div>
                             <Input
                                 label="Titre de l'offre"
@@ -200,7 +189,6 @@ const ClientAddJob = () => {
                             )}
                         </div>
 
-                        {/* Catégorie */}
                         <div>
                             <label className="block text-[11px] font-medium text-[#1B4F72] mb-1.5">
                                 Catégorie <span className="text-[#D35400]">*</span>
@@ -221,7 +209,6 @@ const ClientAddJob = () => {
                             )}
                         </div>
 
-                        {/* Description */}
                         <div>
                             <label className="block text-[11px] font-medium text-[#1B4F72] mb-1.5">
                                 Description détaillée <span className="text-[#D35400]">*</span>
@@ -248,7 +235,6 @@ const ClientAddJob = () => {
                             )}
                         </div>
 
-                        {/* Urgence */}
                         <div>
                             <label className="block text-[11px] font-medium text-[#1B4F72] mb-2">
                                 Niveau d'urgence
@@ -261,8 +247,8 @@ const ClientAddJob = () => {
                                         onClick={() => updateField('urgency', urg.id)}
                                         className={`
                                             p-3 border text-center transition-all
-                                            ${formData.urgency === urg.id 
-                                                ? urg.color + ' border-2' 
+                                            ${formData.urgency === urg.id
+                                                ? urg.color + ' border-2'
                                                 : 'border-gray-200 hover:border-[#1B4F72] bg-white'}
                                         `}
                                     >
@@ -273,7 +259,6 @@ const ClientAddJob = () => {
                             </div>
                         </div>
 
-                        {/* Budget */}
                         <div>
                             <label className="block text-[11px] font-medium text-[#1B4F72] mb-2">
                                 Budget estimé (DH) <span className="text-[#D35400]">*</span>
@@ -401,9 +386,9 @@ const ClientAddJob = () => {
                                 {formData.photos.map((photo, idx) => (
                                     <div key={idx} className="relative aspect-square bg-gray-100">
                                         {photo instanceof File ? (
-                                            <img 
-                                                src={URL.createObjectURL(photo)} 
-                                                alt="" 
+                                            <img
+                                                src={URL.createObjectURL(photo)}
+                                                alt=""
                                                 className="w-full h-full object-cover"
                                             />
                                         ) : (
@@ -449,8 +434,8 @@ const ClientAddJob = () => {
                 {step === 3 && (
                     <div className="bg-white border border-gray-200 p-6 space-y-6">
                         <h3 className="text-[14px] font-bold text-[#1B4F72] mb-4">Récapitulatif de votre offre</h3>
-                        
-                        
+
+
                         <div className="space-y-4 bg-gray-50 p-4 border border-gray-200">
                             <div className="flex justify-between py-2 border-b border-gray-200">
                                 <span className="text-[11px] text-gray-500">Titre</span>
@@ -506,9 +491,9 @@ const ClientAddJob = () => {
                                         {formData.photos.slice(0, 3).map((photo, idx) => (
                                             <div key={idx} className="w-12 h-12 bg-gray-200">
                                                 {photo instanceof File && (
-                                                    <img 
-                                                        src={URL.createObjectURL(photo)} 
-                                                        alt="" 
+                                                    <img
+                                                        src={URL.createObjectURL(photo)}
+                                                        alt=""
                                                         className="w-full h-full object-cover"
                                                     />
                                                 )}
@@ -537,7 +522,7 @@ const ClientAddJob = () => {
                                     className="mt-0.5 w-4 h-4 border-gray-300 text-[#D35400] focus:ring-[#D35400]"
                                 />
                                 <span className="text-[11px] text-gray-600 leading-relaxed">
-                                    J'accepte que mon offre soit vérifiée par l'équipe avant publication. 
+                                    J'accepte que mon offre soit vérifiée par l'équipe avant publication.
                                     Je confirme que les informations fournies sont exactes et je m'engage à honorer le paiement une fois le service réalisé.
                                 </span>
                             </label>
@@ -552,7 +537,7 @@ const ClientAddJob = () => {
                         <div className="bg-blue-50 border border-blue-200 p-3 flex items-start gap-2">
                             <Clock className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
                             <p className="text-[11px] text-blue-700">
-                                Votre offre sera examinée sous <strong>24h</strong> ouvrées. 
+                                Votre offre sera examinée sous <strong>24h</strong> ouvrées.
                                 Vous recevrez une notification dès qu'elle sera en ligne.
                             </p>
                         </div>
@@ -579,7 +564,6 @@ const ClientAddJob = () => {
                 )}
             </div>
 
-            <Footer />
         </div>
     );
 };

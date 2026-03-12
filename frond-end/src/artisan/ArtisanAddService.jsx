@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
-import { 
-    Briefcase, DollarSign, Clock, MapPin, 
-    FileText, Camera, CheckCircle, AlertCircle, 
-    ArrowRight, Loader2, X, Star, Award,
+import {
+    Briefcase, DollarSign, Clock, MapPin,
+    Camera, CheckCircle, AlertCircle,
+    ArrowRight, Loader2, X, Award,
     Wrench, Info
 } from 'lucide-react';
-import Header from '../components/Header/Header';
-import Footer from '../components/footer/Footer';
 import Input from '../components/inputs/Input';
 import FileUpload from '../components/inputs/FileUpload';
 import Submit from '../components/buttons/Submit';
@@ -21,12 +19,12 @@ const ArtisanAddService = () => {
         category: '',
         description: '',
         price: '',
-        priceType: 'hour',  
+        priceType: 'hour',
         duration: '',
         warranty: '',
         materials: '',
         location: '',
-        serviceArea: 'city', 
+        serviceArea: 'city',
         photos: [],
         documents: [],
         experience: '',
@@ -72,7 +70,7 @@ const ArtisanAddService = () => {
 
     const validateStep = (currentStep) => {
         const newErrors = {};
-        
+
         if (currentStep === 1) {
             if (!formData.title.trim()) newErrors.title = 'Titre du service requis';
             if (formData.title.length < 10) newErrors.title = 'Minimum 10 caractères';
@@ -123,8 +121,7 @@ const ArtisanAddService = () => {
     if (success) {
         return (
             <div className="min-h-screen bg-gray-50">
-                <Header isAuthenticated={true} userType="artisan" userName="Karim" />
-                
+
                 <div className="max-w-2xl mx-auto mt-20 px-4">
                     <div className="bg-white border border-gray-200 p-8 text-center">
                         <div className="w-16 h-16 bg-green-100 flex items-center justify-center mx-auto mb-4">
@@ -138,14 +135,14 @@ const ArtisanAddService = () => {
                             Délai d'approbation: 24-48h ouvrées
                         </p>
                         <div className="flex gap-3 justify-center">
-                            <a 
-                                href="/artisan/services" 
+                            <a
+                                href="/artisan/services"
                                 className="px-6 py-2.5 bg-[#1B4F72] hover:bg-[#D35400] text-white text-[12px] font-medium transition-colors"
                             >
                                 Voir mes services
                             </a>
-                            <a 
-                                href="/artisan/dashboard" 
+                            <a
+                                href="/artisan/dashboard"
                                 className="px-6 py-2.5 border border-gray-200 hover:border-[#1B4F72] text-[12px] text-gray-600 hover:text-[#1B4F72] transition-colors"
                             >
                                 Tableau de bord
@@ -153,18 +150,18 @@ const ArtisanAddService = () => {
                         </div>
                     </div>
                 </div>
-                
-                <Footer />
+
+
             </div>
         );
     }
 
     return (
         <div className="min-h-screen bg-gray-50">
-            <Header isAuthenticated={true} userType="artisan" userName="Karim" />
+
 
             <div className="max-w-3xl mx-auto px-4 py-8">
-                {/* Header */}
+
                 <div className="mb-6">
                     <h1 className="text-[20px] font-bold text-[#1B4F72]">Ajouter un service</h1>
                     <p className="text-[12px] text-gray-500 mt-1">
@@ -172,7 +169,6 @@ const ArtisanAddService = () => {
                     </p>
                 </div>
 
-                {/* Progress Steps */}
                 <div className="flex items-center mb-8">
                     {[1, 2, 3].map((s) => (
                         <React.Fragment key={s}>
@@ -193,15 +189,13 @@ const ArtisanAddService = () => {
                     <div className="ml-4 text-[11px] text-gray-500">
                         Étape {step}/3: {
                             step === 1 ? 'Description' :
-                            step === 2 ? 'Photos' : 'Validation'
+                                step === 2 ? 'Photos' : 'Validation'
                         }
                     </div>
                 </div>
 
-                {/* Step 1: Description du service */}
                 {step === 1 && (
                     <div className="bg-white border border-gray-200 p-6 space-y-6">
-                        {/* Titre */}
                         <div>
                             <Input
                                 label="Titre du service"
@@ -222,7 +216,6 @@ const ArtisanAddService = () => {
                             </p>
                         </div>
 
-                        {/* Catégorie */}
                         <div>
                             <label className="block text-[11px] font-medium text-[#1B4F72] mb-1.5">
                                 Catégorie <span className="text-[#D35400]">*</span>
@@ -243,7 +236,6 @@ const ArtisanAddService = () => {
                             )}
                         </div>
 
-                        {/* Description */}
                         <div>
                             <label className="block text-[11px] font-medium text-[#1B4F72] mb-1.5">
                                 Description détaillée <span className="text-[#D35400]">*</span>
@@ -270,7 +262,6 @@ const ArtisanAddService = () => {
                             )}
                         </div>
 
-                        {/* Tarif */}
                         <div className="grid grid-cols-2 gap-4">
                             <div>
                                 <Input
@@ -308,7 +299,6 @@ const ArtisanAddService = () => {
                             </div>
                         </div>
 
-                        {/* Durée et Garantie */}
                         <div className="grid grid-cols-2 gap-4">
                             <div>
                                 <Input
@@ -342,7 +332,6 @@ const ArtisanAddService = () => {
                             </div>
                         </div>
 
-                        {/* Matériaux */}
                         <div>
                             <Input
                                 label="Matériaux inclus"
@@ -354,7 +343,6 @@ const ArtisanAddService = () => {
                             />
                         </div>
 
-                        {/* Zone d'intervention */}
                         <div>
                             <label className="block text-[11px] font-medium text-[#1B4F72] mb-2">
                                 Zone d'intervention
@@ -367,8 +355,8 @@ const ArtisanAddService = () => {
                                         onClick={() => updateField('serviceArea', area.id)}
                                         className={`
                                             p-3 border text-center transition-all
-                                            ${formData.serviceArea === area.id 
-                                                ? 'bg-[#1B4F72] text-white border-[#1B4F72]' 
+                                            ${formData.serviceArea === area.id
+                                                ? 'bg-[#1B4F72] text-white border-[#1B4F72]'
                                                 : 'border-gray-200 hover:border-[#1B4F72] bg-white text-gray-700'}
                                         `}
                                     >
@@ -388,16 +376,14 @@ const ArtisanAddService = () => {
                             />
                         </div>
 
-                        {/* Info commission */}
                         <div className="bg-[#1B4F72]/5 border border-[#1B4F72]/20 p-3 flex items-start gap-2">
                             <Info className="w-4 h-4 text-[#1B4F72] flex-shrink-0 mt-0.5" />
                             <p className="text-[11px] text-[#1B4F72]">
-                                Une commission de <strong>10%</strong> sera prélevée sur chaque transaction. 
+                                Une commission de <strong>10%</strong> sera prélevée sur chaque transaction.
                                 Ex: pour un service à 500 DH, vous recevrez 450 DH.
                             </p>
                         </div>
 
-                        {/* Next */}
                         <div className="pt-4 border-t border-gray-100">
                             <Submit
                                 text="Continuer"
@@ -409,7 +395,6 @@ const ArtisanAddService = () => {
                     </div>
                 )}
 
-                {/* Step 2: Photos */}
                 {step === 2 && (
                     <div className="bg-white border border-gray-200 p-6 space-y-6">
                         <div className="text-center mb-6">
@@ -443,15 +428,14 @@ const ArtisanAddService = () => {
                             </p>
                         )}
 
-                        {/* Preview */}
                         {formData.photos.length > 0 && (
                             <div className="grid grid-cols-4 gap-3">
                                 {formData.photos.map((photo, idx) => (
                                     <div key={idx} className="relative aspect-square bg-gray-100 border border-gray-200">
                                         {photo instanceof File ? (
-                                            <img 
-                                                src={URL.createObjectURL(photo)} 
-                                                alt="" 
+                                            <img
+                                                src={URL.createObjectURL(photo)}
+                                                alt=""
                                                 className="w-full h-full object-cover"
                                             />
                                         ) : (
@@ -474,7 +458,6 @@ const ArtisanAddService = () => {
                             </div>
                         )}
 
-                        {/* Documents optionnels */}
                         <div className="pt-4 border-t border-gray-100">
                             <FileUpload
                                 id="service-docs"
@@ -489,7 +472,6 @@ const ArtisanAddService = () => {
                             />
                         </div>
 
-                        {/* Navigation */}
                         <div className="flex gap-3 pt-4">
                             <button
                                 onClick={handleBack}
@@ -508,12 +490,10 @@ const ArtisanAddService = () => {
                     </div>
                 )}
 
-                {/* Step 3: Validation */}
                 {step === 3 && (
                     <div className="bg-white border border-gray-200 p-6 space-y-6">
                         <h3 className="text-[14px] font-bold text-[#1B4F72] mb-4">Récapitulatif</h3>
-                        
-                        {/* Récap */}
+
                         <div className="space-y-3 bg-gray-50 p-4 border border-gray-200">
                             <div className="flex justify-between py-2 border-b border-gray-200">
                                 <span className="text-[11px] text-gray-500">Service</span>
@@ -557,19 +537,17 @@ const ArtisanAddService = () => {
                             </div>
                         </div>
 
-                        {/* Avertissement */}
                         <div className="bg-yellow-50 border border-yellow-200 p-3 flex items-start gap-2">
                             <Award className="w-4 h-4 text-yellow-600 flex-shrink-0 mt-0.5" />
                             <div>
                                 <p className="text-[11px] font-medium text-yellow-700">Engagement de qualité</p>
                                 <p className="text-[10px] text-yellow-600 mt-0.5">
-                                    En publiant ce service, vous vous engagez à respecter les délais annoncés 
+                                    En publiant ce service, vous vous engagez à respecter les délais annoncés
                                     et à fournir une prestation de qualité. Les avis des clients impacteront votre réputation.
                                 </p>
                             </div>
                         </div>
 
-                        {/* Terms */}
                         <div>
                             <label className="flex items-start gap-3 cursor-pointer">
                                 <input
@@ -582,8 +560,8 @@ const ArtisanAddService = () => {
                                     className="mt-0.5 w-4 h-4 border-gray-300 text-[#D35400] focus:ring-[#D35400]"
                                 />
                                 <span className="text-[11px] text-gray-600 leading-relaxed">
-                                    Je certifie que les informations fournies sont exactes. 
-                                    J'accepte que mon service soit vérifié avant publication et 
+                                    Je certifie que les informations fournies sont exactes.
+                                    J'accepte que mon service soit vérifié avant publication et
                                     je m'engage à respecter la <a href="#" className="text-[#D35400] hover:underline">charte qualité</a> de la plateforme.
                                 </span>
                             </label>
@@ -594,16 +572,14 @@ const ArtisanAddService = () => {
                             )}
                         </div>
 
-                        {/* Info vérification */}
                         <div className="bg-blue-50 border border-blue-200 p-3 flex items-start gap-2">
                             <Clock className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
                             <p className="text-[11px] text-blue-700">
-                                Votre service sera examiné sous <strong>24-48h</strong>. 
+                                Votre service sera examiné sous <strong>24-48h</strong>.
                                 Vous recevrez une notification dès sa mise en ligne.
                             </p>
                         </div>
 
-                        {/* Submit */}
                         <div className="flex gap-3 pt-4 border-t border-gray-100">
                             <button
                                 onClick={handleBack}
@@ -624,8 +600,6 @@ const ArtisanAddService = () => {
                     </div>
                 )}
             </div>
-
-            <Footer />
         </div>
     );
 };
