@@ -372,7 +372,7 @@ const ArtisanAddService = () => {
                     </div>
                 )}
 
-                {step ===1 && (
+                {step === 1 && (
                     <div className="bg-white border border-gray-200 p-6 space-y-6">
                         <div className="text-center mb-6">
                             <div className="w-12 h-12 bg-[#1B4F72]/10 flex items-center justify-center mx-auto mb-3">
@@ -389,9 +389,10 @@ const ArtisanAddService = () => {
                             label="Photos du service *"
                             accept="image/*"
                             multiple
-                            maxFiles={8}
-                            maxSize={5}
-                            required
+                            maxFiles={4}
+                            maxSize={1}
+                            required={true}
+                            disabledFiles={false}
                             sublabel="JPG, PNG • Max 5MB • Min 1 photo, max 8 photos"
                             value={formData.photos}
                             onChange={(files) => {
@@ -434,7 +435,7 @@ const ArtisanAddService = () => {
                                 ))}
                             </div>
                         )}
- 
+
 
                         <div className="flex gap-3 pt-4">
                             <button
