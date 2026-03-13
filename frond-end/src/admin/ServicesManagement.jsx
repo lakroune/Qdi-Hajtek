@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import   { useState } from 'react';
 import { 
-    Briefcase, Search, Filter, Grid, List, 
-    CheckCircle, XCircle, Eye, Download 
+    Briefcase, Search,  Grid, List, 
+    CheckCircle, XCircle 
 } from 'lucide-react';
 import ServiceCard from '../components/cards/ServiceCard';
 

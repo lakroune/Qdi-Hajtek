@@ -96,14 +96,7 @@ const JobsManagement = () => {
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-[18px] font-bold text-[#1B4F72]">Gestion des Offres</h1>
-                    {/* <p className="text-[11px] text-gray-500">
-                        {jobs.filter(j => j.status === 'pending').length} offre(s) en attente d'approbation
-                        {jobs.filter(j => j.urgency === 'urgent' && j.status === 'pending').length > 0 && (
-                            <span className="text-red-500 ml-2">
-                                ({jobs.filter(j => j.urgency === 'urgent' && j.status === 'pending').length} urgente(s))
-                            </span>
-                        )}
-                    </p> */}
+                    
                 </div>
                 <div className="flex items-center gap-2">
                     <div className="relative">
@@ -141,14 +134,7 @@ const JobsManagement = () => {
                 </div>
             </div>
 
-            {/* {jobs.filter(j => j.urgency === 'urgent' && j.status === 'pending').length > 0 && (
-                <div className="bg-red-50 border border-red-200 p-3 flex items-center gap-2">
-                    <AlertTriangle className="w-5 h-5 text-red-600" />
-                    <p className="text-[12px] text-red-700">
-                        <strong>Attention:</strong> {jobs.filter(j => j.urgency === 'urgent' && j.status === 'pending').length} offre(s) urgente(s) nécessitent une approbation rapide
-                    </p>
-                </div>
-            )} */}
+            
 
             {/* Stats */}
             <div className="grid grid-cols-5 gap-3">
