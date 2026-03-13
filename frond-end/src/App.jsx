@@ -22,14 +22,10 @@ import Header from './components/Header/Header';
 import ConfirmEmailPage from './auth/ConfirmEmailPage';
 import ResetPasswordPage from './auth/ResetPasswordPage';
 
-import axiosClient from './api/axios-client';
-import { useState, useEffect } from 'react';
 import ArtisanPortfolioPage from './artisan/ArtisanPortfolioPage';
-
+import ClientListOffres from './client/ClientListOffres';
 function App() {
 
-  const [user, setUser] = useState(null);
-  const [estAuthentifie, setAuthChecked] = useState(false);
 
 
   return (
@@ -57,6 +53,7 @@ function App() {
           <Route path="messages" element={<MessagesPage />} />
           <Route path="messages/:conversationId" element={<ConversationPage />} />
           <Route path="s" element={<ClientAddJob />} />
+          <Route path="/mes-offres" element={<ClientListOffres />} />
           <Route path="p" element={<ArtisanPortfolioPage />} />
           <Route path="a" element={<ArtisanAddService />} />
           <Route path="z" element={<ClientAddJob />} />

@@ -90,11 +90,10 @@ const JobCard = ({
                 )}
             </div>
         );
-    }
+    } 
 
     return (
         <div className={`bg-white border border-gray-200 hover:border-[#D35400] transition-all group ${job.urgency === 'urgent' && job.status === 'pending' ? 'ring-2 ring-red-200' : ''}`}>
-            {/* Header with urgency */}
             <div className={`h-2 ${getUrgencyColor(job.urgency)}`}></div>
             
             <div className="p-4">

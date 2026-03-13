@@ -163,7 +163,6 @@ const ArtisanRequests = () => {
                 </div>
             </div>
 
-            {/* Detail Modal */}
             {selectedRequest && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
                     <div className="bg-white w-full max-w-2xl max-h-[90vh] overflow-y-auto border border-gray-200">
@@ -180,7 +179,6 @@ const ArtisanRequests = () => {
                         </div>
 
                         <div className="p-4 space-y-4">
-                            {/* Header Info */}
                             <div className="flex items-start gap-4 pb-4 border-b border-gray-100">
                                 <div className="w-16 h-16 bg-[#1B4F72]/10 flex items-center justify-center">
                                     <span className="text-[20px] font-bold text-[#1B4F72]">
@@ -208,7 +206,6 @@ const ArtisanRequests = () => {
                                 </div>
                             </div>
 
-                            {/* Contact */}
                             <div className="grid grid-cols-2 gap-3">
                                 <div className="p-3 bg-gray-50 border border-gray-200">
                                     <div className="flex items-center gap-2 text-[11px] text-gray-500 mb-1">
@@ -226,7 +223,6 @@ const ArtisanRequests = () => {
                                 </div>
                             </div>
 
-                            {/* Bio */}
                             <div>
                                 <h5 className="text-[12px] font-semibold text-[#1B4F72] mb-2">Présentation</h5>
                                 <p className="p-3 bg-gray-50 border border-gray-200 text-[12px] text-gray-700 leading-relaxed">
@@ -234,7 +230,6 @@ const ArtisanRequests = () => {
                                 </p>
                             </div>
 
-                            {/* Documents */}
                             <div>
                                 <h5 className="text-[12px] font-semibold text-[#1B4F72] mb-2">Documents</h5>
                                 <div className="space-y-2">
@@ -273,7 +268,6 @@ const ArtisanRequests = () => {
                                 </div>
                             </div>
 
-                            {/* Actions */}
                             {selectedRequest.status === 'pending' && (
                                 <div className="flex gap-3 pt-4 border-t border-gray-200">
                                     <button className="flex-1 py-3 bg-green-500 hover:bg-green-600 text-white text-[12px] font-medium transition-colors flex items-center justify-center gap-2">

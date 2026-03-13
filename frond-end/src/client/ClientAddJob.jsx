@@ -99,12 +99,11 @@ const ClientAddJob = () => {
         }
     };
 
-    if (success) {
+    if (true) {
         return (
-            <div className="min-h-screen bg-gray-50">
-
+            <div className="min-h-screen flex items-center justify-center bg-gray-50">
                 <div className="max-w-2xl mx-auto mt-20 px-4">
-                    <div className="bg-white border border-gray-200 p-8 text-center">
+                    <div className="bg-white   p-8 text-center">
                         <div className="w-16 h-16 bg-green-100 flex items-center justify-center mx-auto mb-4">
                             <CheckCircle className="w-8 h-8 text-green-600" />
                         </div>
@@ -115,7 +114,7 @@ const ClientAddJob = () => {
                         </p>
                         <div className="flex gap-3 justify-center">
                             <a
-                                href="/client/jobs"
+                                href="/mes-offres"
                                 className="px-6 py-2.5 bg-[#1B4F72] hover:bg-[#D35400] text-white text-[12px] font-medium transition-colors"
                             >
                                 Voir mes offres
@@ -145,7 +144,7 @@ const ClientAddJob = () => {
                     </p>
                 </div>
 
-                 
+
 
                 {step === 1 && (
                     <div className="bg-white border border-gray-200 p-6 space-y-6">
@@ -307,7 +306,7 @@ const ClientAddJob = () => {
                                 )}
                             </div>
                             <div>
-                                <Input 
+                                <Input
                                     label="Adresse complète"
                                     name="address"
                                     value={formData.address}
