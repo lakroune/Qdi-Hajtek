@@ -4,7 +4,7 @@ import {
     FileText, Star, Clock, MapPin, Phone, Mail,
     Download, MoreHorizontal
 } from 'lucide-react';
-import FileUpload from '../components/inputs/FileUpload';
+
 
 const ArtisanRequests = () => {
     const [selectedRequest, setSelectedRequest] = useState(null);
@@ -29,7 +29,43 @@ const ArtisanRequests = () => {
                 certificates: ['attestation_1.pdf', 'attestation_2.pdf']
             },
             bio: 'Électricien professionnel avec plus de 7 ans d\'expérience dans le bâtiment et l\'industrie.'
-        }
+        }, {
+            id: 1,
+            firstName: 'Smail',
+            lastName: 'lakhdhar',
+            email: 'smail@email.com',
+            phone: '+212 6 12 34 56 78',
+            specialty: 'Électricité',
+            experience: '5-10 ans',
+            city: 'Safi',
+            submittedAt: '2026-03-15 09:30',
+            status: 'pending',
+            documents: {
+                cinFront: 'cin_front.pdf',
+                cinBack: 'cin_back.pdf',
+                diplomas: ['diplome.pdf'],
+                certificates: ['attestation_1.pdf', 'attestation_2.pdf']
+            },
+            bio: 'Électricien professionnel avec plus de 7 ans d\'expérience dans le bâtiment et l\'industrie.'
+        }, {
+            id: 1,
+            firstName: 'Smail',
+            lastName: 'lakhdhar',
+            email: 'smail@email.com',
+            phone: '+212 6 12 34 56 78',
+            specialty: 'Électricité',
+            experience: '5-10 ans',
+            city: 'Safi',
+            submittedAt: '2026-03-15 09:30',
+            status: 'pending',
+            documents: {
+                cinFront: 'cin_front.pdf',
+                cinBack: 'cin_back.pdf',
+                diplomas: ['diplome.pdf'],
+                certificates: ['attestation_1.pdf', 'attestation_2.pdf']
+            },
+            bio: 'Électricien professionnel avec plus de 7 ans d\'expérience dans le bâtiment et l\'industrie.'
+        },
 
     ];
 
@@ -52,7 +88,7 @@ const ArtisanRequests = () => {
     };
 
     return (
-        <div className="space-y-4">
+        <div className="space-y-4 max-h-screen">
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-[18px] font-bold text-[#1B4F72]">Demandes Artisan</h1>
@@ -104,7 +140,7 @@ const ArtisanRequests = () => {
                     <table className="w-full">
                         <thead className="bg-gray-50 border-b border-gray-200">
                             <tr>
-                                <th className="px-4 py-3 text-left text-[11px] font-semibold text-gray-600">Utilisateyr</th>
+                                <th className="px-4 py-3 text-left text-[11px] font-semibold text-gray-600">Condidat</th>
                                 <th className="px-4 py-3 text-left text-[11px] font-semibold text-gray-600">Spécialité</th>
                                 <th className="px-4 py-3 text-left text-[11px] font-semibold text-gray-600">Expérience</th>
                                 <th className="px-4 py-3 text-left text-[11px] font-semibold text-gray-600">Ville</th>
@@ -138,22 +174,30 @@ const ArtisanRequests = () => {
                                     <td className="px-4 py-3">{getStatusBadge(req.status)}</td>
                                     <td className="px-4 py-3">
                                         <div className="flex items-center gap-1">
-                                            <button
-                                                onClick={() => setSelectedRequest(req)}
-                                                className="p-1.5 text-gray-400 hover:text-[#1B4F72] hover:bg-[#1B4F72]/10 transition-colors"
-                                            >
-                                                <Eye className="w-4 h-4" />
-                                            </button>
-                                            {req.status === 'pending' && (
-                                                <>
-                                                    <button className="p-1.5 text-gray-400 hover:text-green-600 hover:bg-green-50 transition-colors">
-                                                        <CheckCircle className="w-4 h-4" />
-                                                    </button>
-                                                    <button className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors">
-                                                        <XCircle className="w-4 h-4" />
-                                                    </button>
-                                                </>
-                                            )}
+
+                                            <div className="flex flex-col items-center gap-1 flex-shrink-0">
+                                                <button
+                                                    onClick={() => onApprove(service.id)}
+                                                    className=" w-full p-1.5 text-white bg-green-600 text-[10px]  hover:bg-green-800 transition-colors"
+                                                    title="Approuver"
+                                                >
+                                                    approuver
+                                                </button>
+                                                <button
+                                                    onClick={() => onReject(service.id)}
+                                                    className="w-full p-1.5 text-white bg-red-600 text-[10px] hover:bg-red-800 transition-colors"
+                                                    title="Rejeter"
+                                                >
+                                                    rejeter
+                                                </button>
+                                                <button
+                                                    onClick={() => setSelectedRequest(req)}
+                                                    className="w-full p-1.5 text-white bg-gray-600 text-[10px] hover:bg-gray-800 transition-colors"
+                                                    title="Voir détails"
+                                                >
+                                                    Voir
+                                                </button>
+                                            </div>
                                         </div>
                                     </td>
                                 </tr>
@@ -270,11 +314,11 @@ const ArtisanRequests = () => {
 
                             {selectedRequest.status === 'pending' && (
                                 <div className="flex gap-3 pt-4 border-t border-gray-200">
-                                    <button className="flex-1 py-3 bg-green-500 hover:bg-green-600 text-white text-[12px] font-medium transition-colors flex items-center justify-center gap-2">
+                                    <button className="flex-1 py-3 bg-green-500 hover:bg-green-600 text-white text-[11px] font-medium transition-colors flex items-center justify-center gap-2">
                                         <CheckCircle className="w-4 h-4" />
                                         Approuver la demande
                                     </button>
-                                    <button className="flex-1 py-3 border border-red-500 text-red-500 hover:bg-red-50 text-[12px] font-medium transition-colors flex items-center justify-center gap-2">
+                                    <button className="flex-1 py-3 border border-red-500 text-red-500 hover:bg-red-50 text-[11px] font-medium transition-colors flex items-center justify-center gap-2">
                                         <XCircle className="w-4 h-4" />
                                         Rejeter
                                     </button>
