@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { 
-    Flag, Search, Filter, CheckCircle, XCircle, 
-    Eye, MoreHorizontal, AlertTriangle, Clock, User 
+import {
+    Flag, Search, Filter, CheckCircle, XCircle,
+    Eye, MoreHorizontal, AlertTriangle, Clock, User
 } from 'lucide-react';
 
 const ReportsManagement = () => {
@@ -9,9 +9,9 @@ const ReportsManagement = () => {
     const [selectedReport, setSelectedReport] = useState(null);
 
     const reports = [
-        { 
-            id: 1234, 
-            type: 'artisan', 
+        {
+            id: 1234,
+            type: 'artisan',
             subject: 'Karim Plombier',
             reporter: 'Ahmed Client',
             reason: 'Non professionnel',
@@ -19,7 +19,7 @@ const ReportsManagement = () => {
             date: '2024-01-15 14:30',
             status: 'pending',
             priority: 'high'
-        } 
+        }
     ];
 
     const getStatusBadge = (status) => {
@@ -53,13 +53,13 @@ const ReportsManagement = () => {
                 <div className="flex items-center gap-2">
                     <div className="relative">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                        <input 
-                            type="text" 
+                        <input
+                            type="text"
                             placeholder="Rechercher..."
                             className="pl-9 pr-4 py-2 text-[12px] border border-gray-200 focus:border-[#1B4F72] focus:outline-none w-48"
                         />
                     </div>
-                    <select 
+                    <select
                         value={filter}
                         onChange={(e) => setFilter(e.target.value)}
                         className="px-3 py-2 text-[12px] border border-gray-200 focus:border-[#1B4F72] focus:outline-none bg-white"
@@ -83,9 +83,10 @@ const ReportsManagement = () => {
                         <div className={`w-10 h-10 ${stat.color} flex rounded-full items-center justify-center`}>
                             <Flag className="w-5 h-5 text-white" />
                         </div>
+                        <p className=" hidden lg:block text-[10px] text-gray-500">{stat.label}</p>
+
                         <div>
                             <p className="text-[18px] font-bold text-[#1B4F72]">{stat.value}</p>
-                            <p className=" hidden lg:block text-[10px] text-gray-500">{stat.label}</p>
                         </div>
                     </div>
                 ))}
@@ -112,9 +113,9 @@ const ReportsManagement = () => {
                                     <td className="px-4 py-3">
                                         <span className={`
                                             px-2 py-0.5 text-[10px] 
-                                            ${report.type === 'artisan' ? 'bg-blue-100 text-blue-700' : 
-                                              report.type === 'client' ? 'bg-green-100 text-green-700' : 
-                                              'bg-purple-100 text-purple-700'}
+                                            ${report.type === 'artisan' ? 'bg-blue-100 text-blue-700' :
+                                                report.type === 'client' ? 'bg-green-100 text-green-700' :
+                                                    'bg-purple-100 text-purple-700'}
                                         `}>
                                             {report.type}
                                         </span>
@@ -130,7 +131,7 @@ const ReportsManagement = () => {
                                     <td className="px-4 py-3">{getStatusBadge(report.status)}</td>
                                     <td className="px-4 py-3">
                                         <div className="flex items-center gap-1">
-                                            <button 
+                                            <button
                                                 onClick={() => setSelectedReport(report)}
                                                 className="p-1.5 text-gray-400 hover:text-[#1B4F72] hover:bg-[#1B4F72]/10 transition-colors"
                                             >
@@ -158,7 +159,7 @@ const ReportsManagement = () => {
                             <h3 className="text-[14px] font-bold text-[#1B4F72]">
                                 Signalement #{selectedReport.id}
                             </h3>
-                            <button 
+                            <button
                                 onClick={() => setSelectedReport(null)}
                                 className="text-gray-400 hover:text-[#D35400]"
                             >

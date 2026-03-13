@@ -1,6 +1,6 @@
 import {
     MapPin, Clock, Calendar, User,
-    CheckCircle, XCircle, Eye, Phone
+    Phone
 } from 'lucide-react';
 
 const JobCard = ({
@@ -21,9 +21,9 @@ const JobCard = ({
 
     const BadgeStatut = ({ status }) => {
         const styles = {
-            pending: 'bg-yellow-100 text-yellow-700 border-yellow-200',
-            approved: 'bg-green-100 text-green-700 border-green-200',
-            rejected: 'bg-red-100 text-red-700 border-red-200'
+            pending: ' px-2 py-0.5  bg-yellow-100 text-yellow-700 border-yellow-200',
+            approved: ' px-2 py-0.5 bg-green-100 text-green-700 border-green-200',
+            rejected: ' px-2 py-0.5 bg-red-100 text-red-700 border-red-200'
         };
         const libelles = { pending: 'En attente', approved: 'Approuvée', rejected: 'Rejetée' };
 
@@ -99,7 +99,6 @@ const JobCard = ({
                     </span>
                 </div>
 
-                {/* Section Client */}
                 <div className="bg-gray-50 p-3 mb-4 rounded-sm border border-gray-100">
                     <div className="flex items-center gap-2 mb-2">
                         <div className="w-7 h-7 bg-[#1B4F72] text-white flex items-center justify-center text-[10px] font-bold">
