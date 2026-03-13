@@ -62,14 +62,14 @@ const ReviewsManagement = () => {
                 </div>
             </div>
 
-            <div className="grid lg:grid-cols-5 md:grid-cols-4 sm:grid-cols-3 gap-3">
+            <div className="grid lg:grid-cols-5 md:grid-cols-4 sm:grid-cols-3 gap-3 bg-white rounded-lg">
                 {[5, 4, 3, 2, 1].map((rating) => (
                     <button
                         key={rating}
                         onClick={() => setFilterRating(rating.toString())}
                         className={`
                             p-3 border text-center transition-colors
-                            border-gray-200 hover:border-[#1B4F72]
+                            border-gray-200 hover:border-[#1B4F72] rounded-lg
                         `}
                     >
                         <div className="flex justify-center mb-1">
@@ -78,7 +78,6 @@ const ReviewsManagement = () => {
                         <p className="text-[16px] font-bold text-[#1B4F72]">
                             {rating === 5 ? 45 : rating === 4 ? 32 : rating === 3 ? 15 : rating === 2 ? 5 : 3}%
                         </p>
-                        <p className="text-[10px] text-gray-500">{rating} étoiles</p>
                     </button>
                 ))}
             </div>
@@ -88,65 +87,70 @@ const ReviewsManagement = () => {
                     <div
                         key={review.id}
                         className={`
-                            bg-white border p-4 transition-colors
-                            ${review.isReported  ? 'border-red-300 bg-red-50' : 'border-gray-200 hover:border-[#1B4F72]'}
+                            bg-white border p-3 transition-colors flex w-full justify-between
+                            ${review.isReported ? 'border-red-300 bg-red-50' : 'border-gray-200 hover:border-[#1B4F72]'}
                         `}
                     >
-                        <div className="flex  items-start justify-between">
-                            <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 bg-[#1B4F72]/10 flex items-center justify-center rounded-full">
-                                    <span className="text-[14px] font-bold  text-[#1B4F72]">
-                                        {review.artisan.charAt(0)}
-                                    </span>
+
+                        <div>
+                            <div className="flex  items-start  ">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 bg-[#1B4F72]/10 flex items-center justify-center rounded-full">
+                                        <span className="text-[14px] font-bold  text-[#1B4F72]">
+                                            {review.artisan.charAt(0)}
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <h4 className="text-[12px] font-semibold text-[#1B4F72]">{review.artisan}</h4>
+                                        <p className="text-[10px] text-gray-500">par {review.client}</p>
+                                    </div>
+                                    <div className="mt-3 flex items-center gap-1">
+                                        {renderStars(review.rating)}
+                                        <span className="ml-2 text-[11px] text-gray-400">{review.date}</span>
+                                    </div>
                                 </div>
-                                <div>
-                                    <h4 className="text-[12px] font-semibold text-[#1B4F72]">{review.artisan}</h4>
-                                    <p className="text-[10px] text-gray-500">par {review.client}</p>
+                                <div className="flex items-center gap-2">
+                                    {review.isReported && (
+                                        <span className="px-2 py-0.5 bg-red-100 text-red-600 text-[10px] font-medium flex items-center gap-1">
+                                            <Flag className="w-3 h-3" />
+                                            Signalé
+                                        </span>
+                                    )}
+
                                 </div>
-                                 <div className="mt-3 flex items-center gap-1">
-                            {renderStars(review.rating)}
-                            <span className="ml-2 text-[11px] text-gray-400">{review.date}</span>
+                            </div>
+
+
+
+                            <p className="mt-2 text-[12px] text-gray-700 leading-relaxed">
+                                {review.comment}
+                            </p>
                         </div>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                {review.isReported && (
-                                    <span className="px-2 py-0.5 bg-red-100 text-red-600 text-[10px] font-medium flex items-center gap-1">
-                                        <Flag className="w-3 h-3" />
-                                        Signalé
-                                    </span>
-                                )}
-                                <span className={`
-                                    px-2 py-0.5 text-[10px]
-                                    ${review.status === 'approved' ? 'bg-green-100 text-green-600' :
-                                        review.status === 'flagged' ? 'bg-red-100 text-red-600' :
-                                            'bg-yellow-100 text-yellow-600'}
-                                `}>
-                                    {review.status === 'approved' ? 'Approuvé' :
-                                        review.status === 'flagged' ? 'Signalé' : 'En attente'}
-                                </span>
-                            </div>
+                        <div className="flex flex-col items-center gap-1 flex-shrink-0">
+                            <button
+                                onClick={() => onApprove(service.id)}
+                                className=" w-full p-1.5 text-white bg-green-600 text-[10px]  hover:bg-green-800 transition-colors"
+                                title="Approuver"
+                            >
+                                approuver
+                            </button>
+                            <button
+                                onClick={() => onReject(service.id)}
+                                className="w-full p-1.5 text-white bg-red-600 text-[10px] hover:bg-red-800 transition-colors"
+                                title="Rejeter"
+                            >
+                                rejeter
+                            </button>
+                            <button
+                                onClick={() => onView(service)}
+                                className="w-full p-1.5 text-white bg-gray-600 text-[10px] hover:bg-gray-800 transition-colors"
+                                title="Voir détails"
+                            >
+                                Voir
+                            </button>
                         </div>
 
 
-
-                        <p className="mt-2 text-[12px] text-gray-700 leading-relaxed">
-                            {review.comment}
-                        </p>
-
-                        {/* <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between">
-
-                            <div className="flex items-center gap-1">
-                                <button className="p-1.5 text-gray-400 hover:text-[#1B4F72] hover:bg-[#1B4F72]/10 transition-colors">
-                                    <Eye className="w-4 h-4" />
-                                </button>
-                                <button className="p-1.5 text-gray-400 hover:text-green-600 hover:bg-green-50 transition-colors">
-                                    <CheckCircle className="w-4 h-4" />
-                                </button>
-                                <button className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors">
-                                    <Trash2 className="w-4 h-4" />
-                                </button>
-                            </div>
-                        </div> */}
                     </div>
                 ))}
             </div>
