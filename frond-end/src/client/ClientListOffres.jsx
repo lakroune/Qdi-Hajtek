@@ -178,18 +178,11 @@ const ClientListOffres = () => {
                                     className="bg-white hover:border-[#D35400]      border border-gray-100 transition-all duration-300 overflow-hidden group"
                                 >
                                     <div className="relative h-40 overflow-hidden">
-                                        {job.image ? (
-                                            <img
-                                                src={job.image}
-                                                alt={job.title}
-                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                            />
-                                        ) : (
-                                            <div className="flex flex-col items-center justify-center h-full bg-gray-100 text-gray-400">
-                                                <ImageIcon className="w-10 h-10 mb-2" />
-                                                <span className="text-[11px]">Aucune photo</span>
-                                            </div>
-                                        )}
+
+                                        <div className="flex flex-col items-center justify-center h-full bg-gray-100 text-gray-400">
+                                            <Briefcase className="w-12 h-12 text-[#1B4F72]/30" />
+                                        </div>
+
 
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
 
