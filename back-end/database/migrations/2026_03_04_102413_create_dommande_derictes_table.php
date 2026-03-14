@@ -15,16 +15,13 @@ return new class extends Migration
             $table->id();
             $table->foreignId('client_id')->constrained('clients')->onDelete('cascade');
             $table->foreignId('service_id')->constrained('services')->onDelete('cascade');
-
             $table->date('date_debut');
-            $table->date('date_fin_estimee');
             $table->enum('statut', ['en_attente', 'accepte', 'refuse', 'termine', 'annule'])->default('en_attente');
-
             $table->text('description_specifique')->nullable();
             $table->float('prix_final');
             $table->string('code_confirmation')->nullable();
 
-            $table->enum('mode_paiement', ['cash', 'transfert', 'en_ligne'])->nullable();
+            $table->enum('mode_paiement', ['paypal', 'stripe'])->nullable();
             $table->boolean('a_ete_signale')->default(false);
             $table->timestamp('date_cloture')->nullable();
             $table->boolean('is_completed')->default(false);

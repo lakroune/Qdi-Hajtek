@@ -70,9 +70,7 @@ const ClientListOffres = () => {
                         <h1 className="text-2xl font-bold text-[#1B4F72]">Mes Offres</h1>
                         <p className="text-sm text-gray-500 mt-1">Suivez l'état de vos demandes de services</p>
                     </div>
-                    <button className="px-6 py-3 bg-[#1B4F72] hover:bg-[#2C3E50] text-white text-sm font-bold transition-all shadow-md flex items-center gap-2">
-                        + Nouvelle demande
-                    </button>
+
                 </div>
 
                 <div className="flex border-b border-gray-200 mb-8 overflow-x-auto no-scrollbar">
@@ -129,7 +127,7 @@ const ClientListOffres = () => {
                                                     <StatusIcon className="w-3 h-3" />
                                                     {status.label}
                                                 </div>
-                                                <h3 className="text-lg font-bold text-[#1B4F72] group-hover:text-[#D35400] transition-colors">
+                                                <h3 className="text-[12px] font-bold text-[#1B4F72] group-hover:text-[#D35400] transition-colors">
                                                     {job.title}
                                                 </h3>
                                                 <p className="text-xs text-gray-500 line-clamp-1">{job.description}</p>
@@ -178,7 +176,7 @@ const ClientListOffres = () => {
                         <div className="bg-gray-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
                             <Briefcase className="w-10 h-10 text-gray-300" />
                         </div>
-                        <h3 className="text-lg font-bold text-[#1B4F72]">Rien à afficher ici</h3>
+                        <h3 className="text-[12px] font-bold text-[#1B4F72]">Rien à afficher ici</h3>
                         <p className="text-sm text-gray-500 mb-8">Aucune offre ne correspond à ce statut pour le moment.</p>
                         <button onClick={() => setActiveTab('all')} className="text-[#D35400] font-bold text-sm underline">Voir toutes mes offres</button>
                     </div>

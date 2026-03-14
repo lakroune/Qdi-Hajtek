@@ -17,13 +17,13 @@ import JobsManagement from './admin/JobsManagement';
 import ClientAddJob from './client/ClientAddJob';
 import ArtisanAddService from './artisan/ArtisanAddService';
 import NotFoundPage from './errors/NotFoundPage';
-import Footer from './components/footer/Footer';
 import Header from './components/Header/Header';
 import ConfirmEmailPage from './auth/ConfirmEmailPage';
 import ResetPasswordPage from './auth/ResetPasswordPage';
 
 import ArtisanPortfolioPage from './artisan/ArtisanPortfolioPage';
 import ClientListOffres from './client/ClientListOffres';
+import ArtisanOffreDetail from './artisan/ArtisanOffreDetail';
 function App() {
 
 
@@ -55,7 +55,7 @@ function App() {
           <Route path="/mes-offres" element={<ClientListOffres />} />
           <Route path="p" element={<ArtisanPortfolioPage />} />
           <Route path="a" element={<ArtisanAddService />} />
-          <Route path="z" element={<ClientAddJob />} />
+          <Route path="z" element={<ArtisanOffreDetail />} />
           <Route path="e" element={<ClientAddJob />} />
         </Route>
 
