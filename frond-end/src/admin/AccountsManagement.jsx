@@ -12,8 +12,41 @@ const AccountsManagement = () => {
     const transactions = [
         {
             id: 'TRX-001',
-            type: 'service', // service | job
+            type: 'service',  
             serviceName: 'Réparation fuite d\'eau',
+
+            client: {
+                id: 101,
+                name: 'Ahmed Benali',
+                avatar: null,
+                city: 'Casablanca'
+            },
+
+            artisan: {
+                id: 201,
+                name: 'Karim Plombier',
+                specialty: 'Plomberie',
+                avatar: null
+            },
+
+            amountTotal: 850,
+            adminCommission: 85,
+            artisanNet: 765,
+
+            status: 'refunded',
+            paymentStatus: 'released',
+
+            createdAt: '2024-01-15 09:30',
+            paidAt: '2024-01-15 09:35',
+            completedAt: '2024-01-15 14:00',
+            releasedAt: '2024-01-15 16:30',
+
+            description: 'Intervention urgente fuite sous évier cuisine'
+        },
+        {
+            id: 'TRX-002',
+            type: 'service',  
+            serviceName: 'Installation luminaires salon + 2 chambres',
 
             client: {
                 id: 101,
@@ -36,13 +69,47 @@ const AccountsManagement = () => {
             status: 'completed',
             paymentStatus: 'released',
 
-            createdAt: '2024-01-15 09:30',
+            createdAt: '2024-01-15 09:30',    
             paidAt: '2024-01-15 09:35',
             completedAt: '2024-01-15 14:00',
             releasedAt: '2024-01-15 16:30',
 
             description: 'Intervention urgente fuite sous évier cuisine'
-        }
+        },
+        {
+            id: 'TRX-003',
+            type: 'service',  
+            serviceName: 'Installation luminaires salon + 2 chambres',
+
+            client: {
+                id: 101,
+                name: 'Ahmed Benali',
+                avatar: null,
+                city: 'Casablanca'
+            },
+
+            artisan: {
+                id: 201,
+                name: 'Karim Plombier',
+                specialty: 'Plomberie',
+                avatar: null
+            },
+
+            amountTotal: 850,
+            adminCommission: 85,
+            artisanNet: 765,
+
+            status: 'completed',
+            paymentStatus: 'released',
+
+            createdAt: '2024-01-15 09:30',    
+            paidAt: '2024-01-15 09:35',
+            completedAt: '2024-01-15 14:00',
+            releasedAt: '2024-01-15 16:30',
+
+            description: 'Intervention urgente fuite sous évier cuisine'
+        },
+           
     ];
 
     const filteredTransactions = transactions.filter(t => {
@@ -264,9 +331,9 @@ const AccountsManagement = () => {
                                         <div className="flex items-center gap-1">
                                             <button
                                                 onClick={() => setSelectedTransaction(trx)}
-                                                className="p-1.5 text-gray-400 hover:text-[#1B4F72] hover:bg-[#1B4F72]/10"
+                                                className="p-1.5 text-white bg-[#1B4F72] hover:bg-[#1B4F72]/90 text-[10px] font-semibold"
                                             >
-                                                <Eye className="w-4 h-4" />
+                                                Voir
                                             </button>
 
                                             {trx.paymentStatus === 'held' && trx.status !== 'disputed' && (
@@ -295,7 +362,7 @@ const AccountsManagement = () => {
             </div>
 
             {selectedTransaction && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 max-h-screen overflow-auto pt-20">
                     <div className="bg-white w-full max-w-2xl border border-gray-200">
                         <div className="p-4 border-b border-gray-200 flex items-center justify-between">
                             <div>
@@ -311,16 +378,13 @@ const AccountsManagement = () => {
                         </div>
 
                         <div className="p-6 space-y-6">
-                            {/* Schéma visuel de la transaction */}
                             <div className="bg-gray-50 p-4 border border-gray-200">
                                 <h4 className="text-[12px] font-bold text-[#1B4F72] mb-4 text-center">Répartition des fonds</h4>
 
                                 <div className="relative">
-                                    {/* Ligne de progression */}
                                     <div className="absolute top-8 left-0 right-0 h-1 bg-gray-200"></div>
 
                                     <div className="flex justify-between relative">
-                                        {/* Étape 1: Client */}
                                         <div className="text-center w-1/3">
                                             <div className="w-16 h-16 bg-blue-100 border-2 border-blue-400 flex items-center justify-center mx-auto mb-2 relative z-10">
                                                 <User className="w-8 h-8 text-blue-600" />
@@ -344,10 +408,9 @@ const AccountsManagement = () => {
                                             <p className="text-[11px] font-semibold text-[#1B4F72]">Plateforme</p>
                                             <p className="text-[10px] text-gray-500">Garantie</p>
                                             <p className="text-[14px] font-bold text-[#D35400] mt-1">{selectedTransaction.adminCommission} DH</p>
-                                            <p className="text-[9px] text-gray-400">Commission 10%</p>
+                                            <p className="text-[9px] text-gray-400">Commission 5%</p>
                                         </div>
 
-                                        {/* Étape 3: Artisan */}
                                         <div className="text-center w-1/3">
                                             <div className={`
                                                 w-16 h-16 border-2 flex items-center justify-center mx-auto mb-2 relative z-10
@@ -376,7 +439,6 @@ const AccountsManagement = () => {
                                 </div>
                             </div>
 
-                            {/* Timeline */}
                             <div>
                                 <h4 className="text-[12px] font-bold text-[#1B4F72] mb-3">Chronologie</h4>
                                 <div className="space-y-3">
@@ -437,13 +499,11 @@ const AccountsManagement = () => {
                                 </div>
                             </div>
 
-                            {/* Description */}
                             <div className="border border-gray-200 p-3">
                                 <p className="text-[10px] text-gray-500 mb-1">Description du service</p>
                                 <p className="text-[12px] text-gray-700">{selectedTransaction.description}</p>
                             </div>
 
-                            {/* Actions Admin */}
                             {selectedTransaction.paymentStatus === 'held' && selectedTransaction.status !== 'disputed' && (
                                 <div className="flex gap-3 pt-4 border-t border-gray-200">
                                     <button className="flex-1 py-3 bg-green-500 hover:bg-green-600 text-white text-[12px] font-medium transition-colors flex items-center justify-center gap-2">

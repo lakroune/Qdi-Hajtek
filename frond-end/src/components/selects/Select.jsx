@@ -1,7 +1,7 @@
-const Select = ({ label, name, value, onChange, options, Icon }) => {
+const Select = ({ label, name, value, disabled, onChange, options, Icon }) => {
     return (
         <div>
-            <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider m-2">
+            <label className="block text-[11px] font-semibold text-gray-700 uppercase tracking-wider m-2">
                 {label}
             </label>
             <div className="relative">
@@ -11,10 +11,10 @@ const Select = ({ label, name, value, onChange, options, Icon }) => {
 
                 <select
                     value={value}
+                    disabled={disabled}
                     onChange={(e) => onChange(name, e.target.value)}
-                    className="w-full pl-12 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 appearance-none focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all cursor-pointer"
-                >
-                    <option value="" disabled>Sélectionnez une option</option>
+                    className="w-full border border-gray-300 text-[11px] py-2 px-4  border-orange-500 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500]   focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="" disabled>{label}</option>
                     {options.map((option) => (
                         <option key={option.value} value={option.value}>
                             {option.label}
@@ -22,11 +22,7 @@ const Select = ({ label, name, value, onChange, options, Icon }) => {
                     ))}
                 </select>
 
-                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
-                    <svg className="w-4 h-4 fill-current" viewBox="0 0 20 20">
-                        <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
-                    </svg>
-                </div>
+
             </div>
         </div>
     );

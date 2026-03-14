@@ -47,7 +47,7 @@ function App() {
           <Route path="confirme-email" element={<ConfirmEmailPage />} />
         </Route>
 
-        <Route path="/" element={<div className="auth-layout"><Header estAuthentifie={true} nomUtilisateur={"nom"} notifications={4} messages={3} /><Outlet /> <Footer /></div>}>
+        <Route path="/" element={<div className="auth-layout"><Header estAuthentifie={true} nomUtilisateur={"nom"} notifications={4} messages={3} /><Outlet /> </div>}>
           <Route index element={<HomePage />} />
           <Route path="settings" element={<SettingsPage />} />
           <Route path="messages" element={<MessagesPage />} />

@@ -1,11 +1,12 @@
 import { useState, useRef, useEffect } from 'react';
-import {   Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import {
     ArrowLeft,
     Send, Smile, Paperclip,
     Check, CheckCheck, Clock, PhoneCall
 } from 'lucide-react';
 import FileUpload from '../components/inputs/FileUpload';
+import Select from '../components/selects/Select';
 
 const ConversationPage = () => {
     const messagesEndRef = useRef(null);
@@ -187,7 +188,30 @@ const ConversationPage = () => {
                         </div>
                     </div>
 
+                    {/* Sidebar droite - dommande  */}
+                    <div className="w-64 border-l border-gray-200 bg-gray-50 p-4 hidden lg:block">
+                        <div className=" flex items-center gap-2 mb-4">
+                            <h3 className="text-[13px] font-semibold text-[#1B4F72]">Demande</h3>
+                            <span className="text-[10px] text-[#D35400]">#DM-001</span>  
+                        </div>
+                        {/* select  accepter or refuser */}
+                        <Select
+                            label="status"
+                            name="status"
+                            disabled={false}
+                            value={status}
+                            onChange={(e) => setStatus(e.target.value)}
+                            options={[
+                                { value: 'accepter', label: 'Accepter' },
+                                { value: 'refuser', label: 'Refuser' },
+                            ]}
+                        />
+                         
 
+                        <div className="mt-6 pt-4 border-t border-gray-200">
+
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
