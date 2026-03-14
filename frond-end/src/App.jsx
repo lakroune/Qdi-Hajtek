@@ -52,7 +52,7 @@ function App() {
           <Route path="settings" element={<SettingsPage />} />
           <Route path="messages" element={<MessagesPage />} />
           <Route path="messages/:conversationId" element={<ConversationPage />} />
-          <Route path="ajouter-offre" element={<ClientAddJob />} />
+          <Route path="ajouteroffres" element={<ClientAddJob />} />
           <Route path="mes-offres" element={<ClientListOffres />} />
           <Route path="portfolio" element={<ArtisanPortfolioPage />} />
           <Route path="ajouter-service" element={<ArtisanAddService />} />
