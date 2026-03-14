@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import Input from '../components/inputs/Input';
 import Submit from '../components/buttons/Submit';
+import SuccessModel from '../components/models/SuccessModel';
 
 const ArtisanOffreDetail = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -87,33 +88,11 @@ const ArtisanOffreDetail = () => {
 
     // Vue Succès après proposition
     if (success) {
-        return (
-            <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-                <div className="max-w-md w-full bg-white p-8 text-center border border-gray-200">
-                    <div className="w-16 h-16 bg-green-100 flex items-center justify-center mx-auto mb-4">
-                        <CheckCircle className="w-8 h-8 text-green-600" />
-                    </div>
-                    <h2 className="text-[18px] font-bold text-[#1B4F72] mb-2">Proposition envoyée !</h2>
-                    <p className="text-[12px] text-gray-500 mb-6">
-                        Votre proposition a été envoyée au client. Vous serez notifié dès qu'il la consulte.
-                    </p>
-                    <div className="flex gap-3 justify-center">
-                        <a
-                            href="/artisan/offres"
-                            className="px-6 py-2.5 bg-[#1B4F72] hover:bg-[#D35400] text-white text-[12px] font-medium transition-colors"
-                        >
-                            Voir toutes les offres
-                        </a>
-                        <a
-                            href="/artisan/propositions"
-                            className="px-6 py-2.5 border border-gray-200 hover:border-[#1B4F72] text-[12px] text-gray-600 hover:text-[#1B4F72] transition-colors"
-                        >
-                            Mes propositions
-                        </a>
-                    </div>
-                </div>
-            </div>
-        );
+        return <SuccessModel
+            message="Proposition envoyée"
+            goTo="/artisan/offres"
+            buttonName="Mes propositions"
+        />;
     }
 
     return (
@@ -163,7 +142,7 @@ const ArtisanOffreDetail = () => {
                             onClick={() => setShowPropositionModal(true)}
                             className=" py-2.5 p-1 bg-[#D35400] hover:bg-[#1B4F72] text-white text-[12px] font-bold transition-colors flex items-center justify-center gap-2"
                         >
-                           
+
                             faire une proposition
                         </button>
                     </div>
