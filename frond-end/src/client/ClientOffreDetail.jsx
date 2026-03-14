@@ -152,28 +152,11 @@ const ClientOffreDetail = () => {
             <div className="w-[90%] mx-auto px-4 py-6 space-y-6">
 
                 <div className="bg-white border border-gray-200">
-                    <div className="relative w-3/3  flex bg-gray-100 ">
-                        <div className="relative   w-2/3">
-                            <img
-                                src={offre.photos[selectedImage]}
-                                alt={`Photo ${selectedImage + 1}`}
-                                className="   object-cover"
-                            />
+                    <div className="relative w-full flex bg-gray-100 ">
 
 
-                            <div className="absolute top-4 left-4 flex  ">
-                                <span className={`px-3 py-1.5 text-[11px] font-bold uppercase ${urgency.color}`}>
-                                    {urgency.label}
-                                </span>
-                                <span className="px-3 py-1.5 bg-white/90 text-[11px] font-bold text-[#1B4F72]">
-                                    {offre.category}
-                                </span>
-                            </div>
-                        </div>
-
-
-                        {offre.photos.length > 1 && (
-                            <div className=" w-1/3 grid grid-cols-2 gap-0 border-t border-gray-200">
+                        {offre.photos.length > 0 && (
+                            <div className="   grid grid-cols-6 gap-0 border-t border-gray-200">
                                 {offre.photos.map((photo, idx) => (
                                     <button
                                         key={idx}
@@ -190,13 +173,13 @@ const ClientOffreDetail = () => {
                         )}
 
 
-                        <div className="absolute bottom-0 left-0 right-0 p-6">
-                            <h2 className="text-[20px] sm:text-[24px] font-bold text-white leading-tight drop-shadow-lg">
-                                {offre.title}
-                            </h2>
-                        </div>
-                    </div>
 
+                    </div>
+                    <div className="p-5">
+                        <h2 className="text-[20px] sm:text-[24px] md:text-[28px] font-bold text-[#1B4F72] leading-tight drop-shadow-lg">
+                            {offre.title}
+                        </h2>
+                    </div>
 
                 </div>
 
@@ -299,7 +282,7 @@ const ClientOffreDetail = () => {
                                         </div>
                                     </div>
 
-                                     
+
                                 </div>
 
                                 <div className="p-5 space-y-4 flex-1">
@@ -328,7 +311,7 @@ const ClientOffreDetail = () => {
                                         </p>
                                     </div>
 
-                                    
+
                                 </div>
 
                                 <div className="p-5 pt-0 space-y-2">
@@ -340,7 +323,7 @@ const ClientOffreDetail = () => {
                                         Accepter cette proposition
                                     </button>
 
-                                    
+
                                 </div>
                             </div>
                         ))}
