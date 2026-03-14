@@ -25,6 +25,7 @@ import ArtisanPortfolioPage from './artisan/ArtisanPortfolioPage';
 import ClientListOffres from './client/ClientListOffres';
 import ArtisanOffreDetail from './artisan/ArtisanOffreDetail';
 import ArtisanOffres from './artisan/ArtisanOffres';
+import ClientOffreDetail from './client/ClientOffreDetail';
 function App() {
 
 
@@ -54,6 +55,8 @@ function App() {
           <Route path="messages/:conversationId" element={<ConversationPage />} />
           <Route path="ajouteroffres" element={<ClientAddJob />} />
           <Route path="mes-offres" element={<ClientListOffres />} />
+          <Route path="mes-offres/:id" element={<ClientOffreDetail />} />
+          
           <Route path="portfolio" element={<ArtisanPortfolioPage />} />
           <Route path="ajouter-service" element={<ArtisanAddService />} />
           <Route path="offres/:id" element={<ArtisanOffreDetail />} />

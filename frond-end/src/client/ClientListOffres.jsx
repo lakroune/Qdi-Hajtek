@@ -103,7 +103,6 @@ const ClientListOffres = () => {
     return (
         <div className="min-h-screen bg-gray-50 mt-20 pb-8">
 
-            {/* Header */}
             <div className="bg-white   sticky top-0 z-10">
                 <div className="w-[90%] mx-auto px-4 py-6">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -123,7 +122,6 @@ const ClientListOffres = () => {
                         </a>
                     </div>
 
-                    {/* Tabs */}
                     <div className="flex border-b border-gray-200 mt-6 overflow-x-auto no-scrollbar">
                         {[
                             { id: 'all', label: 'Toutes', count: myJobs.length },
@@ -150,7 +148,6 @@ const ClientListOffres = () => {
                 </div>
             </div>
 
-            {/* Content */}
             <div className="w-[90%] mx-auto px-4 py-6">
 
                 {filteredJobs.length === 0 ? (
@@ -180,7 +177,6 @@ const ClientListOffres = () => {
                                     key={job.id}
                                     className="bg-white hover:border-[#D35400]      border border-gray-100 transition-all duration-300 overflow-hidden group"
                                 >
-                                    {/* Image Header */}
                                     <div className="relative h-40 overflow-hidden">
                                         {job.image ? (
                                             <img
