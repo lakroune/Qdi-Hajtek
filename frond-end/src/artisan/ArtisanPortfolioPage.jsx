@@ -2,7 +2,8 @@ import { useState } from 'react';
 import {
     Star, MapPin, Phone, Mail, Clock,
     Briefcase, Heart, Share2,
-    ChevronLeft, ChevronRight
+    ChevronLeft, ChevronRight,
+    X, MessageSquare, Calendar
 } from 'lucide-react';
 
 const ArtisanPortfolioPage = () => {
@@ -10,7 +11,18 @@ const ArtisanPortfolioPage = () => {
     const [isLiked, setIsLiked] = useState(false);
     const [selectedImage, setSelectedImage] = useState(null);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
+    const [isPopUpOpen, setIsPopUpOpen] = useState(false);
+    const [requestData, setRequestData] = useState({
+        description: '',
+        date: '',
+        address: ''
+    });
+    const handleConfirmDemande = (e) => {
+        e.preventDefault();
+        console.log("Données envoyées:", requestData);
+        setIsPopUpOpen(false);
+    };
+    const [data, setData] = useState([]);
     const artisan = {
         id: 1,
         name: 'Ahmed Benali',
@@ -65,9 +77,6 @@ const ArtisanPortfolioPage = () => {
             { id: 1, src: '/images/d.png', title: 'Rénovation complète appartement', category: 'Rénovation' },
             { id: 2, src: '/images/d.png', title: 'Installation douche italienne', category: 'Installation' },
             { id: 3, src: '/images/d.png', title: 'Réparation fuite complexe', category: 'Urgence' },
-            { id: 4, src: '/images/d.png', title: 'Salle de bain moderne', category: 'Rénovation' },
-            { id: 5, src: '/images/d.png', title: 'Installation cuisine', category: 'Installation' },
-            { id: 6, src: '/images/d.png', title: 'Débouchage industriel', category: 'Maintenance' }
         ],
         reviews: [
             {
@@ -117,6 +126,83 @@ const ArtisanPortfolioPage = () => {
     const prevImage = () => {
         setCurrentImageIndex((prev) => (prev - 1 + artisan.portfolio.length) % artisan.portfolio.length);
     };
+    const PopUpDemander = (data = []) => {
+        if (!isPopUpOpen) return null;
+
+        return (
+            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+                <div className="bg-white w-full max-w-md shadow-2xl border border-gray-200">
+                    <div className="flex items-center justify-between p-4 border-b border-gray-100">
+                        <div>
+                            <h3 className="text-[14px] font-bold text-[#1B4F72]">Nouvelle Demande</h3>
+                            <p className="text-[10px] text-[#D35400] font-medium"> {data.title}</p>
+                        </div>
+                        <button onClick={() => setIsPopUpOpen(false)} className="p-1 hover:bg-gray-100 rounded-full transition-colors">
+                            <X className="w-5 h-5 text-gray-400" />
+                        </button>
+                    </div>
+
+                    <form onSubmit={handleConfirmDemande} className="p-5 space-y-4">
+                        <div className="space-y-1">
+                            <label className="text-[11px] font-bold text-[#1B4F72] flex items-center gap-1.5">
+                                <MessageSquare className="w-3.5 h-3.5" /> Description du problème
+                            </label>
+                            <textarea
+                                required
+                                className="w-full border border-gray-200 p-3 text-[12px] focus:outline-none focus:border-[#D35400] bg-gray-50 min-h-[100px]"
+                                placeholder="Détaillez votre besoin ici..."
+                                value={requestData.description}
+                                onChange={(e) => setRequestData({ ...requestData, description: e.target.value })}
+                            />
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-1">
+                                <label className="text-[11px] font-bold text-[#1B4F72] flex items-center gap-1.5">
+                                    <Calendar className="w-3.5 h-3.5" /> Date souhaitée
+                                </label>
+                                <input
+                                    type="date" required
+                                    className="w-full border border-gray-200 p-2 text-[12px] focus:outline-none focus:border-[#D35400] bg-gray-50"
+                                    onChange={(e) => setRequestData({ ...requestData, date: e.target.value })}
+                                />
+                            </div>
+                            <div className="space-y-1">
+                                <label className="text-[11px] font-bold text-[#1B4F72] flex items-center gap-1.5">
+                                    <MapPin className="w-3.5 h-3.5" /> Votre Ville
+                                </label>
+                                <input
+                                    type="text" required
+                                    placeholder="ex: Casablanca"
+                                    className="w-full border border-gray-200 p-2 text-[12px] focus:outline-none focus:border-[#D35400] bg-gray-50"
+                                    onChange={(e) => setRequestData({ ...requestData, address: e.target.value })}
+                                />
+                            </div>
+                        </div>
+
+
+
+                        <div className="flex gap-2 pt-2">
+                            <button
+                                type="button"
+                                onClick={() => setIsPopUpOpen(false)}
+                                className="flex-1 py-2.5 border border-gray-200 text-[12px] font-medium text-gray-600 hover:bg-gray-50"
+                            >
+                                Annuler
+                            </button>
+                            <button
+                                type="submit"
+                                className="flex-1 py-2.5 bg-[#1B4F72] text-white text-[12px] font-bold hover:bg-[#154360] shadow-md transition-all active:scale-95"
+                            >
+                                Confirmer la Demande
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        );
+    };
+
 
     return (
         <div className="min-h-screen bg-white">
@@ -262,7 +348,9 @@ const ArtisanPortfolioPage = () => {
 
                                     <div className="flex items-center justify-between pt-2 border-t border-gray-100">
                                         <p className="text-[16px] font-bold text-[#D35400]">{service.price}</p>
-                                        <button className="px-4 py-2 bg-[#1B4F72] text-white text-[11px] font-medium hover:bg-[#154360] transition-colors">
+                                        <button className="px-4 py-2 bg-[#1B4F72] text-white text-[11px] font-medium hover:bg-[#154360] transition-colors "
+                                            onClick={() => { setIsPopUpOpen(!isPopUpOpen), setData(service) }}
+                                        >
                                             Demander
                                         </button>
                                     </div>
@@ -333,7 +421,7 @@ const ArtisanPortfolioPage = () => {
                     </div>
                 </div>
             )}
-
+            <PopUpDemander data={data} />
         </div>
     );
 };
