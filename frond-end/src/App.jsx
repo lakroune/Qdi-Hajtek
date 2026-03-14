@@ -24,6 +24,7 @@ import ResetPasswordPage from './auth/ResetPasswordPage';
 import ArtisanPortfolioPage from './artisan/ArtisanPortfolioPage';
 import ClientListOffres from './client/ClientListOffres';
 import ArtisanOffreDetail from './artisan/ArtisanOffreDetail';
+import ArtisanOffres from './artisan/ArtisanOffres';
 function App() {
 
 
@@ -51,12 +52,12 @@ function App() {
           <Route path="settings" element={<SettingsPage />} />
           <Route path="messages" element={<MessagesPage />} />
           <Route path="messages/:conversationId" element={<ConversationPage />} />
-          <Route path="s" element={<ClientAddJob />} />
-          <Route path="/mes-offres" element={<ClientListOffres />} />
-          <Route path="p" element={<ArtisanPortfolioPage />} />
-          <Route path="a" element={<ArtisanAddService />} />
-          <Route path="z" element={<ArtisanOffreDetail />} />
-          <Route path="e" element={<ClientAddJob />} />
+          <Route path="ajouter-offre" element={<ClientAddJob />} />
+          <Route path="mes-offres" element={<ClientListOffres />} />
+          <Route path="portfolio" element={<ArtisanPortfolioPage />} />
+          <Route path="ajouter-service" element={<ArtisanAddService />} />
+          <Route path="offres/:id" element={<ArtisanOffreDetail />} />
+          <Route path="offres" element={<ArtisanOffres />} />
         </Route>
 
 
@@ -74,7 +75,7 @@ function App() {
 
 
 
-        
+
         <Route path="*" element={<NotFoundPage />} />
 
 

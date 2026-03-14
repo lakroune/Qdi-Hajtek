@@ -32,7 +32,7 @@ const SuccessModel = (
                         {buttonName}
                     </a>
                     <a
-                        href="window.history.back()"
+                        href={window.history.back()}
                         className="px-6 py-2.5 border border-gray-200 hover:border-[#1B4F72] text-[12px] text-gray-600 hover:text-[#1B4F72] transition-colors"
                     >
                         back
