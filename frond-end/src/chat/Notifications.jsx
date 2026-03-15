@@ -107,8 +107,14 @@ const Notifications = () => {
                                     </div>
 
                                     <div className="flex-1 min-w-0">
-                                       <div>
-                                        
+                                       <div className='flex justify-between'>
+                                         <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-0.5">
+                                            {getTypeLabel(notif.type)}
+                                        </p>
+                                         <div className="flex items-center gap-1 mt-2 text-[10px] text-gray-400">
+                                            <Clock className="w-3 h-3" />
+                                            {notif.date}
+                                        </div>
                                        </div>
                                         <h4 className="text-[13px] font-bold text-[#1B4F72] mb-1">
                                             {notif.title}
