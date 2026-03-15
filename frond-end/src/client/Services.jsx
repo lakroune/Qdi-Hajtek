@@ -54,7 +54,38 @@ const Services = () => {
                                 </div>
                             </div>
 
-                          
+                            <div className="p-4">
+                                <h3 className="text-[14px] font-bold text-gray-800 mb-2 line-clamp-1 group-hover:text-[#1B4F72] transition-colors">
+                                    {x.t}
+                                </h3>
+
+                                <div className="flex items-center gap-2 mb-3">
+                                    <div className="w-7 h-7 bg-[#1B4F72] flex items-center justify-center text-white text-[10px] font-bold">
+                                        {x.art.charAt(0)}
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <p className="text-[12px] text-gray-700 truncate">{x.art}</p>
+                                        <div className="flex items-center gap-1">
+                                            <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
+                                            <span className="text-[11px] text-gray-500">{x.note}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="flex items-center gap-1 text-[11px] text-gray-500 mb-3">
+                                    <MapPin className="w-3 h-3" /> {x.loc}
+                                </div>
+
+                                <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+                                    <div>
+                                        <p className="text-[10px] text-gray-400">À partir de</p>
+                                        <p className="text-[16px] font-bold text-[#D35400]">{x.prix} DH</p>
+                                    </div>
+                                    <a href={`/services/${x.id}`} className="px-3 py-2 bg-[#1B4F72] hover:bg-[#D35400] text-white text-[11px] font-medium transition-colors">
+                                        Voir
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     ))}
                 </div>
