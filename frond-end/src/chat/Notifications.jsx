@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-    Bell, ArrowLeft, Briefcase, MessageSquare, 
+    Bell, ArrowLeft, Briefcase, MessageSquare,
     Star, CheckCircle2, DollarSign, AlertCircle, Clock
 } from 'lucide-react';
 
@@ -79,7 +79,7 @@ const Notifications = () => {
 
             <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
                 <div className="w-[90%] mx-auto px-4 py-4 flex items-center gap-3">
-                    <button 
+                    <button
                         onClick={() => window.history.back()}
                         className="p-2 hover:bg-gray-100 transition-colors"
                     >
@@ -107,22 +107,20 @@ const Notifications = () => {
                                     </div>
 
                                     <div className="flex-1 min-w-0">
-                                       <div className='flex justify-between'>
-                                         <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-0.5">
-                                            {getTypeLabel(notif.type)}
-                                        </p>
-                                         <div className="flex items-center gap-1 mt-2 text-[10px] text-gray-400">
-                                            <Clock className="w-3 h-3" />
-                                            {notif.date}
+                                        <div className='flex justify-between'>
+                                            <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-0.5">
+                                                {getTypeLabel(notif.type)}
+                                            </p>
+                                            <div className="flex items-center gap-1 mt-2 text-[10px] text-gray-400">
+                                                <Clock className="w-3 h-3" />
+                                                {notif.date}
+                                            </div>
                                         </div>
-                                       </div>
-                                        <h4 className="text-[13px] font-bold text-[#1B4F72] mb-1">
-                                            {notif.title}
-                                        </h4>
+
                                         <p className="text-[12px] text-gray-600 leading-relaxed">
                                             {notif.message}
                                         </p>
-                                       
+
                                     </div>
                                 </div>
                             </div>

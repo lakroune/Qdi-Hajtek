@@ -140,7 +140,7 @@ const Header = ({
                     )}
                   </button>
 
-                  <button className="relative p-2 text-[#1B4F72] hover:text-[#D35400]  rounded-full transition-all">
+                  <button  onClick={() => window.location.href = '/notifications'} className="relative p-2 text-[#1B4F72] hover:text-[#D35400]  rounded-full transition-all">
                     <Bell className="w-4 h-4" />
                     {notifications > 0 && (
                       <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-[#D35400] text-white text-[9px] font-bold rounded-full flex items-center justify-center">
