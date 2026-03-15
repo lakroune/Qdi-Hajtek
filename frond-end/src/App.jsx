@@ -41,66 +41,66 @@ function App() {
 
 
 
-<Route
-  path="/quickstart"
-  element={
-    <div className="auth-layout">
+        <Route
+          path="/quickstart"
+          element={
+            <div className="auth-layout">
 
-      {/* HEADER */}
-      <Header
-        estAuthentifie={true}
-        nomUtilisateur="nom"
-        notifications={4}
-        messages={3}
-      />
+              {/* HEADER */}
+              <Header
+                estAuthentifie={true}
+                nomUtilisateur="nom"
+                notifications={4}
+                messages={3}
+              />
 
-      {/* AUTH */}
-      {/* <LoginPage />
+              {/* AUTH */}
+              {/* <LoginPage />
       <RegisterPage />
       <ForgotPasswordPage />
       <ResetPasswordPage />
       <ConfirmEmailPage /> */}
 
-      <hr />
+              <hr />
 
-      {/* CLIENT */}
-      <HomePage />
-      <SettingsPage />
-      <ClientAddJob />
-      <ClientListOffres />
-      <ClientOffreDetail />
-      <ClientFavoris />
+              {/* CLIENT */}
+              <HomePage />
+              <SettingsPage />
+              <ClientAddJob />
+              <ClientListOffres />
+              <ClientOffreDetail />
+              <ClientFavoris />
 
-      <hr />
+              <hr />
 
-      {/* CHAT */}
-      <MessagesPage />
-      <ConversationPage />
+              {/* CHAT */}
+              <MessagesPage />
+              <ConversationPage />
 
-      <hr />
+              <hr />
 
-      {/* ARTISAN */}
-      <ArtisanPortfolioPage />
-      <ArtisanAddService />
-      <ArtisanOffres />
-      <ArtisanOffreDetail />
+              {/* ARTISAN */}
+              <ArtisanPortfolioPage />
+              <ArtisanAddService />
+              <ArtisanOffres />
+              <ArtisanOffreDetail />
 
-      <hr />
+              <hr />
 
-      {/* ADMIN */}
-      <AdminLayout />
-      <DashboardHome />
-      <ReportsManagement />
-      <ReviewsManagement />
-      <ArtisanRequests />
-      <AccountsManagement />
-      <ServicesManagement />
-      <JobsManagement />
-      <ManageCategories />
+              {/* ADMIN */}
+              <AdminLayout />
+              <DashboardHome />
+              <ReportsManagement />
+              <ReviewsManagement />
+              <ArtisanRequests />
+              <AccountsManagement />
+              <ServicesManagement />
+              <JobsManagement />
+              <ManageCategories />
 
-    </div>
-  }
-/>
+            </div>
+          }
+        />
 
         <Route path="/auth" element={<div className="auth-layout"><Outlet /></div>}>
           <Route index element={<LoginPage />} />
@@ -118,9 +118,9 @@ function App() {
           <Route path="ajouteroffres" element={<ClientAddJob />} />
           <Route path="mes-offres" element={<ClientListOffres />} />
           <Route path="mes-offres/:id" element={<ClientOffreDetail />} />
-          <Route path="favori" element={<ClientFavoris />} />
+          <Route path="favorites" element={<ClientFavoris />} />
           <Route path="notifications" element={<Notifications />} />
-          
+
           <Route path="portfolio" element={<ArtisanPortfolioPage />} />
           <Route path="ajouter-service" element={<ArtisanAddService />} />
           <Route path="offres/:id" element={<ArtisanOffreDetail />} />

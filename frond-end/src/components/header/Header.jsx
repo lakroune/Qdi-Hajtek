@@ -131,7 +131,7 @@ const Header = ({
                 </div>
               ) : (
                 <>
-                  <button className="relative p-2 text-[#1B4F72] hover:text-[#D35400]   rounded-full transition-all">
+                  <button onClick={() => window.location.href = '/messages'} className="relative p-2 text-[#1B4F72] hover:text-[#D35400]   rounded-full transition-all">
                     <MessageCircle className="w-4 h-4" />
                     {messages > 0 && (
                       <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-[#D35400] text-white text-[9px] font-bold rounded-full flex items-center justify-center">
@@ -150,7 +150,7 @@ const Header = ({
                   </button>
 
                   {typeUtilisateur === 'client' && (
-                    <button className="p-2 text-[#1B4F72] hover:text-[#D35400] rounded-full transition-all">
+                    <button onClick={() => window.location.href = '/favorites'} className="p-2 text-[#1B4F72] hover:text-[#D35400] rounded-full transition-all">
                       <Heart className="w-4 h-4" />
                     </button>
                   )}
