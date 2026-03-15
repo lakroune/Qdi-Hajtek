@@ -114,7 +114,7 @@ const ClientListOffres = () => {
                         </div>
 
                         <a
-                            href="/client/nouvelle-offre"
+                            href="/nouvelle-offre"
                             className="flex items-center gap-2 px-5 py-2.5 bg-[#D35400] hover:bg-[#A04000] text-white text-[12px] font-semibold   transition-colors  "
                         >
                             <Plus className="w-4 h-4" />
@@ -158,7 +158,7 @@ const ClientListOffres = () => {
                         <h3 className="text-[16px] font-bold text-[#1B4F72] mb-2">Aucune offre</h3>
                         <p className="text-[12px] text-gray-500 mb-6">Commencez par créer votre première demande</p>
                         <a
-                            href="/client/nouvelle-offre"
+                            href="nouvelle-offre"
                             className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#1B4F72] hover:bg-[#D35400] text-white text-[12px] font-semibold   transition-colors"
                         >
                             <Plus className="w-4 h-4" />

@@ -112,10 +112,10 @@ function App() {
         </Route>
         <Route path="/" element={<div className="auth-layout"><Header estAuthentifie={true} nomUtilisateur={"nom"} notifications={4} messages={3} /><Outlet /> </div>}>
           <Route index element={<HomePage />} />
-          <Route path="settings" element={<SettingsPage />} />
+          <Route path="parametres" element={<SettingsPage />} />
           <Route path="messages" element={<MessagesPage />} />
           <Route path="messages/:conversationId" element={<ConversationPage />} />
-          <Route path="ajouteroffres" element={<ClientAddJob />} />
+          <Route path="nouvelle-offre" element={<ClientAddJob />} />
           <Route path="mes-offres" element={<ClientListOffres />} />
           <Route path="mes-offres/:id" element={<ClientOffreDetail />} />
           <Route path="favorites" element={<ClientFavoris />} />

@@ -69,14 +69,16 @@ const Header = ({
   const obtenirElementsMenuProfil = () => {
     if (typeUtilisateur === 'artisan') {
       return [
-        { vers: '/artisan/dashboard', icone: User, libelle: '' },
-        { vers: '/artisan/services', icone: Briefcase, libelle: '' },
+        { vers: 'parametres', icone: User, libelle: '' },
+        { vers: 'services', icone: Briefcase, libelle: '' },
+        { vers: '/offres', icone: Calendar, libelle: 'Offres' },
+
       ];
     }
     return [
-      { vers: '/client/dashboard', icone: User, libelle: 'Mon compte' },
-      { vers: '/client/favorites', icone: Heart, libelle: 'Favoris' },
-      { vers: '/client/settings', icone: Settings, libelle: 'profil' },
+      { vers: '/favorites', icone: Heart, libelle: 'Favoris' },
+      { vers: '/parametres', icone: Settings, libelle: 'profil' },
+      { vers: '/mes-offres', icone: Calendar, libelle: 'Offres' },
     ];
   };
 
@@ -140,7 +142,7 @@ const Header = ({
                     )}
                   </button>
 
-                  <button  onClick={() => window.location.href = '/notifications'} className="relative p-2 text-[#1B4F72] hover:text-[#D35400]  rounded-full transition-all">
+                  <button onClick={() => window.location.href = '/notifications'} className="relative p-2 text-[#1B4F72] hover:text-[#D35400]  rounded-full transition-all">
                     <Bell className="w-4 h-4" />
                     {notifications > 0 && (
                       <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-[#D35400] text-white text-[9px] font-bold rounded-full flex items-center justify-center">
