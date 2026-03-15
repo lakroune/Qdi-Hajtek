@@ -102,8 +102,61 @@ const ServiceDetail = () => {
                     </button>
                 </div>
 
-             
-                
+                {/* Description */}
+                <div className="bg-white border border-gray-200 p-4">
+                    <div className="flex items-center gap-2 text-[11px] text-gray-500 mb-3">
+                        <span className="text-[18px]">{service.icon}</span>
+                        <span className="uppercase tracking-wide">{service.category}</span>
+                    </div>
+                    <h2 className="text-[15px] font-bold text-gray-800 mb-2">Description</h2>
+                    <p className="text-[13px] text-gray-600 leading-relaxed">{service.description}</p>
+                    
+                    <div className="grid grid-cols-3 gap-2 mt-4 pt-4 border-t border-gray-100">
+                        <div className="p-2 bg-gray-50 text-center">
+                            <Clock className="w-4 h-4 text-gray-400 mx-auto mb-1" />
+                            <p className="text-[10px] text-gray-500">Durée</p>
+                            <p className="text-[12px] font-bold text-gray-700">{service.duration}</p>
+                        </div>
+                        <div className="p-2 bg-gray-50 text-center">
+                            <Shield className="w-4 h-4 text-gray-400 mx-auto mb-1" />
+                            <p className="text-[10px] text-gray-500">Garantie</p>
+                            <p className="text-[12px] font-bold text-gray-700">{service.warranty}</p>
+                        </div>
+                        <div className="p-2 bg-gray-50 text-center">
+                            <MapPin className="w-4 h-4 text-gray-400 mx-auto mb-1" />
+                            <p className="text-[10px] text-gray-500">Zone</p>
+                            <p className="text-[12px] font-bold text-gray-700 truncate">{service.location}</p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Artisan Card */}
+                <div className="bg-white border border-gray-200 p-4">
+                    <div className="flex items-start gap-3 mb-3">
+                        <div className="w-14 h-14 bg-[#1B4F72] flex items-center justify-center text-white text-[20px] font-bold">
+                            {service.artisan.name.charAt(0)}
+                        </div>
+                        <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                                <h3 className="text-[15px] font-bold text-gray-800">{service.artisan.name}</h3>
+                                {service.artisan.verified && <Shield className="w-4 h-4 text-blue-500 fill-blue-500" />}
+                                {service.artisan.pro && <span className="px-1.5 py-0.5 bg-[#D35400] text-white text-[9px] font-bold">PRO</span>}
+                            </div>
+                            <p className="text-[11px] text-[#D35400] font-medium">{service.category}</p>
+                            <div className="flex items-center gap-3 mt-2">
+                                <div className="flex items-center gap-1">
+                                    <Star className="w-3.5 h-3.5 text-yellow-500 fill-yellow-500" />
+                                    <span className="text-[12px] font-bold text-gray-700">{service.artisan.rating}</span>
+                                    <span className="text-[10px] text-gray-400">({service.artisan.reviews})</span>
+                                </div>
+                                <span className="text-gray-300">|</span>
+                                <span className="text-[11px] text-gray-500">{service.artisan.jobs} travaux</span>
+                            </div>
+                        </div>
+                    </div>
+                    <p className="text-[12px] text-gray-600 leading-relaxed">{service.artisan.bio}</p>
+                </div>
+
             </div>
 
             
