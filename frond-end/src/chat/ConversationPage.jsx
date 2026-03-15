@@ -1,12 +1,10 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
-    ArrowLeft, Send, Smile, Paperclip,
-    Check, CheckCheck, Clock, MoreVertical,
-    Star, CreditCard, CheckCircle2, MessageSquare, ShieldCheck
+    ArrowLeft, Send, Banknote, Paperclip,
+    Check, CheckCheck, X, MoreVertical,
+    Star, CreditCard, CheckCircle2, ShieldCheck
 } from 'lucide-react';
-import FileUpload from '../components/inputs/FileUpload';
-import Select from '../components/selects/Select';
 
 const ConversationPage = () => {
     const messagesEndRef = useRef(null);
@@ -22,6 +20,9 @@ const ConversationPage = () => {
     const [isConfirmed, setIsConfirmed] = useState(false);
     const [rating, setRating] = useState(0);
     const [comment, setComment] = useState('');
+
+
+    const [showModelAction, setShowModelAction] = useState(false);
 
     const [conversation] = useState({
         id: 1,
@@ -71,16 +72,13 @@ const ConversationPage = () => {
                     <span className="w-5 h-5 flex items-center justify-center bg-[#1B4F72] text-white   -full text-[10px]">1</span>
                     Validation du devis
                 </div>
-                <Select
-                    name="status"
-                    label={"choisissez une option"}
-                    value={status}
-                    onChange={(e) => setStatus(e.target.value)}
-                    options={[
-                        { value: 'accepter', label: 'Accepter dommande' },
-                        { value: 'refuser', label: 'Refuser' },
-                    ]}
-                />
+                <button
+                    onClick={() => setShowModelAction(true)}
+                    className="w-full py-2 flex items-center justify-center gap-2 text-[12px] border    transition-colors bg-white border-gray-300 hover:bg-gray-50"
+                >
+                    <CheckCircle2 className="w-4 h-4" />
+                    Accepter
+                </button>
             </div>
 
             {/* etp 2 */}
@@ -159,6 +157,47 @@ const ConversationPage = () => {
         </div>
     );
 
+    if (showModelAction)
+        return (
+
+            <div
+                className="fixed inset-0 z-[999] flex items-center justify-center p-4"
+                role="dialog"
+                aria-modal="true"
+            >
+                <div
+                    className="absolute inset-0 bg-black/40 backdrop-blur-[2px] transition-opacity animate-in fade-in duration-200"
+
+                />
+                <div className={`relative w-full max-w-xs  bg-white shadow-2xl border border-gray-100 transform transition-all animate-in zoom-in-95 duration-200`}>
+
+
+                    <div className="p-6">
+                        <div className="flex items-center gap-4 mb-6">
+                            <div className="w-10 h-10 bg-[#D35400]/10 flex items-center justify-center  ">
+                                <Banknote className="w-5 h-5 text-[#D35400]" />
+                            </div>
+                            <div>
+                                <h3 className="text-[14px] font-bold text-[#1B4F72]"> Offre de travail</h3>
+                                <p className="text-[11px] text-gray-400 leading-none mt-1">confirmation de la mission</p>
+                            </div>
+                        </div>
+                        <p className="text-[12px] text-gray-600 mb-3">Voulez-vous vraiment accepter cette offre ?</p>
+                        <input type="numbre" placeholder="0000.00" className="border m-2 w-9/12 border-gray-300 p-1 text-center text-[11px] tracking-widest focus:ring-1 focus:ring-[#D35400] outline-none" />
+                        <div className="grid grid-cols-2 gap-3">
+                            <button onClick={() => setShowModelAction(false)} className="py-2 text-[12px] text-gray-400 hover:text-gray-600 font-medium">Non</button>
+                            <button
+                                onClick={() => {  setStatus("accepter"); setShowModelAction(false);}}
+                                className="py-2 bg-[#1B4F72] text-white text-[12px] font-bold hover:bg-[#D35400] transition-colors"
+                            >
+                                Confirmer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+
     return (
         <div className="min-h-screen bg-gray-50">
             <div className="max-w-6xl mx-auto mt-16 h-[calc(100vh-64px)]">
@@ -205,7 +244,6 @@ const ConversationPage = () => {
                     <div className="w-80 border-l border-gray-100 bg-white p-5 hidden lg:block overflow-y-auto">
                         <RenderStatusDommande />
                     </div>
-
                     {showStatusDommande && (
                         <div className="fixed inset-0 bg-black/50 z-50 lg:hidden flex items-end">
                             <div className="bg-white w-full max-h-[90vh]   -t-2xl p-6 overflow-y-auto">
@@ -216,6 +254,7 @@ const ConversationPage = () => {
                     )}
                 </div>
             </div>
+
         </div>
     );
 };

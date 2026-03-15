@@ -41,7 +41,6 @@ const LogoutModal = ({
                 onClick={surFermeture}
             />
 
-            {/* Contenu  */}
             <div className={`relative w-full ${variante === 'simple' ? 'max-w-xs' : 'max-w-sm'} bg-white shadow-2xl border border-gray-100 transform transition-all animate-in zoom-in-95 duration-200`}>
 
                 {variante === 'par_defaut' && (
