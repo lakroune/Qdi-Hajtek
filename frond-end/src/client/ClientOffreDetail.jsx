@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import {
     MapPin, Calendar, DollarSign, Clock, ArrowLeft,
-    CheckCircle2, XCircle, MessageCircle, Star, User,
-    Phone, Mail, ChevronLeft, ChevronRight,
-    Shield, Clock3, Briefcase, AlertCircle
+    CheckCircle2, MoreVertical, Star,
+    Briefcase, AlertCircle
 } from 'lucide-react';
 
 const ClientOffreDetail = () => {
@@ -133,7 +132,7 @@ const ClientOffreDetail = () => {
         <div className="min-h-screen bg-gray-50 mt-20 pb-8">
 
             <div className="bg-white border-b border-gray-200 sticky top-0 z-20">
-                <div className="w-[90%] mx-auto px-4 py-4">
+                <div className="w-[90%] flex justify-between mx-auto px-4 py-4">
                     <div className="flex items-center gap-3">
                         <button
                             onClick={() => window.history.back()}
@@ -146,7 +145,11 @@ const ClientOffreDetail = () => {
                             <p className="text-[11px] text-gray-500">#{offre.id} • {offre.createdAt}</p>
                         </div>
                     </div>
+                    <div>
+                        <MoreVertical className="w-5 h-5 text-[#1B4F72]" />
+                    </div>
                 </div>
+
             </div>
 
             <div className="w-[90%] mx-auto px-4 py-6 space-y-6">
@@ -231,13 +234,9 @@ const ClientOffreDetail = () => {
                         <div>
                             <h3 className="text-[18px] font-bold text-[#1B4F72] flex items-center gap-2">
                                 Propositions reçues
-                                <span className="px-2.5 py-1 bg-[#D35400] text-white text-[12px]">
-                                    {propositions.length}
-                                </span>
+
                             </h3>
-                            <p className="text-[12px] text-gray-500 mt-1">
-                                {propositions.filter(p => p.status === 'pending').length} en attente de réponse
-                            </p>
+
                         </div>
                     </div>
 
@@ -258,9 +257,7 @@ const ClientOffreDetail = () => {
                                                     <h4 className="text-[15px] font-bold text-gray-800 truncate">
                                                         {prop.artisan.name}
                                                     </h4>
-                                                    {prop.artisan.verified && (
-                                                        <Shield className="w-4 h-4 text-blue-500 fill-blue-500" />
-                                                    )}
+
                                                 </div>
                                                 <p className="text-[11px] text-[#D35400] font-medium mt-0.5">
                                                     {prop.artisan.specialty}
@@ -319,7 +316,6 @@ const ClientOffreDetail = () => {
                                         onClick={() => handleAccept(prop.id)}
                                         className="w-full flex items-center justify-center gap-2 py-3 bg-green-500 hover:bg-green-600 text-white text-[13px] font-bold transition-colors"
                                     >
-                                        <CheckCircle2 className="w-4 h-4" />
                                         Accepter cette proposition
                                     </button>
 

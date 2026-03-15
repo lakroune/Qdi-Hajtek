@@ -40,7 +40,66 @@ function App() {
 
 
 
+<Route
+  path="/quickstart"
+  element={
+    <div className="auth-layout">
 
+      {/* HEADER */}
+      <Header
+        estAuthentifie={true}
+        nomUtilisateur="nom"
+        notifications={4}
+        messages={3}
+      />
+
+      {/* AUTH */}
+      {/* <LoginPage />
+      <RegisterPage />
+      <ForgotPasswordPage />
+      <ResetPasswordPage />
+      <ConfirmEmailPage /> */}
+
+      <hr />
+
+      {/* CLIENT */}
+      <HomePage />
+      <SettingsPage />
+      <ClientAddJob />
+      <ClientListOffres />
+      <ClientOffreDetail />
+      <ClientFavoris />
+
+      <hr />
+
+      {/* CHAT */}
+      <MessagesPage />
+      <ConversationPage />
+
+      <hr />
+
+      {/* ARTISAN */}
+      <ArtisanPortfolioPage />
+      <ArtisanAddService />
+      <ArtisanOffres />
+      <ArtisanOffreDetail />
+
+      <hr />
+
+      {/* ADMIN */}
+      <AdminLayout />
+      <DashboardHome />
+      <ReportsManagement />
+      <ReviewsManagement />
+      <ArtisanRequests />
+      <AccountsManagement />
+      <ServicesManagement />
+      <JobsManagement />
+      <ManageCategories />
+
+    </div>
+  }
+/>
 
         <Route path="/auth" element={<div className="auth-layout"><Outlet /></div>}>
           <Route index element={<LoginPage />} />
