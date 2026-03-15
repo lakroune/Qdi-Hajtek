@@ -30,6 +30,7 @@ import ClientFavoris from './client/ClientFavoris';
 import ManageCategories from './admin/ManageCategories ';
 import Notifications from './chat/Notifications';
 import Services from './client/Services';
+import ServiceDetail from './client/ServiceDetail';
 function App() {
 
 
@@ -126,6 +127,7 @@ function App() {
           <Route path="offres/:id" element={<ArtisanOffreDetail />} />
           <Route path="offres" element={<ArtisanOffres />} />
           <Route path="services" element={<Services />} />
+          <Route path='services/:id' element={<ServiceDetail />} />
           
         </Route>
 
