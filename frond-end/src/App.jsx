@@ -27,6 +27,7 @@ import ArtisanOffreDetail from './artisan/ArtisanOffreDetail';
 import ArtisanOffres from './artisan/ArtisanOffres';
 import ClientOffreDetail from './client/ClientOffreDetail';
 import ClientFavoris from './client/ClientFavoris';
+import ManageCategories from './admin/ManageCategories ';
 function App() {
 
 
@@ -76,6 +77,7 @@ function App() {
           <Route path='services' element={<ServicesManagement />} />
           <Route path='accounts' element={<AccountsManagement />} />
           <Route path='jobs' element={<JobsManagement />} />
+          <Route path='categories' element={<ManageCategories />} />
         </Route>
 
 
