@@ -28,6 +28,7 @@ import ArtisanOffres from './artisan/ArtisanOffres';
 import ClientOffreDetail from './client/ClientOffreDetail';
 import ClientFavoris from './client/ClientFavoris';
 import ManageCategories from './admin/ManageCategories ';
+import Notifications from './chat/Notifications';
 function App() {
 
 
@@ -118,6 +119,7 @@ function App() {
           <Route path="mes-offres" element={<ClientListOffres />} />
           <Route path="mes-offres/:id" element={<ClientOffreDetail />} />
           <Route path="favori" element={<ClientFavoris />} />
+          <Route path="notice" element={<Notifications />} />
           
           <Route path="portfolio" element={<ArtisanPortfolioPage />} />
           <Route path="ajouter-service" element={<ArtisanAddService />} />
