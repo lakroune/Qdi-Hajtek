@@ -69,16 +69,17 @@ const Header = ({
   const obtenirElementsMenuProfil = () => {
     if (typeUtilisateur === 'artisan') {
       return [
-        { vers: 'parametres', icone: User, libelle: '' },
-        { vers: 'services', icone: Briefcase, libelle: '' },
+        { vers: 'services', icone: Briefcase, libelle: 'Services' },
         { vers: '/offres', icone: Calendar, libelle: 'Offres' },
+        { vers: '/portfolio', icone: User, libelle: 'Portfolio' },
+        { vers: '/parametres', icone: Settings, libelle: 'parametres' },
 
       ];
     }
     return [
       { vers: '/favorites', icone: Heart, libelle: 'Favoris' },
-      { vers: '/parametres', icone: Settings, libelle: 'profil' },
       { vers: '/mes-offres', icone: Calendar, libelle: 'Offres' },
+      { vers: '/parametres', icone: Settings, libelle: 'parametres' },
     ];
   };
 

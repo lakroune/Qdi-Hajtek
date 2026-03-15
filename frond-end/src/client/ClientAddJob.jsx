@@ -99,7 +99,7 @@ const ClientAddJob = () => {
         }
     };
 
-    if (true) {
+    if (success) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gray-50">
                 <div className="max-w-2xl mx-auto mt-20 px-4">

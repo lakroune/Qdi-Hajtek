@@ -29,6 +29,7 @@ import ClientOffreDetail from './client/ClientOffreDetail';
 import ClientFavoris from './client/ClientFavoris';
 import ManageCategories from './admin/ManageCategories ';
 import Notifications from './chat/Notifications';
+import Services from './client/Services';
 function App() {
 
 
@@ -110,7 +111,7 @@ function App() {
           <Route path="reset-password" element={<ResetPasswordPage />} />
           <Route path="confirme-email" element={<ConfirmEmailPage />} />
         </Route>
-        <Route path="/" element={<div className="auth-layout"><Header estAuthentifie={true} nomUtilisateur={"nom"} notifications={4} messages={3} /><Outlet /> </div>}>
+        <Route path="/" element={<div className="auth-layout"><Header estAuthentifie={true} nomUtilisateur={"nom"} notifications={4} messages={3} typeUtilisateur={"artisan"} /><Outlet /> </div>}>
           <Route index element={<HomePage />} />
           <Route path="parametres" element={<SettingsPage />} />
           <Route path="messages" element={<MessagesPage />} />
@@ -120,11 +121,12 @@ function App() {
           <Route path="mes-offres/:id" element={<ClientOffreDetail />} />
           <Route path="favorites" element={<ClientFavoris />} />
           <Route path="notifications" element={<Notifications />} />
-
           <Route path="portfolio" element={<ArtisanPortfolioPage />} />
           <Route path="ajouter-service" element={<ArtisanAddService />} />
           <Route path="offres/:id" element={<ArtisanOffreDetail />} />
           <Route path="offres" element={<ArtisanOffres />} />
+          <Route path="services" element={<Services />} />
+          
         </Route>
 
 
