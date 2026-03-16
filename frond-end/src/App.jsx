@@ -122,7 +122,7 @@ function App() {
           <Route path="mes-offres/:id" element={<ClientOffreDetail />} />
           <Route path="favorites" element={<ClientFavoris />} />
           <Route path="notifications" element={<Notifications />} />
-          <Route path="portfolio" element={<ArtisanPortfolioPage />} />
+          <Route path="artisan/:id" element={<ArtisanPortfolioPage />} />
           <Route path="ajouter-service" element={<ArtisanAddService />} />
           <Route path="offres/:id" element={<ArtisanOffreDetail />} />
           <Route path="offres" element={<ArtisanOffres />} />
