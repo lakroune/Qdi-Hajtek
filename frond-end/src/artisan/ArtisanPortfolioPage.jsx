@@ -214,7 +214,7 @@ const ArtisanPortfolioPage = () => {
                             <img
                                 src={artisan.avatar}
                                 alt={artisan.name}
-                                className="w-25 h-25 object-cover border border-gray-200"
+                                className="w-30 h-30 object-cover border border-gray-200"
                             />
 
                         </div>
@@ -261,17 +261,6 @@ const ArtisanPortfolioPage = () => {
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-4 mt-3 pt-3 border-t border-gray-100">
-                        <a href={`tel:${artisan.phone}`} className="flex items-center gap-1.5 text-[12px] text-[#1B4F72] hover:text-[#D35400]">
-                            <Phone className="w-3.5 h-3.5" />
-                            {artisan.phone}
-                        </a>
-                        <span className="text-gray-300">|</span>
-                        <a href={`mailto:${artisan.email}`} className="flex items-center gap-1.5 text-[12px] text-[#1B4F72] hover:text-[#D35400] truncate">
-                            <Mail className="w-3.5 h-3.5" />
-                            <span className="truncate">{artisan.email}</span>
-                        </a>
-                    </div>
 
 
                 </div>
