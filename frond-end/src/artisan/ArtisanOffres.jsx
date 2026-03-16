@@ -213,8 +213,7 @@ const ArtisanOffres = () => {
                 </div>
             </div>
 
-            <div className="w-[90%] mx-auto px-4 py-6">
-
+            <div className="w-full mx-auto px-4 py-6">
                 {isLoading ? (
                     <div className="flex flex-col items-center justify-center py-20">
                         <Loader2 className="w-10 h-10 text-[#1B4F72] animate-spin mb-3" />
@@ -235,7 +234,7 @@ const ArtisanOffres = () => {
                         </button>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                         {filteredOffres.map((offre) => {
                             const urgency = getUrgencyConfig(offre.urgency);
                             return (
