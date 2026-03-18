@@ -16,13 +16,7 @@ class UserDAO
     {
 
         return User::create(
-            [
-                'lastname' => $registerDTO->lastname,
-                'firstname' => $registerDTO->firstname,
-                'email' => $registerDTO->email,
-                'password' => bcrypt($registerDTO->password),
-                'city' => $registerDTO->city
-            ]
+            $registerDTO->data
         );
     }
 }

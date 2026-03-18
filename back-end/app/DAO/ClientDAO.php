@@ -23,4 +23,8 @@ class ClientDAO
             ]
         );
     }
+    public function update(int $userId, array $data): Client
+    {
+        return Client::where('id', $userId)->update($data);
+    }
 }

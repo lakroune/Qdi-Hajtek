@@ -24,7 +24,7 @@ class AuthService
     public function register(RegisterDTO $registerDTO)
     {
         $user = $this->userDAO->createFromRegisterDTO($registerDTO);
-        $this->clientDAO->create($user->id, $registerDTO->city);
+        $this->clientDAO->create($user->id, $registerDTO->data['cin']);
 
         if (! $user->assignRole('client')) {
             return  null;

@@ -68,12 +68,7 @@ class AuthController extends Controller
     {
         $data = $request->validated();
         $dto = new RegisterDTO(
-            $data['lastname'],
-            $data['firstname'],
-            $data['email'],
-            $data['password'],
-            $data['cin'],
-            $data['city']
+            $data
         );
         $result = $authService->register($dto);
         return response()->json([
