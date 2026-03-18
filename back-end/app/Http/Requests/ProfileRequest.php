@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class ProfileRequest extends FormRequest
 {
@@ -23,10 +25,32 @@ class ProfileRequest extends FormRequest
     {
         return [
             'city' => 'required|string|max:255',
-            'phone' => 'required|string|max:255',
+            'phone' => 'nullable|numeric|digits:10',
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg|max:1024',
-            'rib' => 'nullable',
+            'rib' => 'nullable|numeric|digits:16',
         ];
     }
-    
+
+    public function messages()
+    {
+        return [
+            'city.required' => 'city is required',
+            'phone.required' => 'phone is required',
+            'phone.max' => 'phone must be less than 10 digits',
+            'avatar.image' => 'avatar must be an image',
+            'avatar.mimes' => 'avatar must be a jpeg, png, jpg',
+            'avatar.max' => 'avatar must be less than 1MB',
+        ];
+    }
+
+    public function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(
+            response()->json([
+                'success' => false,
+                'message' => 'Validation errors',
+                'data' => $validator->errors()
+            ], 422)
+        );
+    }
 }

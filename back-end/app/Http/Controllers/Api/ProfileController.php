@@ -49,6 +49,25 @@ class ProfileController extends Controller
      */
     public function update(ProfileRequest $request, string $id)
     {
-        //
+
+        $user = User::find($id);
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User not found'
+            ], 404);
+        }
+
+        $data = $request->validated();
+
+        $user->update($data);
+        $user->save();
+        $user->client->update($data);
+        $user->save();
+        return response()->json([
+            'success' => true,
+            'message' => 'Profile updated successfully',
+            'user' => $user
+        ], 200);
     }
 }

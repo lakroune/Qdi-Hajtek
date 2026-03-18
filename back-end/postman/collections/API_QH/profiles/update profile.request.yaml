@@ -1,0 +1,8 @@
+$kind: http-request
+name: update profile
+url: http://127.0.0.1:8000/api/profile
+method: GET
+headers:
+  - key: Authorization
+    value: "{{token-g}}"
+order: 1400

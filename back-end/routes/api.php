@@ -14,4 +14,5 @@ Route::middleware('auth:api')->group(function () {
     Route::post('verifier-email', [AuthController::class, 'verifierEmail']);
     Route::post('logout', [AuthController::class, 'logout']);
     Route::get('profile', [ProfileController::class, 'show']);
+    Route::patch('profile/{id}', [ProfileController::class, 'update']);
 });
