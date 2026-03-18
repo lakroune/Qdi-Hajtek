@@ -1,0 +1,12 @@
+$kind: http-request
+name: generate-code
+url: http://127.0.0.1:8000/api/generate-code
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \    \"email\": \"ismasil@example.com\"\r
+
+    }"
+order: 5000

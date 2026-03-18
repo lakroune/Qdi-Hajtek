@@ -10,15 +10,15 @@ body:
 
     \  \"lastname\": \"Lakroune\",\r
 
-    \  \"email\": \"ismail@example.com\",\r
+    \  \"email\": \"ismasil@example.com\",\r
 
     \  \"password\": \"password123\",\r
 
     \  \"password_confirmation\": \"password123\",\r
 
-    \  \"phone\": \"0612345678\",\r
+    \  \"phone\": \"0612145678\",\r
 
     \  \"city\": \"Casablanca\"\r
 
     }"
-order: 2733155375708442
+order: 2000

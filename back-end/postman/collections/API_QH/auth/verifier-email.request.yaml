@@ -4,4 +4,11 @@ url: http://127.0.0.1:8000/api/verifier-email
 method: POST
 headers:
   Authorization: "{{token-g}}"
-order: 3395437999182192
+body:
+  type: json
+  content: "{\r
+
+    \  \"code_verification\": 433109\r
+
+    }"
+order: 4000

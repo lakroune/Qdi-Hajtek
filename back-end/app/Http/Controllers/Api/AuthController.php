@@ -10,6 +10,7 @@ use App\Http\Requests\GenerateCodeRequest;
 use App\Mail\VerificationCodeMail;
 use App\Models\Role;
 use App\Models\User;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
@@ -145,7 +146,8 @@ class AuthController extends Controller
         try {
             Mail::to($user->email)->send(new VerificationCodeMail($user->code_verification, $user));
             return response()->json([
-                'message' => 'email sent successfully'
+                'message' => 'email sent successfully',
+                'user' => $user
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
@@ -153,15 +155,22 @@ class AuthController extends Controller
             ], 500);
         }
     }
-    public function logout(Request $request)
+
+    public function logout()
     {
-        $user = $request->user();
+        try {
+            JWTAuth::parseToken()->invalidate();
 
-        $user->currentAccessToken()->delete();
-
-        $user->tokens()->delete();
-        return response()->json([
-            'message' => 'Déconnecté avec succès'
-        ], 200);
+            return response()->json([
+                'success' => true,
+                'message' => 'Logged out successfully'
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to logout',
+                'error' => "something went wrong"
+            ], 500);
+        }
     }
 }
