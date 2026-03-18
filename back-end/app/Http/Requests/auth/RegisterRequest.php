@@ -35,17 +35,15 @@ class RegisterRequest extends FormRequest
     public function messages()
     {
         return [
-            'firstname.required' => 'Le prénom est requis',
-            'lastname.required' => 'Le nom est requis',
-            'email.required' => 'L\'email est requis',
-            'email.email' => 'L\'email doit être valide',
-            'email.unique' => 'L\'email est deja utilise',
-            'password.required' => 'Le mot de passe est requis',
-            'password.min' => 'Le mot de passe doit avoir au moins 8 caractères',
-            'password.confirmed' => 'Les mots de passe ne correspondent pas',
-            'phone.required' => 'Le numéro de telephone est requis',
-            'phone.unique' => 'Le numéro de telephone est deja utilise',
-            'city.required' => 'La ville est requise',
+            'firstname.required' => 'firstname is required',
+            'lastname.required' => 'lastname is required',
+            'email.required' => 'email is required',
+            'email.unique' => 'email already exists',
+            'password.required' => 'password is required',
+            'phone.required' => 'phone is required',
+            'phone.unique' => 'phone already exists',
+            'city.required' => 'city is required',
+
 
         ];
     }
