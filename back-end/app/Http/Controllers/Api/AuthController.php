@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\DTO\Auth\LoginDTO;
 use App\DTO\Auth\RegisterDTO;
+use App\DTO\Auth\VerifierEmailDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\auth\LoginRequest;
 use App\Http\Requests\auth\RegisterRequest;
@@ -47,34 +48,16 @@ class AuthController extends Controller
             'token' => $result['token']
         ], 201);
     }
-    public function verifierEmail(VerifierEmailRequest $request)
+    public function verifierEmail(VerifierEmailRequest $request, AuthService $authService)
     {
-        $data = $request->validated();
-
-        $user = auth('api')->user();
-
-        if (!$user) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Unauthorized'
-            ], 401);
-        }
-
-        if ($user->code_verification != $data['code_verification']) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Invalid verification code'
-            ], 400);
-        }
-
-        $user->email_verified_at = now();
-        $user->save();
+        $dto = new  VerifierEmailDTO($request->validated());
+        $result = $authService->verifierEmail($dto);
 
         return response()->json([
-            'success' => true,
-            'message' => 'Email verified successfully',
-            'user' => $user
-        ], 200);
+            'success' => $result['success'] ?? false,
+            'message' => $result['message'] ?? null,
+            'user' => $result['user'] ?? null,
+        ]);
     }
 
     public function generateCode(GenerateCodeRequest $request)

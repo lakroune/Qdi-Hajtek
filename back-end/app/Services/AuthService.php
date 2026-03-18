@@ -6,6 +6,7 @@ use App\DAO\ClientDAO;
 use App\DAO\UserDAO;
 use App\DTO\Auth\LoginDTO;
 use App\DTO\Auth\RegisterDTO;
+use App\DTO\Auth\VerifierEmailDTO;
 use App\Jobs\SendVerificationEmail;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
@@ -62,10 +63,26 @@ class AuthService
 
         $token = JWTAuth::fromUser($user);
         return [
-            
+
             'success' => true,
             'user' => $user,
             'token' => $token
+        ];
+    }
+
+    public function verifierEmail(VerifierEmailDTO $verifierEmailDTO)
+    {
+        $user = $this->userDAO->verifierEmail($verifierEmailDTO);
+
+        if ($user) {
+            return [
+                'success' => true,
+                'user' => $user
+            ];
+        }
+        return [
+            'success' => false,
+            'message' => 'Invalid verification code'
         ];
     }
 }

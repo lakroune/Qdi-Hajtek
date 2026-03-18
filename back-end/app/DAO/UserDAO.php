@@ -4,6 +4,7 @@ namespace App\DAO;
 
 use App\DTO\Auth\LoginDTO;
 use App\DTO\Auth\RegisterDTO;
+use App\DTO\Auth\VerifierEmailDTO;
 use App\Models\User;
 
 class UserDAO
@@ -24,5 +25,17 @@ class UserDAO
     public function login(LoginDTO $loginDTO)
     {
         return User::where('email', $loginDTO->data['email'])->first();
+    }
+
+    public function verifierEmail(VerifierEmailDTO $verifierEmailDTO)
+    {
+        $user = User::where('email', auth('api')->user()->email)->first();
+
+        if ($user->code_verification == $verifierEmailDTO->data['code_verification']) {
+            $user->email_verified_at = now();
+            $user->save();
+            return $user;
+        }
+        return null;
     }
 }
