@@ -16,5 +16,5 @@ Route::middleware('auth:api')->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
     Route::get('profile', [ProfileController::class, 'show']);
     Route::patch('profile/{id}', [ProfileController::class, 'update']);
-    Route::apiResource('artisans', ArtisanController::class)->only('store');
+    // Route::apiResource('artisans', ArtisanController::class)->only('store');
 });

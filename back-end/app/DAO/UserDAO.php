@@ -2,6 +2,7 @@
 
 namespace App\DAO;
 
+use App\DTO\Auth\LoginDTO;
 use App\DTO\Auth\RegisterDTO;
 use App\Models\User;
 
@@ -18,5 +19,10 @@ class UserDAO
         return User::create(
             $registerDTO->data
         );
+    }
+
+    public function login(LoginDTO $loginDTO)
+    {
+        return User::where('email', $loginDTO->data['email'])->first();
     }
 }

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\DAO\ClientDAO;
 use App\DAO\UserDAO;
+use App\DTO\Auth\LoginDTO;
 use App\DTO\Auth\RegisterDTO;
 use App\Jobs\SendVerificationEmail;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
@@ -27,7 +28,9 @@ class AuthService
         $this->clientDAO->create($user->id, $registerDTO->data['cin']);
 
         if (! $user->assignRole('client')) {
-            return  null;
+            return  [
+                'success' => false,
+            ];
         }
         $code = random_int(100000, 999999);
         $user->code_verification = $code;
@@ -39,6 +42,28 @@ class AuthService
 
         SendVerificationEmail::dispatch($user);
         return  [
+            'success' => true,
+            'user' => $user,
+            'token' => $token
+        ];
+    }
+
+    public function login(LoginDTO $loginDTO)
+    {
+        $user = $this->userDAO->login($loginDTO);
+
+        if (!$user || !password_verify($loginDTO->data['password'], $user->password)) {
+            return ['success' => false, 'message' => 'Invalid informations'];
+        }
+
+        if (!$user->email_verified_at) {
+            return ['success' => false, 'message' => 'Email not verified'];
+        }
+
+        $token = JWTAuth::fromUser($user);
+        return [
+            
+            'success' => true,
             'user' => $user,
             'token' => $token
         ];

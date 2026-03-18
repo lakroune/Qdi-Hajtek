@@ -1,4 +1,7 @@
 $kind: http-request
+name: New Request
 url: ""
 method: GET
+headers:
+  Authorization: "{{token-g}}"
 order: 3237385064782803

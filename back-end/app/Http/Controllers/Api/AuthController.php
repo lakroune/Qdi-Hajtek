@@ -2,20 +2,16 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\DTO\Auth\LoginDTO;
 use App\DTO\Auth\RegisterDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\auth\LoginRequest;
 use App\Http\Requests\auth\RegisterRequest;
 use App\Http\Requests\auth\VerifierEmailRequest;
 use App\Http\Requests\GenerateCodeRequest;
-use App\Jobs\SendVerificationEmail;
 use App\Mail\VerificationCodeMail;
-use App\Models\Client;
-use App\Models\Role;
-use App\Models\User;
 use App\Services\AuthService;
 use Exception;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
@@ -23,56 +19,29 @@ use function Illuminate\Support\now;
 
 class AuthController extends Controller
 {
-    public function login(LoginRequest $request)
+    public function login(LoginRequest $request, AuthService $authService)
     {
-        $data = $request->validated();
+        $dto = new LoginDTO($request->validated());
 
-        $user = User::where('email', $data['email'])->first();
-        if ($user) {
-            if ($user->email_verified_at) {
-                if (password_verify($data['password'], $user->password)) {
-                    if (!$user->email_verified_at) {
-                        return response()->json([
-                            'success' => false,
-                            'message' => 'Email not verified'
-                        ], 401);
-                    }
-                    $token = JWTAuth::fromUser($user);
-                    return response()->json([
-                        'success' => true,
-                        'message' => 'Logged in successfully',
-                        'user' => $user,
-                        'token' => $token
-                    ], 200);
-                } else {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Invalid password'
-                    ], 401);
-                }
-            } else {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Email not verified'
-                ], 401);
-            }
-        } else {
-            return response()->json([
-                'success' => false,
-                'message' => 'User not found'
-            ], 404);
-        }
+        $result = $authService->login($dto);
+
+        return response()->json([
+            'success' => $result['success'],
+            'message' => $result['message'],
+            'user' => $result['user'] ?? null,
+            'token' => $result['token'] ?? null
+        ]);
     }
 
     public function register(RegisterRequest $request, AuthService $authService)
     {
-        $data = $request->validated();
+
         $dto = new RegisterDTO(
-            $data
+            $request->validated()
         );
         $result = $authService->register($dto);
         return response()->json([
-            'success' => true,
+            'success' => $result['success'],
             'message' => 'Account created successfully',
             'user' => $result['user'],
             'token' => $result['token']
