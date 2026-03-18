@@ -29,7 +29,7 @@ class RegisterRequest extends FormRequest
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:8|confirmed',
             'cin' => 'required|string|unique:clients,cin',
-            'city' => 'required|string|max:255',
+            'city' => 'required|string|max:255',  //pour le client
         ];
     }
     public function messages()

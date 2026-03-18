@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\DTO\Auth\RegisterDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\auth\LoginRequest;
 use App\Http\Requests\auth\RegisterRequest;
@@ -12,6 +13,7 @@ use App\Mail\VerificationCodeMail;
 use App\Models\Client;
 use App\Models\Role;
 use App\Models\User;
+use App\Services\AuthService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -62,38 +64,23 @@ class AuthController extends Controller
         }
     }
 
-    public function register(RegisterRequest $request)
+    public function register(RegisterRequest $request, AuthService $authService)
     {
         $data = $request->validated();
-
-        $user = User::create($data);
-
-        Client::create([
-            'id'  => $user->id,
-            'cin' => $data['cin'],
-        ]);
-
-        if (! $user->assignRole('client')) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to assign role'
-            ]);
-        }
-
-        $code = random_int(100000, 999999);
-        $user->code_verification = $code;
-        $user->save();
-
-        $token = JWTAuth::claims([
-            'exp' => now()->addHours(50)->timestamp
-        ])->fromUser($user);
-
-        SendVerificationEmail::dispatch($user);
+        $dto = new RegisterDTO(
+            $data['lastname'],
+            $data['firstname'],
+            $data['email'],
+            $data['password'],
+            $data['cin'],
+            $data['city']
+        );
+        $result = $authService->register($dto);
         return response()->json([
             'success' => true,
             'message' => 'Account created successfully',
-            'user' => $user,
-            'token' => $token
+            'user' => $result['user'],
+            'token' => $result['token']
         ], 201);
     }
     public function verifierEmail(VerifierEmailRequest $request)
