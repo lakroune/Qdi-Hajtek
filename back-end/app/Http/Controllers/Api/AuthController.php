@@ -7,6 +7,7 @@ use App\Http\Requests\auth\LoginRequest;
 use App\Http\Requests\auth\RegisterRequest;
 use App\Http\Requests\auth\VerifierEmailRequest;
 use App\Http\Requests\GenerateCodeRequest;
+use App\Jobs\SendVerificationEmail;
 use App\Mail\VerificationCodeMail;
 use App\Models\Client;
 use App\Models\Role;
@@ -73,8 +74,7 @@ class AuthController extends Controller
 
         Client::create([
             'id'  => $user->id,
-            'CIN' => $data['cin'],
-            'statut' => 'actif',
+            'cin' => $data['cin'],
         ]);
 
         $role = Role::where('name', 'client')->first();
@@ -92,7 +92,8 @@ class AuthController extends Controller
 
         $token = JWTAuth::fromUser($user);
 
-        Mail::to($user->email)->send(new VerificationCodeMail($user->code_verification, $user));
+        SendVerificationEmail::dispatch($user);
+        // Mail::to($user->email)->send(new VerificationCodeMail($user->code_verification, $user));
 
         return response()->json([
             'success' => true,
