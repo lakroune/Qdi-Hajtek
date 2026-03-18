@@ -93,4 +93,16 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->roles()->where('name', 'artisan')->exists();
     }
+
+    public function assignRole(string $roleName): bool
+    {
+        $role = Role::where('name', $roleName)->first();
+        if (!$role) {
+            return false;
+        }
+        if (!$this->roles()->where('role_id', $role->id)->exists()) {
+            $this->roles()->attach($role->id);
+        }
+        return true;
+    }
 }
