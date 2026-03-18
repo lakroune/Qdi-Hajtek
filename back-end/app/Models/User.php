@@ -56,16 +56,16 @@ class User extends Authenticatable implements JWTSubject
 
     public function client()
     {
-        return $this->hasOne(Client::class);
+        return $this->hasOne(Client::class, 'id');
     }
     public function artisan()
     {
-        return $this->hasOne(Artisan::class);
+        return $this->hasOne(Artisan::class, 'id');
     }
 
     public function admin()
     {
-        return $this->hasOne(Admin::class);
+        return $this->hasOne(Admin::class, 'id');
     }
     public function roles()
     {

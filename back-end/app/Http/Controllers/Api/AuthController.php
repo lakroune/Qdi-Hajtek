@@ -64,26 +64,18 @@ class AuthController extends Controller
     {
         $data = $request->validated();
 
-        $user = User::create([
-            'firstname' => $data['firstname'],
-            'lastname'  => $data['lastname'],
-            'email'     => $data['email'],
-            'password'  => $data['password'],
-            'city'      => $data['city'] ?? null,
-        ]);
+        $user = User::create($data);
 
         Client::create([
             'id'  => $user->id,
             'cin' => $data['cin'],
         ]);
 
-        $role = Role::where('name', 'client')->first();
-        if ($role) {
-            $role->users()->attach($user->id);
-        } else {
+        if (! $user->assignRole('client')) {
             return response()->json([
-                'message' => 'Role client not found'
-            ], 404);
+                'success' => false,
+                'message' => 'Failed to assign role'
+            ]);
         }
 
         $code = random_int(100000, 999999);
@@ -93,8 +85,6 @@ class AuthController extends Controller
         $token = JWTAuth::fromUser($user);
 
         SendVerificationEmail::dispatch($user);
-        // Mail::to($user->email)->send(new VerificationCodeMail($user->code_verification, $user));
-
         return response()->json([
             'success' => true,
             'message' => 'Account created successfully',
