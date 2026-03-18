@@ -17,6 +17,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
+use function Illuminate\Support\now;
+
 class AuthController extends Controller
 {
     public function login(LoginRequest $request)
@@ -82,7 +84,9 @@ class AuthController extends Controller
         $user->code_verification = $code;
         $user->save();
 
-        $token = JWTAuth::fromUser($user);
+        $token = JWTAuth::claims([
+            'exp' => now()->addHours(50)->timestamp
+        ])->fromUser($user);
 
         SendVerificationEmail::dispatch($user);
         return response()->json([

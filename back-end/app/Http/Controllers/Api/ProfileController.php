@@ -24,9 +24,17 @@ class ProfileController extends Controller
             ], 403);
         }
         $profile = [];
-        $profile['user'] = $user;
+
         if ($user->hasRole('client')) {
-            $profile['client'] = $user->client;
+            $profile = [
+                'user' => $user->load('client'),
+            ];
+        }
+
+        if ($user->hasRole('artisan')) {
+            $profile = [
+                'user' => $user->load(['client', 'artisan'])
+            ];
         }
 
         return response()->json([
