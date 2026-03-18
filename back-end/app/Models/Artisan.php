@@ -11,6 +11,8 @@ class Artisan extends Model
     use HasFactory;
 
     protected $table = 'artisans';
+    public $incrementing = false;
+    protected $primaryKey = 'id';
     public function user()
     {
         return $this->belongsTo(User::class);

@@ -11,6 +11,8 @@ class Client extends Model
     use HasFactory;
 
     protected $table = 'clients';
+    public $incrementing = false;
+    protected $primaryKey = 'id';
 
     public function user()
     {
@@ -35,5 +37,4 @@ class Client extends Model
     {
         return $this->hasMany(OffreTravail::class);
     }
-
 }
