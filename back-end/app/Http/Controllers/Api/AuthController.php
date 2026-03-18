@@ -16,7 +16,6 @@ use Exception;
 use Illuminate\Support\Facades\Mail;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
-use function Illuminate\Support\now;
 
 class AuthController extends Controller
 {
@@ -60,42 +59,42 @@ class AuthController extends Controller
         ]);
     }
 
-    public function generateCode(GenerateCodeRequest $request)
-    {
-        $data = $request->validated();
+    // public function generateCode(GenerateCodeRequest $request)
+    // {
+    //     $data = $request->validated();
 
-        $user = User::where('email', $data['email'])->first();
-        if (!$user) {
-            return response()->json(
-                ['message' => 'invalid email'],
-                404
-            );
-        }
+    //     $user = User::where('email', $data['email'])->first();
+    //     if (!$user) {
+    //         return response()->json(
+    //             ['message' => 'invalid email'],
+    //             404
+    //         );
+    //     }
 
-        if ($user->email_verified_at) {
-            return response()->json(
-                ['message' => 'email already verified'],
-                400
-            );
-        }
+    //     if ($user->email_verified_at) {
+    //         return response()->json(
+    //             ['message' => 'email already verified'],
+    //             400
+    //         );
+    //     }
 
-        $new_code = random_int(100000, 999999);
-        $user->code_verification = $new_code;
-        $user->save();
+    //     $new_code = random_int(100000, 999999);
+    //     $user->code_verification = $new_code;
+    //     $user->save();
 
 
-        try {
-            Mail::to($user->email)->send(new VerificationCodeMail($user->code_verification, $user));
-            return response()->json([
-                'message' => 'email sent successfully',
-                'user' => $user
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'something went wrong'
-            ], 500);
-        }
-    }
+    //     try {
+    //         Mail::to($user->email)->send(new VerificationCodeMail($user->code_verification, $user));
+    //         return response()->json([
+    //             'message' => 'email sent successfully',
+    //             'user' => $user
+    //         ], 200);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'message' => 'something went wrong'
+    //         ], 500);
+    //     }
+    // }
 
     public function logout()
     {

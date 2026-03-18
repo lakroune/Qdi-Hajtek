@@ -7,6 +7,8 @@ use App\DTO\Auth\RegisterDTO;
 use App\DTO\Auth\VerifierEmailDTO;
 use App\Models\User;
 
+use function Illuminate\Support\now;
+
 class UserDAO
 {
     /**
