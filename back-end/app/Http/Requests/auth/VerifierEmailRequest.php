@@ -24,20 +24,15 @@ class VerifierEmailRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => 'required|email',
-            'token' => 'required',
-            'code' => 'required|numeric|digits:4',
+            'code_verification' => 'required|numeric|digits:6',
         ];
     }
     public function messages()
     {
         return [
-            'email.required' => 'L\'email est requis',
-            'email.email' => 'L\'email doit être valide',
-            'token.required' => 'Le token est requis',
-            'code.required' => 'Le code est requis',
-            'code.numeric' => 'Le code doit être numérique',
-            'code.digits' => 'Le code doit avoir 4 chiffres',
+            'code_verification.required' => 'code is required',
+            'code_verification.numeric' => 'code must be numeric',
+            'code_verification.digits' => 'code must be 6 digits',
         ];
     }
 

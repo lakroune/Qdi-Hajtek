@@ -48,22 +48,33 @@ class AuthController extends Controller
         ], 201);
     }
 
-    public function  verifierEmail(VerifierEmailRequest $request)
+    public function verifierEmail(VerifierEmailRequest $request)
     {
         $data = $request->validated();
 
-        $user = User::where('email', $data['email'])->first();
+        $user = auth('api')->user();
 
         if (!$user) {
             return response()->json([
-                'message' => 'Utilisateur non trouvé'
-            ], 404);
+                'success' => false,
+                'message' => 'Unauthorized'
+            ], 401);
         }
+
+        if ($user->code_verification != $data['code_verification']) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid verification code'
+            ], 400);
+        }
+
         $user->email_verified_at = now();
         $user->save();
 
         return response()->json([
-            'message' => 'Email vérifié avec succès'
+            'success' => true,
+            'message' => 'Email verified successfully',
+            'user' => $user
         ], 200);
     }
 
