@@ -7,6 +7,7 @@ use App\Http\Requests\auth\LoginRequest;
 use App\Http\Requests\auth\RegisterRequest;
 use App\Http\Requests\auth\VerifierEmailRequest;
 use App\Mail\VerificationCodeMail;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -48,9 +49,8 @@ class AuthController extends Controller
     public function register(RegisterRequest $request)
     {
         $data = $request->validated();
-
         $user = User::create($data);
-
+        Role::where('name', 'client')->first()->users()->attach($user->id);
         return response()->json([
             'message' => 'account created successfully',
             'user' => $user
