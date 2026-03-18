@@ -24,8 +24,6 @@ class User extends Authenticatable implements JWTSubject
         'password',
         'lastname',
         'firstname',
-        'phone',
-        'avatar',
         'city',
         'code_verification',
     ];
@@ -81,5 +79,18 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->roles()->where('name', 'admin')->exists();
+    }
+    public function isClient(): bool
+    {
+        return $this->roles()->where('name', 'client')->exists();
+    }
+    public function isArtisan(): bool
+    {
+        return $this->roles()->where('name', 'artisan')->exists();
     }
 }

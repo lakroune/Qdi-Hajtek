@@ -23,14 +23,15 @@ class ProfileController extends Controller
                 'message' => 'Unauthorized'
             ], 403);
         }
-
-
-
-
+        $profile = [];
+        if ($user->isClient()) {
+            $profile[] = $user->client;
+        }
 
         return response()->json([
             'success' => true,
-            'user' => $user,
+            'message' => 'Profile retrieved successfully',
+            'profile' => $profile
         ], 200);
     }
 

@@ -8,6 +8,7 @@ use App\Http\Requests\auth\RegisterRequest;
 use App\Http\Requests\auth\VerifierEmailRequest;
 use App\Http\Requests\GenerateCodeRequest;
 use App\Mail\VerificationCodeMail;
+use App\Models\Client;
 use App\Models\Role;
 use App\Models\User;
 use Exception;
@@ -62,14 +63,26 @@ class AuthController extends Controller
     {
         $data = $request->validated();
 
-        $user = User::create($data);
+        $user = User::create([
+            'firstname' => $data['firstname'],
+            'lastname'  => $data['lastname'],
+            'email'     => $data['email'],
+            'password'  => $data['password'],
+            'city'      => $data['city'] ?? null,
+        ]);
+
+        Client::create([
+            'id'  => $user->id,
+            'CIN' => $data['cin'],
+            'statut' => 'actif',
+        ]);
 
         $role = Role::where('name', 'client')->first();
         if ($role) {
             $role->users()->attach($user->id);
         } else {
             return response()->json([
-                'message' => 'something went wrong'
+                'message' => 'Role client not found'
             ], 404);
         }
 
@@ -88,7 +101,6 @@ class AuthController extends Controller
             'token' => $token
         ], 201);
     }
-
     public function verifierEmail(VerifierEmailRequest $request)
     {
         $data = $request->validated();

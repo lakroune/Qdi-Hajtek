@@ -16,9 +16,9 @@ return new class extends Migration
             $table->primary('id');
             $table->enum('statut', ['actif', 'inactif'])->default('actif');
             $table->string('phone')->nullable();
-            $table->string('CIN')->unique();
+            $table->string('cin')->unique();
             $table->string('avatar')->nullable();
-            $table->string('RIB')->nullable();
+            $table->string('rib')->nullable();
             $table->timestamps();
         });
     }

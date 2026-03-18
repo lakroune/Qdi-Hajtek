@@ -14,6 +14,12 @@ class Client extends Model
     public $incrementing = false;
     protected $primaryKey = 'id';
 
+    protected $fillable = [
+        'cin',
+        'phone',
+        'avatar',
+        'rib',
+    ];
     public function user()
     {
         return $this->belongsTo(User::class);

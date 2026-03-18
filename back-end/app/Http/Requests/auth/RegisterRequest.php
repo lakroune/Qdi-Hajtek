@@ -28,7 +28,7 @@ class RegisterRequest extends FormRequest
             'lastname' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:8|confirmed',
-            'phone' => 'required|string|unique:users,phone',
+            'cin' => 'required|string|unique:clients,cin',
             'city' => 'required|string|max:255',
         ];
     }
@@ -40,8 +40,8 @@ class RegisterRequest extends FormRequest
             'email.required' => 'email is required',
             'email.unique' => 'email already exists',
             'password.required' => 'password is required',
-            'phone.required' => 'phone is required',
-            'phone.unique' => 'phone already exists',
+            'cin.required' => 'cin is required',
+            'cin.unique' => 'cin already exists',
             'city.required' => 'city is required',
 
 
