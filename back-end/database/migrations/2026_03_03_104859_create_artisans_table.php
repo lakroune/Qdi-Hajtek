@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('artisans', function (Blueprint $table) {
             $table->foreignId('id')->constrained('users')->onDelete('cascade');
-            $table->string('specialite'); // 
+            $table->string('specialite'); 
             $table->text('bio')->nullable();
             $table->boolean('is_verified')->default(false);
             $table->float('note')->default(0);

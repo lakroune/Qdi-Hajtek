@@ -14,6 +14,11 @@ return new class extends Migration
         Schema::create('clients', function (Blueprint $table) {
             $table->foreignId('id')->constrained('users')->onDelete('cascade');
             $table->primary('id');
+            $table->enum('statut', ['actif', 'inactif'])->default('actif');
+            $table->string('phone')->nullable();
+            $table->string('CIN')->unique();
+            $table->string('avatar')->nullable();
+            $table->string('RIB')->nullable();
             $table->timestamps();
         });
     }
