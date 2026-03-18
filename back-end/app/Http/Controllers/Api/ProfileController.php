@@ -23,24 +23,12 @@ class ProfileController extends Controller
                 'message' => 'Unauthorized'
             ], 403);
         }
-        $profile = [];
 
-        if ($user->hasRole('client')) {
-            $profile = [
-                'user' => $user->load('client'),
-            ];
-        }
-
-        if ($user->hasRole('artisan')) {
-            $profile = [
-                'user' => $user->load(['client', 'artisan'])
-            ];
-        }
 
         return response()->json([
             'success' => true,
             'message' => 'Profile retrieved successfully',
-            'profile' => $profile
+            'profile'  => $user->load(['client', 'artisan']),
         ], 200);
     }
 
@@ -61,9 +49,7 @@ class ProfileController extends Controller
         $data = $request->validated();
 
         $user->update($data);
-        $user->save();
         $user->client->update($data);
-        $user->save();
         return response()->json([
             'success' => true,
             'message' => 'Profile updated successfully',

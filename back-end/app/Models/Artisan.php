@@ -21,6 +21,12 @@ class Artisan extends Model
         'note',
         'rayon_action',
     ];
+
+    protected $casts = [
+        
+    ];
+
+    protected $hidden = [];
     public function user()
     {
         return $this->belongsTo(User::class);
