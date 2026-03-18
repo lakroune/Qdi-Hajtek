@@ -105,4 +105,16 @@ class User extends Authenticatable implements JWTSubject
         }
         return true;
     }
+
+    public function removeRole(string $roleName): bool
+    {
+        $role = Role::where('name', $roleName)->first();
+        if (!$role) {
+            return false;
+        }
+        if ($this->roles()->where('role_id', $role->id)->exists()) {
+            $this->roles()->detach($role->id);
+        }
+        return true;
+    }
 }
