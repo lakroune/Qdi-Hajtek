@@ -117,4 +117,22 @@ class User extends Authenticatable implements JWTSubject
         }
         return true;
     }
+
+    public function hasRole(string $roleName): bool
+    {
+        $role = Role::where('name', $roleName)->first();
+        if (!$role) {
+            return false;
+        }
+        return $this->roles()->where('role_id', $role->id)->exists();
+    }
+    public function hasRoles(array $roleNames): bool
+    {
+        foreach ($roleNames as $roleName) {
+            if ($this->hasRole($roleName)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
