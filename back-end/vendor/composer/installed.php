@@ -3,7 +3,7 @@
         'name' => 'laravel/laravel',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '1d64322fa5552afba680461ad06673166330ae39',
+        'reference' => '436e86bb3c85f66a387769f51e938b32d01302f3',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -400,7 +400,7 @@
         'laravel/laravel' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '1d64322fa5552afba680461ad06673166330ae39',
+            'reference' => '436e86bb3c85f66a387769f51e938b32d01302f3',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -997,15 +997,6 @@
             'install_path' => __DIR__ . '/../sebastian/version',
             'aliases' => array(),
             'dev_requirement' => true,
-        ),
-        'spatie/laravel-permission' => array(
-            'pretty_version' => '6.24.1',
-            'version' => '6.24.1.0',
-            'reference' => 'eefc9d17eba80d023d6bff313f882cb2bcd691a3',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../spatie/laravel-permission',
-            'aliases' => array(),
-            'dev_requirement' => false,
         ),
         'spatie/once' => array(
             'dev_requirement' => false,
