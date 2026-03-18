@@ -19,7 +19,6 @@ return new class extends Migration
             $table->float('note_moyenne')->default(0);
             $table->integer('rayon_action')->default(10);
             $table->primary('id'); 
-            $table->timestamps();
         });
     }
 

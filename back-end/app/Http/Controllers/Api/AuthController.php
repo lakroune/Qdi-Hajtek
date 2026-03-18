@@ -30,7 +30,7 @@ class AuthController extends Controller
                 'message' => 'Veuillez verifier votre email'
             ]);
         }
-        
+
         if (!Auth::attempt($dataFormLogin)) {
             return response()->json([
                 'message' => 'Identifiant incorrect (Email or Password)'
@@ -48,16 +48,12 @@ class AuthController extends Controller
     public function register(RegisterRequest $request)
     {
         $data = $request->validated();
-        $user = User::create($data);
-        $code = str_pad(random_int(0, 9999), 4, '0', STR_PAD_LEFT);
-        $user->code_verification = $code;
-        $user->save();
 
-        $token = $user->createToken('main')->plainTextToken;
-        Mail::to($user->email)->send(new VerificationCodeMail($code, $user));
+        $user = User::create($data);
+
         return response()->json([
-            'user' => $user,
-            'token' => $token
+            'message' => 'account created successfully',
+            'user' => $user
         ], 201);
     }
 
