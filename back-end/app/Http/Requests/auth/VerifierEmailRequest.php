@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\auth;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class VerifierEmailRequest extends FormRequest
 {
@@ -37,5 +39,16 @@ class VerifierEmailRequest extends FormRequest
             'code.numeric' => 'Le code doit être numérique',
             'code.digits' => 'Le code doit avoir 4 chiffres',
         ];
+    }
+
+    public function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(
+            response()->json([
+                'success' => false,
+                'message' => 'Validation errors',
+                'data' => $validator->errors()
+            ], 422)
+        );
     }
 }

@@ -6,19 +6,19 @@ body:
   type: json
   content: "{\r
 
-    \    \"nom\": \"Lakroune\",\r
+    \  \"firstname\": \"Ismail\",\r
 
-    \    \"prenom\": \"Ismail\",\r
+    \  \"lastname\": \"Lakroune\",\r
 
-    \    \"email\": \"lemtiriabdellah@gmail.com\",\r
+    \  \"email\": \"ismail@example.com\",\r
 
-    \    \"password\": \"password123\",\r
+    \  \"password\": \"password123\",\r
 
-    \    \"password_confirmation\": \"password123\",\r
+    \  \"password_confirmation\": \"password123\",\r
 
-    \    \"telephone\": \"0612345678\",\r
+    \  \"phone\": \"0612345678\",\r
 
-    \    \"ville\": \"Casablanca\"\r
+    \  \"city\": \"Casablanca\"\r
 
     }"
 order: 2733155375708442

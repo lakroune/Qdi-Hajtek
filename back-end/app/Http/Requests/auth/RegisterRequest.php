@@ -5,7 +5,6 @@ namespace App\Http\Requests\auth;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Validation\ValidationException;
 
 class RegisterRequest extends FormRequest
 {
@@ -25,31 +24,28 @@ class RegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nom' => '|string|max:255',
-            'prenom' => 'required|string|max:255',
+            'firstname' => 'required|string|max:255',
+            'lastname' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:8|confirmed',
-            'telephone' => 'required|string|unique:users,telephone',
-            'ville' => 'required|string|max:255',
+            'phone' => 'required|string|unique:users,phone',
+            'city' => 'required|string|max:255',
         ];
     }
     public function messages()
     {
         return [
-            'nom.required' => 'Le nom est requis',
-            'prenom.required' => 'Le prénom est requis',
+            'firstname.required' => 'Le prénom est requis',
+            'lastname.required' => 'Le nom est requis',
             'email.required' => 'L\'email est requis',
-            'password.required' => 'Le mot de passe est requis',
-            'telephone.required' => 'Le téléphone est requis',
-            'password.confirmed' => 'Les mots de passe ne correspondent pas',
-            'email.unique' => 'Cet email est déjà utilisé',
-            'telephone.unique' => 'Ce numéro de téléphone est déjà utilisé',
-            'password.min' => 'Le mot de passe doit avoir au moins 8 caractères',
             'email.email' => 'L\'email doit être valide',
-            'prenom.string' => 'Le prénom doit être une chaîne de caractères',
-            'nom.string' => 'Le nom doit être une chaîne de caractères',
-            'telephone.string' => 'Le téléphone doit être une chaîne de caractères',
-            'ville.string' => 'La ville doit être une chaîne de caractères',
+            'email.unique' => 'L\'email est deja utilise',
+            'password.required' => 'Le mot de passe est requis',
+            'password.min' => 'Le mot de passe doit avoir au moins 8 caractères',
+            'password.confirmed' => 'Les mots de passe ne correspondent pas',
+            'phone.required' => 'Le numéro de telephone est requis',
+            'phone.unique' => 'Le numéro de telephone est deja utilise',
+            'city.required' => 'La ville est requise',
 
         ];
     }

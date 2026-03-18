@@ -1,0 +1,7 @@
+$kind: http-request
+name: verifier-email
+url: http://127.0.0.1:8000/api/verifier-email
+method: POST
+headers:
+  Authorization: "{{token-g}}"
+order: 3395437999182192

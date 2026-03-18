@@ -13,6 +13,14 @@ class Artisan extends Model
     protected $table = 'artisans';
     public $incrementing = false;
     protected $primaryKey = 'id';
+
+    protected $ffillable = [
+        'specialite',
+        'bio',
+        'is_verified',
+        'note',
+        'rayon_action',
+    ];
     public function user()
     {
         return $this->belongsTo(User::class);

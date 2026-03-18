@@ -16,9 +16,9 @@ return new class extends Migration
             $table->string('specialite'); // 
             $table->text('bio')->nullable();
             $table->boolean('is_verified')->default(false);
-            $table->float('note_moyenne')->default(0);
+            $table->float('note')->default(0);
             $table->integer('rayon_action')->default(10);
-            $table->primary('id'); 
+            $table->primary('id');
         });
     }
 

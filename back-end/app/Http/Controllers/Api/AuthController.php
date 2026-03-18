@@ -10,9 +10,8 @@ use App\Mail\VerificationCodeMail;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
 {
@@ -21,15 +20,31 @@ class AuthController extends Controller
     public function register(RegisterRequest $request)
     {
         $data = $request->validated();
+
         $user = User::create($data);
-        Role::where('name', 'client')->first()->users()->attach($user->id);
+
+        $role = Role::where('name', 'client')->first();
+        if ($role) {
+            $role->users()->attach($user->id);
+        } else {
+            return response()->json([
+                'message' => 'something went wrong'
+            ], 404);
+        }
+
         $code = random_int(100000, 999999);
         $user->code_verification = $code;
         $user->save();
+
+        $token = JWTAuth::fromUser($user);
+
         Mail::to($user->email)->send(new VerificationCodeMail($user->code_verification, $user));
+
         return response()->json([
-            'message' => 'account created successfully',
-            'user' => $user
+            'success' => true,
+            'message' => 'Account created successfully',
+            'user' => $user,
+            'token' => $token
         ], 201);
     }
 

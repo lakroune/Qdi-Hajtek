@@ -22,12 +22,14 @@ class User extends Authenticatable implements JWTSubject
     protected $fillable = [
         'email',
         'password',
-        'nom',
-        'prenom',
-        'telephone',
-        'photo_profil',
-        'role'
+        'lastname',
+        'firstname',
+        'phone',
+        'avatar',
+        'city',
+        'code_verification',
     ];
+    protected $guard_name = 'api';
 
 
     /**
@@ -38,6 +40,7 @@ class User extends Authenticatable implements JWTSubject
     protected $hidden = [
         'password',
         'remember_token',
+        // 'code_verification',
     ];
 
     /**
@@ -78,5 +81,5 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [];
-    }   
+    }
 }
