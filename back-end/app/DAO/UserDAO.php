@@ -28,6 +28,18 @@ class UserDAO
     {
         return User::where('id', $id)->update($data);
     }
+    public function updatePassword($id, $data): bool
+    {
+
+        $user = User::where('id', $id)->first();
+        if (password_verify($data['old_password'], $user->password)) {
+            $user->update([
+                'password' => bcrypt($data['new_password'])
+            ]);
+            return true;
+        }
+        return false;
+    }
     public function login(LoginDTO $loginDTO)
     {
         return User::where('email', $loginDTO->data['email'])->first();

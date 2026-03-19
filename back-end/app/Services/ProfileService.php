@@ -2,12 +2,15 @@
 
 namespace App\Services;
 
+use App\DAO\ClientDAO;
+use App\DAO\UserDAO;
+
 class ProfileService
 {
     /**
      * Create a new class instance.
      */
-    public function __construct()
+    public function __construct(private UserDAO $userDAO, private ClientDAO $clientDAO)
     {
         //
     }
@@ -65,5 +68,22 @@ class ProfileService
         ];
     }
 
-  
+    public function updatePassword(array $data)
+    {
+        $user = auth('api')->user();
+
+        if (! $user) {
+            return [
+                'success' => false,
+                'message' => 'Unauthorized'
+            ];
+        }
+
+        $reslt = $this->userDAO->updatePassword($user->id, $data);
+
+        return [
+            'success' => $reslt,
+            'message' => $reslt ? 'Password updated successfully' : 'Invalid password',
+        ];
+    }
 }
