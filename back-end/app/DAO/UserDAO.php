@@ -24,6 +24,10 @@ class UserDAO
         );
     }
 
+    public function update($id, $data)
+    {
+        return User::where('id', $id)->update($data);
+    }
     public function login(LoginDTO $loginDTO)
     {
         return User::where('email', $loginDTO->data['email'])->first();

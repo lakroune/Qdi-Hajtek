@@ -3,21 +3,20 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\BecomeArtisanRequest;
 use App\Http\Requests\ProfileRequest;
-use App\Models\User;
 use App\Services\ProfileService;
 
 class ProfileController extends Controller
 {
 
+    public function __construct(private ProfileService $profileService) {}
 
     /**
      * Display the specified resource.
      */
-    public function show(ProfileService $profileService)
+    public function show()
     {
-        $reslt = $profileService->getProfile();
+        $reslt = $this->profileService->getProfile();
 
 
         return response()->json([
@@ -30,25 +29,14 @@ class ProfileController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(ProfileRequest $request, string $id)
+    public function update(ProfileRequest $request)
     {
+        $result = $this->profileService->updateProfile($request->validated());
 
-        $user = User::find($id);
-        if (!$user) {
-            return response()->json([
-                'success' => false,
-                'message' => 'User not found'
-            ], 404);
-        }
-
-        $data = $request->validated();
-
-        $user->update($data);
-        $user->client->update($data);
         return response()->json([
-            'success' => true,
-            'message' => 'Profile updated successfully',
-            'user' => $user
-        ], 200);
+            'success' => $result['success'],
+            'message' => $result['message'],
+            'data' => $result['profile']
+        ]);
     }
 }
