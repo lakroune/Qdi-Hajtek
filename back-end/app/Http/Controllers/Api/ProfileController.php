@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\BecomeArtisanRequest;
 use App\Http\Requests\ProfileRequest;
 use App\Models\User;
+use App\Services\ProfileService;
 
 class ProfileController extends Controller
 {
@@ -14,23 +15,16 @@ class ProfileController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show()
+    public function show(ProfileService $profileService)
     {
-        $user = auth('api')->user();
-
-        if (!$user) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Unauthorized'
-            ], 403);
-        }
+        $reslt = $profileService->getProfile();
 
 
         return response()->json([
-            'success' => true,
-            'message' => 'Profile retrieved successfully',
-            'profile'  => $user->load(['client', 'artisan']),
-        ], 200);
+            'success' => $reslt['success'],
+            'message' => $reslt['message'],
+            'data' => $reslt['profile']
+        ]);
     }
 
     /**
