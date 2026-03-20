@@ -1,0 +1,41 @@
+$kind: http-request
+name: add services
+url: http://127.0.0.1:8000/api/services
+method: POST
+headers:
+  - key: Authorization
+    value: "{{token-g}}"
+body:
+  type: formdata
+  content:
+    - type: text
+      key: titre
+      value: Installation Électrique
+      description: ""
+      disabled: false
+    - type: text
+      key: description
+      value: Installation complète..
+      description: ""
+      disabled: false
+    - type: text
+      key: tarif
+      value: "500.00"
+      description: ""
+      disabled: false
+    - type: text
+      key: type_tarif
+      value: prix_fixe
+      description: ""
+      disabled: false
+    - type: text
+      key: images
+      value: ""
+      description: ""
+      disabled: false
+    - type: text
+      key: categorie_id
+      value: "1"
+      description: ""
+      disabled: false
+order: 6000

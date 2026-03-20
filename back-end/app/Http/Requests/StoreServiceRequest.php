@@ -24,7 +24,7 @@ class StoreServiceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required|string',
+            'titre' => 'required|string',
             'description' => 'required|string|max:255',
             'tarif' => 'required|numeric',
             'type_tarif' => 'nullable|string|in:prix_fixe,prix_heure,prix_jour,prix_m2',
@@ -39,7 +39,7 @@ class StoreServiceRequest extends FormRequest
     public function messages()
     {
         return [
-            'title.required' => 'title is required',
+            'titre.required' => 'title is required',
             'description.required' => 'description is required',
             'tarif.required' => 'tarif is required',
             'images.*.image' => 'image must be an image',
