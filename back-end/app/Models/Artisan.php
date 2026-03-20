@@ -14,7 +14,7 @@ class Artisan extends Model
     public $incrementing = false;
     protected $primaryKey = 'id';
     public $timestamps = false;
-    protected $fillable = [             
+    protected $fillable = [
         'id',
         'specialite',
         'bio',
@@ -44,5 +44,9 @@ class Artisan extends Model
     public function  documents()
     {
         return $this->hasMany(Document::class);
+    }
+    public function disponibilites()
+    {
+        return $this->hasMany(Disponibilite::class);
     }
 }

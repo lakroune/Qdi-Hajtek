@@ -3,8 +3,7 @@ name: become artisan
 url: http://127.0.0.1:8000/api/artisans
 method: POST
 headers:
-  - key: Authorization
-    value: "{{token-g}}"
+  Authorization: "{{token-g}}"
 body:
   type: formdata
   content:
@@ -34,6 +33,23 @@ body:
       key: rib_doc
       src:
         - /C:/Users/youco/Desktop/8311140a8baca9620ec4ed1c833a1dca.jpg
+      description: ""
+      disabled: false
+    - type: text
+      key: bio
+      value: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+      description: ""
+      disabled: false
+    - type: file
+      key: diplome_doc[0]
+      src:
+        - /C:/Users/youco/Desktop/8311140a8baca9620ec4ed1c833a1dca.jpg
+      description: ""
+      disabled: false
+    - type: file
+      key: certificat_doc[0]
+      src:
+        - /C:/Users/youco/Desktop/artworks-000185841602-bsblc3-t1080x1080.jpg
       description: ""
       disabled: false
 order: 1400

@@ -1,0 +1,57 @@
+# =========================
+# OS / Editors
+# =========================
+.DS_Store
+Thumbs.db
+.idea
+.vscode
+.fleet
+.zed
+
+# =========================
+# Logs
+# =========================
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# =========================
+# ENV (Laravel + React)
+# =========================
+.env
+.env.*
+!.env.example
+
+# =========================
+# Laravel (back-end)
+# =========================
+back-end/vendor
+back-end/public/build
+back-end/public/hot
+back-end/public/storage
+
+back-end/storage/logs
+back-end/storage/framework
+back-end/storage/*.key
+
+back-end/bootstrap/cache
+
+back-end/.phpunit.cache
+back-end/.phpunit.result.cache
+back-end/auth.json
+back-end/Homestead.yaml
+back-end/Homestead.json
+
+# =========================
+# React (front-end)
+# =========================
+frond-end/node_modules
+frond-end/build
+frond-end/dist
+
+# =========================
+# Misc
+# =========================
+*.swp
+*.swo
