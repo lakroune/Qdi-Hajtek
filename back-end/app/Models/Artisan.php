@@ -13,8 +13,8 @@ class Artisan extends Model
     protected $table = 'artisans';
     public $incrementing = false;
     protected $primaryKey = 'id';
-
-    protected $ffillable = [
+    public $timestamps = false;
+    protected $fillable = [             
         'id',
         'specialite',
         'bio',
@@ -24,11 +24,9 @@ class Artisan extends Model
         'rayon_action',
     ];
 
-    protected $casts = [
-        
-    ];
+    protected $casts = [];
 
-    protected $hidden = [];
+    // protected $hidden = [];
     public function user()
     {
         return $this->belongsTo(User::class, 'id', 'id');
