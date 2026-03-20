@@ -5,7 +5,7 @@ namespace App\DAO;
 use App\Models\Categorie;
 use Illuminate\Http\Request;
 
-class CategoryDAO
+class CategorieDAO
 {
     /**
      * Create a new class instance.

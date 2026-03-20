@@ -4,7 +4,7 @@ namespace App\DTO;
 
 use Illuminate\Http\Request;
 
-class CategoryDTO
+class CategorieDTO
 {
     /**
      * Create a new class instance.
