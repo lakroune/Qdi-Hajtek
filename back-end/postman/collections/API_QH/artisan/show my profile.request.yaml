@@ -1,0 +1,7 @@
+$kind: http-request
+name: show my profile
+url: http://127.0.0.1:8000/api/profile
+method: GET
+headers:
+  Authorization: "{{token-g}}"
+order: 2000

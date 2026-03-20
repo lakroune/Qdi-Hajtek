@@ -1,6 +1,6 @@
 <?php
 
-namespace App\DAOs;
+namespace App\DAO;
 
 use App\DTOs\ArtisanRegistrationDTO;
 use App\Models\Artisan;
@@ -9,9 +9,10 @@ use Illuminate\Support\Facades\DB;
 
 class ArtisanDAO
 {
-    public function create(ArtisanRegistrationDTO $dto, array $filePaths): Artisan
+    public function createDommnde(ArtisanRegistrationDTO $dto, array $filePaths): Artisan
     {
         return DB::transaction(function () use ($dto, $filePaths) {
+
             $artisan = Artisan::create([
                 'id' => $dto->userId,
                 'specialite' => $dto->specialite,

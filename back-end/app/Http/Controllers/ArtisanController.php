@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\DAOs\ArtisanDAO;
-use App\DTOs\ArtisanRegistrationDTO;
+use App\DAO\ArtisanDAO;
+use App\DTO\ArtisanRegistrationDTO;
 use App\Models\Artisan;
 use App\Http\Requests\StoreArtisanRequest;
 use App\Http\Requests\UpdateArtisanRequest;
@@ -31,6 +31,23 @@ class ArtisanController extends Controller
             'diplomes' => [],
             'certificats' => [],
         ];
+        if ($request->hasFile('diplome_doc')) {
+            foreach ($request->file('diplome_doc') as $file) {
+                $filePaths['diplomes'][] = $file->store('artisans/diplomes', 'public');
+            }
+        }
+        if ($request->hasFile('certificat_doc')) {
+            foreach ($request->file('certificat_doc') as $file) {
+                $filePaths['certificats'][] = $file->store('artisans/certificats', 'public');
+            }
+        }
+
+        $artisan = $artisanDAO->createDommnde($artisanDAO, $filePaths);
+        return response()->json([
+            'success' => true,
+            'message' => 'Artisan created successfully',
+            'data' => $artisan
+        ]);
     }
 
     /**
