@@ -5,9 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class DommandeDericte extends Model
+class DemandeDirecte extends Model
 {
-    /** @use HasFactory<\Database\Factories\DommandeDericteFactory> */
+    /** @use HasFactory<\Database\Factories\DemandeDericteFactory> */
     use HasFactory;
 
     protected $table = 'dommande_derictes';
