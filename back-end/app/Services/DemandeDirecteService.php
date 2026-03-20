@@ -2,13 +2,23 @@
 
 namespace App\Services;
 
+use App\DAO\DemandeDirecteDAO;
+use App\DTO\DemandeDirecteDTO;
+use Illuminate\Support\Str;
+
 class DemandeDirecteService
 {
     /**
      * Create a new class instance.
      */
-    public function __construct()
+    public function __construct(private DemandeDirecteDAO $demandeDirecteDAO)
     {
         //
+    }
+    public function createDemandeDirecte(DemandeDirecteDTO $dto)
+    {
+        $data = $dto->toArray();
+        $data['code_confirmation'] = strtoupper(Str::random(6));
+        return $this->demandeDirecteDAO->create($data);
     }
 }

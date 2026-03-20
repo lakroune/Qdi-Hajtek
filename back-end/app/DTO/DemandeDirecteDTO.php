@@ -15,7 +15,6 @@ class DemandeDirecteDTO
         public  string $date_debut,
         public  string $statut,
         public  float $prix_final,
-        public  string $code_confirmation,
         public  string $description_specifique = ""
     ) {
         //
@@ -29,7 +28,6 @@ class DemandeDirecteDTO
             date_debut: $request->date_debut,
             statut: $request->statut,
             prix_final: $request->prix_final,
-            code_confirmation: $request->code_confirmation,
             description_specifique: $request->description_specifique,
         );
     }
