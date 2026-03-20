@@ -22,7 +22,7 @@ class StoreCategorieRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nom_categorie' => 'required|string',
+            'nom_categorie' => 'required|string|',
             'description' => 'required|string',
             'icon' => 'required|string',
         ];
