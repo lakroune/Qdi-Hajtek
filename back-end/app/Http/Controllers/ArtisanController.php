@@ -21,7 +21,7 @@ class ArtisanController extends Controller
      */
     public function store(StoreArtisanRequest $request)
     {
-        //
+        $data = $request->validated();
     }
 
     /**

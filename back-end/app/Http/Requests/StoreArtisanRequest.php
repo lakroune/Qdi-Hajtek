@@ -25,14 +25,16 @@ class StoreArtisanRequest extends FormRequest
     {
 
         return [
-            "specialite" => "required|string|max:255",
-            "bio" => "nullable|string",
-            "rayon_action" => "required|numeric",
-            "cin_rec" => "required|file|mimes:jpg,jpeg,png|max:1024",
-            "cin_ver" => "required|file|mimes:jpg,jpeg,png|max:1024",
-            "rib_doc" => "required|file|mimes:jpg,jpeg,png|max:1024",
-            "diplome_doc" => "nullable|array",
-            "certificat_doc" => "nullable|array",
+            "specialite"     => "required|string|max:255",
+            "bio"            => "nullable|string",
+            "rayon_action"   => "required|numeric|min:1",
+            "cin_rec"        => "required|image|mimes:jpg,jpeg,png|max:2048",
+            "cin_ver"        => "required|image|mimes:jpg,jpeg,png|max:2048",
+            "rib_doc"        => "required|image|mimes:jpg,jpeg,png|max:2048",
+            "diplome_doc"    => "nullable|array",
+            "diplome_doc.*"  => "image|mimes:jpg,jpeg,png,pdf|max:2048",
+            "certificat_doc"   => "nullable|array",
+            "certificat_doc.*" => "image|mimes:jpg,jpeg,png,pdf|max:2048",
         ];
     }
 
@@ -40,15 +42,21 @@ class StoreArtisanRequest extends FormRequest
     {
 
         return [
-            "specialite.required" => "The specialite field is required.",
-            "bio.required" => "The bio field is required.",
-            "rayon_action.required" => "The rayon_action field is required.",
-            "cin_rec.required" => "The cin_rec field is required.",
-            "cin_ver.required" => "The cin_ver field is required.",
-            "rib_doc.required" => "The rib_doc field is required.",
-            "diplome_doc.required" => "The diplome_doc field is required.",
-            "certificat_doc.required" => "The certificat_doc field is required.",
-            "required" => "The :attribute field is required.",
+            "specialite.required" => "specialite is required",
+            "bio.required" => "bio is required",
+            "rayon_action.required" => "rayon_action is required",
+            "cin_rec.required" => "cin_rec is required",
+            "cin_ver.required" => "cin_ver is required",
+            "rib_doc.required" => "rib_doc is required",
+            "diplome_doc.required" => "diplome_doc is required",
+            "certificat_doc.required" => "certificat_doc is required",
+            "cin_rec.image" => "cin_rec must be an image",
+            "cin_ver.image" => "cin_ver must be an image",
+            "rib_doc.image" => "rib_doc must be an image",
+            "diplome_doc.image" => "diplome_doc must be an image",
+            "certificat_doc.image" => "certificat_doc must be an image",
+            "diplome_doc.*.image" => "diplome_doc.* must be an image",
+            "certificat_doc.*.image" => "certificat_doc.* must be an image",
         ];
     }
 
