@@ -10,6 +10,16 @@ class Service extends Model
     /** @use HasFactory<\Database\Factories\ServiceFactory> */
     use HasFactory;
     protected $table = 'services';
+    protected $fillable = [
+        'artisan_id',
+        'categorie_id',
+        'titre',
+        'description',
+        'tarif',
+        'type_tarif',
+        'estimation_duree',
+        'material'
+    ];
 
     public function clients()
     {
