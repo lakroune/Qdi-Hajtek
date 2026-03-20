@@ -18,7 +18,9 @@ class Service extends Model
         'tarif',
         'type_tarif',
         'estimation_duree',
-        'material'
+        'material',
+        'is_completed',
+        'is_active'
     ];
 
     public function clients()

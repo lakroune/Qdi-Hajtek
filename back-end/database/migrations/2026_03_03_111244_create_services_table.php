@@ -23,7 +23,6 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->integer('estimation_duree');
             $table->string('material')->nullable();
-            // $table->string('image')->nullable();
             $table->timestamps();
         });
     }
