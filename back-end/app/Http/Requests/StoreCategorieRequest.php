@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class StoreCategorieRequest extends FormRequest
 {
@@ -22,9 +24,31 @@ class StoreCategorieRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nom_categorie' => 'required|string|',
-            'description' => 'required|string',
-            'icon' => 'required|string',
+            'nom_categorie' => 'required|string|unique:categories,nom_categorie',
+            'description' => 'required|string|max:255',
+            'icon' => 'required|string|unique:categories,icon_url',
         ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'nom_categorie.unique' => 'name already exists.',
+            'icon.unique' => 'icon already exists.',
+            'description.required' => 'description is required.',
+            'icon.required' => 'icon is required.',
+            'nom_categorie.required' => 'name is required.',
+        ];
+    }
+
+    public  function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(
+            response()->json([
+                'success' => false,
+                'message' => 'Validation errors',
+                'data' => $validator->errors()
+            ], 422)
+        );
     }
 }
