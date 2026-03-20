@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class StoreArtisanRequest extends FormRequest
 {
@@ -32,5 +34,32 @@ class StoreArtisanRequest extends FormRequest
             "diplome_doc" => "nullable|array",
             "certificat_doc" => "nullable|array",
         ];
+    }
+
+    public function messages()
+    {
+
+        return [
+            "specialite.required" => "The specialite field is required.",
+            "bio.required" => "The bio field is required.",
+            "rayon_action.required" => "The rayon_action field is required.",
+            "cin_rec.required" => "The cin_rec field is required.",
+            "cin_ver.required" => "The cin_ver field is required.",
+            "rib_doc.required" => "The rib_doc field is required.",
+            "diplome_doc.required" => "The diplome_doc field is required.",
+            "certificat_doc.required" => "The certificat_doc field is required.",
+            "required" => "The :attribute field is required.",
+        ];
+    }
+
+    public function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(
+            response()->json([
+                'success' => false,
+                'message' => 'Validation errors',
+                'data' => $validator->errors()
+            ], 422)
+        );
     }
 }
