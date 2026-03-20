@@ -23,4 +23,8 @@ class CategorieService
     {
         return $this->categorieDAO->create($data);
     }
+    public function getCategoryDetails(int $id)
+    {
+        return $this->categorieDAO->findWithServices($id);
+    }
 }

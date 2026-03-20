@@ -25,6 +25,12 @@ class CategorieDAO
     {
         return Categorie::findOrFail($id);
     }
+    public function findWithServices(int $id)
+    {
+        return Categorie::
+        // with(['services.images', 'services.artisan.user'])->
+        findOrFail($id);
+    }
     public function create(array $data)
     {
         return Categorie::create($data);

@@ -46,7 +46,11 @@ class CategorieController extends Controller
      */
     public function show(Categorie $categorie)
     {
-        //
+        $categorie = $this->categorieService->getCategoryDetails($categorie->id);
+        return response()->json([
+            'message' => 'Categorie found successfully',
+            'data' => $categorie
+        ]);
     }
 
     /**
