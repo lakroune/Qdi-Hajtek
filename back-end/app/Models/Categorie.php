@@ -11,6 +11,12 @@ class Categorie extends Model
     use HasFactory;
     protected $table = 'categories';
 
+    protected $fillable = [
+        'nom_categorie',
+        'description',
+        'icon_url',
+        'is_active',
+    ];
 
     public function offreTravails()
     {

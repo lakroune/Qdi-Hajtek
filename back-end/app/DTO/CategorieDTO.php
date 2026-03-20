@@ -21,7 +21,6 @@ class CategorieDTO
             nom_categorie: $request->validated('nom_categorie'),
             description: $request->validated('description'),
             icon: $request->validated('icon'),
-            is_active: $request->boolean('is_active', true)
         );
     }
     public function toArray(): array
@@ -30,7 +29,6 @@ class CategorieDTO
             'nom_categorie' => $this->nom_categorie,
             'description'   => $this->description,
             'icon'          => $this->icon,
-            'is_active'     => $this->is_active,
         ];
     }
 }

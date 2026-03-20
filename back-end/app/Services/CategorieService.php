@@ -19,7 +19,7 @@ class CategorieService
     {
         return $this->categorieDAO->getActiveCategories();
     }
-    public function storeCategory(array $data)
+    public function createCategorie(array $data)
     {
         return $this->categorieDAO->create($data);
     }
