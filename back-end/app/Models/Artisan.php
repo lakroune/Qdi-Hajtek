@@ -31,9 +31,9 @@ class Artisan extends Model
     {
         return $this->belongsTo(User::class, 'id', 'id');
     }
-    public function portofolio()
+    public function services()
     {
-        return $this->hasOne(Portofolio::class);
+        return $this->hasMany(Service::class);
     }
 
     public function clients()

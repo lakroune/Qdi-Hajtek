@@ -1,0 +1,7 @@
+$kind: http-request
+name: show service
+url: http://127.0.0.1:8000/api/services/5
+method: GET
+headers:
+  Authorization: "{{token-g}}"
+order: 922954381662424

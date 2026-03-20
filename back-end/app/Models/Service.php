@@ -28,9 +28,8 @@ class Service extends Model
         return $this->belongsToMany(Client::class, 'favoris', 'service_id', 'client_id');
     }
 
-    public function portofolio()
-    {
-        return $this->belongsTo(Portofolio::class);
+    public function artisan(){
+        return $this->belongsTo(Artisan::class);
     }
 
     public function dommandeDerictes()

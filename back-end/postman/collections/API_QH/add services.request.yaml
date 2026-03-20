@@ -3,8 +3,7 @@ name: add services
 url: http://127.0.0.1:8000/api/services
 method: POST
 headers:
-  - key: Authorization
-    value: "{{token-g}}"
+  Authorization: "{{token-g}}"
 body:
   type: formdata
   content:
@@ -28,14 +27,26 @@ body:
       value: prix_fixe
       description: ""
       disabled: false
-    - type: text
-      key: images
-      value: ""
+    - type: file
+      key: images[0]
+      src:
+        - /C:/Users/youco/Desktop/71xHh6f9YgL._AC_UF1000,1000_QL80_.jpg
       description: ""
       disabled: false
     - type: text
       key: categorie_id
       value: "1"
+      description: ""
+      disabled: false
+    - type: text
+      key: estimation_duree
+      value: "22"
+      description: ""
+      disabled: false
+    - type: file
+      key: images[1]
+      src:
+        - /C:/Users/youco/Desktop/artworks-000185841602-bsblc3-t1080x1080.jpg
       description: ""
       disabled: false
 order: 6000

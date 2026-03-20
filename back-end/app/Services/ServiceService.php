@@ -50,4 +50,9 @@ class ServiceService
             throw $e;
         }
     }
+
+    public function getServiceDetails(int $serviceId)
+    {
+        return $this->serviceDAO->getServiceDetails($serviceId);
+    }
 }

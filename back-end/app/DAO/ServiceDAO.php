@@ -29,4 +29,8 @@ class ServiceDAO
             return $service->load('images');
         });
     }
+    public function getServiceDetails(int $serviceId)
+    {
+        return Service::with(['images', 'artisan.user'])->findOrFail($serviceId);
+    }
 }

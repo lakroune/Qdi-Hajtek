@@ -41,7 +41,11 @@ class ServiceController extends Controller
      */
     public function show(Service $service)
     {
-        //
+        $service = $this->serviceService->getServiceDetails($service->id);
+        return response()->json([
+            'message' => 'Service found successfully',
+            'data' => $service
+        ]);
     }
 
     /**

@@ -33,9 +33,9 @@ Route::middleware('auth:api')->group(function () {
 
 
 
-    Route::apiResource('services', ServiceController::class)->only('store');
+    Route::apiResource('services', ServiceController::class);
     Route::apiResource('categorie', CategorieController::class);
 
-    Route::get('artisans/{artisanId}/services', [ServiceController::class, 'artisanServices']);
-    Route::patch('services/{service}/toggle-status', [ServiceController::class, 'toggleStatus']);
+    // Route::get('artisans/{artisanId}/services', [ServiceController::class, 'artisanServices']);
+    // Route::patch('services/{service}/toggle-status', [ServiceController::class, 'toggleStatus']);
 });
