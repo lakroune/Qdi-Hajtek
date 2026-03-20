@@ -14,7 +14,7 @@ class ArtisanRegistrationDTO
     public static function fromRequest($request): self
     {
         return new self(
-            userId: auth()->user()->id(),
+            userId: auth()->user()->id,
             specialite: $request->specialite,
             bio: $request->bio,
             rayonAction: (float) $request->rayon_action,

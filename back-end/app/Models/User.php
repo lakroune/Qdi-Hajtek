@@ -61,7 +61,7 @@ class User extends Authenticatable implements JWTSubject
     }
     public function artisan()
     {
-        return $this->hasOne(Artisan::class, 'id');
+        return $this->hasOne(Artisan::class, 'id', 'id');
     }
 
     public function admin()

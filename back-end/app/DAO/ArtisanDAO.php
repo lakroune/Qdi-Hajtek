@@ -2,14 +2,14 @@
 
 namespace App\DAO;
 
-use App\DTOs\ArtisanRegistrationDTO;
+use App\DTO\ArtisanRegistrationDTO;
 use App\Models\Artisan;
 use App\Models\Document;
 use Illuminate\Support\Facades\DB;
 
 class ArtisanDAO
 {
-    public function createDommnde(ArtisanRegistrationDTO $dto, array $filePaths): Artisan
+    public function createDommnde( ArtisanRegistrationDTO $dto, array $filePaths): Artisan
     {
         return DB::transaction(function () use ($dto, $filePaths) {
 

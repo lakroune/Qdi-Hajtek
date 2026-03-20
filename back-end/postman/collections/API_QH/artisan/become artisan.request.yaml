@@ -1,0 +1,39 @@
+$kind: http-request
+name: become artisan
+url: http://127.0.0.1:8000/api/artisans
+method: POST
+headers:
+  - key: Authorization
+    value: "{{token-g}}"
+body:
+  type: formdata
+  content:
+    - type: text
+      key: specialite
+      value: sabak
+      description: ""
+      disabled: false
+    - type: text
+      key: rayon_action
+      value: "30"
+      description: ""
+      disabled: false
+    - type: file
+      key: cin_rec
+      src:
+        - /C:/Users/youco/Desktop/8311140a8baca9620ec4ed1c833a1dca.jpg
+      description: ""
+      disabled: false
+    - type: file
+      key: cin_ver
+      src:
+        - /C:/Users/youco/Desktop/8311140a8baca9620ec4ed1c833a1dca.jpg
+      description: ""
+      disabled: false
+    - type: file
+      key: rib_doc
+      src:
+        - /C:/Users/youco/Desktop/8311140a8baca9620ec4ed1c833a1dca.jpg
+      description: ""
+      disabled: false
+order: 1400

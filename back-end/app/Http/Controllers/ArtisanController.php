@@ -23,7 +23,7 @@ class ArtisanController extends Controller
      */
     public function store(StoreArtisanRequest $request, ArtisanDAO $artisanDAO)
     {
-        $artisanDAO = ArtisanRegistrationDTO::fromRequest((object) $request->validated());
+        $dto = ArtisanRegistrationDTO::fromRequest((object) $request->validated());
         $filePaths = [
             'cin_rec' => $request->file('cin_rec')->store('artisans/cin', 'public'),
             'cin_ver' => $request->file('cin_ver')->store('artisans/cin', 'public'),
@@ -42,7 +42,8 @@ class ArtisanController extends Controller
             }
         }
 
-        $artisan = $artisanDAO->createDommnde($artisanDAO, $filePaths);
+        $artisan = $artisanDAO->createDommnde($dto, $filePaths);
+
         return response()->json([
             'success' => true,
             'message' => 'Artisan created successfully',

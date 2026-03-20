@@ -15,9 +15,11 @@ class Artisan extends Model
     protected $primaryKey = 'id';
 
     protected $ffillable = [
+        'id',
         'specialite',
         'bio',
         'is_verified',
+        'experience',
         'note',
         'rayon_action',
     ];
@@ -29,7 +31,7 @@ class Artisan extends Model
     protected $hidden = [];
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'id', 'id');
     }
     public function portofolio()
     {
