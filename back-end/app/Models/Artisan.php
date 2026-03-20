@@ -40,4 +40,9 @@ class Artisan extends Model
     {
         return $this->belongsToMany(Client::class, 'aimers', 'artisan_id', 'client_id');
     }
+
+    public function  documents()
+    {
+        return $this->hasMany(Document::class);
+    }
 }

@@ -9,4 +9,18 @@ class Document extends Model
 {
     /** @use HasFactory<\Database\Factories\DocumentFactory> */
     use HasFactory;
+
+    protected $fillable = [
+        'artisan_id',
+        'type_document',
+        'titre_document',
+        'file_path',
+        'statut_verification'
+    ];
+
+
+    public function artisan()
+    {
+        return $this->belongsTo(Artisan::class);
+    }
 }
