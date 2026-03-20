@@ -5,9 +5,17 @@ namespace App\Http\Controllers;
 use App\Models\Disponibilite;
 use App\Http\Requests\StoreDisponibiliteRequest;
 use App\Http\Requests\UpdateDisponibiliteRequest;
+use App\Services\DisponibiliteService;
 
 class DisponibiliteController extends Controller
 {
+
+    private $dispoService;
+
+    public function __construct(DisponibiliteService $dispoService)
+    {
+        $this->dispoService = $dispoService;
+    }
     /**
      * Display a listing of the resource.
      */
@@ -21,7 +29,16 @@ class DisponibiliteController extends Controller
      */
     public function store(StoreDisponibiliteRequest $request)
     {
-        //
+
+        $result = $this->dispoService->saveHoraire(
+            auth()->user()->id,
+            $request->validated()['horaires']
+        );
+
+        return response()->json([
+            'message' => 'Disponibilitees saved successfully',
+            'data' => $result
+        ], 201);
     }
 
     /**

@@ -24,7 +24,9 @@ class DisponibiliteDAO
                 ];
             }
 
-            return Disponibilite::insert($disponibilites);
+            $disponibilites = Disponibilite::insert($disponibilites);
+
+            return $disponibilites;
         });
     }
 

@@ -24,14 +24,19 @@ class StoreDisponibiliteRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'heure_debut' => 'required|date_format:H:i',
-            'heure_fin'   => 'required|date_format:H:i|after:heure_debut',
+            'horaires' => 'required|array|min:1',
+            'horaires.*.jour'  => 'required|string|in:lundi,mardi,mercredi,jeudi,vendredi,samedi,dimanche',
+            'horaires.*.debut' => 'required|date_format:H:i',
+            'horaires.*.fin'   => 'required|date_format:H:i|after:horaires.*.debut',
         ];
     }
 
     public function messages()
     {
-        return [];
+        return [
+            'horaires.*.debut.after' => 'The end time must be after the start time',
+            'horaires.*.fin.after' => 'The end time must be after the start time',
+        ];
     }
 
 

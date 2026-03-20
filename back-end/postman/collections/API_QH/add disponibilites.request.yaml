@@ -1,0 +1,78 @@
+$kind: http-request
+name: add disponibilites
+url: http://127.0.0.1:8000/api/artisans/2/disponibilites
+method: POST
+headers:
+  Authorization: "{{token-g}}"
+body:
+  type: json
+  content: "{\r
+
+    \    \"artisan_id\": 2,\r
+
+    \    \"horaires\": [\r
+
+    \        {\r
+
+    \            \"jour\": \"lundi\",\r
+
+    \            \"debut\": \"08:00\",\r
+
+    \            \"fin\": \"18:00\"\r
+
+    \        },\r
+
+    \        {\r
+
+    \            \"jour\": \"mardi\",\r
+
+    \            \"debut\": \"08:00\",\r
+
+    \            \"fin\": \"18:00\"\r
+
+    \        },\r
+
+    \        {\r
+
+    \            \"jour\": \"mercredi\",\r
+
+    \            \"debut\": \"08:00\",\r
+
+    \            \"fin\": \"18:00\"\r
+
+    \        },\r
+
+    \        {\r
+
+    \            \"jour\": \"jeudi\",\r
+
+    \            \"debut\": \"08:00\",\r
+
+    \            \"fin\": \"18:00\"\r
+
+    \        },\r
+
+    \        {\r
+
+    \            \"jour\": \"vendredi\",\r
+
+    \            \"debut\": \"08:00\",\r
+
+    \            \"fin\": \"12:00\"\r
+
+    \        },\r
+
+    \        {\r
+
+    \            \"jour\": \"samedi\",\r
+
+    \            \"debut\": \"09:00\",\r
+
+    \            \"fin\": \"13:00\"\r
+
+    \        }\r
+
+    \    ]\r
+
+    }"
+order: 5000
