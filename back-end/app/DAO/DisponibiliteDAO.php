@@ -53,7 +53,17 @@ class DisponibiliteDAO
     public function getAllByArtisan(int $artisanId)
     {
         return Disponibilite::where('artisan_id', $artisanId)
-            ->orderByRaw("FIELD(jour_semaine, 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche')")
-            ->get();
+            ->orderByRaw("
+            CASE jour_semaine
+                WHEN 'lundi' THEN 1
+                WHEN 'mardi' THEN 2
+                WHEN 'mercredi' THEN 3
+                WHEN 'jeudi' THEN 4
+                WHEN 'vendredi' THEN 5
+                WHEN 'samedi' THEN 6
+                WHEN 'dimanche' THEN 7
+                ELSE 8
+            END
+        ")->get();
     }
 }

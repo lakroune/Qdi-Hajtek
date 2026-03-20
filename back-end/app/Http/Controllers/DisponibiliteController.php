@@ -44,9 +44,14 @@ class DisponibiliteController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Disponibilite $disponibilite)
+    public function show()
     {
-        //
+    $horiraires = $this->dispoService->getFormattedDisponibilites(auth()->user()->id);
+
+        return response()->json([
+            'message' => 'Disponibilitees saved successfully',
+            'data' => $horiraires
+        ], 201);
     }
 
     /**
