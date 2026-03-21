@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Models\DemandeDirecte;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -14,7 +15,7 @@ class NewDemandeNotification extends Notification
     /**
      * Create a new notification instance.
      */
-    public function __construct()
+    public function __construct(public DemandeDirecte $demandeDirecte)
     {
         //
     }
@@ -26,7 +27,7 @@ class NewDemandeNotification extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['mail', 'database', 'broadcast'];
     }
 
     /**
@@ -48,7 +49,24 @@ class NewDemandeNotification extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            //
+            'demande_directe_id' => $this->demandeDirecte->id,
+            'contenu' => "Une nouvelle demande vient d'être créée",
+
+        ];
+    }
+    public function toDatabase(object $notifiable)
+    {
+        return [
+            'demande_directe_id' => $this->demandeDirecte->id,
+            'contenu' => "Une nouvelle demande vient d'être créée",
+        ];
+    }
+
+    public function toBroadcast(object$notifiable)
+    {
+        return [
+            'demande_directe_id' => $this->demandeDirecte->id,
+            'contenu' => "Une nouvelle demande vient d'être créée",
         ];
     }
 }
