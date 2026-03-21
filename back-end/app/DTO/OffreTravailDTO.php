@@ -10,16 +10,16 @@ class OffreTravailDTO
      * Create a new class instance.
      */
     public function __construct(
-        public readonly int $clientId,
-        public readonly int $categorieId,
-        public readonly string $titre,
-        public readonly string $description,
-        public readonly float $budgetEstime,
-        public readonly string $dateLimite,
-        public readonly string $typeRemuneration,
-        public readonly string $niveauUrgence,
-        public readonly string $statut = 'en_cours',
-        public readonly bool $is_completed = false
+        public  int $clientId,
+        public  int $categorieId,
+        public  string $titre,
+        public  string $description,
+        public  float $budgetEstime,
+        public  string $dateLimite,
+        public  string $typeRemuneration,
+        public  string $niveauUrgence,
+        public  string $statut = 'en_cours',
+        public  bool $is_completed = false
 
     ) {
         //

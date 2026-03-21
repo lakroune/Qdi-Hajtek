@@ -15,22 +15,19 @@ return new class extends Migration
             $table->id();
 
             $table->foreignId('artisan_id')
-                  ->constrained('artisans')
-                  ->onDelete('cascade');
+                ->constrained('artisans')
+                ->onDelete('cascade');
 
             $table->foreignId('offre_id')
-                  ->constrained('offre_travails')
-                  ->onDelete('cascade');
-
-            $table->float('prix_propose'); 
-            $table->string('delai_execution'); 
-            $table->text('message_explicatif'); 
-            $table->timestamp('date_soumission'); 
-            $table->date('date_disponibilite'); 
-            $table->text('conditions_speciales')->nullable(); 
-
+                ->constrained('offre_travails')
+                ->onDelete('cascade');
+            $table->float('prix_propose');
+            $table->string('delai_execution');
+            $table->text('message_explicatif');
+            $table->date('date_disponibilite');
+            $table->text('conditions_speciales')->nullable();
             $table->enum('statut_proposition', ['en_attente', 'accepte', 'refuse', 'annule'])
-                  ->default('en_attente');
+                ->default('en_attente');
 
             $table->timestamps();
         });

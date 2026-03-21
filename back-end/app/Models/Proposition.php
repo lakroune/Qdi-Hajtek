@@ -12,15 +12,28 @@ class Proposition extends Model
 
     protected $table = 'propositions';
 
+    protected $fillable = [
+        'artisan_id',
+        'offre_id',
+        'prix_propose',
+        'delai_execution',
+        'message_explicatif',
+        'date_disponibilite',
+        'conditions_speciales',
+        'statut_proposition'
+    ];
 
     public function offreTravail()
     {
         return $this->belongsTo(OffreTravail::class);
     }
 
+    public function artisan()
+    {
+        return $this->belongsTo(Artisan::class);
+    }
     public function  notfication()
     {
         return $this->morphOne(Notification::class, 'notifiable');
     }
-    
 }

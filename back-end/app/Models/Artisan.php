@@ -49,4 +49,8 @@ class Artisan extends Model
     {
         return $this->hasMany(Disponibilite::class);
     }
+    public function propositions()
+    {
+        return $this->hasMany(Proposition::class);
+    }
 }
