@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\DAO\PropositionDAO;
 use App\DTO\PropositionDTO;
+use App\Events\PropositionCreated;
 
 class PropositionService
 {
@@ -17,6 +18,9 @@ class PropositionService
 
     public function createProposition(PropositionDTO $propositionDTO)
     {
-        return $this->propositionDAO->create($propositionDTO->toArray());
+        $proposition = $this->propositionDAO->create($propositionDTO->toArray());
+
+        event(new PropositionCreated($proposition));
+        return $proposition;
     }
 }
