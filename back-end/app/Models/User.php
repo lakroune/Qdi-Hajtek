@@ -57,7 +57,7 @@ class User extends Authenticatable implements JWTSubject
 
     public function client()
     {
-        return $this->hasOne(Client::class, 'id');
+        return $this->hasOne(Client::class, 'id', 'id');
     }
     public function artisan()
     {
@@ -66,7 +66,7 @@ class User extends Authenticatable implements JWTSubject
 
     public function admin()
     {
-        return $this->hasOne(Admin::class, 'id');
+        return $this->hasOne(Admin::class, 'id', 'id');
     }
     public function roles()
     {

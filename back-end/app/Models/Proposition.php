@@ -14,7 +14,7 @@ class Proposition extends Model
 
     protected $fillable = [
         'artisan_id',
-        'offre_id',
+        'offre_travail_id',
         'prix_propose',
         'delai_execution',
         'message_explicatif',

@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Models\Proposition;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -14,7 +15,7 @@ class NewPropositionNotification extends Notification
     /**
      * Create a new notification instance.
      */
-    public function __construct()
+    public function __construct( private Proposition $proposition)
     {
         //
     }
@@ -26,7 +27,7 @@ class NewPropositionNotification extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['mail', 'database', 'broadcast'];
     }
 
     /**

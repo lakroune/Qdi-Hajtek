@@ -18,7 +18,7 @@ return new class extends Migration
                 ->constrained('artisans')
                 ->onDelete('cascade');
 
-            $table->foreignId('offre_id')
+            $table->foreignId('offre_travail_id')
                 ->constrained('offre_travails')
                 ->onDelete('cascade');
 

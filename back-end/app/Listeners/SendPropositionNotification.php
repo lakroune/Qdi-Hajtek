@@ -23,7 +23,7 @@ class SendPropositionNotification
     public function handle(PropositionCreated $event): void
     {
         $proposition = $event->proposition;
-        $client = $proposition->offreTravail->client;
-        $client->user->notify(new NewPropositionNotification());
+
+        $proposition->offreTravail->client->user->notify(new NewPropositionNotification($proposition));
     }
 }

@@ -24,7 +24,7 @@ class StorePropositionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'offre_id' => 'required|exists:offre_travails,id',
+            'offre_travail_id' => 'required|exists:offre_travails,id',
             'prix_propose' => 'required|numeric|min:0',
             'delai_execution' => 'required|string',
             'message_explicatif' => 'required|string|min:20',
@@ -36,8 +36,8 @@ class StorePropositionRequest extends FormRequest
     public function messages()
     {
         return [
-            'offre_id.required' => 'offre is required',
-            'offre_id.exists' => 'offre is not found',
+            'offre_travail_id.required' => 'offre is required',
+            'offre_travail_id.exists' => 'offre is not found',
             'prix_propose.required' => 'prix is required',
             'prix_propose.numeric' => 'prix must be a number',
             'prix_propose.min' => 'prix must be at least 0',
