@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\DAO\DemandeDirecteDAO;
 use App\DTO\DemandeDirecteDTO;
+use App\Events\DemandeCreated;
 use Illuminate\Support\Str;
 
 class DemandeDirecteService
@@ -19,6 +20,8 @@ class DemandeDirecteService
     {
         $data = $dto->toArray();
         $data['code_confirmation'] = strtoupper(Str::random(6));
-        return $this->demandeDirecteDAO->create($data);
+        $demande =  $this->demandeDirecteDAO->create($data);
+        event(new DemandeCreated($demande));
+        return $demande;
     }
 }

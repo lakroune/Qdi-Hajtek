@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('conversations', function (Blueprint $table) {
             $table->id();
+            $table->string('subject')->nullable();
             $table->morphs('conversable');
             $table->timestamp('last_message_at')->nullable();
             $table->timestamps();
