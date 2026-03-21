@@ -26,8 +26,8 @@ class AuthController extends Controller
         $result = $authService->login($dto);
 
         return response()->json([
-            'success' => $result['success'],
-            'message' => $result['message'],
+            'success' => $result['success']??false,
+            'message' => $result['message']??null,
             'user' => $result['user'] ?? null,
             'token' => $result['token'] ?? null
         ]);

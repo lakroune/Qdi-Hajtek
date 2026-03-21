@@ -31,6 +31,7 @@ import ManageCategories from './admin/ManageCategories ';
 import Notifications from './chat/Notifications';
 import Services from './client/Services';
 import ServiceDetail from './client/ServiceDetail';
+import ProtectedRoute from './errors/ProtectedRoute';
 function App() {
 
 
@@ -39,70 +40,6 @@ function App() {
     <>
       {/* <Header /> */}
       <Routes>
-
-
-
-
-        <Route
-          path="/quickstart"
-          element={
-            <div className="auth-layout">
-
-              {/* HEADER */}
-              <Header
-                estAuthentifie={true}
-                nomUtilisateur="nom"
-                notifications={4}
-                messages={3}
-              />
-
-              {/* AUTH */}
-              {/* <LoginPage />
-      <RegisterPage />
-      <ForgotPasswordPage />
-      <ResetPasswordPage />
-      <ConfirmEmailPage /> */}
-
-              <hr />
-
-              {/* CLIENT */}
-              <HomePage />
-              <SettingsPage />
-              <ClientAddJob />
-              <ClientListOffres />
-              <ClientOffreDetail />
-              <ClientFavoris />
-
-              <hr />
-
-              {/* CHAT */}
-              <MessagesPage />
-              <ConversationPage />
-
-              <hr />
-
-              {/* ARTISAN */}
-              <ArtisanPortfolioPage />
-              <ArtisanAddService />
-              <ArtisanOffres />
-              <ArtisanOffreDetail />
-
-              <hr />
-
-              {/* ADMIN */}
-              <AdminLayout />
-              <DashboardHome />
-              <ReportsManagement />
-              <ReviewsManagement />
-              <ArtisanRequests />
-              <AccountsManagement />
-              <ServicesManagement />
-              <JobsManagement />
-              <ManageCategories />
-
-            </div>
-          }
-        />
 
         <Route path="/auth" element={<div className="auth-layout"><Outlet /></div>}>
           <Route index element={<LoginPage />} />
@@ -128,23 +65,24 @@ function App() {
           <Route path="offres" element={<ArtisanOffres />} />
           <Route path="services" element={<Services />} />
           <Route path='services/:id' element={<ServiceDetail />} />
-          
+
         </Route>
 
 
 
 
         <Route path="/admin" element={<AdminLayout />}>
-          <Route index element={<DashboardHome />} />
-          <Route path='reports' element={<ReportsManagement />} />
-          <Route path='reviews' element={<ReviewsManagement />} />
-          <Route path='artisan-requests' element={<ArtisanRequests />} />
-          <Route path='services' element={<ServicesManagement />} />
-          <Route path='accounts' element={<AccountsManagement />} />
-          <Route path='jobs' element={<JobsManagement />} />
-          <Route path='categories' element={<ManageCategories />} />
+          <Route element={<ProtectedRoute />}>
+            <Route index element={<DashboardHome />} />
+            <Route path='reports' element={<ReportsManagement />} />
+            <Route path='reviews' element={<ReviewsManagement />} />
+            <Route path='artisan-requests' element={<ArtisanRequests />} />
+            <Route path='services' element={<ServicesManagement />} />
+            <Route path='accounts' element={<AccountsManagement />} />
+            <Route path='jobs' element={<JobsManagement />} />
+            <Route path='categories' element={<ManageCategories />} />
+          </Route>
         </Route>
-
 
 
 

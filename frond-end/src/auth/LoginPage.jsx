@@ -16,15 +16,15 @@ const LoginPage = () => {
   const [erreur, setErreur] = useState('');
   const navigate = useNavigate();
 
-  const [donneesFormulaire, setDonneesFormulaire] = useState({
+  const [dataForm, setdataForm] = useState({
     email: '',
     password: '',
     seSouvenirDeMoi: false
   });
 
-  const handleChange = (e) => {
+  const changeData = (e) => {
     const { name, value, type, checked } = e.target;
-    setDonneesFormulaire(prev => ({
+    setdataForm(prev => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value
     }));
@@ -32,34 +32,18 @@ const LoginPage = () => {
     if (erreur) setErreur('');
   };
 
-  const handleSubmit = async (e) => {
+  const submitData = async (e) => {
     e.preventDefault();
     setEstEnChargement(true);
-
-
-    try {
-      const { data } = await axiosClient.post('/login', {
-        email: donneesFormulaire.email,
-        password: donneesFormulaire.password
-      });
-
-      localStorage.setItem('ACCESS_TOKEN', data.token);
-      localStorage.setItem('USER_DATA', JSON.stringify(data.user));
-
-      if (data.user.role === 'artisan') {
-        navigate('/artisan/dashboard');
-      } else {
-        navigate('/client/dashboard');
-      }
-    } catch (err) {
-      if (err.response && err.response.data.message) {
-        setErreur(err.response.data.message);
-      } else {
-        setErreur('Erreur de connexion au serveur');
-      }
-    } finally {
+    const response = await axiosClient.post('/login', dataForm);
+    if (response.status === 200) {
       setEstEnChargement(false);
+      localStorage.setItem('ACCESS_TOKEN', response.data.token);
+      // navigate('/dashboard');
+      console.log(response.data.user);
     }
+    setEstEnChargement(false);
+
   };
 
   return (
@@ -91,7 +75,7 @@ const LoginPage = () => {
           </div>
 
           <div className="space-y-3">
-            
+
           </div>
         </div>
       </div>
@@ -113,14 +97,14 @@ const LoginPage = () => {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={submitData} className="space-y-5">
 
             <Input
               label="Adresse Email"
               type="email"
               name="email"
-              value={donneesFormulaire.email}
-              onChange={handleChange}
+              value={dataForm.email}
+              onChange={changeData}
               placeholder="exemple@email.com"
               Icon={Mail}
               required
@@ -131,9 +115,9 @@ const LoginPage = () => {
                 label="Mot de passe"
                 type={afficherMotDePasse ? 'text' : 'password'}
                 name="password"
-                value={donneesFormulaire.password}
-                onChange={handleChange}
-                placeholder="••••••••"
+                value={dataForm.password}
+                onChange={changeData}
+                placeholder="********"
                 Icon={Lock}
                 required
               />
@@ -151,8 +135,8 @@ const LoginPage = () => {
                 <input
                   type="checkbox"
                   name="seSouvenirDeMoi"
-                  checked={donneesFormulaire.seSouvenirDeMoi}
-                  onChange={handleChange}
+                  checked={dataForm.seSouvenirDeMoi}
+                  onChange={changeData}
                   className="w-4 h-4 border-gray-300 text-[#D35400] focus:ring-[#D35400]"
                 />
                 <span className="text-[11px] text-gray-600 group-hover:text-[#1B4F72] transition-colors">
