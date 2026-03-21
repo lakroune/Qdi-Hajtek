@@ -1,0 +1,20 @@
+$kind: http-request
+name: add demande
+url: http://127.0.0.1:8000/api/demandes-directes
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \    \"service_id\": 5,\r
+
+    \    \"date_debut\": \"2026-04-15\",\r
+
+    \    \"prix_final\": 450.00,\r
+
+    \    \"description_specifique\": \"d\",\r
+
+    \    \"mode_paiement\": \"paypal\"\r
+
+    }"
+order: 3626944461538252

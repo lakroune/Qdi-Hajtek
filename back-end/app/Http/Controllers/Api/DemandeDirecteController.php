@@ -2,13 +2,19 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\DTO\DemandeDirecteDTO;
 use App\Http\Controllers\Controller;
 use App\Models\DemandeDirecte;
 use App\Http\Requests\StoreDemandeDirecteRequest;
 use App\Http\Requests\UpdateDemandeDirecteRequest;
+use App\Services\DemandeDirecteService;
 
 class DemandeDirecteController extends Controller
 {
+    public function __construct(private DemandeDirecteService $demandeDirecteService)
+    {
+        // 
+    }
     /**
      * Display a listing of the resource.
      */
@@ -22,7 +28,13 @@ class DemandeDirecteController extends Controller
      */
     public function store(StoreDemandeDirecteRequest $request)
     {
-        //
+        $dto = DemandeDirecteDTO::fromRequest($request);
+        $demandeDirecte = $this->demandeDirecteService->createDemandeDirecte($dto);
+        return response()->json([
+            'success' => true,
+            'message' => 'Demande directe created successfully',
+            'data' => $demandeDirecte
+        ]);
     }
 
     /**

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CategorieController;
+use App\Http\Controllers\Api\DemandeDirecteController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\ArtisanController;
 use App\Http\Controllers\DisponibiliteController;
@@ -30,7 +31,7 @@ Route::middleware('auth:api')->group(function () {
 
 
 
-
+    Route::post('demandes-directes', [DemandeDirecteController::class, 'store']);
 
 
     Route::apiResource('services', ServiceController::class);
