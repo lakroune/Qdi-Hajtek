@@ -51,4 +51,11 @@ class PropositionDAO
     {
         return Proposition::where('offre_id', $offreId)->get();
     }
+    public function acceptProposition(int $id)
+    {
+        $proposition = $this->findById($id);
+        $proposition->statut_proposition = 'acceptee';
+        $proposition->save();
+        return $proposition;
+    }
 }
