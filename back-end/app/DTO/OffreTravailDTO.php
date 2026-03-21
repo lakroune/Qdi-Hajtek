@@ -29,13 +29,13 @@ class OffreTravailDTO
     {
         return new self(
             clientId: $request->user()->client->id,
-            categorieId: $request->valivalidated('categorie_id'),
-            titre: $request->valivalidated('titre'),
-            description: $request->valivalidated('description'),
-            budgetEstime: $request->valivalidated('budget_estime'),
-            dateLimite: $request->valivalidated('date_limite'),
-            typeRemuneration: $request->valivalidated('type_remuneration'),
-            niveauUrgence: $request->valivalidated('niveau_urgence'),
+            categorieId: $request->validated('categorie_id'),
+            titre: $request->validated('titre'),
+            description: $request->validated('description'),
+            budgetEstime: $request->validated('budget_estime'),
+            dateLimite: $request->validated('date_limite'),
+            typeRemuneration: $request->validated('type_remuneration'),
+            niveauUrgence: $request->validated('niveau_urgence'),
         );
     }
 

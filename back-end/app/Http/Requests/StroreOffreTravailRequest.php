@@ -25,7 +25,6 @@ class StroreOffreTravailRequest extends FormRequest
     {
 
         return [
-            'service_id' => 'required|exists:services,id',
             'categorie_id' => 'required|exists:categories,id',
             'titre' => 'required|string',
             'description' => 'required|string',

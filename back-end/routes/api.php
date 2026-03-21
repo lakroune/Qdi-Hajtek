@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CategorieController;
 use App\Http\Controllers\Api\DemandeDirecteController;
+use App\Http\Controllers\Api\OffreTravailController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\ArtisanController;
 use App\Http\Controllers\DisponibiliteController;
@@ -36,6 +37,7 @@ Route::middleware('auth:api')->group(function () {
 
     Route::apiResource('services', ServiceController::class);
     Route::apiResource('categorie', CategorieController::class);
+    Route::apiResource('offres-travail', OffreTravailController::class)->only('store');
 
     // Route::get('artisans/{artisanId}/services', [ServiceController::class, 'artisanServices']);
     // Route::patch('services/{service}/toggle-status', [ServiceController::class, 'toggleStatus']);

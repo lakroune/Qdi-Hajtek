@@ -1,0 +1,30 @@
+$kind: http-request
+name: add offre
+url: http://127.0.0.1:8000/api/offres-travail
+method: POST
+headers:
+  Authorization: "{{token-g}}"
+body:
+  type: json
+  content: "{\r
+
+    \    \"service_id\": 1,\r
+
+    \    \"categorie_id\": 3,\r
+
+    \    \"titre\": \"Réparation d'installation électrique domestique\",\r
+
+    \    \"description\": \"Nous recherchons un artisan qualifié pour refaire le
+    câblage complet d'un appartement de 80m². Le travail inclut l'installation
+    des prises et du tableau électrique.\",\r
+
+    \    \"budget_estime\": 1500.50,\r
+
+    \    \"date_limite\": \"2026-04-30\",\r
+
+    \    \"type_remuneration\": \"prix_fixe\",\r
+
+    \    \"niveau_urgence\": \"urgent\"\r
+
+    }"
+order: 8024
