@@ -64,12 +64,16 @@ const RegisterPage = () => {
 
         try {
             setEstChargement(true);
-            await axiosClient.post('/register', formData);
-            navigate('/auth/login');
+            const response = await axiosClient.post('/register', formData);
+            if (response.status === 201) {
+                setEstChargement(false);
+                localStorage.setItem('ACCESS_TOKEN', response.data.token);
+                navigate('/auth/confirme-email');
+            }
         } catch (error) {
-            setEstChargement(false);
-            if (error.response.status === 422) {
-                setErrors(error.response.data.errors);
+            if (error.response && error.response.status === 422) {
+                setEstChargement(false);
+                setErrors(error.response.data.data || {});
             }
         }
     }
@@ -120,7 +124,7 @@ const RegisterPage = () => {
                         <p className="text-[12px] text-gray-500">Simple, rapide et gratuit.</p>
                     </div>
 
-                    <form onSubmit={submitData} className="space-y-4">
+                    <form onSubmit={submitData} method="POST" className="space-y-4">
                         <div className="grid grid-cols-2 gap-3">
                             <Input
                                 label="Prénom"
