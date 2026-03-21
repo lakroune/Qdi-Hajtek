@@ -21,6 +21,7 @@ return new class extends Migration
             $table->foreignId('offre_id')
                 ->constrained('offre_travails')
                 ->onDelete('cascade');
+
             $table->float('prix_propose');
             $table->string('delai_execution');
             $table->text('message_explicatif');
