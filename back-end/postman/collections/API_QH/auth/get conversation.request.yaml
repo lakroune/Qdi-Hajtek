@@ -1,9 +1,10 @@
 $kind: http-request
-name: send message
+name: get conversation
 url: http://127.0.0.1:8000/api/conversations/2/messages
 method: POST
 headers:
-  Authorization: "{{token-g}}"
+  - key: Authorization
+    value: "{{token-g}}"
 body:
   type: json
   content: "{\r
@@ -13,4 +14,4 @@ body:
     \    \"conversation_id\":1\r
 
     }"
-order: 10000
+order: null

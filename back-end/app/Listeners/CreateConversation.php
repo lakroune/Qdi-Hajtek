@@ -2,7 +2,9 @@
 
 namespace App\Listeners;
 
+use App\DAO\ConversationDAO;
 use App\Events\DemandeCreated;
+use App\Models\DemandeDirecte;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
@@ -11,7 +13,7 @@ class CreateConversation
     /**
      * Create the event listener.
      */
-    public function __construct()
+    public function __construct(private ConversationDAO $conversationDAO)
     {
         //
     }
@@ -23,10 +25,13 @@ class CreateConversation
     {
         $demandeDirecte = $event->demandeDirecte;
 
-        $demandeDirecte->conversation()->create(
+        $this->conversationDAO->create(
             [
                 'last_message_at' => now(),
-                'subject' => $demandeDirecte->service->titre //titre dyal nzido 3la demande
+                'subject' => $demandeDirecte->service->titre,
+                'demande_directe_id' => $demandeDirecte->id,
+                'conversable_id'     => $demandeDirecte->id,
+                'conversable_type'   => DemandeDirecte::class
             ]
         );
     }

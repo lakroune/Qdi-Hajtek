@@ -12,7 +12,9 @@ class Conversation extends Model
     protected $table = 'conversations';
     protected $fillable = [
         'subject',
-        'last_message_at',  
+        'last_message_at',
+        'conversable_id',
+        'conversable_type',
     ];
     public function conversable()
     {

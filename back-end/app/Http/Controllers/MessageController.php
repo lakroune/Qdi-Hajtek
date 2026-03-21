@@ -19,7 +19,9 @@ class MessageController extends Controller
      */
     public function index()
     {
-        //
+        $messages = $this->messageService->getConversationMessages(1);
+
+        return response()->json($messages);
     }
 
     /**
