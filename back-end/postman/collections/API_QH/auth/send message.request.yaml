@@ -1,0 +1,16 @@
+$kind: http-request
+name: send message
+url: http://127.0.0.1:8000/api/conversations/2/messages
+method: POST
+headers:
+  Authorization: "{{token-g}}"
+body:
+  type: json
+  content: "{\r
+
+    \    \"contenu_message\": \"السلام عليكم، واش الخدمة مزال كاينا؟\",\r
+
+    \    \"conversation_id\":2\r
+
+    }"
+order: 3134937457756542

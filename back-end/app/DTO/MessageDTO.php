@@ -21,7 +21,7 @@ class MessageDTO
     {
         return new self(
             conversation_id: (int) $request->validated('conversation_id'),
-            sender_id: (int) $request->user()->id,
+            sender_id: auth('api')->user()->id,
             contenu_message: $request->validated('contenu_message'),
         );
     }

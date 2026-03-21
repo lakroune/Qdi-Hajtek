@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\PropositionController;
 use App\Http\Controllers\ArtisanController;
 use App\Http\Controllers\DisponibiliteController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ServiceController;
 use Illuminate\Support\Facades\Route;
 
@@ -42,6 +43,10 @@ Route::middleware('auth:api')->group(function () {
     Route::post('propositions', [PropositionController::class, 'store']);
 
     Route::patch('propositions/{id}/accept', [PropositionController::class, 'accept']);
+
+    Route::post('conversations/{id}/messages', [MessageController::class, 'store']);
+
+
 
     // Route::get('artisans/{artisanId}/services', [ServiceController::class, 'artisanServices']);
     // Route::patch('services/{service}/toggle-status', [ServiceController::class, 'toggleStatus']);
