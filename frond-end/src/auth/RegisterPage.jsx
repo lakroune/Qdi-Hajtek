@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { data, Link } from 'react-router-dom';
 import {
     Mail, Lock, ArrowRight, Check, Shield,
     Clock, User, Eye, EyeOff, AlertCircle,
@@ -13,86 +13,70 @@ import { useNavigate } from 'react-router-dom';
 
 
 const RegisterPage = () => {
-    const navigate = useNavigate();
-    const [afficherMotDePasse, setAfficherMotDePasse] = useState(false);
-    const [estEnChargement, setEstEnChargement] = useState(false);
-
-    const [donneesFormulaire, setDonneesFormulaire] = useState({
-        prenom: '',
-        nom: '',
+    const [formData, setFromData] = useState({
+        firstname: '',
+        lastname: '',
         email: '',
-        telephone: '',
-        ville: '',
         password: '',
         password_confirmation: '',
-        accepterTermes: false
-    });
+        city: '',
+        cin: '',
+        termes: false
+    })
 
-    const [erreurs, setErreurs] = useState({});
+    const [errors, setErrors] = useState({});
+    const [afficherMotDePasse, setAfficherMotDePasse] = useState(false);
+    const [estchargement, setEstChargement] = useState(false);
 
-    const handleInputChange = (e) => {
+    const changeFormDate = (e) => {
         const { name, value, type, checked } = e.target;
-        setDonneesFormulaire(prev => ({
-            ...prev,
-            [name]: type === 'checkbox' ? checked : value
-        }));
-        if (erreurs[name]) {
-            setErreurs(prev => ({ ...prev, [name]: '' }));
-        }
-    };
 
-    const validerFormulaire = () => {
-        const nouvellesErreurs = {};
+        setFromData((data) => {
+            return {
+                ...data,
+                [name]: type === 'checkbox' ? checked : value
+            }
+        })
 
-        if (!donneesFormulaire.prenom.trim()) nouvellesErreurs.prenom = 'Prénom requis';
-        if (!donneesFormulaire.nom.trim()) nouvellesErreurs.nom = 'Nom requis';
-        if (!donneesFormulaire.email.trim()) nouvellesErreurs.email = 'Email requis';
-        if (!donneesFormulaire.telephone.trim()) nouvellesErreurs.telephone = 'Téléphone requis';
-        if (!donneesFormulaire.ville.trim()) nouvellesErreurs.ville = 'Ville requise';
+    }
 
-        if (!donneesFormulaire.password) {
-            nouvellesErreurs.password = 'Mot de passe requis';
-        } else if (donneesFormulaire.password.length < 8) {
-            nouvellesErreurs.password = 'Minimum 8 caractères';
-        }
+    const validation = () => {
+        const newErrors = {};
+        if (formData.firstname.trim() === '') newErrors.firstname = "Le prenom est requis";
+        if (formData.lastname.trim() === '') newErrors.lastname = "Le nom est requis";
+        if (formData.email.trim() === '') newErrors.email = "L'email est requis";
+        if (formData.password.trim() === '') newErrors.password = "Le mot de passe est requis";
+        if (formData.password.length < 8) newErrors.password = "Le mot de passe doit contenir au moins 8 caractères";
+        if (formData.password !== formData.password_confirmation) newErrors.password_confirmation = "Les mots de passe ne correspondent pas";
+        if (formData.city.trim() === '') newErrors.city = "La ville est requise";
+        if (formData.cin.trim() === '') newErrors.cin = "Le cin est requis";
+        if (!formData.termes) newErrors.termes = "Veuillez accepter les termes et conditions";
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    }
 
-        if (donneesFormulaire.password !== donneesFormulaire.password_confirmation) {
-            nouvellesErreurs.password_confirmation = 'Les mots de passe ne correspondent pas';
-        }
+    const navigate = useNavigate();
 
-        if (!donneesFormulaire.accepterTermes) {
-            nouvellesErreurs.termes = 'Vous devez accepter les conditions';
-        }
-
-        setErreurs(nouvellesErreurs);
-        return Object.keys(nouvellesErreurs).length === 0;
-    };
-
-    const handleSubmit = async (e) => {
+    const submitData = async (e) => {
         e.preventDefault();
-        if (!validerFormulaire()) return;
 
-        setEstEnChargement(true);
-        setErreurs({});
+        if (!validation()) return;
 
         try {
-            const { data } = await axiosClient.post('/register', donneesFormulaire);
-
-            localStorage.setItem('ACCESS_TOKEN', data.token);
-            localStorage.setItem('USER_DATA', JSON.stringify(data.user));
-
-            navigate('/auth/confirme-email');
-        } catch (err) {
-            if (err.response && err.response.data.errors) {
-                const erreursServeur = err.response.data.errors;
-                setErreurs(erreursServeur);
-            } else {
-                console.error("Erreur :", err);
+            setEstChargement(true);
+            await axiosClient.post('/register', formData);
+            navigate('/auth/login');
+        } catch (error) {
+            setEstChargement(false);
+            if (error.response.status === 422) {
+                setErrors(error.response.data.errors);
             }
-        } finally {
-            setEstEnChargement(false);
         }
-    };
+    }
+
+
+
+
 
     return (
         <div className="min-h-screen flex">
@@ -136,25 +120,25 @@ const RegisterPage = () => {
                         <p className="text-[12px] text-gray-500">Simple, rapide et gratuit.</p>
                     </div>
 
-                    <form onSubmit={handleSubmit} className="space-y-4">
+                    <form onSubmit={submitData} className="space-y-4">
                         <div className="grid grid-cols-2 gap-3">
                             <Input
                                 label="Prénom"
-                                name="prenom"
-                                value={donneesFormulaire.prenom}
-                                onChange={handleInputChange}
+                                name="firstname"
+                                value={formData.firstname}
+                                onChange={changeFormDate}
                                 placeholder="Prénom"
                                 Icon={User}
-                                error={erreurs.prenom}
+                                error={errors.firstname}
                             />
                             <Input
                                 label="Nom"
-                                name="nom"
-                                value={donneesFormulaire.nom}
-                                onChange={handleInputChange}
+                                name="lastname"
+                                value={formData.lastname}
+                                onChange={changeFormDate}
                                 placeholder="Nom"
                                 Icon={User}
-                                error={erreurs.nom}
+                                error={errors.lastname}
                             />
                         </div>
 
@@ -162,32 +146,32 @@ const RegisterPage = () => {
                             label="Email"
                             type="email"
                             name="email"
-                            value={donneesFormulaire.email}
-                            onChange={handleInputChange}
+                            value={formData.email}
+                            onChange={changeFormDate}
                             placeholder="votre@email.com"
                             Icon={Mail}
-                            error={erreurs.email}
+                            error={errors.email}
                         />
 
                         <Input
-                            label="Téléphone"
-                            type="tel"
-                            name="telephone"
-                            value={donneesFormulaire.telephone}
-                            onChange={handleInputChange}
-                            placeholder="+212 6 XX XX XX XX"
+                            label="CIN"
+                            type="text"
+                            name="cin"
+                            value={formData.cin}
+                            onChange={changeFormDate}
+                            placeholder="AB123456"
                             Icon={MapPin}
-                            error={erreurs.telephone}
+                            error={errors.cin}
                         />
 
                         <Input
-                            label="Ville"
-                            name="ville"
-                            value={donneesFormulaire.ville}
-                            onChange={handleInputChange}
+                            label="city"
+                            name="city"
+                            value={formData.city}
+                            onChange={changeFormDate}
                             placeholder="Ex: Casablanca"
                             Icon={MapPin}
-                            error={erreurs.ville}
+                            error={errors.city}
                         />
 
                         <div className="relative">
@@ -195,11 +179,11 @@ const RegisterPage = () => {
                                 label="Mot de passe"
                                 type={afficherMotDePasse ? 'text' : 'password'}
                                 name="password"
-                                value={donneesFormulaire.password}
-                                onChange={handleInputChange}
-                                placeholder="••••••••"
+                                value={formData.password}
+                                onChange={changeFormDate}
+                                placeholder="************"
                                 Icon={Lock}
-                                error={erreurs.password}
+                                error={errors.password}
                             />
                             <button
                                 type="button"
@@ -214,20 +198,20 @@ const RegisterPage = () => {
                             label="Confirmer le mot de passe"
                             type="password"
                             name="password_confirmation"
-                            value={donneesFormulaire.password_confirmation}
-                            onChange={handleInputChange}
-                            placeholder="••••••••"
+                            value={formData.password_confirmation}
+                            onChange={changeFormDate}
+                            placeholder="************"
                             Icon={Lock}
-                            error={erreurs.password_confirmation}
+                            error={errors.password_confirmation}
                         />
 
                         <div>
                             <label className="flex items-start gap-3 cursor-pointer">
                                 <input
                                     type="checkbox"
-                                    name="accepterTermes"
-                                    checked={donneesFormulaire.accepterTermes}
-                                    onChange={handleInputChange}
+                                    name="termes"
+                                    checked={formData.termes}
+                                    onChange={changeFormDate}
                                     className="w-4 h-4 mt-0.5 border-gray-300 text-[#D35400] focus:ring-[#D35400]"
                                 />
                                 <span className="text-[11px] text-gray-600 leading-relaxed">
@@ -237,19 +221,19 @@ const RegisterPage = () => {
                                     <Link to="/privacy" className="text-[#D35400] hover:underline">Politique de confidentialité</Link>
                                 </span>
                             </label>
-                            {erreurs.termes && (
+                            {errors.termes && (
                                 <p className="mt-1 text-[10px] text-red-500 flex items-center gap-1">
-                                    <AlertCircle className="w-3 h-3" /> {erreurs.termes}
+                                    <AlertCircle className="w-3 h-3" /> {errors.termes}
                                 </p>
                             )}
                         </div>
 
                         <button
                             type="submit"
-                            disabled={estEnChargement}
+                            disabled={estchargement}
                             className="w-full py-3 text-[13px] font-semibold flex items-center justify-center gap-2 transition-colors bg-[#1B4F72] hover:bg-[#D35400] text-white disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            {estEnChargement ? (
+                            {estchargement ? (
                                 <>
                                     <div className="w-4 h-4 border-2 border-white border-t-transparent animate-spin" />
                                     Création...
@@ -263,7 +247,6 @@ const RegisterPage = () => {
                         </button>
                     </form>
 
-                    {/* Divider & Social (Google/Facebook) ... */}
                     <div className="relative my-6">
                         <div className="absolute inset-0 flex items-center">
                             <div className="w-full border-t border-gray-200"></div>
