@@ -2,6 +2,8 @@ $kind: http-request
 name: add demande
 url: http://127.0.0.1:8000/api/demandes-directes
 method: POST
+headers:
+  Authorization: "{{token-g}}"
 body:
   type: json
   content: "{\r
