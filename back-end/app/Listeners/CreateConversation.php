@@ -26,7 +26,7 @@ class CreateConversation
         $demandeDirecte->conversation()->create(
             [
                 'last_message_at' => now(),
-                // 'subject' => $demandeDirecte->subject//titre dyal nzido 3la demande
+                'subject' => $demandeDirecte->service->titre //titre dyal nzido 3la demande
             ]
         );
     }

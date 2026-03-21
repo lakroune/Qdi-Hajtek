@@ -8,9 +8,9 @@ body:
   type: json
   content: "{\r
 
-    \    \"service_id\": 5,\r
+    \    \"service_id\": 1,\r
 
-    \    \"date_debut\": \"2026-04-15\",\r
+    \    \"date_debut\": \"20233-04-15\",\r
 
     \    \"prix_final\": 450.00,\r
 

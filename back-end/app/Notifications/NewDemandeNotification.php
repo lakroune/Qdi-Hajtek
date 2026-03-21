@@ -36,9 +36,12 @@ class NewDemandeNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->line('The introduction to the notification.')
-            ->action('Notification Action', url('/'))
-            ->line('Thank you for using our application!');
+            ->subject('Nouvelle Demande de Service - Qdi Hajtek')
+            ->greeting('Bonjour ' . $notifiable->name . '!')
+            ->line("Vous avez reçu une nouvelle demande directe pour l'un de vos services.")
+            ->action('Voir la demande', url('/demandes/' . $this->demandeDirecte->conversation->id))
+            ->line('Merci de répondre à votre client dans les plus brefs délais.')
+            ->salutation('Cordialement, L\'équipe Qdi Hajtek');
     }
 
     /**
@@ -62,7 +65,7 @@ class NewDemandeNotification extends Notification
         ];
     }
 
-    public function toBroadcast(object$notifiable)
+    public function toBroadcast(object $notifiable)
     {
         return [
             'demande_directe_id' => $this->demandeDirecte->id,
