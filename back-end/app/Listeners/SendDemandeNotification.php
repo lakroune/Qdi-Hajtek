@@ -23,6 +23,6 @@ class SendDemandeNotification
     public function handle(DemandeCreated $event): void
     {
         $demandeDirecte = $event->demandeDirecte;
-        $demandeDirecte->service->artisan->notify(new NewDemandeNotification($event->demandeDirecte));
+        $demandeDirecte->service->artisan->user->notify(new NewDemandeNotification($event->demandeDirecte));
     }
 }

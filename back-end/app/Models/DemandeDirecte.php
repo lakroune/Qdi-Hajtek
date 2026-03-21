@@ -10,7 +10,7 @@ class DemandeDirecte extends Model
     /** @use HasFactory<\Database\Factories\DemandeDericteFactory> */
     use HasFactory;
 
-    protected $table = 'dommande_derictes';
+    protected $table = 'demande_directes';
     protected $fillable = [
         'client_id',
         'service_id',
