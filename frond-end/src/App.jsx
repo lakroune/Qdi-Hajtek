@@ -60,7 +60,7 @@ function App() {
           <Route path="favorites" element={<ClientFavoris />} />
           <Route path="notifications" element={<Notifications />} />
           <Route path="artisan/:id" element={<ArtisanPortfolioPage />} />
-          <Route path="ajouter-service" element={<ArtisanAddService />} />
+          <Route path="nouvelle-service" element={<ArtisanAddService />} />
           <Route path="offres/:id" element={<ArtisanOffreDetail />} />
           <Route path="offres" element={<ArtisanOffres />} />
           <Route path="services" element={<Services />} />
@@ -72,7 +72,7 @@ function App() {
 
 
         <Route path="/admin" element={<AdminLayout />}>
-          <Route element={<ProtectedRoute />}>
+          <Route element={<ProtectedRoute roles={['client']} />}>
             <Route index element={<DashboardHome />} />
             <Route path='reports' element={<ReportsManagement />} />
             <Route path='reviews' element={<ReviewsManagement />} />
