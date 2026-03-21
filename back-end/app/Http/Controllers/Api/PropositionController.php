@@ -32,7 +32,7 @@ class PropositionController extends Controller
         $dto = PropositionDTO::fromRequest($request);
 
         return $this->propositionService->createProposition($dto);
-}
+    }
 
     /**
      * Display the specified resource.
@@ -56,5 +56,10 @@ class PropositionController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function accept(string $id)
+    {
+        return $this->propositionService->acceptProposition($id);
     }
 }

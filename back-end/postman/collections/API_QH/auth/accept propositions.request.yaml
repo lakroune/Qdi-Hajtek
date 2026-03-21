@@ -1,6 +1,6 @@
 $kind: http-request
-name: add propositions
-url: http://127.0.0.1:8000/api/propositions
+name: accept propositions
+url: http://127.0.0.1:8000/api/propositions/18/accept
 method: POST
 headers:
   Authorization: "{{token-g}}"
@@ -8,7 +8,9 @@ body:
   type: json
   content: "{\r
 
-    \    \"offre_travail_id\": 1,\r
+    \    \"artisan_id\": 5,\r
+
+    \    \"offre_id\": 1,\r
 
     \    \"prix_propose\": 1200.00,\r
 
@@ -23,4 +25,4 @@ body:
     hors fournitures.\"\r
 
     }"
-order: 7000
+order: 6799

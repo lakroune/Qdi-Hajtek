@@ -4,9 +4,9 @@ namespace App\Listeners;
 
 use App\Events\PropositionAccepted;
 use App\Notifications\NewPropositionNotification;
+use App\Notifications\PropositionAcceptedNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
-
 class NotifyArtisanOfAcceptance
 {
     /**
@@ -24,6 +24,6 @@ class NotifyArtisanOfAcceptance
     {
         $proposition = $event->proposition;
 
-        $proposition->artisan->user->notify(new NewPropositionNotification($proposition));
+        $proposition->artisan->user->notify(new PropositionAcceptedNotification($proposition));
     }
 }

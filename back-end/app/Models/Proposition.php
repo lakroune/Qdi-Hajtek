@@ -35,4 +35,9 @@ class Proposition extends Model
     {
         return $this->morphOne(Notification::class, 'notifiable');
     }
+
+    public function conversation()
+    {
+        return $this->morphOne(Conversation::class, 'conversable');
+    }
 }

@@ -40,6 +40,9 @@ Route::middleware('auth:api')->group(function () {
     Route::apiResource('categorie', CategorieController::class);
     Route::apiResource('offres-travail', OffreTravailController::class)->only('store');
     Route::post('propositions', [PropositionController::class, 'store']);
+
+    Route::patch('propositions/{id}/accept', [PropositionController::class, 'accept']);
+
     // Route::get('artisans/{artisanId}/services', [ServiceController::class, 'artisanServices']);
     // Route::patch('services/{service}/toggle-status', [ServiceController::class, 'toggleStatus']);
 });
