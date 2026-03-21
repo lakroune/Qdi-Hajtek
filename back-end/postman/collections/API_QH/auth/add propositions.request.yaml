@@ -1,0 +1,28 @@
+$kind: http-request
+name: add propositions
+url: http://127.0.0.1:8000/api/propositions
+method: POST
+headers:
+  Authorization: "{{token-g}}"
+body:
+  type: json
+  content: "{\r
+
+    \    \"artisan_id\": 5,\r
+
+    \    \"offre_id\": 1,\r
+
+    \    \"prix_propose\": 1200.00,\r
+
+    \    \"delai_execution\": \"3 jours\",\r
+
+    \    \"message_explicatif\": \"Je dispose de tout le matériel nécessaire et
+    j'ai une expérience de 5 ans dans ce type de travaux électriques.\",\r
+
+    \    \"date_disponibilite\": \"2026-03-25\",\r
+
+    \    \"conditions_speciales\": \"Le prix inclut la main d'œuvre uniquement,
+    hors fournitures.\"\r
+
+    }"
+order: 6779

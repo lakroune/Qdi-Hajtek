@@ -20,7 +20,6 @@ class Proposition extends Model
         'message_explicatif',
         'date_disponibilite',
         'conditions_speciales',
-        'statut_proposition'
     ];
 
     public function offreTravail()
