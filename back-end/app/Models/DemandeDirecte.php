@@ -37,6 +37,10 @@ class DemandeDirecte extends Model
         return $this->belongsTo(Service::class);
     }
 
+    public function conversation()
+    {
+        return $this->morphOne(Conversation::class, 'conversable');
+    }
     public function notification()
     {
         return $this->morphOne(Notification::class, 'notifiable');

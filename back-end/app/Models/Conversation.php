@@ -9,4 +9,9 @@ class Conversation extends Model
 {
     /** @use HasFactory<\Database\Factories\ConversationFactory> */
     use HasFactory;
+
+    public function conversable()
+    {
+        return $this->morphTo();
+    }
 }

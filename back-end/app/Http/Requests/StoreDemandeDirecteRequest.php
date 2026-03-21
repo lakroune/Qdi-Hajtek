@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class StoreDemandeDirecteRequest extends FormRequest
 {
@@ -22,7 +24,36 @@ class StoreDemandeDirecteRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'service_id' => 'required|exists:services,id',
+            'date_debut' => 'required|date',
+            'prix_final' => 'required|numeric',
+            'description_specifique' => 'nullable|string',
+            'adresse' => 'nullable|string',
         ];
+    }
+
+    public function messages()
+    {
+        return  [
+            'service_id.required' => 'service is required',
+            'service_id.exists' => 'service is not found',
+            'date_debut.required' => 'date_debut is required',
+            'date_debut.date_format' => 'date_debut must be a date',
+            'date_fin.required' => 'date_fin is required',
+            'date_fin.date_format' => 'date_fin must be a date',
+            'date_fin.after' => 'date_fin must be after date_debut',
+            'description_specifique.max' => 'description_specifique must be less than 255 characters',
+            'adresse.required' => 'adresse is required',
+            'adresse.max' => 'adresse must be less than 255 characters',
+        ];
+    }
+
+    public function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(response()->json([
+            'success' => false,
+            'message' => 'Validation errors',
+            'data' => $validator->errors()
+        ]));
     }
 }

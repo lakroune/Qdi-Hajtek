@@ -20,10 +20,8 @@ return new class extends Migration
             $table->text('description_specifique')->nullable();
             $table->float('prix_final');
             $table->string('code_confirmation')->nullable();
-
-            $table->enum('mode_paiement', ['paypal', 'stripe'])->nullable();
-            $table->boolean('a_ete_signale')->default(false);
-            $table->timestamp('date_cloture')->nullable();
+            $table->date('date_confirmation')->nullable();
+            $table->string('adresse')->nullable();
             $table->boolean('is_completed')->default(false);
 
             $table->timestamps();

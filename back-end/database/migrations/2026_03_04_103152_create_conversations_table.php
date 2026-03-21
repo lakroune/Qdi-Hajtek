@@ -13,9 +13,7 @@ return new class extends Migration
     {
         Schema::create('conversations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('proposition_id')->nullable()->constrained('propositions')->onDelete('cascade'); // constrained('propositions')->onDelete('cascade');
-            $table->foreignId('dommande_derictes_id')->nullable()->constrained('dommande_derictes')->onDelete('cascade');
-
+            $table->morphs('conversable');
             $table->timestamp('last_message_at')->nullable();
             $table->timestamps();
         });
