@@ -17,6 +17,10 @@ return new class extends Migration
                 ->constrained('conversations')
                 ->onDelete('cascade');
 
+            $table->foreignId('sender_id')
+                ->constrained('users')
+                ->onDelete('cascade');
+
             $table->text('contenu_message');
             $table->boolean('is_read')->default(false);
             $table->timestamp('read_at')->nullable();

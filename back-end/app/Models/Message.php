@@ -9,4 +9,24 @@ class Message extends Model
 {
     /** @use HasFactory<\Database\Factories\MessageFactory> */
     use HasFactory;
+    protected $table = 'messages';
+
+    protected $fillable = [
+        'conversation_id',
+        'sender_id',
+        'contenu_message',
+        'is_read',
+        'read_at',
+        'attachment_path',
+    ];
+
+    public function conversation()
+    {
+        return $this->belongsTo(Conversation::class);
+    }
+
+    public function sender()
+    {
+        return $this->belongsTo(User::class, 'sender_id');
+    }
 }
