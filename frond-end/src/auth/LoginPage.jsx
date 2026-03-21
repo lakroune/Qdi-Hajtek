@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import Cookies from 'js-cookie';
 import {
   Mail, Lock, ArrowRight, Eye, EyeOff,
   Check, Shield, AlertCircle
@@ -38,7 +39,12 @@ const LoginPage = () => {
     const response = await axiosClient.post('/login', dataForm);
     if (response.status === 200) {
       setEstEnChargement(false);
-      localStorage.setItem('ACCESS_TOKEN', response.data.token);
+      Cookies.set('ACCESS_TOKEN', response.data.token, {
+        expires: 7,
+        secure: true,
+        sameSite: 'strict'
+      });
+      Cookies.set('USER_DATA', JSON.stringify(response.data.user), { expires: 7 });
       // navigate('/dashboard');
       console.log(response.data.user);
     }

@@ -1,4 +1,5 @@
 import axios from "axios";
+import Cookies from 'js-cookie';
 
 const axiosClient = axios.create({
     baseURL: "http://127.0.0.1:8000/api",
@@ -9,7 +10,7 @@ const axiosClient = axios.create({
 });
 
 axiosClient.interceptors.request.use((config) => {
-    const token = localStorage.getItem('ACCESS_TOKEN');
+    const token = Cookies.get('ACCESS_TOKEN');
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
     }
@@ -20,10 +21,18 @@ axiosClient.interceptors.response.use(
     (response) => response,
     (error) => {
         if (error.response && error.response.status === 401) {
-            localStorage.removeItem('ACCESS_TOKEN');
-            window.location.reload(); 
+            Cookies.remove('ACCESS_TOKEN');
+            Cookies.remove('USER_DATA');
+
+            window.location.href = '/auth/login';
         }
-        throw error;
+
+        if (error.response && error.response.status === 403) {
+            console.error("Accès interdit ! Role non autorisé.");
+            // window.location.href = '/unauthorized';
+        }
+
+        return Promise.reject(error);
     }
 );
 

@@ -42,7 +42,7 @@ class UserDAO
     }
     public function login(LoginDTO $loginDTO)
     {
-        return User::where('email', $loginDTO->data['email'])->firstOrFail();
+        return User::with('roles')->where('email', $loginDTO->data['email'])->firstOrFail();
     }
 
     public function verifierEmail(VerifierEmailDTO $verifierEmailDTO)
