@@ -13,7 +13,7 @@ class StoreServiceRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return  auth('api')->user()->isActive() and auth('api')->user()->isArtisan() and auth('api')->user()->artisan->isVerified();
     }
 
     /**
@@ -26,9 +26,9 @@ class StoreServiceRequest extends FormRequest
         return [
             'titre' => 'required|string|max:255',
             'description' => 'required|string',
-            'tarif' => 'required|numeric|between:0,999999.99', 
+            'tarif' => 'required|numeric|between:0,999999.99',
             'type_tarif' => 'required|string|in:prix_fixe,prix_heure,prix_jour,prix_m2',
-            'estimation_duree' => 'required|integer', 
+            'estimation_duree' => 'required|integer',
             'material' => 'nullable|string|max:255',
             'categorie_id' => 'required|integer|exists:categories,id',
             'images' => 'nullable|array|max:5',

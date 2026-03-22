@@ -21,7 +21,7 @@ Route::get('/villes', function () {
 });
 
 
-Route::get('/categories', [CategorieController::class, 'index']); 
+Route::get('/categories', [CategorieController::class, 'index']);
 Route::middleware('auth:api')->group(function () {
 
     Route::post('verifier-email', [AuthController::class, 'verifierEmail']);
@@ -33,8 +33,13 @@ Route::middleware('auth:api')->group(function () {
     //nady artisan store
     Route::post('artisans', [ArtisanController::class, 'store']);
 
-    //23
+    //23mazal  hasso gates
     // Route::apiResource('categorie', CategorieController::class)->only('store');
+
+
+
+    Route::apiResource('services', ServiceController::class)->only('store');
+
 
     Route::get('artisans/{artisan}/disponibilites', [DisponibiliteController::class, 'show']);
     Route::post('artisans/{artisan}/disponibilites', [DisponibiliteController::class, 'store']);
@@ -42,8 +47,6 @@ Route::middleware('auth:api')->group(function () {
 
     Route::post('demandes-directes', [DemandeDirecteController::class, 'store']);
 
-
-    Route::apiResource('services', ServiceController::class);
 
     Route::apiResource('offres-travail', OffreTravailController::class)->only('store');
     Route::post('propositions', [PropositionController::class, 'store']);
