@@ -33,4 +33,8 @@ class ServiceDAO
     {
         return Service::with(['images', 'artisan.user'])->findOrFail($serviceId);
     }
+    public  function getServices()
+    {
+        return Service::with(['images', 'artisan.user.client', 'categorie'])->get();
+    }
 }

@@ -18,7 +18,11 @@ class ServiceController extends Controller
      */
     public function index()
     {
-        //
+        $services = $this->serviceService->getServices();
+        return response()->json([
+            'message' => 'Services found successfully',
+            'data' => $services
+        ]);
     }
 
     /**

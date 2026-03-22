@@ -31,6 +31,7 @@ const ArtisanAddService = () => {
 
     const [errors, setErrors] = useState({});
 
+
     useEffect(() => {
         const fetchCategories = async () => {
             try {
