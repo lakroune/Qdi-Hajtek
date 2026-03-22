@@ -5,8 +5,6 @@ import {
     Award, Briefcase, GraduationCap, IdCard, Save,
     Eye, EyeOff
 } from 'lucide-react';
-import Header from '../components/Header/Header';
-import Footer from '../components/footer/Footer';
 import AvatarUpload from '../components/inputs/AvatarUpload';
 import Input from '../components/inputs/Input';
 import FileUpload from '../components/inputs/FileUpload';
@@ -19,21 +17,22 @@ const PageParametres = () => {
     const [afficherMotDePasse, setAfficherMotDePasse] = useState({});
     const [villes, setVilles] = useState([]);
 
+
+
     const [donneesUtilisateur, setDonneesUtilisateur] = useState({
-        prenom: 'Ahmed',
-        nom: 'Benali',
-        email: 'ahmed.benali@email.com',
-        telephone: '+212 6 12 34 56 78',
-        adresse: '123 Rue Mohammed V',
-        ville: 'Casablanca',
-        avatar: '/images/avatars/client.jpg'
+        prenom: '',
+        nom: '',
+        email: '',
+        telephone: '',
+        adresse: '',
+        ville: '',
+        avatar: '',
     });
 
     const [donneesSécurité, setDonneesSécurité] = useState({
         motDePasseActuel: '',
         nouveauMotDePasse: '',
         confirmerMotDePasse: '',
-        doubleAuthentificationActive: false
     });
 
     const [formulaireArtisan, setFormulaireArtisan] = useState({
@@ -46,10 +45,6 @@ const PageParametres = () => {
         cniVerso: null,
         diplomes: [],
         attestations: [],
-        telephonePro: '',
-        emailPro: '',
-        adresseTravail: '',
-        villeTravail: '',
     });
 
     const onglets = [
@@ -101,20 +96,12 @@ const PageParametres = () => {
             });
     }, []);
 
-    const enregistrerModifications = async () => {
-        setChargement(true);
-        await new Promise(r => setTimeout(r, 1000));
-        setChargement(false);
-        setMessageSucces('Modifications enregistrées !');
-        setTimeout(() => setMessageSucces(''), 3000);
+    const saveModificationProfileClient = async () => {
+
     };
 
-    const soumettreFormulaireArtisan = async (e) => {
-        e.preventDefault();
-        setChargement(true);
-        await new Promise(r => setTimeout(r, 1500));
-        setChargement(false);
-        setMessageSucces('Votre demande a été envoyée !');
+    const becomeArtisanSave = async (e) => {
+
     };
 
     const mettreAJourChamp = (modificateur, objet, champ, valeur) => {
@@ -234,7 +221,7 @@ const PageParametres = () => {
                                 <div className="mt-6 pt-4 border-t border-gray-100 flex justify-end">
                                     <Submit
                                         text="Enregistrer"
-                                        onClick={enregistrerModifications}
+                                        onClick={saveModificationProfileClient}
                                         isLoading={chargement}
                                         icon={Save}
                                         size="md"
@@ -302,7 +289,7 @@ const PageParametres = () => {
                                     <div className="mt-4 pt-4 border-t border-gray-100">
                                         <Submit
                                             text="Mettre à jour"
-                                            onClick={enregistrerModifications}
+                                            onClick={saveModificationProfileClient}
                                             isLoading={chargement}
                                             size="md"
                                             className="w-auto"
@@ -321,28 +308,15 @@ const PageParametres = () => {
                                     </p>
                                 </div>
 
-                                <form onSubmit={soumettreFormulaireArtisan} className="space-y-6">
+                                <form onSubmit={becomeArtisanSave} className="space-y-6">
                                     <div>
                                         <h3 className="text-[12px] font-bold text-[#1B4F72] mb-3 flex items-center gap-2">
                                             <Briefcase className="w-4 h-4 text-[#D35400]" />
                                             Informations professionnelles
                                         </h3>
                                         <div className="grid md:grid-cols-2 gap-4">
-                                            <Input
-                                                label="Nom de l'entreprise"
-                                                name="nomEntreprise"
-                                                value={formulaireArtisan.nomEntreprise}
-                                                onChange={(e) => mettreAJourChamp(setFormulaireArtisan, formulaireArtisan, 'nomEntreprise', e.target.value)}
-                                                placeholder="Ex: Benali Plomberie"
-                                                Icon={Building}
-                                            />
-                                            <Input
-                                                label="Numéro SIRET"
-                                                name="numeroSiret"
-                                                value={formulaireArtisan.numeroSiret}
-                                                onChange={(e) => mettreAJourChamp(setFormulaireArtisan, formulaireArtisan, 'numeroSiret', e.target.value)}
-                                                placeholder="123 456 789 00012"
-                                            />
+
+
 
                                             <div>
                                                 <label className="block text-[11px] font-medium text-[#1B4F72] mb-1.5">
@@ -441,55 +415,7 @@ const PageParametres = () => {
                                         </div>
                                     </div>
 
-                                    <div className="pt-4 border-t border-gray-100">
-                                        <h3 className="text-[12px] font-bold text-[#1B4F72] mb-3 flex items-center gap-2">
-                                            <IdCard className="w-4 h-4 text-[#D35400]" />
-                                            Coordonnées professionnelles
-                                        </h3>
-                                        <div className="grid md:grid-cols-2 gap-4">
-                                            <Input
-                                                label="Téléphone pro"
-                                                name="telephonePro"
-                                                type="tel"
-                                                value={formulaireArtisan.telephonePro}
-                                                onChange={(e) => mettreAJourChamp(setFormulaireArtisan, formulaireArtisan, 'telephonePro', e.target.value)}
-                                                Icon={Phone}
-                                                required
-                                            />
-                                            <Input
-                                                label="Email pro"
-                                                name="emailPro"
-                                                type="email"
-                                                value={formulaireArtisan.emailPro}
-                                                onChange={(e) => mettreAJourChamp(setFormulaireArtisan, formulaireArtisan, 'emailPro', e.target.value)}
-                                                Icon={Mail}
-                                            />
-                                            <Input
-                                                label="Adresse"
-                                                name="adresseTravail"
-                                                value={formulaireArtisan.adresseTravail}
-                                                onChange={(e) => mettreAJourChamp(setFormulaireArtisan, formulaireArtisan, 'adresseTravail', e.target.value)}
-                                                Icon={MapPin}
-                                                required
-                                            />
-                                            <div>
-                                                <label className="block text-[11px] font-medium text-[#1B4F72] mb-1.5">
-                                                    Ville <span className="text-[#D35400]">*</span>
-                                                </label>
-                                                <select
-                                                    required
-                                                    value={formulaireArtisan.villeTravail}
-                                                    onChange={(e) => mettreAJourChamp(setFormulaireArtisan, formulaireArtisan, 'villeTravail', e.target.value)}
-                                                    className="w-full px-3 py-2 text-[12px] border border-gray-200 focus:border-[#D35400] focus:outline-none bg-white"
-                                                >
-                                                    <option value="">Sélectionnez</option>
-                                                    {villes.map(ville => (
-                                                        <option key={ville.valeur} value={ville.libelle}>{ville.libelle}</option>
-                                                    ))}
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
+
 
                                     <div className="pt-6 border-t border-gray-100">
                                         <div className="flex items-start gap-2 mb-4 p-3 bg-blue-50">
@@ -502,7 +428,7 @@ const PageParametres = () => {
 
                                         <Submit
                                             text="Soumettre ma candidature"
-                                            onClick={soumettreFormulaireArtisan}
+                                            onClick={becomeArtisanSave}
                                             isLoading={chargement}
                                             variant="secondary"
                                             size="lg"
@@ -516,7 +442,7 @@ const PageParametres = () => {
                 </div>
             </div>
 
-           
+
         </div>
     );
 };

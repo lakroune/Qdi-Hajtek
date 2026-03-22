@@ -1,7 +1,7 @@
 $kind: http-request
-name: update profile
-url: http://127.0.0.1:8000/api/profile
+name: get villes
+url: http://127.0.0.1:8000/api/villes
 method: GET
 headers:
   Authorization: "{{token-g}}"
-order: 4000
+order: 2990

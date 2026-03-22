@@ -10,13 +10,16 @@ use App\Http\Controllers\ArtisanController;
 use App\Http\Controllers\DisponibiliteController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ServiceController;
+use App\Models\Ville;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
 Route::post('/generate-code', [AuthController::class, 'generateCode']);
-
+Route::get('/villes', function () {
+    return Ville::all();
+});
 
 Route::middleware('auth:api')->group(function () {
     Route::post('verifier-email', [AuthController::class, 'verifierEmail']);
