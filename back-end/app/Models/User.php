@@ -137,6 +137,11 @@ class User extends Authenticatable implements JWTSubject
         return false;
     }
 
+    public function hasEmailVerified(): bool
+    {
+        return $this->email_verified_at !== null;
+    }
+
     public function messages()
     {
         return $this->hasMany(Message::class);

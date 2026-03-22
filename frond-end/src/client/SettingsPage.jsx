@@ -83,9 +83,8 @@ const PageParametres = () => {
             try {
                 const response = await axiosClient.get('/villes');
                 setVilles(response.data);
-                console.log(response.data);
             } catch (error) {
-                console.error('Erreur lors de la recherche des villes', error);
+                console.error('Erreur lors de la recherche des villes');
             }
         };
         if (villes.length === 0) {
@@ -104,7 +103,7 @@ const PageParametres = () => {
                     telephone: user.client.phone || '',
                     adresse: user.client.adresse || '',
                     cin: user.client.cin || '',
-                    ville: user.ville || '',
+                    ville: user.city || '',
                     avatar: getAvatarUrl(user.client.avatar),
                 });
 
@@ -280,7 +279,7 @@ const PageParametres = () => {
                                         >
                                             <option value="">Sélectionnez une ville</option>
                                             {villes.map(ville => (
-                                                <option key={ville.id} value={ville.ville}>
+                                                <option key={ville.id} selected={ville.ville === donneesUtilisateur.ville} value={ville.ville}>
                                                     {ville.ville}
                                                 </option>
                                             ))}

@@ -13,7 +13,7 @@ class ProfileRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return auth('api')->user()->isClient() and auth('api')->user()->hasEmailVerified();
     }
 
     /**
@@ -41,6 +41,7 @@ class ProfileRequest extends FormRequest
             'avatar.image' => 'avatar must be an image',
             'avatar.mimes' => 'avatar must be a jpeg, png, jpg',
             'avatar.max' => 'avatar must be less than 1MB',
+            'rib.required' => 'rib is required',
         ];
     }
 
