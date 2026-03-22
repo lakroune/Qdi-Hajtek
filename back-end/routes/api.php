@@ -23,10 +23,10 @@ Route::get('/villes', function () {
 Route::middleware('auth:api')->group(function () {
     Route::post('verifier-email', [AuthController::class, 'verifierEmail']);
     Route::post('logout', [AuthController::class, 'logout']);
-    Route::apiResource('profile', ProfileController::class)->only('show', 'update');
-
-
+    Route::get('profile/me', [ProfileController::class, 'show']);
+    Route::put('profile/update-password', [ProfileController::class, 'updatePassword']);
     Route::patch('profile', [ProfileController::class, 'update']);
+
     Route::apiResource('artisans', ArtisanController::class)->only('store');
 
 

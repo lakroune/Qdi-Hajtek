@@ -6,7 +6,7 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class ProfileRequest extends FormRequest
+class PasswordRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,24 +24,25 @@ class ProfileRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'city' => 'required|string|max:255',
-            'phone' => 'nullable|numeric|digits:10|regex:/^0[1-9](\d{8})$/',
-            'address' => 'nullable|string|max:255',
-            'avatar' => 'nullable|image|mimes:jpeg,png,jpg|max:1024',
-            'rib' => 'nullable|numeric|digits:16',
+            'old_password' => 'required|string|min:8',
+            'new_password' => 'required|string|min:8|confirmed',
+            'new_password_confirmation' => 'required|string|min:8',
         ];
     }
 
     public function messages()
     {
         return [
-            'city.required' => 'city is required',
-            'phone.required' => 'phone is required',
-            'phone.max' => 'phone must be less than 10 digits',
-            'avatar.image' => 'avatar must be an image',
-            'avatar.mimes' => 'avatar must be a jpeg, png, jpg',
-            'avatar.max' => 'avatar must be less than 1MB',
-            'rib.required' => 'rib is required',
+            'old_password.required' => 'old password is required',
+            'old_password.string' => 'old password must be a string',
+            'old_password.min' => 'old password must be at least 8 characters',
+            'new_password.required' => 'new password is required',
+            'new_password.string' => 'new password must be a string',
+            'new_password.min' => 'new password must be at least 8 characters',
+            'new_password.confirmed' => 'new password must be confirmed',
+            'new_password_confirmation.required' => 'new password confirmation is required',
+            'new_password_confirmation.string' => 'new password confirmation must be a string',
+            'new_password_confirmation.min' => 'new password confirmation must be at least 8 characters',
         ];
     }
 

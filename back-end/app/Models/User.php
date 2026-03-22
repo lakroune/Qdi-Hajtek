@@ -142,6 +142,11 @@ class User extends Authenticatable implements JWTSubject
         return $this->email_verified_at !== null;
     }
 
+    public function isActive(): bool
+    {
+        return $this->client->statut === "actif";
+    }
+
     public function messages()
     {
         return $this->hasMany(Message::class);

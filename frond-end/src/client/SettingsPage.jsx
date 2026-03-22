@@ -6,7 +6,8 @@ import {
     Eye, EyeOff,
     SplinePointer,
     UploadCloud,
-    LoaderCircle
+    LoaderCircle,
+    XCircle
 } from 'lucide-react';
 import AvatarUpload from '../components/inputs/AvatarUpload';
 import Input from '../components/inputs/Input';
@@ -18,6 +19,7 @@ const PageParametres = () => {
     const [ongletActif, setOngletActif] = useState('profil');
     const [chargement, setChargement] = useState(false);
     const [messageSucces, setMessageSucces] = useState('');
+    const [messageErreur, setMessageErreur] = useState('');
     const [afficherMotDePasse, setAfficherMotDePasse] = useState({});
     const [villes, setVilles] = useState([]);
 
@@ -33,7 +35,7 @@ const PageParametres = () => {
         avatar: '',
     });
 
-    const [donneesSécurité, setDonneesSécurité] = useState({
+    const [donneesSecurite, setDonneesSecurite] = useState({
         motDePasseActuel: '',
         nouveauMotDePasse: '',
         confirmerMotDePasse: '',
@@ -142,7 +144,7 @@ const PageParametres = () => {
                 formData.append('avatar', donneesUtilisateur.avatar);
             }
 
-            const response = await axiosClient.put('/profile/update', formData);
+            const response = await axiosClient.patch('/profile', formData);
 
             if (response.status === 200) {
                 setMessageSucces('Votre profil a été mis à jour avec succès !');
@@ -155,6 +157,42 @@ const PageParametres = () => {
         }
     };
 
+    const saveModificationMotDePasse = async () => {
+
+        if (donneesSecurite.motDePasseActuel.length < 8 || donneesSecurite.nouveauMotDePasse.length < 8 || donneesSecurite.confirmerMotDePasse.length < 8 || donneesSecurite.nouveauMotDePasse !== donneesSecurite.confirmerMotDePasse) {
+
+        }
+        setChargement(true);
+        setMessageSucces('');
+        setMessageErreur('');
+
+        try {
+            const response = await axiosClient.put('/profile/update-password', {
+                old_password: donneesSecurite.motDePasseActuel,
+                new_password: donneesSecurite.nouveauMotDePasse,
+                new_password_confirmation: donneesSecurite.confirmerMotDePasse,
+
+            });
+
+            if (response.status === 200) {
+                if (response.data.success) {
+                    setMessageSucces(response.data.message);
+                    setDonneesSecurite({
+                        motDePasseActuel: '',
+                        nouveauMotDePasse: '',
+                        confirmerMotDePasse: '',
+                    });
+                }
+                else {
+                    setMessageErreur(response.data.message);
+                }
+            }
+        } catch (error) {
+            console.error('Erreur lors de la mise à jour du mot de passe', error);
+        } finally {
+            setChargement(false);
+        }
+    };
 
     const becomeArtisanSave = async (e) => {
 
@@ -181,6 +219,13 @@ const PageParametres = () => {
                     <div className="mb-4 p-3 border border-green-200 bg-green-50 flex items-center gap-2 text-green-700 text-[12px]">
                         <CheckCircle className="w-4 h-4" />
                         {messageSucces}
+                    </div>
+                )}
+
+                {messageErreur && (
+                    <div className="mb-4 p-3 border border-red-200 bg-red-50 flex items-center gap-2 text-red-700 text-[12px]">
+                        <XCircle className="w-4 h-4" />
+                        {messageErreur}
                     </div>
                 )}
 
@@ -314,8 +359,8 @@ const PageParametres = () => {
                                                 label="Mot de passe actuel"
                                                 name="motDePasseActuel"
                                                 type={afficherMotDePasse.actuel ? 'text' : 'password'}
-                                                value={donneesSécurité.motDePasseActuel}
-                                                onChange={(e) => mettreAJourChamp(setDonneesSécurité, donneesSécurité, 'motDePasseActuel', e.target.value)}
+                                                value={donneesSecurite.motDePasseActuel}
+                                                onChange={(e) => mettreAJourChamp(setDonneesSecurite, donneesSecurite, 'motDePasseActuel', e.target.value)}
                                                 Icon={Lock}
                                             />
                                             <button
@@ -332,8 +377,8 @@ const PageParametres = () => {
                                                 label="Nouveau mot de passe"
                                                 name="nouveauMotDePasse"
                                                 type={afficherMotDePasse.nouveau ? 'text' : 'password'}
-                                                value={donneesSécurité.nouveauMotDePasse}
-                                                onChange={(e) => mettreAJourChamp(setDonneesSécurité, donneesSécurité, 'nouveauMotDePasse', e.target.value)}
+                                                value={donneesSecurite.nouveauMotDePasse}
+                                                onChange={(e) => mettreAJourChamp(setDonneesSecurite, donneesSecurite, 'nouveauMotDePasse', e.target.value)}
                                                 Icon={Lock}
                                             />
                                             <button
@@ -349,8 +394,8 @@ const PageParametres = () => {
                                             label="Confirmer le mot de passe"
                                             name="confirmerMotDePasse"
                                             type="password"
-                                            value={donneesSécurité.confirmerMotDePasse}
-                                            onChange={(e) => mettreAJourChamp(setDonneesSécurité, donneesSécurité, 'confirmerMotDePasse', e.target.value)}
+                                            value={donneesSecurite.confirmerMotDePasse}
+                                            onChange={(e) => mettreAJourChamp(setDonneesSecurite, donneesSecurite, 'confirmerMotDePasse', e.target.value)}
                                             Icon={Lock}
                                         />
                                     </div>
@@ -358,7 +403,7 @@ const PageParametres = () => {
                                     <div className="mt-4 pt-4 border-t border-gray-100">
                                         <Submit
                                             text="Mettre à jour"
-                                            onClick={saveModificationProfileClient}
+                                            onClick={saveModificationMotDePasse}
                                             isLoading={chargement}
                                             size="md"
                                             className="w-auto"
