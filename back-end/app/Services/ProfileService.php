@@ -46,7 +46,8 @@ class ProfileService
 
         $clientData = collect($data)->only([
             'phone',
-            'rib'
+            'rib',
+            'address',
         ])->toArray();
 
         if (!empty($clientData)) {
