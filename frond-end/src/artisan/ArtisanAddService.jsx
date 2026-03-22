@@ -7,6 +7,7 @@ import {
 import Input from '../components/inputs/Input';
 import FileUpload from '../components/inputs/FileUpload';
 import Submit from '../components/buttons/Submit';
+import axiosClient from '../api/axios-client';
 
 const ArtisanAddService = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -67,15 +68,34 @@ const ArtisanAddService = () => {
 
 
     const submitData = async () => {
-        if (!formData.acceptTerms) {
-            setErrors({ ...errors, terms: 'Vous devez accepter les conditions' });
-            return;
-        }
+        const isValid = validation();
+        if (!isValid) return;
 
         setIsLoading(true);
-        await new Promise(r => setTimeout(r, 1500));
+        setErrors({});
+
+        try {
+            const data = new FormData();
+            data.append('titre', formData.titre);
+            data.append('categorie_id', formData.categorie_id);
+            data.append('description', formData.description);
+            data.append('tarif', formData.tarif);
+            data.append('type_tarif', formData.type_tarif);
+            data.append('estimation_duree', formData.estimation_duree);
+            data.append('materials', formData.materials);
+
+            formData.images.forEach((image, index) => {
+                data.append(`images[${index}]`, image);
+            });
+
+            const response = await axiosClient.post('/services', data);
+
+            console.log(response.data);
+        } catch (error) {
+
+        }
+
         setIsLoading(false);
-        setSuccess(true);
     };
 
     const updateField = (field, value) => {
