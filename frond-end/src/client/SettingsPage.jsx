@@ -3,7 +3,10 @@ import {
     User, Mail, Phone, MapPin, Lock, Shield, FileText,
     CheckCircle, AlertTriangle, ArrowRight, Building,
     Award, Briefcase, GraduationCap, IdCard, Save,
-    Eye, EyeOff
+    Eye, EyeOff,
+    SplinePointer,
+    UploadCloud,
+    LoaderCircle
 } from 'lucide-react';
 import AvatarUpload from '../components/inputs/AvatarUpload';
 import Input from '../components/inputs/Input';
@@ -18,7 +21,7 @@ const PageParametres = () => {
     const [afficherMotDePasse, setAfficherMotDePasse] = useState({});
     const [villes, setVilles] = useState([]);
 
-
+    const [isInitialLoading, setIsInitialLoading] = useState(true);
 
     const [donneesUtilisateur, setDonneesUtilisateur] = useState({
         prenom: '',
@@ -42,7 +45,7 @@ const PageParametres = () => {
         specialite: '',
         experience: '',
         description: '',
-        cni: '',
+        cin: '',
         cniRecto: null,
         cniVerso: null,
         diplomes: [],
@@ -92,30 +95,67 @@ const PageParametres = () => {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const response = await axiosClient.get('/user');
-                const user = response.data;
-                console.log(user);
+                const response = await axiosClient.get('/profile/me');
+                const user = response.data.data;
                 setDonneesUtilisateur({
-
                     prenom: user.firstname || '',
                     nom: user.lastname || '',
                     email: user.email || '',
-                    telephone: user.phone || '',
+                    telephone: user.client.phone || '',
                     adresse: user.client.adresse || '',
                     cin: user.client.cin || '',
                     ville: user.ville || '',
-                    avatar: user.avatar || '',
+                    avatar: getAvatarUrl(user.client.avatar),
                 });
+
+
+
             } catch (error) {
                 console.error('Erreur lors de la récupération de l\'utilisateur', error);
             } finally {
+                setIsInitialLoading(false);
             }
         };
         fetchUser();
     }, []);
-    const saveModificationProfileClient = async () => {
 
+
+    const getAvatarUrl = (path) => {
+        if (!path) return "https://via.placeholder.com/150";
+        const cleanPath = path.replace(/\\/g, '').replace('public/', '');
+        return `http://localhost:8000/storage/${cleanPath}`;
     };
+    const saveModificationProfileClient = async () => {
+        setChargement(true);
+        setMessageSucces('');
+
+        try {
+            const formData = new FormData();
+
+            formData.append('prenom', donneesUtilisateur.prenom);
+            formData.append('nom', donneesUtilisateur.nom);
+            formData.append('email', donneesUtilisateur.email);
+            formData.append('phone', donneesUtilisateur.telephone);
+            formData.append('adresse', donneesUtilisateur.adresse);
+            formData.append('city', donneesUtilisateur.ville);
+
+            if (donneesUtilisateur.avatar instanceof File) {
+                formData.append('avatar', donneesUtilisateur.avatar);
+            }
+
+            const response = await axiosClient.put('/profile/update', formData);
+
+            if (response.status === 200) {
+                setMessageSucces('Votre profil a été mis à jour avec succès !');
+                // setDonneesUtilisateur(response.data.user);
+            }
+        } catch (error) {
+            console.error('Erreur lors de la mise à jour du profil');
+        } finally {
+            setChargement(false);
+        }
+    };
+
 
     const becomeArtisanSave = async (e) => {
 
@@ -124,6 +164,10 @@ const PageParametres = () => {
     const mettreAJourChamp = (modificateur, objet, champ, valeur) => {
         modificateur({ ...objet, [champ]: valeur });
     };
+
+    if (isInitialLoading) {
+        return <div className="flex justify-center items-center h-screen"><LoaderCircle className="animate-spin w-12 h-12 text-[#D35400]" /></div>;
+    }
 
     return (
         <div className="min-h-screen bg-white">
@@ -181,7 +225,7 @@ const PageParametres = () => {
                                     <Input
                                         label="Prénom"
                                         name="prenom"
-                                        value={donneesUtilisateur.prenom}
+                                        value={donneesUtilisateur.prenom || ''}
                                         onChange={(e) => mettreAJourChamp(setDonneesUtilisateur, donneesUtilisateur, 'prenom', e.target.value)}
                                         Icon={User}
                                         required
@@ -189,7 +233,7 @@ const PageParametres = () => {
                                     <Input
                                         label="Nom"
                                         name="nom"
-                                        value={donneesUtilisateur.nom}
+                                        value={donneesUtilisateur.nom || ''}
                                         onChange={(e) => mettreAJourChamp(setDonneesUtilisateur, donneesUtilisateur, 'nom', e.target.value)}
                                         Icon={User}
                                         required
@@ -198,7 +242,7 @@ const PageParametres = () => {
                                         label="Email"
                                         name="email"
                                         type="email"
-                                        value={donneesUtilisateur.email}
+                                        value={donneesUtilisateur.email || ''}
                                         onChange={(e) => mettreAJourChamp(setDonneesUtilisateur, donneesUtilisateur, 'email', e.target.value)}
                                         Icon={Mail}
                                         required
@@ -207,7 +251,7 @@ const PageParametres = () => {
                                         label="Téléphone"
                                         name="telephone"
                                         type="tel"
-                                        value={donneesUtilisateur.telephone}
+                                        value={donneesUtilisateur.telephone || ''}
                                         onChange={(e) => mettreAJourChamp(setDonneesUtilisateur, donneesUtilisateur, 'telephone', e.target.value)}
                                         Icon={Phone}
                                         required
@@ -216,27 +260,29 @@ const PageParametres = () => {
                                     <Input
                                         label="Adresse"
                                         name="adresse"
-                                        value={donneesUtilisateur.adresse}
+                                        value={donneesUtilisateur.adresse || ''}
                                         onChange={(e) => mettreAJourChamp(setDonneesUtilisateur, donneesUtilisateur, 'adresse', e.target.value)}
                                         Icon={MapPin}
                                     />
                                     <Input
                                         label="CIN"
                                         name="cin"
-                                        value={donneesUtilisateur.cin}
+                                        value={donneesUtilisateur.cin || ''}
                                         onChange={(e) => mettreAJourChamp(setDonneesUtilisateur, donneesUtilisateur, 'cin', e.target.value)}
                                         Icon={IdCard}
                                     />
 
                                     <div className="md:col-span-2">
-                                        <label className="block text-[11px] font-medium text-[#1B4F72] mb-1.5">Ville</label>
                                         <select
                                             value={donneesUtilisateur.ville}
                                             onChange={(e) => mettreAJourChamp(setDonneesUtilisateur, donneesUtilisateur, 'ville', e.target.value)}
                                             className="w-full px-3 py-2 text-[12px] border border-gray-200 focus:border-[#D35400] focus:outline-none bg-white"
                                         >
+                                            <option value="">Sélectionnez une ville</option>
                                             {villes.map(ville => (
-                                                <option key={ville.id} value={ville.ville}>{ville.ville}</option>
+                                                <option key={ville.id} value={ville.ville}>
+                                                    {ville.ville}
+                                                </option>
                                             ))}
                                         </select>
                                     </div>

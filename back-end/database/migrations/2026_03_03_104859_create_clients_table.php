@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('phone')->nullable();
             $table->string('cin')->unique();
             $table->string('avatar')->nullable();
+            $table->string('adresse')->nullable();
             $table->string('rib')->nullable();
             $table->timestamps();
         });

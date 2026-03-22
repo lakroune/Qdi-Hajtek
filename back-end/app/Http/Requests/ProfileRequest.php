@@ -25,7 +25,8 @@ class ProfileRequest extends FormRequest
     {
         return [
             'city' => 'required|string|max:255',
-            'phone' => 'nullable|numeric|digits:10',
+            'phone' => 'nullable|numeric|digits:10|regex:/^0[1-9](\d{8})$/',
+            'address' => 'nullable|string|max:255',
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg|max:1024',
             'rib' => 'nullable|numeric|digits:16',
         ];

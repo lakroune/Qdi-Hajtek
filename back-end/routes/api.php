@@ -15,7 +15,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-
 Route::post('/generate-code', [AuthController::class, 'generateCode']);
 Route::get('/villes', function () {
     return Ville::all();
@@ -24,11 +23,8 @@ Route::get('/villes', function () {
 Route::middleware('auth:api')->group(function () {
     Route::post('verifier-email', [AuthController::class, 'verifierEmail']);
     Route::post('logout', [AuthController::class, 'logout']);
-    Route::get('profile', [ProfileController::class, 'show']);
+    Route::apiResource('profile', ProfileController::class)->only('show', 'update');
 
-    Route::get('/user', function () {
-        return auth('api')->user()->load(['client', 'artisan', 'admin']);
-    });
 
     Route::patch('profile', [ProfileController::class, 'update']);
     Route::apiResource('artisans', ArtisanController::class)->only('store');

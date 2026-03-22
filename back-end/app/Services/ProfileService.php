@@ -28,7 +28,7 @@ class ProfileService
         return [
             'success' => true,
             'message' => 'Profile retrieved successfully',
-            'profile'  => $user->load(['client', 'artisan']),
+            'profile'  => $user->load(['client', 'artisan', 'admin']),
         ];
     }
 
