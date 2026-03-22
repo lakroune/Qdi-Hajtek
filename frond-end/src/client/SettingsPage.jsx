@@ -34,6 +34,11 @@ const PageParametres = () => {
         adresse: '',
         ville: '',
         avatar: '',
+        //artisan
+        specialite: '',
+        experience: '',
+        description: '',
+
     });
 
     const [donneesSecurite, setDonneesSecurite] = useState({
@@ -107,6 +112,13 @@ const PageParametres = () => {
                     cin: user.client.cin || '',
                     ville: user.city || '',
                     avatar: getAvatarUrl(user.client.avatar),
+                    //artisan
+                    specialite: user.artisan?.specialite || '',
+                    experience: user.artisan?.experience || '',
+                    description: user.artisan?.bio || '',
+                    rayon: user.artisan?.rayon_action || '',
+                    artisan: user.artisan || null,
+                    clinet: user.client || null
                 });
 
 
@@ -328,6 +340,7 @@ const PageParametres = () => {
                                     <Input
                                         label="Prénom"
                                         name="prenom"
+                                        disabled={true}
                                         value={donneesUtilisateur.prenom || ''}
                                         onChange={(e) => mettreAJourChamp(setDonneesUtilisateur, donneesUtilisateur, 'prenom', e.target.value)}
                                         Icon={User}
@@ -336,6 +349,7 @@ const PageParametres = () => {
                                     <Input
                                         label="Nom"
                                         name="nom"
+                                        disabled={true}
                                         value={donneesUtilisateur.nom || ''}
                                         onChange={(e) => mettreAJourChamp(setDonneesUtilisateur, donneesUtilisateur, 'nom', e.target.value)}
                                         Icon={User}
@@ -345,6 +359,7 @@ const PageParametres = () => {
                                         label="Email"
                                         name="email"
                                         type="email"
+                                        disabled={true}
                                         value={donneesUtilisateur.email || ''}
                                         onChange={(e) => mettreAJourChamp(setDonneesUtilisateur, donneesUtilisateur, 'email', e.target.value)}
                                         Icon={Mail}
@@ -363,6 +378,7 @@ const PageParametres = () => {
                                     <Input
                                         label="Adresse"
                                         name="adresse"
+                                        type="text"
                                         value={donneesUtilisateur.adresse || ''}
                                         onChange={(e) => mettreAJourChamp(setDonneesUtilisateur, donneesUtilisateur, 'adresse', e.target.value)}
                                         Icon={MapPin}
@@ -370,10 +386,52 @@ const PageParametres = () => {
                                     <Input
                                         label="CIN"
                                         name="cin"
+                                        type="text"
+                                        disabled={true}
                                         value={donneesUtilisateur.cin || ''}
                                         onChange={(e) => mettreAJourChamp(setDonneesUtilisateur, donneesUtilisateur, 'cin', e.target.value)}
                                         Icon={IdCard}
                                     />
+                                    {/* artisan */}
+                                    {donneesUtilisateur?.artisan?.is_verified && (
+                                        <Input
+                                            label="description"
+                                            name="description"
+                                            type="text"
+                                            disabled={true}
+                                            value={donneesUtilisateur.description || ''}
+                                            onChange={(e) => mettreAJourChamp(setDonneesUtilisateur, donneesUtilisateur, 'description', e.target.value)}
+                                            Icon={Building}
+                                        />
+                                    )}
+                                    {/* spiecialite */}
+                                    {donneesUtilisateur?.artisan?.is_verified && (
+                                        <Input
+                                            label="spécialité"
+                                            name="specialite"
+                                            type="text"
+                                            disabled={true}
+                                            value={donneesUtilisateur.specialite || ''}
+                                            onChange={(e) => mettreAJourChamp(setDonneesUtilisateur, donneesUtilisateur, 'specialite', e.target.value)}
+                                            Icon={Building}
+                                        />
+                                    )}
+
+                                    {/* rayon */}
+                                    {donneesUtilisateur?.artisan?.is_verified && (
+                                        <Input
+                                            label="rayon"
+                                            name="rayon"
+                                            type="text"
+                                            disabled={true}
+                                            value={donneesUtilisateur.rayon || ''}
+                                            onChange={(e) => mettreAJourChamp(setDonneesUtilisateur, donneesUtilisateur, 'rayon', e.target.value)}
+                                            Icon={Building}
+                                        />
+                                    )}
+
+
+
 
                                     <div className="md:col-span-2">
                                         <select
@@ -473,156 +531,180 @@ const PageParametres = () => {
                         )}
 
                         {ongletActif === 'devenir-artisan' && (
-                            <div className="border border-gray-200 p-4">
-                                <div className="mb-6 pb-4 border-b border-gray-100">
-                                    <h2 className="text-[15px] font-bold text-[#1B4F72] mb-1">Devenir Artisan</h2>
-                                    <p className="text-[11px] text-gray-500">
-                                        Remplissez ce formulaire. Votre demande sera examinée sous 48h.
-                                    </p>
-                                </div>
 
-                                <form onSubmit={becomeArtisanSave} className="space-y-6">
-                                    <div>
-                                        <h3 className="text-[12px] font-bold text-[#1B4F72] mb-3 flex items-center gap-2">
-                                            <Briefcase className="w-4 h-4 text-[#D35400]" />
-                                            Informations professionnelles
-                                        </h3>
-                                        <div className="grid md:grid-cols-2 gap-4">
+                            donneesUtilisateur.artisan ? (
+
+                                <div className="border border-gray-200 p-4">
+                                    <div className="mb-6 pb-4 border-b border-gray-100">
+                                        <h2 className="text-[15px] font-bold text-[#1B4F72] mb-1">Devenir Artisan</h2>
+                                        <p className="text-[11px] text-gray-500">
+                                            Remplissez ce formulaire. Votre demande sera examinée sous 48h.
+                                        </p>
+                                    </div>
+
+                                    <form onSubmit={becomeArtisanSave} className="space-y-6">
+                                        <div>
+                                            <h3 className="text-[12px] font-bold text-[#1B4F72] mb-3 flex items-center gap-2">
+                                                <Briefcase className="w-4 h-4 text-[#D35400]" />
+                                                Informations professionnelles
+                                            </h3>
+                                            <div className="grid md:grid-cols-2 gap-4">
 
 
 
-                                            <div>
-                                                <label className="block text-[11px] font-medium text-[#1B4F72] mb-1.5">
-                                                    Spécialité <span className="text-[#D35400]">*</span>
-                                                </label>
-                                                <select
-                                                    required
-                                                    value={formulaireArtisan.specialite}
-                                                    onChange={(e) => mettreAJourChamp(setFormulaireArtisan, formulaireArtisan, 'specialite', e.target.value)}
-                                                    className="w-full px-3 py-2 text-[12px] border border-gray-200 focus:border-[#D35400] focus:outline-none bg-white"
-                                                >
-                                                    {specialites.map(s => (
-                                                        <option key={s.valeur} value={s.valeur}>{s.libelle}</option>
-                                                    ))}
-                                                </select>
+                                                <div>
+                                                    <label className="block text-[11px] font-medium text-[#1B4F72] mb-1.5">
+                                                        Spécialité <span className="text-[#D35400]">*</span>
+                                                    </label>
+                                                    <select
+                                                        required
+                                                        value={formulaireArtisan.specialite}
+                                                        onChange={(e) => mettreAJourChamp(setFormulaireArtisan, formulaireArtisan, 'specialite', e.target.value)}
+                                                        className="w-full px-3 py-2 text-[12px] border border-gray-200 focus:border-[#D35400] focus:outline-none bg-white"
+                                                    >
+                                                        {specialites.map(s => (
+                                                            <option key={s.valeur} value={s.valeur}>{s.libelle}</option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+
+                                                <div>
+                                                    <label className="block text-[11px] font-medium text-[#1B4F72] mb-1.5">
+                                                        Expérience <span className="text-[#D35400]">*</span>
+                                                    </label>
+                                                    <select
+                                                        required
+                                                        value={formulaireArtisan.experience}
+                                                        onChange={(e) => mettreAJourChamp(setFormulaireArtisan, formulaireArtisan, 'experience', e.target.value)}
+                                                        className="w-full px-3 py-2 text-[12px] border border-gray-200 focus:border-[#D35400] focus:outline-none bg-white"
+                                                    >
+                                                        {experiences.map(exp => (
+                                                            <option key={exp.valeur} value={exp.valeur}>{exp.libelle}</option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+
+                                                <Input
+                                                    label="rayon de travail"
+                                                    name="rayonTravail"
+                                                    value={formulaireArtisan.rayonTravail || ''}
+                                                    onChange={(e) => mettreAJourChamp(setFormulaireArtisan, formulaireArtisan, 'rayonTravail', e.target.value)}
+                                                    Icon={Disc3}
+                                                />
+
+                                                <div className="md:col-span-2">
+                                                    <label className="block text-[11px] font-medium text-[#1B4F72] mb-1.5">
+                                                        Description <span className="text-[#D35400]">*</span>
+                                                    </label>
+                                                    <textarea
+                                                        required
+                                                        rows={3}
+                                                        value={formulaireArtisan.description}
+                                                        onChange={(e) => mettreAJourChamp(setFormulaireArtisan, formulaireArtisan, 'description', e.target.value)}
+                                                        placeholder="Décrivez votre expertise..."
+                                                        className="w-full px-3 py-2 text-[12px] border border-gray-200 focus:border-[#D35400] focus:outline-none resize-none"
+                                                    />
+                                                </div>
                                             </div>
+                                        </div>
 
-                                            <div>
-                                                <label className="block text-[11px] font-medium text-[#1B4F72] mb-1.5">
-                                                    Expérience <span className="text-[#D35400]">*</span>
-                                                </label>
-                                                <select
+                                        <div className="pt-4 border-t border-gray-100">
+                                            <h3 className="text-[12px] font-bold text-[#1B4F72] mb-3 flex items-center gap-2">
+                                                <FileText className="w-4 h-4 text-[#D35400]" />
+                                                Documents requis
+                                            </h3>
+                                            <div className="grid md:grid-cols-2 gap-4">
+                                                <FileUpload
+                                                    id="cni-recto"
+                                                    label="CNI (Recto)"
+                                                    accept="image/*,.pdf"
                                                     required
-                                                    value={formulaireArtisan.experience}
-                                                    onChange={(e) => mettreAJourChamp(setFormulaireArtisan, formulaireArtisan, 'experience', e.target.value)}
-                                                    className="w-full px-3 py-2 text-[12px] border border-gray-200 focus:border-[#D35400] focus:outline-none bg-white"
-                                                >
-                                                    {experiences.map(exp => (
-                                                        <option key={exp.valeur} value={exp.valeur}>{exp.libelle}</option>
-                                                    ))}
-                                                </select>
-                                            </div>
-
-                                            <Input
-                                                label="rayon de travail"
-                                                name="rayonTravail"
-                                                value={formulaireArtisan.rayonTravail || ''}
-                                                onChange={(e) => mettreAJourChamp(setFormulaireArtisan, formulaireArtisan, 'rayonTravail', e.target.value)}
-                                                Icon={Disc3}
-                                            />
-
-                                            <div className="md:col-span-2">
-                                                <label className="block text-[11px] font-medium text-[#1B4F72] mb-1.5">
-                                                    Description <span className="text-[#D35400]">*</span>
-                                                </label>
-                                                <textarea
+                                                    maxSize={1}
+                                                    value={formulaireArtisan.cniRecto}
+                                                    onChange={(fichier) => mettreAJourChamp(setFormulaireArtisan, formulaireArtisan, 'cniRecto', fichier)}
+                                                />
+                                                <FileUpload
+                                                    id="cni-verso"
+                                                    label="CNI (Verso)"
+                                                    accept="image/*,.pdf"
                                                     required
-                                                    rows={3}
-                                                    value={formulaireArtisan.description}
-                                                    onChange={(e) => mettreAJourChamp(setFormulaireArtisan, formulaireArtisan, 'description', e.target.value)}
-                                                    placeholder="Décrivez votre expertise..."
-                                                    className="w-full px-3 py-2 text-[12px] border border-gray-200 focus:border-[#D35400] focus:outline-none resize-none"
+                                                    maxSize={1}
+                                                    value={formulaireArtisan.cniVerso}
+                                                    onChange={(fichier) => mettreAJourChamp(setFormulaireArtisan, formulaireArtisan, 'cniVerso', fichier)}
+                                                />
+                                                <FileUpload
+                                                    id="id-rib"
+                                                    label="Attestation de RIB"
+                                                    accept="image/*,.pdf"
+                                                    required
+                                                    maxSize={1}
+                                                    value={formulaireArtisan.attestationsRib}
+                                                    onChange={(fichier) => mettreAJourChamp(setFormulaireArtisan, formulaireArtisan, 'attestationsRib', fichier)}
+                                                />
+                                                <FileUpload
+                                                    id="diplomes"
+                                                    label="Diplômes"
+                                                    accept="image/*,.pdf"
+                                                    multiple
+                                                    maxFiles={5}
+                                                    value={formulaireArtisan.diplomes}
+                                                    onChange={(fichiers) => mettreAJourChamp(setFormulaireArtisan, formulaireArtisan, 'diplomes', fichiers)}
+                                                />
+                                                <FileUpload
+                                                    id="attestations"
+                                                    label="Attestations"
+                                                    accept="image/*,.pdf"
+                                                    multiple
+                                                    maxFiles={3}
+                                                    value={formulaireArtisan.attestations}
+                                                    onChange={(fichiers) => mettreAJourChamp(setFormulaireArtisan, formulaireArtisan, 'attestations', fichiers)}
                                                 />
                                             </div>
                                         </div>
-                                    </div>
 
-                                    <div className="pt-4 border-t border-gray-100">
-                                        <h3 className="text-[12px] font-bold text-[#1B4F72] mb-3 flex items-center gap-2">
-                                            <FileText className="w-4 h-4 text-[#D35400]" />
-                                            Documents requis
-                                        </h3>
-                                        <div className="grid md:grid-cols-2 gap-4">
-                                            <FileUpload
-                                                id="cni-recto"
-                                                label="CNI (Recto)"
-                                                accept="image/*,.pdf"
-                                                required
-                                                maxSize={1}
-                                                value={formulaireArtisan.cniRecto}
-                                                onChange={(fichier) => mettreAJourChamp(setFormulaireArtisan, formulaireArtisan, 'cniRecto', fichier)}
-                                            />
-                                            <FileUpload
-                                                id="cni-verso"
-                                                label="CNI (Verso)"
-                                                accept="image/*,.pdf"
-                                                required
-                                                maxSize={1}
-                                                value={formulaireArtisan.cniVerso}
-                                                onChange={(fichier) => mettreAJourChamp(setFormulaireArtisan, formulaireArtisan, 'cniVerso', fichier)}
-                                            />
-                                            <FileUpload
-                                                id="id-rib"
-                                                label="Attestation de RIB"
-                                                accept="image/*,.pdf"
-                                                required
-                                                maxSize={1}
-                                                value={formulaireArtisan.attestationsRib}
-                                                onChange={(fichier) => mettreAJourChamp(setFormulaireArtisan, formulaireArtisan, 'attestationsRib', fichier)}
-                                            />
-                                            <FileUpload
-                                                id="diplomes"
-                                                label="Diplômes"
-                                                accept="image/*,.pdf"
-                                                multiple
-                                                maxFiles={5}
-                                                value={formulaireArtisan.diplomes}
-                                                onChange={(fichiers) => mettreAJourChamp(setFormulaireArtisan, formulaireArtisan, 'diplomes', fichiers)}
-                                            />
-                                            <FileUpload
-                                                id="attestations"
-                                                label="Attestations"
-                                                accept="image/*,.pdf"
-                                                multiple
-                                                maxFiles={3}
-                                                value={formulaireArtisan.attestations}
-                                                onChange={(fichiers) => mettreAJourChamp(setFormulaireArtisan, formulaireArtisan, 'attestations', fichiers)}
+
+
+                                        <div className="pt-6 border-t border-gray-100">
+                                            <div className="flex items-start gap-2 mb-4 p-3 bg-blue-50">
+                                                <AlertTriangle className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
+                                                <p className="text-[10px] text-blue-700">
+                                                    En soumettant ce formulaire, vous acceptez la vérification de vos documents.
+                                                    Validation sous 48h.
+                                                </p>
+                                            </div>
+
+                                            <Submit
+                                                text="Soumettre ma candidature"
+                                                onClick={becomeArtisanSave}
+                                                isLoading={chargement}
+                                                variant="secondary"
+                                                size="lg"
+                                                icon={ArrowRight}
                                             />
                                         </div>
-                                    </div>
-
-
-
-                                    <div className="pt-6 border-t border-gray-100">
-                                        <div className="flex items-start gap-2 mb-4 p-3 bg-blue-50">
-                                            <AlertTriangle className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
-                                            <p className="text-[10px] text-blue-700">
-                                                En soumettant ce formulaire, vous acceptez la vérification de vos documents.
-                                                Validation sous 48h.
+                                    </form>
+                                </div>
+                            ) :
+                                (
+                                    <div className="border border-gray-200 p-8 flex flex-col items-center justify-center text-center gap-4">
+                                        <div className="w-16 h-16 rounded-full bg-orange-50 flex items-center justify-center">
+                                            <CheckCircle className="w-8 h-8 text-[#D35400]" />
+                                        </div>
+                                        <div>
+                                            <h2 className="text-[14px] font-bold text-[#1B4F72] mb-1">
+                                                Demande envoyée
+                                            </h2>
+                                            <p className="text-[11px] text-gray-500 max-w-xs">
+                                                Votre candidature est en cours de traitement. Vous recevrez une réponse sous <span className="font-semibold text-[#D35400]">48h</span>.
                                             </p>
                                         </div>
-
-                                        <Submit
-                                            text="Soumettre ma candidature"
-                                            onClick={becomeArtisanSave}
-                                            isLoading={chargement}
-                                            variant="secondary"
-                                            size="lg"
-                                            icon={ArrowRight}
-                                        />
+                                        <div className="flex items-center gap-2 px-4 py-2 bg-orange-50 border border-orange-100">
+                                            <LoaderCircle className="w-3.5 h-3.5 text-[#D35400] animate-spin" />
+                                            <span className="text-[11px] text-[#D35400] font-medium">En attente de validation</span>
+                                        </div>
                                     </div>
-                                </form>
-                            </div>
+                                )
+
                         )}
                     </div>
                 </div>

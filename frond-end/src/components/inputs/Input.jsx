@@ -7,6 +7,7 @@ const Input = ({
     onChange,
     placeholder,
     Icon,
+    disabled = false,
     required = false,
     error = false,
     className = ''
@@ -26,6 +27,7 @@ const Input = ({
                     type={type}
                     name={name}
                     value={value}
+                    disabled = {disabled}
                     onChange={onChange}
                     placeholder={placeholder}
                     required={required}
