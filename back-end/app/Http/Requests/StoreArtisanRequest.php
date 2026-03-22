@@ -13,7 +13,7 @@ class StoreArtisanRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return auth('api')->user()->isClient() and auth('api')->user()->hasEmailVerified() and auth('api')->user()->isActive();
     }
 
     /**

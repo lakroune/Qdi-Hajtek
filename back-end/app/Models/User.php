@@ -136,6 +136,25 @@ class User extends Authenticatable implements JWTSubject
         }
         return false;
     }
+    // has one role like clinet just for example
+    public function hasOneRole(string $roleName): bool
+    {
+        $roles = $this->roles()->get();
+
+        if (count($roles) === 1 and $roles[0]->name === $roleName) {
+            return true;
+        }
+        return false;
+    }
+
+    public function notHasRole(string $roleName): bool
+    {
+        $role = Role::where('name', $roleName)->first();
+        if (!$role) {
+            return false;
+        }
+        return !$this->roles()->where('role_id', $role->id)->exists();
+    }
 
     public function hasEmailVerified(): bool
     {

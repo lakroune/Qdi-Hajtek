@@ -7,7 +7,8 @@ import {
     SplinePointer,
     UploadCloud,
     LoaderCircle,
-    XCircle
+    XCircle,
+    Disc3
 } from 'lucide-react';
 import AvatarUpload from '../components/inputs/AvatarUpload';
 import Input from '../components/inputs/Input';
@@ -42,12 +43,11 @@ const PageParametres = () => {
     });
 
     const [formulaireArtisan, setFormulaireArtisan] = useState({
-        nomEntreprise: '',
-        numeroSiret: '',
         specialite: '',
         experience: '',
         description: '',
-        cin: '',
+        rayonTravail: '',
+        attestationsRib: null,
         cniRecto: null,
         cniVerso: null,
         diplomes: [],
@@ -195,7 +195,66 @@ const PageParametres = () => {
     };
 
     const becomeArtisanSave = async (e) => {
+        e.preventDefault();
 
+        setMessageSucces('');
+        setMessageErreur('');
+
+        // Validation
+        if (!formulaireArtisan.specialite || !formulaireArtisan.experience || !formulaireArtisan.description) {
+            setMessageErreur('Veuillez remplir tous les champs obligatoires.');
+            return;
+        }
+
+        if (!formulaireArtisan.cniRecto || !formulaireArtisan.cniVerso) {
+            setMessageErreur('Veuillez uploader les deux faces de votre CNI.');
+            return;
+        }
+
+
+        setChargement(true);
+
+        try {
+            const formData = new FormData();
+
+            formData.append('specialite', formulaireArtisan.specialite);
+            formData.append('experience', formulaireArtisan.experience);
+            formData.append('rayon_action', formulaireArtisan.rayonTravail || 30);
+            formData.append('bio', formulaireArtisan.description);
+            formData.append('cin_rec', formulaireArtisan.cniRecto);
+            formData.append('cin_ver', formulaireArtisan.cniVerso);
+            formData.append('rib_doc', formulaireArtisan.attestationsRib);
+            formulaireArtisan.diplomes.forEach((fichier) => {
+                formData.append(`diplome_doc[]`, fichier);
+            });
+
+            formulaireArtisan.attestations.forEach((fichier) => {
+                formData.append(`certificat_doc[]`, fichier);
+            });
+
+            const response = await axiosClient.post('/artisans', formData);
+
+            if (response.status === 200 || response.status === 201) {
+                setMessageSucces('Votre candidature a été soumise avec succès ! Vous recevrez une réponse sous 48h.');
+                setFormulaireArtisan({
+                    specialite: '',
+                    experience: '',
+                    description: '',
+                    rayonTravail: 30,
+                    attestationsRib: null,
+                    cniRecto: null,
+                    cniVerso: null,
+                    diplomes: [],
+                    attestations: [],
+                });
+            }
+        } catch (error) {
+            const msg = error.response?.data?.message || 'Une erreur est survenue. Veuillez réessayer.';
+            setMessageErreur(msg);
+            console.error('Erreur candidature artisan:', error);
+        } finally {
+            setChargement(false);
+        }
     };
 
     const mettreAJourChamp = (modificateur, objet, champ, valeur) => {
@@ -464,6 +523,14 @@ const PageParametres = () => {
                                                 </select>
                                             </div>
 
+                                            <Input
+                                                label="rayon de travail"
+                                                name="rayonTravail"
+                                                value={formulaireArtisan.rayonTravail || ''}
+                                                onChange={(e) => mettreAJourChamp(setFormulaireArtisan, formulaireArtisan, 'rayonTravail', e.target.value)}
+                                                Icon={Disc3}
+                                            />
+
                                             <div className="md:col-span-2">
                                                 <label className="block text-[11px] font-medium text-[#1B4F72] mb-1.5">
                                                     Description <span className="text-[#D35400]">*</span>
@@ -489,27 +556,33 @@ const PageParametres = () => {
                                             <FileUpload
                                                 id="cni-recto"
                                                 label="CNI (Recto)"
-                                                icon={IdCard}
                                                 accept="image/*,.pdf"
                                                 required
-                                                maxSize={5}
+                                                maxSize={1}
                                                 value={formulaireArtisan.cniRecto}
                                                 onChange={(fichier) => mettreAJourChamp(setFormulaireArtisan, formulaireArtisan, 'cniRecto', fichier)}
                                             />
                                             <FileUpload
                                                 id="cni-verso"
                                                 label="CNI (Verso)"
-                                                icon={IdCard}
                                                 accept="image/*,.pdf"
                                                 required
-                                                maxSize={5}
+                                                maxSize={1}
                                                 value={formulaireArtisan.cniVerso}
                                                 onChange={(fichier) => mettreAJourChamp(setFormulaireArtisan, formulaireArtisan, 'cniVerso', fichier)}
                                             />
                                             <FileUpload
+                                                id="id-rib"
+                                                label="Attestation de RIB"
+                                                accept="image/*,.pdf"
+                                                required
+                                                maxSize={1}
+                                                value={formulaireArtisan.attestationsRib}
+                                                onChange={(fichier) => mettreAJourChamp(setFormulaireArtisan, formulaireArtisan, 'attestationsRib', fichier)}
+                                            />
+                                            <FileUpload
                                                 id="diplomes"
                                                 label="Diplômes"
-                                                icon={GraduationCap}
                                                 accept="image/*,.pdf"
                                                 multiple
                                                 maxFiles={5}
@@ -519,7 +592,6 @@ const PageParametres = () => {
                                             <FileUpload
                                                 id="attestations"
                                                 label="Attestations"
-                                                icon={Award}
                                                 accept="image/*,.pdf"
                                                 multiple
                                                 maxFiles={3}

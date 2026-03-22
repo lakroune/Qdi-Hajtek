@@ -21,13 +21,16 @@ Route::get('/villes', function () {
 });
 
 Route::middleware('auth:api')->group(function () {
+
+
     Route::post('verifier-email', [AuthController::class, 'verifierEmail']);
     Route::post('logout', [AuthController::class, 'logout']);
     Route::get('profile/me', [ProfileController::class, 'show']);
     Route::put('profile/update-password', [ProfileController::class, 'updatePassword']);
     Route::patch('profile', [ProfileController::class, 'update']);
 
-    Route::apiResource('artisans', ArtisanController::class)->only('store');
+    // mskitya
+    Route::post('artisans', [ArtisanController::class, 'store']);
 
 
     Route::get('artisans/{artisan}/disponibilites', [DisponibiliteController::class, 'show']);
