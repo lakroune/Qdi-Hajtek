@@ -1,0 +1,7 @@
+$kind: http-request
+name: get user auth
+url: http://127.0.0.1:8000/api/user
+method: POST
+headers:
+  Authorization: "{{token-g}}"
+order: 9635

@@ -25,6 +25,11 @@ Route::middleware('auth:api')->group(function () {
     Route::post('verifier-email', [AuthController::class, 'verifierEmail']);
     Route::post('logout', [AuthController::class, 'logout']);
     Route::get('profile', [ProfileController::class, 'show']);
+
+    Route::get('/user', function () {
+        return auth('api')->user()->load(['client', 'artisan', 'admin']);
+    });
+
     Route::patch('profile', [ProfileController::class, 'update']);
     Route::apiResource('artisans', ArtisanController::class)->only('store');
 

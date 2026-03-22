@@ -9,6 +9,7 @@ import AvatarUpload from '../components/inputs/AvatarUpload';
 import Input from '../components/inputs/Input';
 import FileUpload from '../components/inputs/FileUpload';
 import Submit from '../components/buttons/Submit';
+import axiosClient from '../api/axios-client';
 
 const PageParametres = () => {
     const [ongletActif, setOngletActif] = useState('profil');
@@ -41,6 +42,7 @@ const PageParametres = () => {
         specialite: '',
         experience: '',
         description: '',
+        cni: '',
         cniRecto: null,
         cniVerso: null,
         diplomes: [],
@@ -74,28 +76,43 @@ const PageParametres = () => {
     ];
 
     useEffect(() => {
-        fetch('https://countriesnow.space/api/v0.1/countries/cities', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ country: "Morocco" })
-        })
-            .then(reponse => reponse.json())
-            .then(donnees => {
-                if (!donnees.error) {
-                    const villesFormatees = donnees.data.map(nomVille => ({
-                        valeur: nomVille.toLowerCase().replace(/\s+/g, '_'),
-                        libelle: nomVille
-                    }));
-                    setVilles(villesFormatees);
-                }
-            })
-            .catch(() => {
-                setVilles([
-                    { valeur: 'casablanca', libelle: 'Casablanca' },
-                ]);
-            });
+        const fetchVilles = async () => {
+            try {
+                const response = await axiosClient.get('/villes');
+                setVilles(response.data);
+                console.log(response.data);
+            } catch (error) {
+                console.error('Erreur lors de la recherche des villes', error);
+            }
+        };
+        if (villes.length === 0) {
+            fetchVilles();
+        }
     }, []);
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const response = await axiosClient.get('/user');
+                const user = response.data;
+                console.log(user);
+                setDonneesUtilisateur({
 
+                    prenom: user.firstname || '',
+                    nom: user.lastname || '',
+                    email: user.email || '',
+                    telephone: user.phone || '',
+                    adresse: user.client.adresse || '',
+                    cin: user.client.cin || '',
+                    ville: user.ville || '',
+                    avatar: user.avatar || '',
+                });
+            } catch (error) {
+                console.error('Erreur lors de la récupération de l\'utilisateur', error);
+            } finally {
+            }
+        };
+        fetchUser();
+    }, []);
     const saveModificationProfileClient = async () => {
 
     };
@@ -195,15 +212,22 @@ const PageParametres = () => {
                                         Icon={Phone}
                                         required
                                     />
-                                    <div className="md:col-span-2">
-                                        <Input
-                                            label="Adresse"
-                                            name="adresse"
-                                            value={donneesUtilisateur.adresse}
-                                            onChange={(e) => mettreAJourChamp(setDonneesUtilisateur, donneesUtilisateur, 'adresse', e.target.value)}
-                                            Icon={MapPin}
-                                        />
-                                    </div>
+
+                                    <Input
+                                        label="Adresse"
+                                        name="adresse"
+                                        value={donneesUtilisateur.adresse}
+                                        onChange={(e) => mettreAJourChamp(setDonneesUtilisateur, donneesUtilisateur, 'adresse', e.target.value)}
+                                        Icon={MapPin}
+                                    />
+                                    <Input
+                                        label="CIN"
+                                        name="cin"
+                                        value={donneesUtilisateur.cin}
+                                        onChange={(e) => mettreAJourChamp(setDonneesUtilisateur, donneesUtilisateur, 'cin', e.target.value)}
+                                        Icon={IdCard}
+                                    />
+
                                     <div className="md:col-span-2">
                                         <label className="block text-[11px] font-medium text-[#1B4F72] mb-1.5">Ville</label>
                                         <select
@@ -212,7 +236,7 @@ const PageParametres = () => {
                                             className="w-full px-3 py-2 text-[12px] border border-gray-200 focus:border-[#D35400] focus:outline-none bg-white"
                                         >
                                             {villes.map(ville => (
-                                                <option key={ville.valeur} value={ville.libelle}>{ville.libelle}</option>
+                                                <option key={ville.id} value={ville.ville}>{ville.ville}</option>
                                             ))}
                                         </select>
                                     </div>
