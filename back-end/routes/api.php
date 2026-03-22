@@ -20,8 +20,9 @@ Route::get('/villes', function () {
     return Ville::all();
 });
 
-Route::middleware('auth:api')->group(function () {
 
+Route::get('/categories', [CategorieController::class, 'index']); 
+Route::middleware('auth:api')->group(function () {
 
     Route::post('verifier-email', [AuthController::class, 'verifierEmail']);
     Route::post('logout', [AuthController::class, 'logout']);
@@ -29,23 +30,21 @@ Route::middleware('auth:api')->group(function () {
     Route::put('profile/update-password', [ProfileController::class, 'updatePassword']);
     Route::patch('profile', [ProfileController::class, 'update']);
 
-    // mskitya
+    //nady artisan store
     Route::post('artisans', [ArtisanController::class, 'store']);
 
+    //23
+    // Route::apiResource('categorie', CategorieController::class)->only('store');
 
     Route::get('artisans/{artisan}/disponibilites', [DisponibiliteController::class, 'show']);
     Route::post('artisans/{artisan}/disponibilites', [DisponibiliteController::class, 'store']);
-
-
-
-
 
 
     Route::post('demandes-directes', [DemandeDirecteController::class, 'store']);
 
 
     Route::apiResource('services', ServiceController::class);
-    Route::apiResource('categorie', CategorieController::class);
+
     Route::apiResource('offres-travail', OffreTravailController::class)->only('store');
     Route::post('propositions', [PropositionController::class, 'store']);
 

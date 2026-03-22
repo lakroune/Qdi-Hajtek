@@ -108,7 +108,7 @@ const PageParametres = () => {
                     nom: user.lastname || '',
                     email: user.email || '',
                     telephone: user.client.phone || '',
-                    adresse: user.client.adresse || '',
+                    adresse: user.client.address || '',
                     cin: user.client.cin || '',
                     ville: user.city || '',
                     avatar: getAvatarUrl(user.client.avatar),
@@ -149,7 +149,7 @@ const PageParametres = () => {
             formData.append('nom', donneesUtilisateur.nom);
             formData.append('email', donneesUtilisateur.email);
             formData.append('phone', donneesUtilisateur.telephone);
-            formData.append('adresse', donneesUtilisateur.adresse);
+            formData.append('address', donneesUtilisateur.adresse);
             formData.append('city', donneesUtilisateur.ville);
 
             if (donneesUtilisateur.avatar instanceof File) {
@@ -532,7 +532,7 @@ const PageParametres = () => {
 
                         {ongletActif === 'devenir-artisan' && (
 
-                            donneesUtilisateur.artisan ? (
+                            donneesUtilisateur?.artisan === null ? (
 
                                 <div className="border border-gray-200 p-4">
                                     <div className="mb-6 pb-4 border-b border-gray-100">

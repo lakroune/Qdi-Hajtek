@@ -53,4 +53,8 @@ class Artisan extends Model
     {
         return $this->hasMany(Proposition::class);
     }
+    public function isVerified()
+    {
+        return $this->is_verified;
+    }
 }

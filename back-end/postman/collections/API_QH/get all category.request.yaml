@@ -1,0 +1,8 @@
+$kind: http-request
+name: get all category
+url: http://127.0.0.1:8000/api/categorie
+method: GET
+headers:
+  Authorization: "{{token-g}}"
+examples: .resources/get all category.resources/examples
+order: 7575

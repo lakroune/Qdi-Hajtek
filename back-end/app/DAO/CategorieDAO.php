@@ -18,7 +18,7 @@ class CategorieDAO
     public function getActiveCategories()
     {
         return Categorie::where('is_active', true)
-            ->withCount('services')
+            // ->withCount('services')
             ->get();
     }
     public function findById(int $id)

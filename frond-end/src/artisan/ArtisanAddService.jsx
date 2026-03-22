@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Briefcase, DollarSign, Clock,
     Camera, CheckCircle, AlertCircle, Loader2, X,
@@ -12,6 +12,9 @@ import axiosClient from '../api/axios-client';
 const ArtisanAddService = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [success, setSuccess] = useState(false);
+    const [categories, setCategories] = useState([
+
+    ]);
 
     const [formData, setFormData] = useState({
         titre: '',
@@ -28,11 +31,18 @@ const ArtisanAddService = () => {
 
     const [errors, setErrors] = useState({});
 
-    const categories = [
-        { id: '', label: 'Sélectionnez votre spécialité' },
-        { id: '1', label: 'Plomberie' },
-        { id: '2', label: 'Électricité' }
-    ];
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const response = await axiosClient.get('/categories');
+                setCategories(response.data.data);
+            } catch (error) {
+                console.error('Error fetching categories:', error);
+            }
+        };
+
+        fetchCategories();
+    }, []);
 
     const type_tarifs = [
         { id: 'prix_heure', label: 'Par heure', example: 'Ex: 250 DH/heure' },
@@ -196,7 +206,7 @@ const ArtisanAddService = () => {
                             className="w-full px-3 py-2 text-[12px] border border-gray-200 focus:border-[#D35400] focus:outline-none bg-white"
                         >
                             {categories.map(cat => (
-                                <option key={cat.id} value={cat.id}>{cat.label}</option>
+                                <option key={cat.id} value={cat.id}>{cat.nom_categorie}</option>
                             ))}
                         </select>
                         {errors.categorie_id && (

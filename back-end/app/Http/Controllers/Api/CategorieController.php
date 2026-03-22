@@ -25,7 +25,11 @@ class CategorieController extends Controller
 
     public function index()
     {
-        //
+        $categories = $this->categorieService->listActiveCategories();
+        return response()->json([
+            'message' => 'Categories found successfully',
+            'data' => $categories
+        ]);
     }
 
     /**

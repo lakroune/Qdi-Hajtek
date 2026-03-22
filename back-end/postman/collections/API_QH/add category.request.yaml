@@ -8,14 +8,14 @@ body:
   type: json
   content: "{\r
 
-    \    \"nom_categorie\": \"Plomb11er1ie\",\r
+    \    \"nom_categorie\": \"Pslsoambseise\",\r
 
     \    \"description\": \"Tous les services liés à la tuyauterie et
     robinetterie\",\r
 
-    \    \"icon\": \"file_image_here.png\",\r
+    \    \"icon\": \"jeje\",\r
 
     \    \"is_active\": true\r
 
     }"
-order: 9000
+order: 10000
