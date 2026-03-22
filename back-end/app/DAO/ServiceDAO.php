@@ -31,7 +31,7 @@ class ServiceDAO
     }
     public function getServiceDetails(int $serviceId)
     {
-        return Service::with(['images', 'artisan.user'])->findOrFail($serviceId);
+        return Service::with(['images', 'artisan.user.client', 'categorie'])->findOrFail($serviceId);
     }
     public  function getServices()
     {

@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     ArrowLeft, Heart, MapPin, Star, Clock, Shield,
     MessageSquare, Calendar, X, ChevronLeft, ChevronRight,
-    User, ArrowRight
+    ArrowRight,
+    LoaderCircle
 } from 'lucide-react';
+import axiosClient from '../api/axios-client';
+import { useParams } from 'react-router-dom';
 
 const ServiceDetail = () => {
     const [isFav, setIsFav] = useState(false);
@@ -11,35 +14,25 @@ const ServiceDetail = () => {
     const [selectedImg, setSelectedImg] = useState(null);
     const [imgIdx, setImgIdx] = useState(0);
     const [form, setForm] = useState({ desc: '', date: '', ville: '' });
+    const [isCharging, setIsCharging] = useState(true);
+    const [service, setService] = useState(null);
+    const { id } = useParams();
+    const STORAGE_URL = "http://127.0.0.1:8000/storage/";
 
-    const service = {
-        id: 1,
-        title: "Réparation fuite d'eau - Intervention rapide",
-        category: "Plomberie",
-        icon: "🔧",
-        description: "Intervention rapide pour toute fuite d'eau (évier, lavabo, douche, WC). Diagnostic complet et réparation durable. Garantie 6 mois sur toute intervention. Disponible 7j/7, urgences traitées sous 2h.",
-        price: 350,
-        priceType: "À partir de",
-        location: "Casablanca et environs",
-        duration: "1-2 heures",
-        warranty: "6 mois",
-        images: [
-            "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=800",
-            "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800",
-            "https://images.unsplash.com/photo-1585704032915-c3400ca199e7?w=800"
-        ],
-        artisan: {
-            id: 5,
-            name: "Karim El Amrani",
-            rating: 4.9,
-            reviews: 127,
-            jobs: 89,
-            memberSince: "2022",
-            verified: true,
-            pro: true,
-            bio: "Plombier certifié avec 10 ans d'expérience. Spécialiste des urgences et rénovations."
+    useEffect(() => {
+        const fetchService = async () => {
+            try {
+                const response = await axiosClient.get('/services/' + id);
+                setService(response.data.data);
+            } catch (error) {
+                console.error(error);
+            }
+            finally {
+                setIsCharging(false);
+            }
         }
-    };
+        fetchService();
+    }, []);
 
     const nextImg = () => setImgIdx((i) => (i + 1) % service.images.length);
     const prevImg = () => setImgIdx((i) => (i - 1 + service.images.length) % service.images.length);
@@ -50,6 +43,12 @@ const ServiceDetail = () => {
         setShowDemand(false);
     };
 
+    if (isCharging) {
+        return <div className="flex justify-center items-center h-screen"><LoaderCircle className="animate-spin w-12 h-12 text-[#D35400]" /></div>;
+    }
+
+    if (!service) return null;
+
     return (
         <div className="min-h-screen bg-gray-50 mt-20 pb-8">
 
@@ -59,7 +58,7 @@ const ServiceDetail = () => {
                         <ArrowLeft className="w-5 h-5 text-[#1B4F72]" />
                     </button>
                     <div className="flex-1">
-                        <h1 className="text-[16px] font-bold text-[#1B4F72] line-clamp-1">{service.title}</h1>
+                        <h1 className="text-[16px] font-bold text-[#1B4F72] line-clamp-1">{service.titre}</h1>
                     </div>
                     <button
                         onClick={() => setIsFav(!isFav)}
@@ -77,7 +76,7 @@ const ServiceDetail = () => {
                     <div className="grid grid-cols-3 gap-0 border-t border-gray-200">
                         {service.images.map((img, i) => (
                             <div key={i} className="aspect-square bg-gray-100 border-r border-gray-200 last:border-r-0 cursor-pointer" onClick={() => { setImgIdx(i); setSelectedImg(i); }}>
-                                <img src={img} alt="" className={`w-full h-full object-cover ${imgIdx === i ? 'opacity-100' : 'opacity-60 hover:opacity-100'}`} />
+                                <img src={`${STORAGE_URL}${img.url}`} alt="" className={`w-full h-full object-cover ${imgIdx === i ? 'opacity-100' : 'opacity-60 hover:opacity-100'}`} />
                             </div>
                         ))}
                     </div>
@@ -85,8 +84,8 @@ const ServiceDetail = () => {
 
                 <div className="bg-white border border-gray-200 p-4 flex items-center justify-between">
                     <div>
-                        <p className="text-[11px] text-gray-500">{service.priceType}</p>
-                        <p className="text-[24px] font-bold text-[#D35400]">{service.price} DH</p>
+                        <p className="text-[11px] text-gray-500">{service.type_tarif}</p>
+                        <p className="text-[24px] font-bold text-[#D35400]">{service.tarif} DH</p>
                     </div>
                     <button
                         onClick={() => setShowDemand(true)}
@@ -98,8 +97,7 @@ const ServiceDetail = () => {
 
                 <div className="bg-white border border-gray-200 p-4">
                     <div className="flex items-center gap-2 text-[11px] text-gray-500 mb-3 pb-3 border-b border-gray-100">
-                        <span className="text-[18px]">{service.icon}</span>
-                        <span className="uppercase tracking-wide">{service.category}</span>
+                        <span className="uppercase tracking-wide">{service.categorie.nom_categorie}</span>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -114,21 +112,21 @@ const ServiceDetail = () => {
                                 <Clock className="w-4 h-4 text-[#D35400]" />
                                 <div>
                                     <p className="text-[10px] text-gray-500">Durée estimée</p>
-                                    <p className="text-[12px] font-bold text-gray-700">{service.duration}</p>
+                                    <p className="text-[12px] font-bold text-gray-700">{service.estimation_duree} min</p>
                                 </div>
                             </div>
                             <div className="flex items-center gap-2 p-2 bg-gray-50">
                                 <Shield className="w-4 h-4 text-[#D35400]" />
                                 <div>
-                                    <p className="text-[10px] text-gray-500">Garantie</p>
-                                    <p className="text-[12px] font-bold text-gray-700">{service.warranty}</p>
+                                    <p className="text-[10px] text-gray-500">Matériel</p>
+                                    <p className="text-[12px] font-bold text-gray-700">{service.material}</p>
                                 </div>
                             </div>
                             <div className="flex items-center gap-2 p-2 bg-gray-50">
                                 <MapPin className="w-4 h-4 text-[#D35400]" />
                                 <div>
-                                    <p className="text-[10px] text-gray-500">Zone d'intervention</p>
-                                    <p className="text-[12px] font-bold text-gray-700 truncate">{service.location}</p>
+                                    <p className="text-[10px] text-gray-500">Ville</p>
+                                    <p className="text-[12px] font-bold text-gray-700 truncate">{service.artisan.user.city}</p>
                                 </div>
                             </div>
                         </div>
@@ -141,21 +139,20 @@ const ServiceDetail = () => {
                 >
                     <div className="flex items-start gap-3 mb-3">
                         <div className="w-14 h-14 bg-[#1B4F72] flex items-center justify-center text-white text-[20px] font-bold group-hover:bg-[#D35400] transition-colors">
-                            {service.artisan.name.charAt(0)}
+                            <img src={`${STORAGE_URL}${service.artisan.user.client?.avastar ?? 'https://placehold.co/150x150/1B4F72/ffffff?text=A'}`} alt="" className="w-full h-full object-cover" />
                         </div>
                         <div className="flex-1">
                             <div className="flex items-center gap-2 mb-1">
-                                <h3 className="text-[15px] font-bold text-gray-800 group-hover:text-[#1B4F72] transition-colors">{service.artisan.name}</h3>
-                                <p className="text-[11px] text-[#D35400] font-medium">{service.category}</p>
+                                <h3 className="text-[15px] font-bold text-gray-800 group-hover:text-[#1B4F72] transition-colors">{service.artisan.user.firstname} {service.artisan.user.lastname}</h3>
+                                <p className="text-[11px] text-[#D35400] font-medium">{service.artisan.specialite}</p>
                             </div>
                             <div className="flex items-center gap-3 mt-2">
                                 <div className="flex items-center gap-1">
                                     <Star className="w-3.5 h-3.5 text-yellow-500 fill-yellow-500" />
-                                    <span className="text-[12px] font-bold text-gray-700">{service.artisan.rating}</span>
-                                    <span className="text-[10px] text-gray-400">({service.artisan.reviews})</span>
+                                    <span className="text-[12px] font-bold text-gray-700">{service.artisan.note}</span>
                                 </div>
                                 <span className="text-gray-300">|</span>
-                                <span className="text-[11px] text-gray-500">{service.artisan.jobs} travaux</span>
+                                <span className="text-[11px] text-gray-500">{service.artisan.is_verified ? 'Vérifié' : 'Non vérifié'}</span>
                             </div>
                         </div>
                         <ArrowRight className="w-5 h-5 text-gray-300 group-hover:text-[#D35400] transition-colors" />
@@ -170,7 +167,7 @@ const ServiceDetail = () => {
                 <div className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4">
                     <button onClick={() => setSelectedImg(null)} className="absolute top-4 right-4 text-white text-2xl">×</button>
                     <button onClick={prevImg} className="absolute left-4 p-2 text-white"><ChevronLeft className="w-6 h-6" /></button>
-                    <img src={service.images[imgIdx]} alt="" className="max-w-full max-h-[85vh] object-contain" />
+                    <img src={`${STORAGE_URL}${service.images[imgIdx].url}`} alt="" className="max-w-full max-h-[85vh] object-contain" />
                     <button onClick={nextImg} className="absolute right-4 p-2 text-white"><ChevronRight className="w-6 h-6" /></button>
                 </div>
             )}
@@ -181,7 +178,7 @@ const ServiceDetail = () => {
                         <div className="flex items-center justify-between p-4 border-b border-gray-100">
                             <div>
                                 <h3 className="text-[14px] font-bold text-[#1B4F72]">Nouvelle Demande</h3>
-                                <p className="text-[10px] text-[#D35400] font-medium">{service.title}</p>
+                                <p className="text-[10px] text-[#D35400] font-medium">{service.titre}</p>
                             </div>
                             <button onClick={() => setShowDemand(false)} className="p-1 hover:bg-gray-100">
                                 <X className="w-5 h-5 text-gray-400" />

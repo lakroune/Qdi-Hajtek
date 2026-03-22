@@ -37,8 +37,8 @@ Route::middleware('auth:api')->group(function () {
     // Route::apiResource('categorie', CategorieController::class)->only('store');
 
 
-
-    Route::apiResource('services', ServiceController::class)->only('store','index');
+    //service nadi (sauf toggel save)
+    Route::apiResource('services', ServiceController::class)->only('store', 'index','show');
 
 
     Route::get('artisans/{artisan}/disponibilites', [DisponibiliteController::class, 'show']);
