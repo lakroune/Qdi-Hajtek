@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Heart, MapPin, Star } from 'lucide-react';
+import { Heart, LoaderCircle, MapPin, Star } from 'lucide-react';
 import axiosClient from '../api/axios-client';
 
 const Services = () => {
     const [favs, setFavs] = useState([1, 3]);
+    const [isloading, setIsLoading] = useState(true);
     const [services, setServices] = useState([]);
 
     useEffect(() => {
@@ -14,6 +15,9 @@ const Services = () => {
             } catch (error) {
                 console.error('Error fetching services:', error);
             }
+            finally {
+                setIsLoading(false);
+            }
         }
         fetchServices();
     }, []);
@@ -21,6 +25,10 @@ const Services = () => {
     const toggleFav = (id) => {
         setFavs(favs.includes(id) ? favs.filter(f => f !== id) : [...favs, id]);
     };
+
+    if (isloading) {
+        return <div className="flex justify-center items-center h-screen"><LoaderCircle className="animate-spin w-12 h-12 text-[#D35400]" /></div>;
+    }
 
     return (
         <div className="min-h-screen bg-gray-50 mt-20 pb-8">
@@ -57,7 +65,7 @@ const Services = () => {
 
                                 <div className="flex items-center gap-2 mb-3">
                                     <div className="w-7 h-7 bg-[#1B4F72] flex items-center justify-center text-white text-[10px] font-bold uppercase">
-                                        {service.artisan.user.firstname.charAt(0)}
+                                        <img src={service.artisan.user.client?.avatar ? 'http://localhost:8000/storage/' + service.artisan.user.client.avatar : 'https://via.placeholder.com/400x300?text=No+Image'} alt={service.artisan.user.avatar} className="w-full h-full object-cover" />
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <p className="text-[12px] text-gray-700 truncate">
