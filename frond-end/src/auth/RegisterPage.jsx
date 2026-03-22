@@ -10,7 +10,7 @@ import Logo from '../components/logo/Logo';
 
 import axiosClient from "../api/axios-client";
 import { useNavigate } from 'react-router-dom';
-
+import Cookies from 'js-cookie';
 
 const RegisterPage = () => {
     const [formData, setFromData] = useState({
@@ -67,7 +67,13 @@ const RegisterPage = () => {
             const response = await axiosClient.post('/register', formData);
             if (response.status === 201) {
                 setEstChargement(false);
-                localStorage.setItem('ACCESS_TOKEN', response.data.token);
+                Cookies.set('ACCESS_TOKEN', response.data.token, {
+                    expires: 7,
+                    secure: true,
+                    sameSite: 'strict'
+                })
+                Cookies.set('USER_DATA', JSON.stringify(response.data.user), { expires: 7 });
+                console.log(response.data.user);
                 navigate('/auth/confirme-email');
             }
         } catch (error) {

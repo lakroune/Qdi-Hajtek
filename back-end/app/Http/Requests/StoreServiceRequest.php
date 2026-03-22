@@ -24,13 +24,13 @@ class StoreServiceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'titre' => 'required|string',
-            'description' => 'required|string|max:255',
-            'tarif' => 'required|numeric',
-            'type_tarif' => 'nullable|string|in:prix_fixe,prix_heure,prix_jour,prix_m2',
-            'estimation_duree' => 'nullable|numeric',
+            'titre' => 'required|string|max:255',
+            'description' => 'required|string',
+            'tarif' => 'required|numeric|between:0,999999.99', 
+            'type_tarif' => 'required|string|in:prix_fixe,prix_heure,prix_jour,prix_m2',
+            'estimation_duree' => 'required|integer', 
             'material' => 'nullable|string|max:255',
-            'categorie_id' => 'required|numeric',
+            'categorie_id' => 'required|integer|exists:categories,id',
             'images' => 'nullable|array|max:5',
             'images.*' => 'image|mimes:jpg,jpeg,png|max:1024',
         ];

@@ -18,7 +18,7 @@ const ArtisanAddService = () => {
         categorie_id: '',
         description: '',
         tarif: '',
-        type_tarif: 'hour',
+        type_tarif: 'prix_heure',
         estimation_duree: '',
         warranty: '',
         materials: '',
@@ -30,15 +30,15 @@ const ArtisanAddService = () => {
 
     const categories = [
         { id: '', label: 'Sélectionnez votre spécialité' },
-        { id: 'plomberie', label: 'Plomberie' },
-        { id: 'electricite', label: 'Électricité' }
+        { id: '1', label: 'Plomberie' },
+        { id: '2', label: 'Électricité' }
     ];
 
     const type_tarifs = [
-        { id: 'hour', label: 'Par heure', example: 'Ex: 250 DH/heure' },
-        { id: 'm2', label: 'Au m²', example: 'Ex: 150 DH/m²' },
-        { id: 'fixed', label: 'Forfait', example: 'Ex: 1200 DH' },
-        { id: 'quote', label: 'Sur devis', example: 'Prix selon complexité' }
+        { id: 'prix_heure', label: 'Par heure', example: 'Ex: 250 DH/heure' },
+        { id: 'prix_m2', label: 'Au m²', example: 'Ex: 150 DH/m²' },
+        { id: 'prix_fixe', label: 'Forfait', example: 'Ex: 1200 DH' },
+        { id: 'prix_jour', label: 'Par Jour', example: 'Ex: 500 DH/jour' }
     ];
 
 
@@ -53,7 +53,7 @@ const ArtisanAddService = () => {
         if (formData.titre.length < 10) newErrors.titre = 'Minimum 10 caractères';
         if (!formData.categorie_id) newErrors.categorie_id = 'Catégorie requise';
         if (!formData.description.trim()) newErrors.description = 'Description requise';
-        if (formData.description.length < 100) newErrors.description = 'Minimum 100 caractères pour détailler votre service';
+        if (formData.description.length < 20) newErrors.description = 'Minimum 100 caractères pour détailler votre service';
         if (!formData.tarif) newErrors.tarif = 'Tarif requis';
         if (!formData.estimation_duree) newErrors.estimation_duree = 'Durée estimée requise';
 
@@ -82,20 +82,27 @@ const ArtisanAddService = () => {
             data.append('tarif', formData.tarif);
             data.append('type_tarif', formData.type_tarif);
             data.append('estimation_duree', formData.estimation_duree);
-            data.append('materials', formData.materials);
+            data.append('material', formData.materials);
 
-            formData.images.forEach((image, index) => {
-                data.append(`images[${index}]`, image);
+            if (formData.images && formData.images.length > 0) {
+                formData.images.forEach((image) => {
+                    data.append('images[]', image);
+                });
+            }
+            data.forEach((value, key) => {
+                console.log(key, value);
             });
-
             const response = await axiosClient.post('/services', data);
-
+            setSuccess(true);
             console.log(response.data);
         } catch (error) {
-
+            if (error.response && error.response.status === 422) {
+                setErrors(error.response.data.errors || {});
+            }
+            console.error("Erreur lors de l'envoi:", error);
+        } finally {
+            setIsLoading(false);
         }
-
-        setIsLoading(false);
     };
 
     const updateField = (field, value) => {
@@ -212,9 +219,9 @@ const ArtisanAddService = () => {
                         />
                         <div className="flex justify-between mt-1">
                             <span className="text-[10px] text-gray-400">
-                                Minimum 100 caractères recommandé
+                                Minimum 20 caractères recommandé
                             </span>
-                            <span className={`text-[10px] ${formData.description.length < 100 ? 'text-gray-400' : 'text-green-600'}`}>
+                            <span className={`text-[10px] ${formData.description.length < 20 ? 'text-gray-400' : 'text-green-600'}`}>
                                 {formData.description.length} caractères
                             </span>
                         </div>
