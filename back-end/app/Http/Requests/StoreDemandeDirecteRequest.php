@@ -13,7 +13,7 @@ class StoreDemandeDirecteRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return auth('api')->user()->isClient() and auth('api')->user()->hasEmailVerified() and auth('api')->user()->isActive();
     }
 
     /**
@@ -26,7 +26,6 @@ class StoreDemandeDirecteRequest extends FormRequest
         return [
             'service_id' => 'required|exists:services,id',
             'date_debut' => 'required|date',
-            'prix_final' => 'required|numeric',
             'description_specifique' => 'nullable|string',
             'adresse' => 'nullable|string',
         ];

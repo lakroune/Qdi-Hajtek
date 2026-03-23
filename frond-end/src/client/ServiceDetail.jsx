@@ -7,16 +7,19 @@ import {
 } from 'lucide-react';
 import axiosClient from '../api/axios-client';
 import { useParams } from 'react-router-dom';
+import Submit from '../components/buttons/Submit';
 
 const ServiceDetail = () => {
     const [isFav, setIsFav] = useState(false);
     const [showDemand, setShowDemand] = useState(false);
     const [selectedImg, setSelectedImg] = useState(null);
     const [imgIdx, setImgIdx] = useState(0);
-    const [form, setForm] = useState({ desc: '', date: '', ville: '' });
+    const [form, setForm] = useState({ desc: '', date: '', address: '' });
     const [isCharging, setIsCharging] = useState(true);
     const [service, setService] = useState(null);
+    const [demandeSending, setDemandeSending] = useState(false);
     const { id } = useParams();
+    const [errorenvoi, setErrorenvoi] = useState('');
     const STORAGE_URL = "http://127.0.0.1:8000/storage/";
 
     useEffect(() => {
@@ -37,15 +40,37 @@ const ServiceDetail = () => {
     const nextImg = () => setImgIdx((i) => (i + 1) % service.images.length);
     const prevImg = () => setImgIdx((i) => (i - 1 + service.images.length) % service.images.length);
 
-    const submit = (e) => {
+    const submit = async (e) => {
         e.preventDefault();
-        console.log("Demande:", form);
-        setShowDemand(false);
+        setErrorenvoi('');
+        setDemandeSending(true);
+        const data = new FormData();
+        data.append('description_specifique', form.desc);
+        data.append('date_debut', form.date);
+        data.append('adresse', form.address);
+        data.append('service_id', id);
+        try {
+            const response = await axiosClient.post('/demandes-directes', data);
+            if (response.data.success) {
+                setShowDemand(false);
+                setForm({ desc: '', date: '', address: '' });
+            }
+            else {
+                setErrorenvoi(response.data.message);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+        finally {
+            setDemandeSending(false);
+        }
     };
 
     if (isCharging) {
         return <div className="flex justify-center items-center h-screen"><LoaderCircle className="animate-spin w-12 h-12 text-[#D35400]" /></div>;
     }
+
+
 
     if (!service) return null;
 
@@ -177,6 +202,7 @@ const ServiceDetail = () => {
                     <div className="bg-white w-full max-w-md shadow-2xl border border-gray-200">
                         <div className="flex items-center justify-between p-4 border-b border-gray-100">
                             <div>
+
                                 <h3 className="text-[14px] font-bold text-[#1B4F72]">Nouvelle Demande</h3>
                                 <p className="text-[10px] text-[#D35400] font-medium">{service.titre}</p>
                             </div>
@@ -184,7 +210,7 @@ const ServiceDetail = () => {
                                 <X className="w-5 h-5 text-gray-400" />
                             </button>
                         </div>
-
+                        {errorenvoi && <p className="text-[10px] w-full flex  justify-center text-[#FF2400] font-medium" >{errorenvoi}</p>}
                         <form onSubmit={submit} className="p-5 space-y-4">
                             <div>
                                 <label className="text-[11px] font-bold text-[#1B4F72] flex items-center gap-1.5 mb-1">
@@ -213,14 +239,14 @@ const ServiceDetail = () => {
                                 </div>
                                 <div>
                                     <label className="text-[11px] font-bold text-[#1B4F72] flex items-center gap-1.5 mb-1">
-                                        <MapPin className="w-3.5 h-3.5" /> Ville
+                                        <MapPin className="w-3.5 h-3.5" /> Adresse
                                     </label>
                                     <input
                                         type="text" required
                                         placeholder="ex: Casablanca"
                                         className="w-full border border-gray-200 p-2 text-[12px] focus:outline-none focus:border-[#D35400] bg-gray-50"
-                                        value={form.ville}
-                                        onChange={(e) => setForm({ ...form, ville: e.target.value })}
+                                        value={form.address}
+                                        onChange={(e) => setForm({ ...form, address: e.target.value })}
                                     />
                                 </div>
                             </div>
@@ -233,12 +259,17 @@ const ServiceDetail = () => {
                                 >
                                     Annuler
                                 </button>
-                                <button
+                                <Submit
                                     type="submit"
+                                    text="Confirmer la Demande"
+                                    disabled={demandeSending}
+                                    isLoading={demandeSending}
+                                    size="md"
+                                    showIcon={false}
                                     className="flex-1 py-2.5 bg-[#1B4F72] text-white text-[12px] font-bold hover:bg-[#154360] shadow-md transition-all"
                                 >
-                                    Confirmer la Demande
-                                </button>
+
+                                </Submit>
                             </div>
                         </form>
                     </div>

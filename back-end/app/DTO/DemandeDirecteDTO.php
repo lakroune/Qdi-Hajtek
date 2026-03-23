@@ -14,7 +14,7 @@ class DemandeDirecteDTO
         public  int $service_id,
         public  string $date_debut,
         public  string $statut = "en_attente",
-        public  float $prix_final,
+        public  float $prix_final = 0.0,
         public  ?string $description_specifique
     ) {
         //
@@ -27,7 +27,7 @@ class DemandeDirecteDTO
             service_id: $request->service_id,
             date_debut: $request->date_debut,
             statut: "en_attente",
-            prix_final: $request->prix_final,
+            prix_final: 0.0,
             description_specifique: $request->description_specifique,
         );
     }
