@@ -54,7 +54,7 @@ function App() {
             <Route index element={<HomePage />} />
             <Route path="parametres" element={<SettingsPage />} />
             <Route path="messages" element={<MessagesPage />} />
-            <Route path="messages/:conversationId" element={<ConversationPage />} />
+            <Route path="messages/:conversation_id" element={<ConversationPage />} />
             <Route path="nouvelle-offre" element={<ClientAddJob />} />
             <Route path="mes-offres" element={<ClientListOffres />} />
             <Route path="mes-offres/:id" element={<ClientOffreDetail />} />

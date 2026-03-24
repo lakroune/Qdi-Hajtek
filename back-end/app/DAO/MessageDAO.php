@@ -24,10 +24,14 @@ class MessageDAO
 
     public function getByConversation(int $conversationId, int $perPage = 20)
     {
-        return Message::where('conversation_id', $conversationId)
-            ->with('sender:id,lastname,firstname')
-            ->orderBy('created_at', 'asc')
-            ->paginate($perPage);
+        return [
+            'messages' => Message::where('conversation_id', $conversationId)
+                ->with('sender:id,lastname,firstname')
+                ->orderBy('created_at', 'asc')
+                ->paginate($perPage),
+            'conversation' => Conversation::find($conversationId)->only('subject'),
+            'currentUser' => auth('api')->user()->only('id')
+        ];
     }
     public function markAsRead(int $conversationId): void
     {

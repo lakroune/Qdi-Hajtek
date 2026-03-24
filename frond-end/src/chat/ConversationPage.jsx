@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import {
     ArrowLeft, Send, Banknote, Paperclip,
     Check, CheckCheck, X, MoreVertical,
@@ -23,13 +23,11 @@ const ConversationPage = () => {
     const [comment, setComment] = useState('');
 
     const [messages, setMessages] = useState([]);
-    const currentUser = { id: 2 };
-    const [showModelAction, setShowModelAction] = useState(false);
 
-    const [conversation] = useState({
-        id: 1,
-        user: { name: 'Karim Plombier', avatar: null, isOnline: true }
-    });
+    const [showModelAction, setShowModelAction] = useState(false);
+    const [infoConversation, setInfoConversation] = useState({});
+    const { conversation_id } = useParams();
+
 
 
 
@@ -41,28 +39,36 @@ const ConversationPage = () => {
     useEffect(() => {
         const fetchMessages = async () => {
             try {
-                const response = await axiosClient.get(`/conversations/${conversation.id}/messages`);
+                const response = await axiosClient.get(
+                    `/conversations/${conversation_id}/messages`
+                );
 
-                const messagesData = response.data.data.data.map(msg => ({
+                const apiData = response.data.data;
+                const messagesArray = apiData.messages.data;
+                const currentUserId = apiData.currentUser.id;
+                setInfoConversation(apiData.conversation);
+
+                const formattedMessages = messagesArray.map(msg => ({
                     id: msg.id,
                     text: msg.contenu_message,
-                    isMe: msg.sender_id === currentUser.id,
-                    time: new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                    isMe: msg.sender_id === currentUserId,
+                    time: new Date(msg.created_at).toLocaleTimeString([], {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    }),
                     status: msg.is_read ? 'read' : 'sent',
                     senderName: `${msg.sender.firstname} ${msg.sender.lastname}`
                 }));
 
-                setMessages(messagesData);
-
+                setMessages(formattedMessages);
             } catch (error) {
-                console.error("Erreur lors du chargement des messages:", error);
+                console.error("Erreur lors du chargement des messages", error);
             }
         };
-
-        if (conversation.id) {
+        if (conversation_id) {
             fetchMessages();
         }
-    }, [conversation.id]);
+    }, [conversation_id]);
 
 
     const sendeMessage = async (e) => {
@@ -73,13 +79,13 @@ const ConversationPage = () => {
         setNewMessage('');
 
         try {
-            const response = await axiosClient.post(`/conversations/${conversation.id}/messages`, {
+            const response = await axiosClient.post(`/conversations/${conversation_id}/messages`, {
                 contenu_message: messageContent,
-                conversation_id: conversation.id
+                conversation_id: conversation_id
             });
 
             if (response.data && response.data.data) {
-
+                ///
             }
         } catch (error) {
             console.error("Erreur lors de l'envoi du message:", error);
@@ -216,7 +222,7 @@ const ConversationPage = () => {
                             </div>
                         </div>
                         <p className="text-[12px] text-gray-600 mb-3">Voulez-vous vraiment accepter cette offre ?</p>
-                        <input type="numbre" placeholder="0000.00" className="border m-2 w-9/12 border-gray-300 p-1 text-center text-[11px] tracking-widest focus:ring-1 focus:ring-[#D35400] outline-none" />
+                        <input type="number" placeholder="0000.00" className="border m-2 w-9/12 border-gray-300 p-1 text-center text-[11px] tracking-widest focus:ring-1 focus:ring-[#D35400] outline-none" />
                         <div className="grid grid-cols-2 gap-3">
                             <button onClick={() => setShowModelAction(false)} className="py-2 text-[12px] text-gray-400 hover:text-gray-600 font-medium">Non</button>
                             <button
@@ -244,9 +250,9 @@ const ConversationPage = () => {
                             <div className="flex items-center gap-3">
                                 <Link to="/messages" className="md:hidden"><ArrowLeft className="w-5 h-5 text-gray-400" /></Link>
                                 <div className="w-10 h-10 bg-[#1B4F72]/10 flex items-center justify-center   -full font-bold text-[#1B4F72] text-sm">
-                                    {conversation.user.name.charAt(0)}
+                                    {infoConversation?.subject?.charAt(0)}
                                 </div>
-                                <h2 className="text-[13px] font-semibold text-[#1B4F72]">{conversation.user.name}</h2>
+                                <h2 className="text-[13px] font-semibold text-[#1B4F72]"> </h2>
                             </div>
                             <button onClick={() => setShowStatusDommande(!showStatusDommande)} className="lg:hidden p-2 text-gray-400"><MoreVertical className="w-5 h-5" /></button>
                         </div>
