@@ -12,8 +12,6 @@ body:
 
     \    \"date_debut\": \"20233-04-15\",\r
 
-    \    \"prix_final\": 450.00,\r
-
     \    \"description_specifique\": \"d\",\r
 
     \    \"mode_paiement\": \"paypal\"\r

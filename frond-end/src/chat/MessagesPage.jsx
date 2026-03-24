@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
     Search, Send
 } from 'lucide-react';
+import axiosClient from '../api/axios-client';
 
 const MessagesPage = () => {
     const [conversations, setConversations] = useState([
@@ -11,13 +12,7 @@ const MessagesPage = () => {
             user: { id: 101, name: 'Karim Plombier', avatar: null, isOnline: true, isArtisan: true },
             lastMessage: { text: 'Je serai là demain à 14h', time: '14:30', isRead: true, isMe: false },
             unreadCount: 0
-        }, 
-        {
-            id: 3,
-            user: { id: 103, name: 'Sofia Menuiserie', avatar: null, isOnline: true, isArtisan: true },
-            lastMessage: { text: 'Vous avez reçu mon devis ?', time: 'Lun', isRead: false, isMe: false },
-            unreadCount: 1
-        } 
+        }
     ]);
 
     const [searchQuery, setSearchQuery] = useState('');
@@ -26,6 +21,18 @@ const MessagesPage = () => {
     const filteredConversations = conversations.filter(conv =>
         conv.user.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
+
+    useEffect(() => {
+        const fetchConversations = async () => {
+            try {
+                const response = await axiosClient.get('/conversations');
+                console.log(response.data);
+            } catch (error) {
+
+            }
+        }
+        fetchConversations();
+    }, []);
 
     return (
         <div className="min-h-screen  bg-gray-50">

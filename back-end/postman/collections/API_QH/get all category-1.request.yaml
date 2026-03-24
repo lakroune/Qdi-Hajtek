@@ -1,0 +1,7 @@
+$kind: http-request
+name: get all category
+url: http://127.0.0.1:8000/api/categories
+method: POST
+auth:
+  type: noauth
+order: 490747474224713

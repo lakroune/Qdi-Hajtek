@@ -8,6 +8,11 @@ body:
   type: formdata
   content:
     - type: text
+      key: categorie_id
+      value: "1"
+      description: ""
+      disabled: false
+    - type: text
       key: titre
       value: Installation Électrique
       description: ""
@@ -27,20 +32,15 @@ body:
       value: prix_fixe
       description: ""
       disabled: false
+    - type: text
+      key: estimation_duree
+      value: "22"
+      description: ""
+      disabled: false
     - type: file
       key: images[0]
       src:
         - /C:/Users/youco/Desktop/71xHh6f9YgL._AC_UF1000,1000_QL80_.jpg
-      description: ""
-      disabled: false
-    - type: text
-      key: categorie_id
-      value: "1"
-      description: ""
-      disabled: false
-    - type: text
-      key: estimation_duree
-      value: "22"
       description: ""
       disabled: false
     - type: file

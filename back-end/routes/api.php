@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\OffreTravailController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\PropositionController;
 use App\Http\Controllers\ArtisanController;
+use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\DisponibiliteController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ServiceController;
@@ -38,14 +39,17 @@ Route::middleware('auth:api')->group(function () {
 
 
     //service nadi (sauf toggel save)
-    Route::apiResource('services', ServiceController::class)->only('store', 'index','show');
+    Route::apiResource('services', ServiceController::class)->only('store', 'index', 'show');
+
+    // mazal  potection artisan envoi lui meme
+    Route::post('demandes-directes', [DemandeDirecteController::class, 'store']);
 
 
     Route::get('artisans/{artisan}/disponibilites', [DisponibiliteController::class, 'show']);
     Route::post('artisans/{artisan}/disponibilites', [DisponibiliteController::class, 'store']);
 
+    Route::get('conversations', [ConversationController::class, 'index']);
 
-    Route::post('demandes-directes', [DemandeDirecteController::class, 'store']);
 
 
     Route::apiResource('offres-travail', OffreTravailController::class)->only('store');
@@ -54,7 +58,7 @@ Route::middleware('auth:api')->group(function () {
     Route::patch('propositions/{id}/accept', [PropositionController::class, 'accept']);
 
     Route::post('conversations/{id}/messages', [MessageController::class, 'store']);
-    Route::get('conversations/{id}/messages', [MessageController::class, 'index']);
+    // Route::get('conversations/{id}/messages', [MessageController::class, 'index']);
 
 
 

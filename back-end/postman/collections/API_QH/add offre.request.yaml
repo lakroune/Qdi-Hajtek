@@ -8,8 +8,6 @@ body:
   type: json
   content: "{\r
 
-    \    \"service_id\": 1,\r
-
     \    \"categorie_id\": 1,\r
 
     \    \"titre\": \"Réparation d'installation électrique domestique\",\r
