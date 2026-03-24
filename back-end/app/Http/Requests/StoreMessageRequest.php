@@ -27,7 +27,7 @@ class StoreMessageRequest extends FormRequest
         return [
             'conversation_id' => 'required|exists:conversations,id',
             'contenu_message' => 'required|string',
-            'attachment_path' => 'nullable|string',
+            'attachment_path' => 'nullable|string'
         ];
     }
 

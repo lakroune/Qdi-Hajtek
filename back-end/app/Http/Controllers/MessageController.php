@@ -17,11 +17,16 @@ class MessageController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index($conversationId)
     {
-        $messages = $this->messageService->getConversationMessages(1);
+        $messages = $this->messageService->getConversationMessages(
+            (int) $conversationId
+        );
 
-        return response()->json($messages);
+        return response()->json([
+            'status' => 'success',
+            'data' => $messages
+        ]);
     }
 
     /**
@@ -31,7 +36,11 @@ class MessageController extends Controller
     {
         $dto = MessageDTO::fromRequest($request);
 
-        return $this->messageService->createMessage($dto);
+        $message = $this->messageService->sendMessage($dto);
+        return response()->json([
+            'status' => 'success',
+            'data' => $message
+        ], 201);
     }
 
     /**

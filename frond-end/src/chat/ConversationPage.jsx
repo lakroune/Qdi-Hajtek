@@ -1,10 +1,11 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, use } from 'react';
 import { Link } from 'react-router-dom';
 import {
     ArrowLeft, Send, Banknote, Paperclip,
     Check, CheckCheck, X, MoreVertical,
     Star, CreditCard, CheckCircle2, ShieldCheck
 } from 'lucide-react';
+import axiosClient from '../api/axios-client';
 
 const ConversationPage = () => {
     const messagesEndRef = useRef(null);
@@ -41,6 +42,27 @@ const ConversationPage = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
 
+
+    useEffect(() => {
+        const fetchMessages = async () => {
+            try {
+                const response = await axiosClient.get(`/conversations/${conversation.id}/messages`);
+
+                console.log(response.data.data);
+
+            } catch (error) {
+                console.error("Erreur lors du chargement des messages:", error);
+            }
+        };
+
+        if (conversation.id) {
+            fetchMessages();
+        }
+
+        // const interval = setInterval(fetchMessages, 5000);
+        // return () => clearInterval(interval);
+
+    }, [conversation.id]);
     const handleSend = (e) => {
         e.preventDefault();
         if (!newMessage.trim()) return;
@@ -187,7 +209,7 @@ const ConversationPage = () => {
                         <div className="grid grid-cols-2 gap-3">
                             <button onClick={() => setShowModelAction(false)} className="py-2 text-[12px] text-gray-400 hover:text-gray-600 font-medium">Non</button>
                             <button
-                                onClick={() => {  setStatus("accepter"); setShowModelAction(false);}}
+                                onClick={() => { setStatus("accepter"); setShowModelAction(false); }}
                                 className="py-2 bg-[#1B4F72] text-white text-[12px] font-bold hover:bg-[#D35400] transition-colors"
                             >
                                 Confirmer

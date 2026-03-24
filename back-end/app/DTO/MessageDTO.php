@@ -22,13 +22,13 @@ class MessageDTO
     }
 
 
-    public static function fromRequest(array $data, int $senderId): self
+    public static function fromRequest($request): self
     {
         return new self(
-            conversation_id: $data['conversation_id'],
-            sender_id: $senderId,
-            contenu_message: $data['contenu_message'],
-            attachment_path: $data['attachment_path'] ?? null
+            conversation_id: $request->validated('conversation_id'),
+            sender_id: auth('api')->user()->id,
+            contenu_message: $request->validated('contenu_message'),
+            attachment_path: $request->validated('attachment_path') ?? null,
         );
     }
 

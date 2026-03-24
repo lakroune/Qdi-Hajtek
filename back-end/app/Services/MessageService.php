@@ -5,6 +5,7 @@ namespace App\Services;
 use App\DAO\MessageDAO;
 use App\DTO\MessageDTO;
 use App\Models\Message;
+use Illuminate\Support\Facades\Storage;
 
 class MessageService
 {
@@ -17,13 +18,19 @@ class MessageService
         //
     }
 
-    public function getConversationMessages(int $conversationId)
+    public function sendMessage(MessageDTO $dto): Message
     {
-        return $this->messageDAO->getConversationMessages($conversationId);
+        //
+        //image
+
+        return $this->messageDAO->create($dto->toArray());
     }
 
-    public function createMessage(MessageDTO $messageDAO)
+    public function getConversationMessages(int $conversationId)
     {
-        return $this->messageDAO->create($messageDAO->toArray());
+        $this->messageDAO->markAsRead($conversationId);
+        return $this->messageDAO->getByConversation($conversationId);
     }
+
+     
 }

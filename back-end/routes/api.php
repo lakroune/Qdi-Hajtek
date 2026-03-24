@@ -58,7 +58,7 @@ Route::middleware('auth:api')->group(function () {
     Route::patch('propositions/{id}/accept', [PropositionController::class, 'accept']);
 
     Route::post('conversations/{id}/messages', [MessageController::class, 'store']);
-    // Route::get('conversations/{id}/messages', [MessageController::class, 'index']);
+    Route::get('conversations/{id}/messages', [MessageController::class, 'index']);
 
 
 
