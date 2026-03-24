@@ -2,7 +2,10 @@
 
 namespace App\DAO;
 
+use App\DTO\MessageDTO;
+use App\Models\Conversation;
 use App\Models\Message;
+use Illuminate\Support\Facades\DB;
 
 class MessageDAO
 {
@@ -14,16 +17,26 @@ class MessageDAO
         //
     }
 
-    public function create(array $data): ?Message
-
+    public function create(MessageDTO $dto): Message
     {
-        return Message::create($data);
+        return Message::create($dto->toArray());
     }
 
-    public function getConversationMessages(int $conversationId)
+    public function getByConversation(int $conversationId, int $perPage = 20)
     {
         return Message::where('conversation_id', $conversationId)
+            ->with('sender:id,name')
             ->orderBy('created_at', 'asc')
-            ->get();
+            ->paginate($perPage);
+    }
+    public function markAsRead(int $conversationId, int $userId): void
+    {
+        Message::where('conversation_id', $conversationId)
+            ->where('sender_id', '!=', $userId)
+            ->where('is_read', false)
+            ->update([
+                'is_read' => true,
+                'read_at' => now()
+            ]);
     }
 }
