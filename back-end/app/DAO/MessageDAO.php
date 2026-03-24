@@ -25,7 +25,7 @@ class MessageDAO
     public function getByConversation(int $conversationId, int $perPage = 20)
     {
         return Message::where('conversation_id', $conversationId)
-            ->with('sender:id,name')
+            ->with('sender:id,lastname,firstname')
             ->orderBy('created_at', 'asc')
             ->paginate($perPage);
     }

@@ -25,4 +25,8 @@ class Conversation extends Model
     {
         return $this->hasMany(Message::class);
     }
+    public function sender()
+    {
+        return $this->belongsToMany(User::class);
+    }
 }

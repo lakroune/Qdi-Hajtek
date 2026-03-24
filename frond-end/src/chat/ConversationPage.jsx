@@ -63,17 +63,29 @@ const ConversationPage = () => {
         // return () => clearInterval(interval);
 
     }, [conversation.id]);
-    const handleSend = (e) => {
+
+
+
+    const sendeMessage = async (e) => {
         e.preventDefault();
         if (!newMessage.trim()) return;
-        setMessages([...messages, {
-            id: Date.now(),
-            text: newMessage,
-            time: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-            isMe: true,
-            status: 'sent'
-        }]);
+
+        const messageContent = newMessage.trim();
         setNewMessage('');
+
+        try {
+            const response = await axiosClient.post(`/conversations/${conversation.id}/messages`, {
+                contenu_message: messageContent,
+                conversation_id: conversation.id
+            });
+
+            if (response.data && response.data.data) {
+
+            }
+        } catch (error) {
+            console.error("Erreur lors de l'envoi du message:", error);
+            setNewMessage(messageContent);
+        }
     };
 
     const getStatusIcon = (status) => {
@@ -255,7 +267,7 @@ const ConversationPage = () => {
                         </div>
 
                         <div className="p-4 border-t border-gray-100 bg-white">
-                            <form onSubmit={handleSend} className="flex items-center gap-2">
+                            <form onSubmit={sendeMessage} className="flex items-center gap-2">
                                 <button type="button" onClick={() => setShowAttachment(!showAttachment)} className="p-2 text-gray-400 hover:text-[#D35400]"><Paperclip className="w-5 h-5" /></button>
                                 <input type="text" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} placeholder="Message..." className="flex-1 px-4 py-2 text-[12px] border border-gray-200   -full focus:outline-none focus:border-[#D35400] bg-gray-50" />
                                 <button type="submit" disabled={!newMessage.trim()} className="p-2.5 bg-[#D35400] text-white   -full disabled:opacity-50"><Send className="w-4 h-4" /></button>

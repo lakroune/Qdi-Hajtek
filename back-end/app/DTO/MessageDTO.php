@@ -25,6 +25,7 @@ class MessageDTO
     public static function fromRequest($request): self
     {
         return new self(
+            id: null,
             conversation_id: $request->validated('conversation_id'),
             sender_id: auth('api')->user()->id,
             contenu_message: $request->validated('contenu_message'),
