@@ -75,7 +75,10 @@ class ConversationDAO
                             $q2->where('artisan_id', $userId);
                         });
                 });
-        })->orderBy('created_at', 'desc')
+        })->with(['messages' => function ($q) {
+            $q->latest()->limit(1);
+        }, 'conversable'])
+            ->orderBy('created_at', 'desc')
 
             ->get();
     }
