@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, use } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
     ArrowLeft, Send, Banknote, Paperclip,
@@ -22,7 +22,8 @@ const ConversationPage = () => {
     const [rating, setRating] = useState(0);
     const [comment, setComment] = useState('');
 
-
+    const [messages, setMessages] = useState([]);
+    const currentUser = { id: 2 };
     const [showModelAction, setShowModelAction] = useState(false);
 
     const [conversation] = useState({
@@ -30,13 +31,7 @@ const ConversationPage = () => {
         user: { name: 'Karim Plombier', avatar: null, isOnline: true }
     });
 
-    const [messages, setMessages] = useState([
-        { id: 1, text: 'Bonjour, je suis disponible pour votre intervention', time: '14:20', isMe: false, status: 'read' },
-        { id: 2, text: 'Parfait, quel est votre tarif horaire ?', time: '14:22', isMe: true, status: 'read' },
-        { id: 3, text: '250 DH/heure, déplacement inclus', time: '14:25', isMe: false, status: 'read' },
-        { id: 4, text: 'D\'accord, pouvez-vous venir demain ?', time: '14:28', isMe: true, status: 'read' },
-        { id: 5, text: 'Je serai là demain à 14h', time: '14:30', isMe: false, status: 'read' },
-    ]);
+
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -48,7 +43,16 @@ const ConversationPage = () => {
             try {
                 const response = await axiosClient.get(`/conversations/${conversation.id}/messages`);
 
-                console.log(response.data.data);
+                const messagesData = response.data.data.data.map(msg => ({
+                    id: msg.id,
+                    text: msg.contenu_message,
+                    isMe: msg.sender_id === currentUser.id,
+                    time: new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                    status: msg.is_read ? 'read' : 'sent',
+                    senderName: `${msg.sender.firstname} ${msg.sender.lastname}`
+                }));
+
+                setMessages(messagesData);
 
             } catch (error) {
                 console.error("Erreur lors du chargement des messages:", error);
@@ -58,12 +62,7 @@ const ConversationPage = () => {
         if (conversation.id) {
             fetchMessages();
         }
-
-        // const interval = setInterval(fetchMessages, 5000);
-        // return () => clearInterval(interval);
-
     }, [conversation.id]);
-
 
 
     const sendeMessage = async (e) => {
