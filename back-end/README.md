@@ -5,3 +5,6 @@
 -- php artisan vendor:publish --provider="PHPOpenSourceSaver\JWTAuth\Providers\LaravelServiceProvider"
 -- composer require laravel/reverb
 -- php artisan reverb:install
+-- composer require pusher/pusher-php-server
+---php artisan queue:work
+-- php artisan reverb:start

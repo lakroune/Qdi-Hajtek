@@ -45,7 +45,7 @@ const LoginPage = () => {
         sameSite: 'strict'
       });
       Cookies.set('USER_DATA', JSON.stringify(response.data.user), { expires: 7 });
-      // navigate('/dashboard');
+      navigate('/');
       console.log(response.data.user);
     }
     setEstEnChargement(false);
