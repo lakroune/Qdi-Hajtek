@@ -28,12 +28,13 @@ const ConversationPage = () => {
     const [infoConversation, setInfoConversation] = useState({});
     const { conversation_id } = useParams();
 
-
+    const [currentUserId, setCurrentUserId] = useState(null);
 
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
+
 
 
     useEffect(() => {
@@ -45,13 +46,15 @@ const ConversationPage = () => {
 
                 const apiData = response.data.data;
                 const messagesArray = apiData.messages.data;
-                const currentUserId = apiData.currentUser.id;
+                const userId = apiData.currentUser.id;
+
+                setCurrentUserId(userId);
                 setInfoConversation(apiData.conversation);
 
                 const formattedMessages = messagesArray.map(msg => ({
                     id: msg.id,
                     text: msg.contenu_message,
-                    isMe: msg.sender_id === currentUserId,
+                    isMe: msg.sender_id === userId,
                     time: new Date(msg.created_at).toLocaleTimeString([], {
                         hour: '2-digit',
                         minute: '2-digit'
@@ -70,8 +73,38 @@ const ConversationPage = () => {
         }
     }, [conversation_id]);
 
-   
 
+    useEffect(() => {
+        if (conversation_id && window.Echo && currentUserId) {
+            const channel = window.Echo.private(`chat.${conversation_id}`)
+                .listen('MessageSent', (e) => {
+                    setMessages((prevMessages) => {
+                        const isDuplicate = prevMessages.some(msg => msg.id === e.message.id);
+                        if (isDuplicate) return prevMessages;
+
+                        const receivedMessage = {
+                            id: e.message.id,
+                            text: e.message.contenu_message,
+                            isMe: e.message.sender_id === currentUserId,
+                            time: new Date(e.message.created_at).toLocaleTimeString([], {
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            }),
+                            status: 'read',
+                            senderName: `${e.message.sender.firstname} ${e.message.sender.lastname}`
+                        };
+
+                        return [...prevMessages, receivedMessage];
+                    });
+                });
+
+            return () => {
+                window.Echo.leave(`chat.${conversation_id}`);
+            };
+        }
+    }, [conversation_id, currentUserId]);
+
+    
     const sendeMessage = async (e) => {
         e.preventDefault();
         if (!newMessage.trim()) return;
@@ -91,11 +124,18 @@ const ConversationPage = () => {
                     id: msg.id,
                     text: msg.contenu_message,
                     isMe: true,
-                    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                    time: new Date(msg.created_at).toLocaleTimeString([], {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    }),
                     status: 'sent',
                     senderName: "You"
                 };
-                setMessages(prev => [...prev, myNewMsg]);
+
+                setMessages(prev => {
+                    if (prev.find(m => m.id === msg.id)) return prev;
+                    return [...prev, myNewMsg];
+                });
             }
         } catch (error) {
             console.error("Erreur:", error);
