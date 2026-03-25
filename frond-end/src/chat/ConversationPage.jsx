@@ -36,7 +36,7 @@ const ConversationPage = () => {
     }, [messages]);
 
 
-
+    // Récupération des messages
     useEffect(() => {
         const fetchMessages = async () => {
             try {
@@ -72,14 +72,18 @@ const ConversationPage = () => {
             fetchMessages();
         }
     }, [conversation_id]);
-
-
+    // Récupération des messages
     useEffect(() => {
-        if (conversation_id && window.Echo && currentUserId) {
-            const channel = window.Echo.private(`chat.${conversation_id}`)
-                .listen('MessageSent', (e) => {
+        // if (conversation_id && window.Echo && currentUserId) {
+            const channel = window.Echo
+                .private(`chat.${conversation_id}`)
+                .listen('.message-sent', (e) => {
+                    console.log("New message received via socket:", e);
+
                     setMessages((prevMessages) => {
-                        const isDuplicate = prevMessages.some(msg => msg.id === e.message.id);
+                        const isDuplicate = prevMessages.some(
+                            msg => msg.id === e.message.id
+                        );
                         if (isDuplicate) return prevMessages;
 
                         const receivedMessage = {
@@ -91,7 +95,9 @@ const ConversationPage = () => {
                                 minute: '2-digit'
                             }),
                             status: 'read',
-                            senderName: `${e.message.sender.firstname} ${e.message.sender.lastname}`
+                            senderName: e.message?.sender
+                                ? `${e.message.sender.firstname || ''} ${e.message.sender.lastname || ''}`.trim()
+                                : "User"
                         };
 
                         return [...prevMessages, receivedMessage];
@@ -101,10 +107,8 @@ const ConversationPage = () => {
             return () => {
                 window.Echo.leave(`chat.${conversation_id}`);
             };
-        }
+        // }
     }, [conversation_id, currentUserId]);
-
-    
     const sendeMessage = async (e) => {
         e.preventDefault();
         if (!newMessage.trim()) return;

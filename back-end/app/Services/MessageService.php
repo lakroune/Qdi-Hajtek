@@ -27,7 +27,8 @@ class MessageService
         $message = $this->messageDAO->create($dto->toArray());
         // $message->load('sender:id,lastname,firstname');
         // //websocket 
-        // broadcast(new MessageSent($message));
+        broadcast(new MessageSent($message))->toOthers();
+        
         return $message;
     }
 
