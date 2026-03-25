@@ -1,8 +1,11 @@
 <?php
 
-use App\Models\Message;
+use App\Models\Conversation;
 use Illuminate\Support\Facades\Broadcast;
 
-Broadcast::channel('messages.{senderId}', function ($user, $id) {
-    return Message::where('sender_id', $id)->where('receiver_id', $user->id)->exists();
+Broadcast::channel('chat.{conversation_id}', function ($user, $conversation_id) {
+    return [
+        'id' => $user->id,
+        'name' => $user->name,
+    ];
 });

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\DAO\MessageDAO;
 use App\DTO\MessageDTO;
+use App\Events\MessageSent;
 use App\Models\Message;
 use Illuminate\Support\Facades\Storage;
 
@@ -23,7 +24,11 @@ class MessageService
         //
         //image
 
-        return $this->messageDAO->create($dto->toArray());
+        $message = $this->messageDAO->create($dto->toArray());
+        // $message->load('sender:id,lastname,firstname');
+        // //websocket 
+        // broadcast(new MessageSent($message));
+        return $message;
     }
 
     public function getConversationMessages(int $conversationId)
@@ -31,6 +36,4 @@ class MessageService
         $this->messageDAO->markAsRead($conversationId);
         return $this->messageDAO->getByConversation($conversationId);
     }
-
-     
 }

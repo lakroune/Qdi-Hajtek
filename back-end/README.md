@@ -8,3 +8,4 @@
 -- composer require pusher/pusher-php-server
 ---php artisan queue:work
 -- php artisan reverb:start
+-- php artisan install:broadcasting

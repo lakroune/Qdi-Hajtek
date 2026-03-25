@@ -70,6 +70,7 @@ const ConversationPage = () => {
         }
     }, [conversation_id]);
 
+   
 
     const sendeMessage = async (e) => {
         e.preventDefault();
@@ -85,14 +86,22 @@ const ConversationPage = () => {
             });
 
             if (response.data && response.data.data) {
-                ///
+                const msg = response.data.data;
+                const myNewMsg = {
+                    id: msg.id,
+                    text: msg.contenu_message,
+                    isMe: true,
+                    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                    status: 'sent',
+                    senderName: "You"
+                };
+                setMessages(prev => [...prev, myNewMsg]);
             }
         } catch (error) {
-            console.error("Erreur lors de l'envoi du message:", error);
+            console.error("Erreur:", error);
             setNewMessage(messageContent);
         }
     };
-
     const getStatusIcon = (status) => {
         if (status === 'read') return <CheckCheck className="w-3 h-3 text-[#D35400]" />;
         return <Check className="w-3 h-3 text-gray-400" />;
