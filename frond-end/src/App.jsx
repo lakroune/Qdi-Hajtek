@@ -32,6 +32,7 @@ import Notifications from './chat/Notifications';
 import Services from './client/Services';
 import ServiceDetail from './client/ServiceDetail';
 import ProtectedRoute from './errors/ProtectedRoute';
+import { Toaster } from 'react-hot-toast';
 function App() {
 
 
@@ -39,6 +40,30 @@ function App() {
   return (
     <>
       {/* <Header /> */}
+
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          style: {
+            fontSize: '11px',
+            borderRadius: '0px',
+          },
+          duration: 5000,
+          success: {
+            style: {
+              background: '#D35400',
+              color: 'white',
+              fontWeight: 'bold',
+            },
+          },
+          error: {
+            style: {
+              background: '#FEF2F2',
+              color: '#DC2626',
+            },
+          },
+        }}
+      />
       <Routes>
 
         <Route path="/auth" element={<div className="auth-layout"><Outlet /></div>}>
@@ -50,7 +75,7 @@ function App() {
           <Route path="confirme-email" element={<ConfirmEmailPage />} />
         </Route>
         <Route element={<ProtectedRoute roles={['client', 'artisan']} />}>
-          <Route path="/" element={<div className="auth-layout"><Header estAuthentifie={true} nomUtilisateur={"nom"} notifications={4} messages={3} typeUtilisateur={"artisan"} /><Outlet /> </div>}>
+          <Route path="/" element={<div className="auth-layout"> <Header /><Outlet /> </div>}>
             <Route index element={<HomePage />} />
             <Route path="parametres" element={<SettingsPage />} />
             <Route path="messages" element={<MessagesPage />} />

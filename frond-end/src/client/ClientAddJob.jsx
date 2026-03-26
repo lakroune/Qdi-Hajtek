@@ -8,12 +8,13 @@ import Input from '../components/inputs/Input';
 import FileUpload from '../components/inputs/FileUpload';
 import Submit from '../components/buttons/Submit';
 import axiosClient from '../api/axios-client';
-
+import { toast } from 'react-hot-toast';
+import Select from '../components/selects/Select';
 const ClientAddJob = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [success, setSuccess] = useState(false);
     const [categories, setCategories] = useState([]);
-
+    const [villes, setVilles] = useState([]);
     const [formData, setFormData] = useState({
         title: '',
         category: '',
@@ -21,7 +22,7 @@ const ClientAddJob = () => {
         budget_estime: '',
         niveau_urgence: 'standard',
         preferredDate: '',
-        location: '',
+        ville: '',
         address: '',
         photos: [],
         acceptTerms: true
@@ -42,7 +43,17 @@ const ClientAddJob = () => {
         fetchCategories();
     }, []);
 
-
+    useEffect(() => {
+        const fetchVilles = async () => {
+            try {
+                const response = await axiosClient.get('/villes');
+                setVilles(response.data);
+            } catch (error) {
+                console.error('Error fetching villes:', error);
+            }
+        }
+        fetchVilles();
+    }, []);
     const urgencies = [
         { id: 'urgent', label: 'Urgent', desc: 'Dans les 24h', color: 'bg-red-100 text-red-700 border-red-200' },
         { id: 'standard', label: 'Standard', desc: 'Cette semaine', color: 'bg-blue-100 text-blue-700 border-blue-200' },
@@ -56,11 +67,6 @@ const ClientAddJob = () => {
 
 
     const publierOffre = async () => {
-        // if (!formData.acceptTerms) {
-        //     setErrors({ ...errors, terms: 'Vous devez accepter les conditions' });
-        //     return;
-        // }
-
         const data = new FormData();
         data.append('titre', formData.title);
         data.append('categorie_id', formData.category);
@@ -68,22 +74,30 @@ const ClientAddJob = () => {
         data.append('budget_estime', formData.budget_estime);
         data.append('niveau_urgence', formData.niveau_urgence);
         data.append('date_limite', formData.preferredDate);
-        data.append('location', formData.location);
+        data.append('ville', formData.ville);
         data.append('address', formData.address);
         data.append('type_remuneration', "prix_fixe");
-        data.append('photos', formData.photos);
+
+        formData.photos.forEach((photo) => {
+            data.append('photos[]', photo);
+        });
 
         try {
             setIsLoading(true);
             const response = await axiosClient.post('/offres-travail', data);
+
             if (response.data.success) {
                 setSuccess(true);
+                toast.success('Offre publiée !');
+            } else {
+                toast.error('Une erreur est survenue');
             }
         } catch (error) {
             if (error.response && error.response.status === 422) {
                 setErrors(error.response.data.errors);
             } else {
                 console.error('Error creating job:', error);
+                toast.error('Une erreur est survenue');
             }
         } finally {
             setIsLoading(false);
@@ -97,43 +111,9 @@ const ClientAddJob = () => {
         }
     };
 
-    if (success) {
-        return (
-            <div className="min-h-screen flex items-center justify-center bg-gray-50">
-                <div className="max-w-2xl mx-auto mt-20 px-4">
-                    <div className="bg-white   p-8 text-center">
-                        <div className="w-16 h-16 bg-green-100 flex items-center justify-center mx-auto mb-4">
-                            <CheckCircle className="w-8 h-8 text-green-600" />
-                        </div>
-                        <h2 className="text-[18px] font-bold text-[#1B4F72] mb-2">Offre publiée avec succès !</h2>
-                        <p className="text-[12px] text-gray-500 mb-6">
-                            Votre demande est en attente d'approbation par notre équipe.
-                            Vous serez notifié dès qu'un artisan vous contactera.
-                        </p>
-                        <div className="flex gap-3 justify-center">
-                            <a
-                                href="/mes-offres"
-                                className="px-6 py-2.5 bg-[#1B4F72] hover:bg-[#D35400] text-white text-[12px] font-medium transition-colors"
-                            >
-                                Voir mes offres
-                            </a>
-                            <a
-                                href="/"
-                                className="px-6 py-2.5 border border-gray-200 hover:border-[#1B4F72] text-[12px] text-gray-600 hover:text-[#1B4F72] transition-colors"
-                            >
-                                Retour à l'accueil
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        );
-    }
 
     return (
         <div className="min-h-screen bg-gray-50">
-
             <div className=" w-[90%] mx-auto px-4 py-8 ">
                 <div className="mt-6">
                     <h1 className="text-[20px] font-bold text-[#1B4F72]">Publier une offre de travail</h1>
@@ -141,8 +121,6 @@ const ClientAddJob = () => {
                         Décrivez votre besoin pour recevoir des propositions d'artisans qualifiés
                     </p>
                 </div>
-
-
 
 
                 <div className="bg-white border border-gray-200 p-6 space-y-6">
@@ -173,6 +151,7 @@ const ClientAddJob = () => {
                                 onChange={(e) => updateField('category', e.target.value)}
                                 className="w-full px-3 py-2 text-[12px] border border-gray-200 focus:border-[#D35400] focus:outline-none bg-white"
                             >
+                                <option value="">Sélectionnez une catégorie</option>
                                 {categories.map(cat => (
                                     <option key={cat.id} value={cat.id}>{cat.nom_categorie}</option>
                                 ))}
@@ -270,18 +249,24 @@ const ClientAddJob = () => {
 
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <Input
-                                label="Ville"
-                                name="location"
-                                value={formData.location}
-                                onChange={(e) => updateField('location', e.target.value)}
-                                placeholder="Ex: Casablanca"
-                                required
-                                Icon={MapPin}
-                            />
-                            {errors.location && (
+                            <label className="block text-[11px] font-medium text-[#1B4F72] mb-1.5">
+                                Ville <span className="text-[#D35400]">*</span>
+                            </label>
+                            <select
+                                value={formData.ville}
+                                onChange={(e) => updateField('ville', e.target.value)}
+                                className="w-full px-3 py-2 text-[12px] border border-gray-200 focus:border-[#D35400] focus:outline-none bg-white"
+                            >
+                                <option value="">Sélectionnez une ville</option>
+                                {villes.map((ville) => (
+                                    <option key={ville.id} value={ville.id}>
+                                        {ville.ville}
+                                    </option>
+                                ))}
+                            </select>
+                            {errors.ville && (
                                 <p className="mt-1 text-[10px] text-red-500 flex items-center gap-1">
-                                    <AlertCircle className="w-3 h-3" /> {errors.location}
+                                    <AlertCircle className="w-3 h-3" /> {errors.ville}
                                 </p>
                             )}
                         </div>

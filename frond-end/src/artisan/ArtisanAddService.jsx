@@ -8,6 +8,7 @@ import Input from '../components/inputs/Input';
 import FileUpload from '../components/inputs/FileUpload';
 import Submit from '../components/buttons/Submit';
 import axiosClient from '../api/axios-client';
+import toast from 'react-hot-toast';
 
 const ArtisanAddService = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -64,7 +65,7 @@ const ArtisanAddService = () => {
         if (formData.titre.length < 10) newErrors.titre = 'Minimum 10 caractères';
         if (!formData.categorie_id) newErrors.categorie_id = 'Catégorie requise';
         if (!formData.description.trim()) newErrors.description = 'Description requise';
-        if (formData.description.length < 20) newErrors.description = 'Minimum 100 caractères pour détailler votre service';
+        if (formData.description.length < 20) newErrors.description = 'Minimum 20 caractères pour détailler votre service';
         if (!formData.tarif) newErrors.tarif = 'Tarif requis';
         if (!formData.estimation_duree) newErrors.estimation_duree = 'Durée estimée requise';
 
@@ -98,14 +99,19 @@ const ArtisanAddService = () => {
             if (formData.images && formData.images.length > 0) {
                 formData.images.forEach((image) => {
                     data.append('images[]', image);
-                });
+                }); 
             }
             data.forEach((value, key) => {
                 console.log(key, value);
             });
             const response = await axiosClient.post('/services', data);
-            setSuccess(true);
-            console.log(response.data);
+
+            if (response.data !== null) {
+                toast.success('Service ajouté !');
+            }
+            else {
+                toast.error('Une erreur est survenue');
+            }
         } catch (error) {
             if (error.response && error.response.status === 422) {
                 setErrors(error.response.data.errors || {});
@@ -123,43 +129,6 @@ const ArtisanAddService = () => {
         }
     };
 
-    if (success) {
-        return (
-            <div className="min-h-screen bg-gray-50">
-
-                <div className="max-w-2xl mx-auto mt-20 px-4">
-                    <div className="bg-white border border-gray-200 p-8 text-center">
-                        <div className="w-16 h-16 bg-green-100 flex items-center justify-center mx-auto mb-4">
-                            <CheckCircle className="w-8 h-8 text-green-600" />
-                        </div>
-                        <h2 className="text-[18px] font-bold text-[#1B4F72] mb-2">Service soumis avec succès !</h2>
-                        <p className="text-[12px] text-gray-500 mb-2">
-                            Votre service est en attente de vérification par notre équipe.
-                        </p>
-                        <p className="text-[11px] text-[#D35400] mb-6">
-                            Délai d'approbation: 24-48h ouvrées
-                        </p>
-                        <div className="flex gap-3 justify-center">
-                            <a
-                                href="/artisan/services"
-                                className="px-6 py-2.5 bg-[#1B4F72] hover:bg-[#D35400] text-white text-[12px] font-medium transition-colors"
-                            >
-                                Voir mes services
-                            </a>
-                            <a
-                                href="/artisan/dashboard"
-                                className="px-6 py-2.5 border border-gray-200 hover:border-[#1B4F72] text-[12px] text-gray-600 hover:text-[#1B4F72] transition-colors"
-                            >
-                                Tableau de bord
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-
-            </div>
-        );
-    }
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -285,6 +254,7 @@ const ArtisanAddService = () => {
                             <Input
                                 label="Durée estimée"
                                 name="estimation_duree"
+                                type="number"
                                 value={formData.estimation_duree}
                                 onChange={(e) => updateField('estimation_duree', e.target.value)}
                                 placeholder="Ex: 2-3 heures"
