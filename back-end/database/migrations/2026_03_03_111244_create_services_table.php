@@ -24,7 +24,7 @@ return new class extends Migration
             $table->integer('estimation_duree');
             $table->string('material')->nullable();
             $table->timestamps();
-        });
+        }); 
     }
 
     /**

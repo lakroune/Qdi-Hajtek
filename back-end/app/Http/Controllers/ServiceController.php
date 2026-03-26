@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\DTO\ServiceDTO;
 use App\Models\Service;
 use App\Http\Requests\StoreServiceRequest;
 use App\Http\Requests\UpdateServiceRequest;
@@ -30,10 +31,9 @@ class ServiceController extends Controller
      */
     public function store(StoreServiceRequest $request)
     {
-        $request->validated();
-        $data = $request->except('images');
+        $dto = ServiceDTO::fromRequest($request);
         $images = $request->file('images') ?? [];
-        $service = $this->serviceService->createService($data, $images);
+        $service = $this->serviceService->createService($dto, $images);
         return response()->json([
             'message' => 'Service created successfully',
             'data' => $service
