@@ -23,6 +23,7 @@ Route::get('/villes', function () {
 
 
 Route::get('/categories', [CategorieController::class, 'index']);
+Route::post('/categories', [CategorieController::class, 'store']);
 Route::middleware('auth:api')->group(function () {
 
     Route::post('verifier-email', [AuthController::class, 'verifierEmail']);

@@ -19,8 +19,9 @@ class OffreTravail extends Model
         'titre',
         'description',
         'budget_estime',
-        'date_limite',
-        'type_remuneration',
+        'preferred_date',
+        'address',
+        'ville',
         'niveau_urgence',
         'statut',
         'is_completed'

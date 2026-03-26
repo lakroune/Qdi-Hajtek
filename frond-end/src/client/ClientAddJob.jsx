@@ -73,7 +73,7 @@ const ClientAddJob = () => {
         data.append('description', formData.description);
         data.append('budget_estime', formData.budget_estime);
         data.append('niveau_urgence', formData.niveau_urgence);
-        data.append('date_preferred', formData.preferredDate);
+        data.append('preferred_date', formData.preferredDate);
         data.append('ville', formData.ville);
         data.append('address', formData.address);
 

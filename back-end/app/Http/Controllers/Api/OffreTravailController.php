@@ -31,7 +31,9 @@ class OffreTravailController extends Controller
     {
 
         $dto = OffreTravailDTO::fromRequest($request);
-        $offreTravail = $this->offreTravailService->createOffreTravail($dto);
+        $photos = $request->file('photos') ?? [];
+
+        $offreTravail = $this->offreTravailService->createOffreTravail($dto, $photos);
         return response()->json([
             'success' => true,
             'message' => 'Offre de travail created successfully',

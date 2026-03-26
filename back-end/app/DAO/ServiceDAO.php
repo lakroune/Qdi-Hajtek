@@ -15,7 +15,7 @@ class ServiceDAO
         //
     }
     public function create(array $data, array $imageUrls)
-    {
+    { 
         return DB::transaction(function () use ($data, $imageUrls) {
             $data['artisan_id'] = auth('api')->user()->id;
             $service = Service::create($data);

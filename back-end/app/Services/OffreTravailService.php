@@ -4,6 +4,9 @@ namespace App\Services;
 
 use App\DAO\OffreTravailDAO;
 use App\DTO\OffreTravailDTO;
+use Exception;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class OffreTravailService
 {
@@ -15,9 +18,26 @@ class OffreTravailService
         //
     }
 
-    public function  createOffreTravail(OffreTravailDTO $offreTravailDTO)
+    public function  createOffreTravail(OffreTravailDTO $offreTravailDTO, array $images = [])
     {
-        return $this->offreTravailDAO->create($offreTravailDTO->toArray());
+        try {
+            $imageUrls = [];
+            if (!empty($images)) {
+                foreach ($images as $image) {
+                    $path = $image->store('offreTravails', 'public');
+                    $imageUrls[] = $path;
+                }
+            }
+            return $this->offreTravailDAO->create($offreTravailDTO->toArray(), $imageUrls);
+        } catch (Exception $e) {
+            Log::error("Error creating offre travail: " . $e->getMessage());
+            if (!empty($imageUrls)) {
+                foreach ($imageUrls as $url) {
+                    Storage::disk('public')->delete($url);
+                }
+            }
+            throw $e;
+        }
     }
 
     public function updateOffreTravail($id, OffreTravailDTO $offreTravailDTO)

@@ -3,6 +3,7 @@
 namespace App\DAO;
 
 use App\Models\OffreTravail;
+use Illuminate\Support\Facades\DB;
 
 class OffreTravailDAO
 {
@@ -14,9 +15,18 @@ class OffreTravailDAO
         //
     }
 
-    public function create($data)
+    public function create(array $data, array $imageUrls)
     {
-        return OffreTravail::create($data);
+
+        return DB::transaction(function () use ($data, $imageUrls) {
+            $offre = OffreTravail::create($data);
+            foreach ($imageUrls as $path) {
+                $offre->images()->create([
+                    'url' =>    $path
+                ]);
+            }
+            return $offre->load('images');
+        });
     }
 
     public function update($id, $data)

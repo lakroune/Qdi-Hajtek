@@ -34,7 +34,7 @@ class OffreTravailDTO
             titre: $request->validated('titre'),
             description: $request->validated('description'),
             budgetEstime: $request->validated('budget_estime'),
-            datePreferred: $request->validated('date_preferred'),
+            datePreferred: $request->validated('preferred_date'),
             ville: $request->validated('ville'),
             address: $request->validated('address'),
             niveauUrgence: $request->validated('niveau_urgence'),
@@ -49,7 +49,7 @@ class OffreTravailDTO
             'titre' => $this->titre,
             'description' => $this->description,
             'budget_estime' => $this->budgetEstime,
-            'date_preferred' => $this->datePreferred,
+            'preferred_date' => $this->datePreferred,
             'niveau_urgence' => $this->niveauUrgence,
             'ville' => $this->ville,
             'address' => $this->address
