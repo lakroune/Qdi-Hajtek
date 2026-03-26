@@ -4,11 +4,12 @@ namespace App\Notifications;
 
 use App\Models\DemandeDirecte;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class NewDemandeNotification extends Notification
+class NewDemandeNotification extends Notification 
 {
     use Queueable;
 
@@ -54,7 +55,6 @@ class NewDemandeNotification extends Notification
         return [
             'demande_directe_id' => $this->demandeDirecte->id,
             'contenu' => "Une nouvelle demande vient d'être créée",
-
         ];
     }
     public function toDatabase(object $notifiable)
@@ -62,6 +62,7 @@ class NewDemandeNotification extends Notification
         return [
             'demande_directe_id' => $this->demandeDirecte->id,
             'contenu' => "Une nouvelle demande vient d'être créée",
+            'type_data' => 'notification',
         ];
     }
 
@@ -70,6 +71,7 @@ class NewDemandeNotification extends Notification
         return [
             'demande_directe_id' => $this->demandeDirecte->id,
             'contenu' => "Une nouvelle demande vient d'être créée",
+            'type_data' => 'notification',
         ];
     }
 }

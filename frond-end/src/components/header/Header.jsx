@@ -1,26 +1,25 @@
-import React, { useState, useEffect } from 'react';
+import  { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, User, Bell, LogOut, Settings, Heart, MessageCircle, Briefcase, Calendar } from 'lucide-react';
 import Logo from '../logo/Logo';
 import LogoutModal from '../models/LogoutModal';
 import { useNavigate } from 'react-router-dom';
-
+import Cookies from 'js-cookie';
 const Header = ({
-  estAuthentifie = false,
-  typeUtilisateur = 'client',
-  nomUtilisateur = '',
-  notifications = 0,
-  messages = 0,
-  dommandesEnAttente = 0
 }) => {
+
   const [estMenuOuvert, setEstMenuOuvert] = useState(false);
   const [estProfilOuvert, setEstProfilOuvert] = useState(false);
   const emplacement = useLocation();
   const [afficherModalDeconnexion, setAfficherModalDeconnexion] = useState(false);
   const [estEnDeconnexion, setEstEnDeconnexion] = useState(false);
   const naviguer = useNavigate();
-
-
+  const [estAuthentifie, setEstAuthentifie] = useState(true);
+  const [dommandesEnAttente, setDommandesEnAttente] = useState(0);
+  const [messages, setMessages] = useState(0);
+  const [notifications, setNotifications] = useState(0);
+  const [typeUtilisateur, setTypeUtilisateur] = useState('client');
+  const [nomUtilisateur, setNomUtilisateur] = useState('ismail');
   useEffect(() => {
     setEstMenuOuvert(false);
     setEstProfilOuvert(false);
@@ -84,7 +83,28 @@ const Header = ({
   };
 
   const elementsMenuProfil = obtenirElementsMenuProfil();
+// websocket
+useEffect(() => {
+    const userId = localStorage.getItem('USER_ID'); 
 
+    if (estAuthentifie && window.Echo && userId) {
+      
+      const noticeChannel = window.Echo.private(`notice.${userId}`)
+        .listen('.notice-created', (data) => { 
+          console.log("notice-created(Event):", data);
+          
+          setNotifications(prev => prev + 1);
+          
+          if (typeUtilisateur === 'artisan') {
+             setDommandesEnAttente(prev => prev + 1);
+          }
+        });
+
+      return () => {
+        window.Echo.leave(`notice.${userId}`);
+      };
+    }
+  }, [estAuthentifie]);
 
   return (
     <>

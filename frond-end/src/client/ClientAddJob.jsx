@@ -11,7 +11,7 @@ import Submit from '../components/buttons/Submit';
 const ClientAddJob = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [success, setSuccess] = useState(false);
-    const [step, setStep] = useState(1); // 1: infos | 2: photos | 3: confirmation
+    const [step, setStep] = useState(1);
 
     const [formData, setFormData] = useState({
         title: '',
@@ -316,210 +316,64 @@ const ClientAddJob = () => {
                                 />
                             </div>
                         </div>
+                        <div className="bg-white border border-gray-200 p-6 space-y-6">
+                            <div className="text-center mb-6">
 
-                        <div className="pt-4 border-t border-gray-100">
-                            <Submit
-                                text="Continuer"
-                                onClick={BtnNextStep}
-                                icon={ArrowRight}
-                                size="md"
-                            />
-                        </div>
-                    </div>
-                )}
-
-                {step === 2 && (
-                    <div className="bg-white border border-gray-200 p-6 space-y-6">
-                        <div className="text-center mb-6">
-                            <div className="w-12 h-12 bg-[#1B4F72]/10 flex items-center justify-center mx-auto mb-3">
-                                <Camera className="w-6 h-6 text-[#1B4F72]" />
-                            </div>
-                            <h3 className="text-[14px] font-bold text-[#1B4F72]">Ajouter des photos (optionnel)</h3>
-                            <p className="text-[11px] text-gray-500 mt-1">
-                                Les photos aident les artisans à mieux évaluer votre besoin
-                            </p>
-                        </div>
-
-                        <FileUpload
-                            id="job-photos"
-                            label="Photos du problème ou du lieu"
-                            accept="image/*"
-                            multiple
-                            maxFiles={5}
-                            maxSize={5}
-                            sublabel="JPG, PNG • Max 5MB par photo • Max 5 photos"
-                            value={formData.photos}
-                            onChange={(files) => updateField('photos', files)}
-                        />
-
-                        {formData.photos.length > 0 && (
-                            <div className="grid grid-cols-5 gap-2">
-                                {formData.photos.map((photo, idx) => (
-                                    <div key={idx} className="relative aspect-square bg-gray-100">
-                                        {photo instanceof File ? (
-                                            <img
-                                                src={URL.createObjectURL(photo)}
-                                                alt=""
-                                                className="w-full h-full object-cover"
-                                            />
-                                        ) : (
-                                            <div className="w-full h-full flex items-center justify-center">
-                                                <Camera className="w-6 h-6 text-gray-400" />
-                                            </div>
-                                        )}
-                                        <button
-                                            onClick={() => {
-                                                const newPhotos = [...formData.photos];
-                                                newPhotos.splice(idx, 1);
-                                                updateField('photos', newPhotos);
-                                            }}
-                                            className="absolute top-1 right-1 w-5 h-5 bg-red-500 text-white flex items-center justify-center"
-                                        >
-                                            <X className="w-3 h-3" />
-                                        </button>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-
-                        <div className="flex gap-3 pt-4 border-t border-gray-100">
-                            <button
-                                onClick={BtnBackStep}
-                                className="flex-1 py-3 border border-gray-200 hover:border-[#1B4F72] text-[12px] text-gray-600 hover:text-[#1B4F72] transition-colors"
-                            >
-                                Retour
-                            </button>
-                            <Submit
-                                text="Continuer"
-                                onClick={BtnNextStep}
-                                icon={ArrowRight}
-                                size="md"
-                                className="flex-1"
-                            />
-                        </div>
-                    </div>
-                )}
-
-                {/* Step 3: Confirmation */}
-                {step === 3 && (
-                    <div className="bg-white border border-gray-200 p-6 space-y-6">
-                        <h3 className="text-[14px] font-bold text-[#1B4F72] mb-4">Récapitulatif de votre offre</h3>
-
-
-                        <div className="space-y-4 bg-gray-50 p-4 border border-gray-200">
-                            <div className="flex justify-between py-2 border-b border-gray-200">
-                                <span className="text-[11px] text-gray-500">Titre</span>
-                                <span className="text-[12px] font-medium text-[#1B4F72] text-right max-w-[60%]">
-                                    {formData.title}
-                                </span>
-                            </div>
-                            <div className="flex justify-between py-2 border-b border-gray-200">
-                                <span className="text-[11px] text-gray-500">Catégorie</span>
-                                <span className="text-[12px] font-medium text-[#1B4F72]">
-                                    {categories.find(c => c.id === formData.category)?.label}
-                                </span>
-                            </div>
-                            <div className="flex justify-between py-2 border-b border-gray-200">
-                                <span className="text-[11px] text-gray-500">Urgence</span>
-                                <span className={`
-                                    px-2 py-0.5 text-[10px] font-medium
-                                    ${formData.urgency === 'urgent' ? 'bg-red-100 text-red-700' : ''}
-                                    ${formData.urgency === 'standard' ? 'bg-blue-100 text-blue-700' : ''}
-                                    ${formData.urgency === 'planned' ? 'bg-gray-100 text-gray-700' : ''}
-                                `}>
-                                    {urgencies.find(u => u.id === formData.urgency)?.label}
-                                </span>
-                            </div>
-                            <div className="flex justify-between py-2 border-b border-gray-200">
-                                <span className="text-[11px] text-gray-500">Budget</span>
-                                <span className="text-[12px] font-bold text-[#D35400]">
-                                    {formData.budgetMin} - {formData.budgetMax} DH
-                                </span>
-                            </div>
-                            <div className="flex justify-between py-2 border-b border-gray-200">
-                                <span className="text-[11px] text-gray-500">Date</span>
-                                <span className="text-[12px] font-medium text-[#1B4F72]">{formData.preferredDate}</span>
-                            </div>
-                            <div className="flex justify-between py-2 border-b border-gray-200">
-                                <span className="text-[11px] text-gray-500">Lieu</span>
-                                <span className="text-[12px] font-medium text-[#1B4F72] text-right">
-                                    {formData.address}, {formData.location}
-                                </span>
-                            </div>
-                            <div className="py-2">
-                                <span className="text-[11px] text-gray-500 block mb-1">Description</span>
-                                <p className="text-[11px] text-gray-700 leading-relaxed">
-                                    {formData.description}
+                                <h3 className="text-[14px] font-bold text-[#1B4F72]">Ajouter des photos (optionnel)</h3>
+                                <p className="text-[11px] text-gray-500 mt-1">
+                                    Les photos aident les artisans à mieux évaluer votre besoin
                                 </p>
                             </div>
+
+                            <FileUpload
+                                id="job-photos"
+                                label="Photos du problème ou du lieu"
+                                accept="image/*"
+                                multiple
+                                disabledFiles={false}
+                                maxFiles={5}
+                                maxSize={5}
+                                sublabel="JPG, PNG • Max 5MB par photo • Max 5 photos"
+                                value={formData.photos}
+                                onChange={(files) => updateField('photos', files)}
+                            />
+
                             {formData.photos.length > 0 && (
-                                <div className="pt-2">
-                                    <span className="text-[11px] text-gray-500 block mb-2">
-                                        {formData.photos.length} photo(s) jointe(s)
-                                    </span>
-                                    <div className="flex gap-2">
-                                        {formData.photos.slice(0, 3).map((photo, idx) => (
-                                            <div key={idx} className="w-12 h-12 bg-gray-200">
-                                                {photo instanceof File && (
-                                                    <img
-                                                        src={URL.createObjectURL(photo)}
-                                                        alt=""
-                                                        className="w-full h-full object-cover"
-                                                    />
-                                                )}
-                                            </div>
-                                        ))}
-                                        {formData.photos.length > 3 && (
-                                            <div className="w-12 h-12 bg-gray-200 flex items-center justify-center text-[10px] text-gray-500">
-                                                +{formData.photos.length - 3}
-                                            </div>
-                                        )}
-                                    </div>
+                                <div className="grid grid-cols-5 gap-2">
+                                    {formData.photos.map((photo, idx) => (
+                                        <div key={idx} className="relative aspect-square bg-gray-100">
+                                            {photo instanceof File ? (
+                                                <img
+                                                    src={URL.createObjectURL(photo)}
+                                                    alt=""
+                                                    className="w-full h-full object-cover"
+                                                />
+                                            ) : (
+                                                <div className="w-full h-full flex items-center justify-center">
+                                                    <Camera className="w-6 h-6 text-gray-400" />
+                                                </div>
+                                            )}
+                                            <button
+                                                onClick={() => {
+                                                    const newPhotos = [...formData.photos];
+                                                    newPhotos.splice(idx, 1);
+                                                    updateField('photos', newPhotos);
+                                                }}
+                                                className="absolute top-1 right-1 w-5 h-5 bg-red-500 text-white flex items-center justify-center"
+                                            >
+                                                <X className="w-3 h-3" />
+                                            </button>
+                                        </div>
+                                    ))}
                                 </div>
                             )}
-                        </div>
 
-                        {/* Terms */}
-                        <div>
-                            <label className="flex items-start gap-3 cursor-pointer">
-                                <input
-                                    type="checkbox"
-                                    checked={formData.acceptTerms}
-                                    onChange={(e) => {
-                                        updateField('acceptTerms', e.target.checked);
-                                        if (errors.terms) setErrors({ ...errors, terms: null });
-                                    }}
-                                    className="mt-0.5 w-4 h-4 border-gray-300 text-[#D35400] focus:ring-[#D35400]"
-                                />
-                                <span className="text-[11px] text-gray-600 leading-relaxed">
-                                    J'accepte que mon offre soit vérifiée par l'équipe avant publication.
-                                    Je confirme que les informations fournies sont exactes et je m'engage à honorer le paiement une fois le service réalisé.
-                                </span>
-                            </label>
-                            {errors.terms && (
-                                <p className="mt-2 text-[10px] text-red-500 flex items-center gap-1">
-                                    <AlertCircle className="w-3 h-3" /> {errors.terms}
-                                </p>
-                            )}
-                        </div>
+                            <div className="flex gap-3 pt-4 border-t border-gray-100">
 
-                        {/* Info */}
-                        <div className="bg-blue-50 border border-blue-200 p-3 flex items-start gap-2">
-                            <Clock className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
-                            <p className="text-[11px] text-blue-700">
-                                Votre offre sera examinée sous <strong>24h</strong> ouvrées.
-                                Vous recevrez une notification dès qu'elle sera en ligne.
-                            </p>
-                        </div>
 
-                        {/* Submit */}
-                        <div className="flex gap-3 pt-4 border-t border-gray-100">
-                            <button
-                                onClick={BtnBackStep}
-                                className="flex-1 py-3 border border-gray-200 hover:border-[#1B4F72] text-[12px] text-gray-600 hover:text-[#1B4F72] transition-colors"
-                            >
-                                Modifier
-                            </button>
+                            </div>
+                        </div>
+                        <div className="pt-4 border-t border-gray-100">
                             <Submit
                                 text={isLoading ? 'Publication...' : 'Publier mon offre'}
                                 onClick={handleSubmit}
@@ -532,6 +386,10 @@ const ClientAddJob = () => {
                         </div>
                     </div>
                 )}
+
+
+
+
             </div>
 
         </div>

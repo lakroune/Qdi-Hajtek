@@ -25,7 +25,7 @@ class MessageService
         //image
 
         $message = $this->messageDAO->create($dto->toArray());
-        // $message->load('sender:id,lastname,firstname');
+        $message->load('sender:id,lastname,firstname');
         // //websocket 
         broadcast(new MessageSent($message))->toOthers();
         

@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import {
     ArrowLeft, Send, Banknote, Paperclip,
-    Check, CheckCheck, X, MoreVertical,
+    Check, CheckCheck,  MoreVertical,
     Star, CreditCard, CheckCircle2, ShieldCheck
 } from 'lucide-react';
 import axiosClient from '../api/axios-client';
@@ -74,7 +74,7 @@ const ConversationPage = () => {
     }, [conversation_id]);
     // Récupération des messages
     useEffect(() => {
-        // if (conversation_id && window.Echo && currentUserId) {
+        if (conversation_id && window.Echo && currentUserId) {
             const channel = window.Echo
                 .private(`chat.${conversation_id}`)
                 .listen('.message-sent', (e) => {
@@ -94,10 +94,9 @@ const ConversationPage = () => {
                                 hour: '2-digit',
                                 minute: '2-digit'
                             }),
-                            status: 'read',
-                            senderName: e.message?.sender
-                                ? `${e.message.sender.firstname || ''} ${e.message.sender.lastname || ''}`.trim()
-                                : "User"
+                            status: e.message.is_read ? 'read' : 'sent',
+                            senderName: `${e.message.sender.firstname || ''} ${e.message.sender.lastname || ''}`.trim()
+
                         };
 
                         return [...prevMessages, receivedMessage];
@@ -107,7 +106,7 @@ const ConversationPage = () => {
             return () => {
                 window.Echo.leave(`chat.${conversation_id}`);
             };
-        // }
+        }
     }, [conversation_id, currentUserId]);
     const sendeMessage = async (e) => {
         e.preventDefault();
