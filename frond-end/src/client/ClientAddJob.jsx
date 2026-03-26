@@ -18,14 +18,13 @@ const ClientAddJob = () => {
         title: '',
         category: '',
         description: '',
-        budgetMin: '',
-        budgetMax: '',
-        urgency: 'standard',
+        budget_estime: '',
+        niveau_urgence: 'standard',
         preferredDate: '',
         location: '',
         address: '',
         photos: [],
-        acceptTerms: false
+        acceptTerms: true
     });
 
     const [errors, setErrors] = useState({});
@@ -56,16 +55,39 @@ const ClientAddJob = () => {
 
 
 
-    const handleSubmit = async () => {
-        if (!formData.acceptTerms) {
-            setErrors({ ...errors, terms: 'Vous devez accepter les conditions' });
-            return;
-        }
+    const publierOffre = async () => {
+        // if (!formData.acceptTerms) {
+        //     setErrors({ ...errors, terms: 'Vous devez accepter les conditions' });
+        //     return;
+        // }
 
-        setIsLoading(true);
-        await new Promise(r => setTimeout(r, 1500));
-        setIsLoading(false);
-        setSuccess(true);
+        const data = new FormData();
+        data.append('titre', formData.title);
+        data.append('categorie_id', formData.category);
+        data.append('description', formData.description);
+        data.append('budget_estime', formData.budget_estime);
+        data.append('niveau_urgence', formData.niveau_urgence);
+        data.append('date_limite', formData.preferredDate);
+        data.append('location', formData.location);
+        data.append('address', formData.address);
+        data.append('type_remuneration', "prix_fixe");
+        data.append('photos', formData.photos);
+
+        try {
+            setIsLoading(true);
+            const response = await axiosClient.post('/offres-travail', data);
+            if (response.data.success) {
+                setSuccess(true);
+            }
+        } catch (error) {
+            if (error.response && error.response.status === 422) {
+                setErrors(error.response.data.errors);
+            } else {
+                console.error('Error creating job:', error);
+            }
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     const updateField = (field, value) => {
@@ -124,41 +146,43 @@ const ClientAddJob = () => {
 
 
                 <div className="bg-white border border-gray-200 p-6 space-y-6">
-                    <div>
-                        <Input
-                            label="Titre de l'offre"
-                            name="title"
-                            value={formData.title}
-                            onChange={(e) => updateField('title', e.target.value)}
-                            placeholder="Ex: Réparation fuite d'eau urgente"
-                            required
-                            Icon={Briefcase}
-                        />
-                        {errors.title && (
-                            <p className="mt-1 text-[10px] text-red-500 flex items-center gap-1">
-                                <AlertCircle className="w-3 h-3" /> {errors.title}
-                            </p>
-                        )}
-                    </div>
+                    <div className="space-y-4 flex gap-4 justify-between">
+                        <div className="w-full">
+                            <Input
+                                label="Titre de l'offre"
+                                name="title"
+                                value={formData.title}
+                                onChange={(e) => updateField('title', e.target.value)}
+                                placeholder="Ex: Réparation fuite d'eau urgente"
+                                required
+                                Icon={Briefcase}
+                            />
+                            {errors.title && (
+                                <p className="mt-1 text-[10px] text-red-500 flex items-center gap-1">
+                                    <AlertCircle className="w-3 h-3" /> {errors.title}
+                                </p>
+                            )}
+                        </div>
 
-                    <div>
-                        <label className="block text-[11px] font-medium text-[#1B4F72] mb-1.5">
-                            Catégorie <span className="text-[#D35400]">*</span>
-                        </label>
-                        <select
-                            value={formData.category}
-                            onChange={(e) => updateField('category', e.target.value)}
-                            className="w-full px-3 py-2 text-[12px] border border-gray-200 focus:border-[#D35400] focus:outline-none bg-white"
-                        >
-                            {categories.map(cat => (
-                                <option key={cat.id} value={cat.id}>{cat.nom_categorie}</option>
-                            ))}
-                        </select>
-                        {errors.category && (
-                            <p className="mt-1 text-[10px] text-red-500 flex items-center gap-1">
-                                <AlertCircle className="w-3 h-3" /> {errors.category}
-                            </p>
-                        )}
+                        <div className='w-full'>
+                            <label className="block text-[11px] font-medium text-[#1B4F72] mb-1.5">
+                                Catégorie <span className="text-[#D35400]">*</span>
+                            </label>
+                            <select
+                                value={formData.category}
+                                onChange={(e) => updateField('category', e.target.value)}
+                                className="w-full px-3 py-2 text-[12px] border border-gray-200 focus:border-[#D35400] focus:outline-none bg-white"
+                            >
+                                {categories.map(cat => (
+                                    <option key={cat.id} value={cat.id}>{cat.nom_categorie}</option>
+                                ))}
+                            </select>
+                            {errors.category && (
+                                <p className="mt-1 text-[10px] text-red-500 flex items-center gap-1">
+                                    <AlertCircle className="w-3 h-3" /> {errors.category}
+                                </p>
+                            )}
+                        </div>
                     </div>
 
                     <div>
@@ -196,10 +220,10 @@ const ClientAddJob = () => {
                                 <button
                                     key={urg.id}
                                     type="button"
-                                    onClick={() => updateField('urgency', urg.id)}
+                                    onClick={() => updateField('niveau_urgence', urg.id)}
                                     className={`
                                             p-3 border text-center transition-all
-                                            ${formData.urgency === urg.id
+                                            ${formData.niveau_urgence === urg.id
                                             ? urg.color + ' border-2'
                                             : 'border-gray-200 hover:border-[#1B4F72] bg-white'}
                                         `}
@@ -213,20 +237,20 @@ const ClientAddJob = () => {
 
                     <div>
 
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-4">
                             <div className="flex-1">
                                 <Input
                                     label=" Budget estimé (DH)"
-                                    name="budgetMin"
+                                    name="budget_estime"
                                     type="number"
                                     required
-                                    value={formData.budgetMin}
-                                    onChange={(e) => updateField('budgetMin', e.target.value)}
+                                    value={formData.budget_estime}
+                                    onChange={(e) => updateField('budget_estime', e.target.value)}
                                     placeholder="Min"
                                     Icon={DollarSign}
                                 />
                             </div>
-                            <span className="text-gray-400">-</span>
+
                             <div className="flex-1">
                                 <Input
                                     label="Date souhaitée d'intervention"
@@ -332,7 +356,7 @@ const ClientAddJob = () => {
                     <div className="pt-4 border-t border-gray-100">
                         <Submit
                             text={isLoading ? 'Publication...' : 'Publier mon offre'}
-                            onClick={handleSubmit}
+                            onClick={publierOffre}
                             isLoading={isLoading}
                             icon={isLoading ? Loader2 : CheckCircle}
                             size="md"
