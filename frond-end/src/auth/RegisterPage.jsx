@@ -1,9 +1,14 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { data, Link } from 'react-router-dom';
 import {
     Mail, Lock, ArrowRight, Check, Shield,
     Clock, User, Eye, EyeOff, AlertCircle,
-    MapPin
+    MapPin,
+    IdCard,
+    ClipboardType,
+    LocationEdit,
+    LocateOffIcon,
+    Locate
 } from 'lucide-react';
 import Input from '../components/inputs/Input';
 import Logo from '../components/logo/Logo';
@@ -27,6 +32,8 @@ const RegisterPage = () => {
     const [errors, setErrors] = useState({});
     const [afficherMotDePasse, setAfficherMotDePasse] = useState(false);
     const [estchargement, setEstChargement] = useState(false);
+    const [villes, setVilles] = useState([]);
+    const navigate = useNavigate();
 
     const changeFormDate = (e) => {
         const { name, value, type, checked } = e.target;
@@ -55,7 +62,6 @@ const RegisterPage = () => {
         return Object.keys(newErrors).length === 0;
     }
 
-    const navigate = useNavigate();
 
     const submitData = async (e) => {
         e.preventDefault();
@@ -84,7 +90,17 @@ const RegisterPage = () => {
         }
     }
 
-
+    useEffect(() => {
+        const fetchVilles = async () => {
+            try {
+                const response = await axiosClient.get('/villes');
+                setVilles(response.data);
+            } catch (error) {
+                console.error('Error fetching cities:', error);
+            }
+        };
+        fetchVilles();
+    }, []);
 
 
 
@@ -163,26 +179,43 @@ const RegisterPage = () => {
                             error={errors.email}
                         />
 
-                        <Input
-                            label="CIN"
-                            type="text"
-                            name="cin"
-                            value={formData.cin}
-                            onChange={changeFormDate}
-                            placeholder="AB123456"
-                            Icon={MapPin}
-                            error={errors.cin}
-                        />
+                        <div className="grid md:grid-cols-2 gap-3">
+                            <Input
+                                label="CIN"
+                                type="text"
+                                name="cin"
+                                value={formData.cin}
+                                onChange={changeFormDate}
+                                placeholder="AB123456"
+                                Icon={IdCard}
+                                error={errors.cin}
+                            />
 
-                        <Input
-                            label="city"
-                            name="city"
-                            value={formData.city}
-                            onChange={changeFormDate}
-                            placeholder="Ex: Casablanca"
-                            Icon={MapPin}
-                            error={errors.city}
-                        />
+                            <div>
+                                <label className="block text-[11px] font-medium text-[#1B4F72] mb-1.5">
+                                    Ville
+                                    <span className="text-[#D35400] ml-1">*</span>
+                                </label>
+
+                                <div className="relative flex">
+
+                                    <Locate className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+
+                                    <select
+                                        value={formData.city}
+                                        onChange={(e) => setFromData({ ...formData, city: e.target.value })}
+                                        className=" w-full pl-9  pr-3 py-2 text-[12px] border border-gray-200 text-[#1B4F72] placeholder-gray-400 focus:outline-none focus:border-[#D35400] transition-colors "
+                                    >
+                                        <option value="">choisissez votre ville</option>
+                                        {villes.map((ville) => (
+                                            <option key={ville.id} value={ville.id}>
+                                                {ville.ville}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
 
                         <div className="relative">
                             <Input

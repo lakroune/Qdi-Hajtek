@@ -25,12 +25,14 @@ return new class extends Migration
             $table->string('titre');
             $table->text('description');
             $table->float('budget_estime');
-            $table->date('date_limite');
+            $table->date('preferred_date');
 
             $table->enum('statut', ['ouvert', 'en_cours', 'complete', 'annule'])
                 ->default('ouvert');
-
-            $table->enum('type_remuneration', ['prix_fixe', 'prix_heure']);
+            $table->string('code_confirmation')->nullable();
+            $table->date('date_confirmation')->nullable();
+            $table->string('ville');
+            $table->string('address');
             $table->enum('niveau_urgence', ['faible', 'moyen', 'urgent']);
             $table->boolean('is_completed')->default(false);
 

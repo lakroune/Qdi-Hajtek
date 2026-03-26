@@ -56,8 +56,8 @@ const ClientAddJob = () => {
     }, []);
     const urgencies = [
         { id: 'urgent', label: 'Urgent', desc: 'Dans les 24h', color: 'bg-red-100 text-red-700 border-red-200' },
-        { id: 'standard', label: 'Standard', desc: 'Cette semaine', color: 'bg-blue-100 text-blue-700 border-blue-200' },
-        { id: 'planned', label: 'Planifié', desc: 'Plus tard', color: 'bg-gray-100 text-gray-700 border-gray-200' }
+        { id: 'moyen', label: 'Standard', desc: 'Cette semaine', color: 'bg-blue-100 text-blue-700 border-blue-200' },
+        { id: 'faible', label: 'Planifié', desc: 'Plus tard', color: 'bg-gray-100 text-gray-700 border-gray-200' }
     ];
 
 
@@ -73,10 +73,9 @@ const ClientAddJob = () => {
         data.append('description', formData.description);
         data.append('budget_estime', formData.budget_estime);
         data.append('niveau_urgence', formData.niveau_urgence);
-        data.append('date_limite', formData.preferredDate);
+        data.append('date_preferred', formData.preferredDate);
         data.append('ville', formData.ville);
         data.append('address', formData.address);
-        data.append('type_remuneration', "prix_fixe");
 
         formData.photos.forEach((photo) => {
             data.append('photos[]', photo);

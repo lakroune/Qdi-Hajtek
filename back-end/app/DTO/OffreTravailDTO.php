@@ -9,20 +9,21 @@ class OffreTravailDTO
     /**
      * Create a new class instance.
      */
-    public function __construct(
-        public  int $clientId,
-        public  int $categorieId,
-        public  string $titre,
-        public  string $description,
-        public  float $budgetEstime,
-        public  string $dateLimite,
-        public  string $typeRemuneration,
-        public  string $niveauUrgence,
-        public  string $statut = 'en_cours',
-        public  bool $is_completed = false
 
+    public function __construct(
+        public int $clientId,
+        public int $categorieId,
+        public string $titre,
+        public string $description,
+        public float $budgetEstime,
+        public ?string $datePreferred,
+        public string $niveauUrgence,
+        public string $ville,
+        public string $address,
+        public string $statut = 'en_cours',
+        public bool $is_completed = false
     ) {
-        //
+        // 
     }
 
     public static function  fromRequest($request)
@@ -33,8 +34,9 @@ class OffreTravailDTO
             titre: $request->validated('titre'),
             description: $request->validated('description'),
             budgetEstime: $request->validated('budget_estime'),
-            dateLimite: $request->validated('date_limite'),
-            typeRemuneration: $request->validated('type_remuneration'),
+            datePreferred: $request->validated('date_preferred'),
+            ville: $request->validated('ville'),
+            address: $request->validated('address'),
             niveauUrgence: $request->validated('niveau_urgence'),
         );
     }
@@ -47,11 +49,10 @@ class OffreTravailDTO
             'titre' => $this->titre,
             'description' => $this->description,
             'budget_estime' => $this->budgetEstime,
-            'date_limite' => $this->dateLimite,
-            'type_remuneration' => $this->typeRemuneration,
+            'date_preferred' => $this->datePreferred,
             'niveau_urgence' => $this->niveauUrgence,
-            'statut' => $this->statut,
-            'is_completed' => $this->is_completed
+            'ville' => $this->ville,
+            'address' => $this->address
         ];
     }
 }

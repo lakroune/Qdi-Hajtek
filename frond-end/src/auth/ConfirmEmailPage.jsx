@@ -3,11 +3,11 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight, Shield, Clock, CheckCircle, XCircle, RefreshCw, Lock } from 'lucide-react';
 import Logo from '../components/logo/Logo';
 import axiosClient from "../api/axios-client";
+import toast from 'react-hot-toast';
 
 const EmailConfirmationPage = () => {
   const [code, setCode] = useState(['', '', '', '', '', '']);
   const [statut, setStatut] = useState('');
-  const [erreur, setErreur] = useState('');
   const [estEnTrainDeRenvoyer, setEstEnTrainDeRenvoyer] = useState(false);
   const [compteARebours, setCompteARebours] = useState(0);
 
@@ -19,7 +19,6 @@ const EmailConfirmationPage = () => {
     const newCode = [...code];
     newCode[index] = value.slice(-1);
     setCode(newCode);
-    setErreur('');
 
     if (value && index < 5) {
       inputsposition.current[index + 1].focus();
@@ -38,7 +37,7 @@ const EmailConfirmationPage = () => {
       await axiosClient.post('/renvoyer-email');
       setCompteARebours(60);
     } catch (error) {
-      setErreur("Impossible de renvoyer le code");
+      toast.error("Impossible de renvoyer le code");
     } finally {
       setEstEnTrainDeRenvoyer(false);
     }
@@ -46,8 +45,6 @@ const EmailConfirmationPage = () => {
 
   const verifierCode = async (e) => {
     e.preventDefault();
-    setStatut('en_cours');
-    setErreur('');
 
     try {
       const response = await axiosClient.post('/verifier-email', {
@@ -55,17 +52,17 @@ const EmailConfirmationPage = () => {
       });
 
       if (response.data.success) {
-        setStatut('succes');
+        toast.success("votre compte a bien verifier");
+        navigate('/auth/login');
+
       } else {
-        setStatut('');
-        setErreur(response.data.message || "Code invalide");
+        toast.error(response.data.message || "Code invalide");
       }
     } catch (error) {
-      setStatut('');
       if (error.response && error.response.data) {
-        setErreur(error.response.data.message || "Erreur de validation");
+        toast.error(error.response.data.message || "Erreur de validation");
       } else {
-        setErreur("Erreur de connexion au serveur");
+        toast.error("Erreur de connexion au serveur");
       }
     }
   };
@@ -77,22 +74,6 @@ const EmailConfirmationPage = () => {
     }
   }, [compteARebours]);
 
-  if (statut === 'succes') {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 p-6">
-        <div className="w-full max-w-md bg-white p-8  border border-gray-100 text-center  ">
-          <div className="w-20 h-20 bg-green-100   flex items-center justify-center mx-auto mb-6">
-            <CheckCircle className="w-10 h-10 text-green-600" />
-          </div>
-          <h2 className="text-[24px] font-bold text-[#1B4F72] mb-3">Email confirmé !</h2>
-          <p className="text-[13px] text-gray-600 mb-8">Votre compte est activé. Vous pouvez maintenant vous connecter.</p>
-          <Link to="/auth/login" className="w-full bg-[#1B4F72] hover:bg-[#D35400] text-white py-3 text-[13px] font-semibold flex items-center justify-center gap-2 transition-colors ">
-            Se connecter <ArrowRight className="w-4 h-4" />
-          </Link>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen flex">
@@ -136,11 +117,8 @@ const EmailConfirmationPage = () => {
               ))}
             </div>
 
-            {erreur && (
-              <div className="  text-red-600 text-[12px] flex items-center justify-center    ">
-                {erreur}
-              </div>
-            )}
+           
+
 
             <button
               type="submit"

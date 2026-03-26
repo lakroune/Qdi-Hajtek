@@ -13,7 +13,7 @@ class StroreOffreTravailRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return auth('api')->user()->hasEmailVerified() and auth('api')->user()->isActive();
     }
 
     /**
@@ -29,24 +29,38 @@ class StroreOffreTravailRequest extends FormRequest
             'titre' => 'required|string',
             'description' => 'required|string',
             'budget_estime' => 'required|numeric',
-            'date_limite' => 'required|date',
-            'type_remuneration' => 'required|in:prix_fixe,prix_heure',
+            'date_preferred' => 'required|date|after_or_equal:today',
             'niveau_urgence' => 'required|in:faible,moyen,urgent',
+            'ville' => 'required|string',
+            'address' => 'required|string',
+            'photos' => 'nullable|array|max:4',
+            'photos.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:1024',
         ];
     }
     public function messages()
     {
         return [
-            'service_id.required' => 'Le service est requis.',
-            'categorie_id.required' => 'La catégorie est requise.',
-            'titre.required' => 'Le titre est requis.',
-            'description.required' => 'La description est requise.',
-            'budget_estime.required' => 'Le budget estimé est requis.',
-            'date_limite.required' => 'La date limite est requise.',
-            'type_remuneration.required' => 'Le type de remuneration est requis.',
-            'niveau_urgence.required' => 'Le niveau d\'urgence est requis.',
-            'service_id.exists' => 'Le service n\'existe pas.',
-            'categorie_id.exists' => 'La catégorie n\'existe pas.',
+            'categorie_id.required' => 'category id is required',
+            'categorie_id.exists' => 'category id is not found',
+            'titre.required' => 'title is required',
+            'titre.string' => 'title must be a string',
+            'description.required' => 'description is required',
+            'description.string' => 'description must be a string',
+            'budget_estime.required' => 'budget is required',
+            'budget_estime.numeric' => 'budget must be a number',
+            'date_preferred.required' => 'date is required',
+            'date_preferred.date' => 'date must be a date',
+            'niveau_urgence.required' => 'urgency level is required',
+            'niveau_urgence.in' => 'urgency level must be faible, moyen or urgent',
+            'ville.required' => 'city is required',
+            'ville.string' => 'city must be a string',
+            'address.required' => 'address is required',
+            'address.string' => 'address must be a string',
+            'photos.array' => 'photos must be an array',
+            'photos.max' => 'photos must have a maximum of 4 elements',
+            'photos.*.image' => 'photos must be images',
+            'photos.*.mimes' => 'photos must be jpeg, png, jpg, gif',
+            'photos.*.max' => 'photos must have a maximum size of 1MB',
         ];
     }
 

@@ -59,7 +59,7 @@ class StorePropositionRequest extends FormRequest
             response()->json([
                 'success' => false,
                 'message' => 'Validation errors',
-                'data' => $validator->errors()
+                'errors' => $validator->errors()
             ], 422)
         );
     }
