@@ -15,7 +15,7 @@ use Illuminate\Queue\SerializesModels;
 class DemandeCreated implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-
+        
     /**
      * Create a new event instance.
      */

@@ -16,7 +16,7 @@ Artisan::command('start:dev', function () {
     Process::start('php artisan reverb:start');
 
     $this->comment('Starting Queue Worker...');
-    Process::start('php artisan queue:work');
+    // Process::start('php artisan queue:work');
 
     $this->comment('Starting Laravel Server: http://127.0.0.1:8000');
     Process::forever()->run('php artisan serve');

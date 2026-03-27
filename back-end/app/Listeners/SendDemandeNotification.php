@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\DemandeCreated;
+use App\Jobs\SendNewDemandeEmail;
 use App\Notifications\NewDemandeNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -23,6 +24,6 @@ class SendDemandeNotification
     public function handle(DemandeCreated $event): void
     {
         $demandeDirecte = $event->demandeDirecte;
-        $demandeDirecte->service->artisan->user->notify(new NewDemandeNotification($event->demandeDirecte));
+        SendNewDemandeEmail::dispatch($demandeDirecte);
     }
 }

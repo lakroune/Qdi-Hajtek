@@ -30,12 +30,12 @@ const Header = ({
   ];
 
   const liensArtisan = [
-    { nom: 'Tableau de bord', chemin: '/artisan/dashboard' },
-    { nom: 'Mes services', chemin: '/artisan/services' },
+    { nom: 'Tableau de bord', chemin: '/dashboard' },
+    { nom: 'Mes services', chemin: '/services' },
   ];
 
   const liensClient = [
-    { nom: 'Favoris', chemin: '/client/favorites' },
+    { nom: 'Favoris', chemin: '/favorites' },
   ];
 
   const obtenirLiensNav = () => {
