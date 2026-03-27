@@ -94,24 +94,11 @@ const ForgotPasswordPage = () => {
         </div>
       </div>
 
-      {/* Right Side - Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center bg-white p-6 lg:p-12">
         <div className="w-full max-w-md">
 
-          {/* Mobile Logo */}
-          <div className="lg:hidden mb-8 text-center">
-            <Link to="/" className="inline-flex items-center gap-3">
-              <div className="w-10 h-10 bg-[#D35400] flex items-center justify-center">
-                <span className="text-white font-bold text-[18px]">9</span>
-              </div>
-              <div className="text-left">
-                <span className="font-bold text-[#1B4F72] text-[16px]">di Hajtek</span>
-                <p className="text-[10px] text-gray-500">Services artisanaux</p>
-              </div>
-            </Link>
-          </div>
+           
 
-          {/* Back Link */}
           <Link 
             to="/auth/login" 
             className="inline-flex items-center gap-2 text-[11px] text-gray-500 hover:text-[#D35400] transition-colors mb-6"

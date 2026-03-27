@@ -1,20 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import {
     Briefcase, MapPin, DollarSign, Calendar,
-    Clock, Camera, X, CheckCircle,
-    AlertCircle, ArrowRight, Loader2
+     Camera, X, CheckCircle,
+    AlertCircle,  Loader2
 } from 'lucide-react';
 import Input from '../components/inputs/Input';
 import FileUpload from '../components/inputs/FileUpload';
 import Submit from '../components/buttons/Submit';
 import axiosClient from '../api/axios-client';
 import { toast } from 'react-hot-toast';
-import Select from '../components/selects/Select';
+import { useNavigate } from 'react-router-dom';
 const ClientAddJob = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [success, setSuccess] = useState(false);
     const [categories, setCategories] = useState([]);
     const [villes, setVilles] = useState([]);
+    const {navigate}=useNavigate();
     const [formData, setFormData] = useState({
         title: '',
         category: '',
@@ -87,7 +88,8 @@ const ClientAddJob = () => {
 
             if (response.data.success) {
                 setSuccess(true);
-                toast.success('Offre publiée !');
+                toast.success('Offre publiée avec sucesse');
+                navigate('/mes-offres');
             } else {
                 toast.error('Une erreur est survenue');
             }

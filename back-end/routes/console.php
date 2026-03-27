@@ -10,8 +10,14 @@ Artisan::command('inspire', function () {
 
 
 Artisan::command('start:dev', function () {
-    $this->info('Starting development services...');
+    $this->info(' stating all services...');
 
+    $this->comment('Starting Reverb...');
     Process::start('php artisan reverb:start');
+
+    $this->comment('Starting Queue Worker...');
+    Process::start('php artisan queue:work');
+
+    $this->comment('Starting Laravel Server: http://127.0.0.1:8000');
     Process::forever()->run('php artisan serve');
 })->purpose('Start all development services');

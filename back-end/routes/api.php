@@ -45,13 +45,16 @@ Route::middleware('auth:api')->group(function () {
     // mazal  potection artisan envoi lui meme
     Route::post('demandes-directes', [DemandeDirecteController::class, 'store']);
 
+    //   mazall  hta hadi potection ,
+    Route::get('offres/me', [OffreTravailController::class, 'mesOffres']);
+
     //mazal  potection artisan envoi lui meme 
     Route::apiResource('offres', OffreTravailController::class)->only('store', 'show', 'index');
-   
+
     //mazal hta hada 
     Route::post('offres/{offre}/propositions', [PropositionController::class, 'store']);
 
-//   
+
     Route::patch('propositions/{id}/accept', [PropositionController::class, 'accept']);
 
     Route::get('artisans/{artisan}/disponibilites', [DisponibiliteController::class, 'show']);

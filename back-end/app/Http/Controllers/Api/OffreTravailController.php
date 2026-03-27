@@ -76,4 +76,9 @@ class OffreTravailController extends Controller
     {
         //
     }
+
+    public function mesOffres()
+    {
+        return $this->offreTravailService->findByClient(auth()->user()->id);
+    }
 }

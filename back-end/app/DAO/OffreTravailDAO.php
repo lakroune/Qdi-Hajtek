@@ -50,7 +50,7 @@ class OffreTravailDAO
     }
     public function findByClient($id)
     {
-        return OffreTravail::where('client_id', $id)->get();
+        return OffreTravail::where('client_id', $id)->with('categorie', 'client.user')->get();
     }
     public function findByCategorie($id)
     {
