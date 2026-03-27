@@ -12,21 +12,9 @@ const ArtisanOffres = () => {
     const [filteredOffres, setFilteredOffres] = useState([]);
 
     const [search, setSearch] = useState('');
-    const [category, setCategory] = useState('');
+    const [filterByCategorie, setFilterByCategorie] = useState('');
 
-    const categories = [
-        { id: '', label: 'Toutes' },
-        { id: 'plomberie', label: 'Plomberie' },
-        { id: 'electricite', label: 'Électricité' },
-        { id: 'menuiserie', label: 'Menuiserie' },
-        { id: 'peinture', label: 'Peinture' },
-        { id: 'climatisation', label: 'Climatisation' },
-        { id: 'jardinage', label: 'Jardinage' },
-        { id: 'maconnerie', label: 'Maçonnerie' },
-        { id: 'serrurerie', label: 'Serrurerie' },
-        { id: 'demenagement', label: 'Déménagement' },
-        { id: 'menage', label: 'Ménage' }
-    ];
+    const [categories, setCategories] = useState([]);
 
 
     useEffect(() => {
@@ -35,6 +23,7 @@ const ArtisanOffres = () => {
             try {
                 const response = await axiosClient.get('/offres');
                 setOffres(response.data.offres.data);
+                setCategories(response.data.categories);
                 setIsLoading(false);
             } catch (error) {
 
@@ -44,27 +33,8 @@ const ArtisanOffres = () => {
 
     }, []);
 
-    useEffect(() => {
-        let result = offres;
 
-        if (search) {
-            result = result.filter(o =>
-                o.titre.toLowerCase().includes(search.toLowerCase()) ||
-                o.description.toLowerCase().includes(search.toLowerCase())
-            );
-        }
 
-        if (category) {
-            result = result.filter(o => o.category === category);
-        }
-
-        setFilteredOffres(result);
-    }, [search, category, offres]);
-
-    const clearFilters = () => {
-        setSearch('');
-        setCategory('');
-    };
 
     const badgeUrgence = (name) => {
         const tableUrgence = {
@@ -84,10 +54,10 @@ const ArtisanOffres = () => {
                 lightColor: 'bg-gray-100 text-gray-600 border-gray-200'
             }
         };
-        return tableUrgence[name] || tableUrgence.planned;
+        return tableUrgence[name] ;
     };
 
-    const hasFilters = search || category;
+
 
     return (
         <div className="min-h-screen bg-gray-100 mt-20 pb-8">
@@ -113,16 +83,16 @@ const ArtisanOffres = () => {
                         </div>
 
                         <select
-                            value={category}
-                            onChange={(e) => setCategory(e.target.value)}
+                            value={filterByCategorie}
+                            onChange={(e) => setFilterByCategorie(e.target.value)}
                             className="px-3 py-2 text-[12px] bg-gray-50 border border-gray-200   focus:border-[#D35400] focus:outline-none focus:ring-2 focus:ring-[#D35400]/20 w-36"
                         >
                             {categories.map(cat => (
-                                <option key={cat.id} value={cat.id}>{cat.label}</option>
+                                <option key={cat.id} value={cat.id}>{cat.nom_categorie}</option>
                             ))}
                         </select>
 
-                        {hasFilters && (
+                        {search && (
                             <button
                                 onClick={clearFilters}
                                 className="px-3 py-2 bg-gray-100 hover:bg-red-50 text-gray-500 hover:text-red-500   transition-colors"
@@ -141,7 +111,7 @@ const ArtisanOffres = () => {
                         <Loader2 className="w-10 h-10 text-[#1B4F72] animate-spin mb-3" />
                         <p className="text-[12px] text-gray-500">Chargement des offres...</p>
                     </div>
-                ) : filteredOffres.length === 0 ? (
+                ) : offres.length === 0 ? (
                     <div className="text-center py-20">
                         <div className="w-20 h-20    flex items-center justify-center mx-auto mb-4">
                             <Briefcase className="w-10 h-10 text-gray-400" />
@@ -157,7 +127,7 @@ const ArtisanOffres = () => {
                     </div>
                 ) : (
                     <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                        {filteredOffres.map((offre) => {
+                        {offres.map((offre) => {
                             const urgency = badgeUrgence(offre?.niveau_urgence);
                             return (
                                 <div
@@ -169,8 +139,8 @@ const ArtisanOffres = () => {
                                             {urgency.titre}
                                         </div>
 
-                                        <div className="h-24 bg-gradient-to-br from-[#1B4F72]/10 to-[#D35400]/10 flex items-center justify-center">
-                                            <Briefcase className="w-12 h-12 text-[#1B4F72]/30" />
+                                        <div className="h-16 bg-amber-200  hover:bg-amber-300 flex items-center justify-center">
+                                            <Briefcase className="w-12 h-12 text-[#1B4F72]/30  " />
                                         </div>
                                     </div>
 
@@ -195,17 +165,17 @@ const ArtisanOffres = () => {
                                         <div className="space-y-1.5">
                                             <div className="flex items-center gap-2 text-[11px] text-gray-600">
                                                 <MapPin className="w-3.5 h-3.5 text-gray-400" />
-                                                <span className="truncate">{offre.location}, {offre.address}</span>
+                                                <span className="truncate">{offre.ville}, {offre.address}</span>
                                             </div>
                                             <div className="flex items-center gap-2 text-[11px] text-gray-600">
                                                 <Calendar className="w-3.5 h-3.5 text-gray-400" />
                                                 <span>{new Date(offre.preferred_date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}</span>
                                             </div>
                                             <div>
-                                                <p className="text-[10px] text-gray-400 mb-0.5">Budget</p>
-                                                <p className="text-[14px] font-bold text-[#D35400]">
+                                                <span className="text-[10px] text-gray-400 mb-0.5">Budget</ span>
+                                                <span className="text-[14px] font-bold text-[#D35400] pl-2">
                                                     {offre.budget_estime.toLocaleString()} -   <span className="text-[10px]">DH</span>
-                                                </p>
+                                                </ span>
                                             </div>
                                         </div>
 
