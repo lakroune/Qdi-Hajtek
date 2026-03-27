@@ -108,9 +108,7 @@ const ClientListOffres = () => {
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div>
                             <h1 className="text-[22px] font-bold text-[#1B4F72]">Mes Offres</h1>
-                            <p className="text-[12px] text-gray-500 mt-1">
-                                {filteredJobs.length} offre{filteredJobs.length !== 1 ? 's' : ''} • Gérez vos demandes
-                            </p>
+                            
                         </div>
 
                         <a

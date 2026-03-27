@@ -13,7 +13,7 @@ class StorePropositionRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return auth('api')->user()->isActive() and auth('api')->user()->isArtisan() and auth('api')->user()->artisan->isVerified() and auth('api')->user()->hasEmailVerified();
     }
 
     /**

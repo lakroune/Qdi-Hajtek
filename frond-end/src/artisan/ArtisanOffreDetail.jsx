@@ -10,6 +10,7 @@ import axiosClient from '../api/axios-client';
 import Input from '../components/inputs/Input';
 import Submit from '../components/buttons/Submit';
 import SuccessModel from '../components/models/SuccessModel';
+import toast from 'react-hot-toast';
 
 const ArtisanOffreDetail = () => {
     const { id } = useParams();
@@ -28,6 +29,7 @@ const ArtisanOffreDetail = () => {
         duration: '',
         durationUnit: 'heures',
         message: '',
+        offre_id: id,
         startDate: ''
     });
 
@@ -81,19 +83,22 @@ const ArtisanOffreDetail = () => {
         return Object.keys(newErrors).length === 0;
     };
 
-    const handleSubmitProposition = async () => {
+    const faireProposition = async () => {
         if (!validateProposition()) return;
+
+        const formData = new FormData();
+        formData.append('prix_propose', proposition.price);
+        formData.append('delai_execution', proposition.duration);
+        formData.append('durationUnit', proposition.durationUnit);
+        formData.append('offre_travail_id', id);
+        formData.append('message_explicatif', proposition.message);
+        formData.append('date_disponibilite', proposition.startDate);
 
         setIsSubmitting(true);
         try {
-            await axiosClient.post(`/offres/${id}/propositions`, {
-                montant: proposition.price,
-                duree_estime: proposition.duration,
-                unite_duree: proposition.durationUnit,
-                message: proposition.message,
-                date_debut: proposition.startDate
-            });
-            setSuccess(true);
+            await axiosClient.post(`/offres/${id}/propositions`, formData);
+
+            toast.success('Proposition envoyée avec succès');
             setShowPropositionModal(false);
         } catch (error) {
             console.error('Submission error:', error);
@@ -216,7 +221,7 @@ const ArtisanOffreDetail = () => {
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                                 {offre.images.map((img, idx) => (
                                     <div key={idx} className="aspect-square bg-gray-100 border border-gray-200 overflow-hidden rounded">
-                                        <img src={getImageURL(img.image_url)} alt="offre" className="w-full h-full object-cover hover:scale-105 transition-transform" />
+                                        <img src={getImageURL(img.url)} alt="offre" className="w-full h-full object-cover hover:scale-105 transition-transform" />
                                     </div>
                                 ))}
                             </div>
@@ -313,7 +318,7 @@ const ArtisanOffreDetail = () => {
                                 </button>
                                 <Submit
                                     text="Envoyer"
-                                    onClick={handleSubmitProposition}
+                                    onClick={faireProposition}
                                     isLoading={isSubmitting}
                                     icon={Send}
                                     className="flex-1"

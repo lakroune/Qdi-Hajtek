@@ -47,7 +47,12 @@ Route::middleware('auth:api')->group(function () {
 
     //mazal  potection artisan envoi lui meme 
     Route::apiResource('offres', OffreTravailController::class)->only('store', 'show', 'index');
+   
+    //mazal hta hada 
+    Route::post('offres/{offre}/propositions', [PropositionController::class, 'store']);
 
+//   
+    Route::patch('propositions/{id}/accept', [PropositionController::class, 'accept']);
 
     Route::get('artisans/{artisan}/disponibilites', [DisponibiliteController::class, 'show']);
     Route::post('artisans/{artisan}/disponibilites', [DisponibiliteController::class, 'store']);
@@ -56,9 +61,6 @@ Route::middleware('auth:api')->group(function () {
 
 
 
-    Route::post('propositions', [PropositionController::class, 'store']);
-
-    Route::patch('propositions/{id}/accept', [PropositionController::class, 'accept']);
 
     Route::post('conversations/{id}/messages', [MessageController::class, 'store']);
     Route::get('conversations/{id}/messages', [MessageController::class, 'index']);
