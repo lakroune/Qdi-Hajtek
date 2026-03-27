@@ -3,7 +3,8 @@ import {
     Star, MapPin, Clock,
     Briefcase, Heart, Share2,
     ChevronLeft, ChevronRight,
-    X, MessageSquare, Calendar
+    X, MessageSquare, Calendar,
+    LoaderCircle
 } from 'lucide-react';
 import { useParams } from 'react-router-dom';
 import axiosClient from '../api/axios-client';
@@ -43,7 +44,9 @@ const ArtisanPortfolioPage = () => {
         setIsPopUpOpen(false);
     };
 
-    if (!artisan) return <div className="min-h-screen flex items-center justify-center">Chargement...</div>;
+    if (!artisan) {
+        return <div className="flex justify-center items-center h-screen"><LoaderCircle className="animate-spin w-12 h-12 text-[#D35400]" /></div>;
+    }
 
     const services = artisan?.artisan?.services || [];
     const reviews = artisan?.reviews || [];
@@ -187,11 +190,11 @@ const ArtisanPortfolioPage = () => {
                                 <div className="flex gap-1">
                                     <button
                                         onClick={() => setIsLiked(!isLiked)}
-                                        className={`p-2 border transition-colors ${isLiked ? 'border-[#D35400] bg-[#D35400]/10 text-[#D35400]' : 'border-gray-200 text-gray-400 hover:text-gray-600'}`}
+                                        className={`p-2  transition-colors ${isLiked ? '  text-[#D35400]' : 'border-gray-200 text-gray-400 hover:text-gray-600'}`}
                                     >
                                         <Heart className={`w-4 h-4 ${isLiked ? 'fill-current' : ''}`} />
                                     </button>
-                                    <button className="p-2 border border-gray-200 text-gray-400 hover:text-gray-600 transition-colors">
+                                    <button className="p-2  text-gray-400 hover:text-gray-600 transition-colors">
                                         <Share2 className="w-4 h-4" />
                                     </button>
                                 </div>
@@ -230,7 +233,7 @@ const ArtisanPortfolioPage = () => {
                                     <img
                                         src={BASE_URL + service.images[0]?.url}
                                         alt={service.titre}
-                                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                                        className="aspect-square w-full object-cover hover:opacity-80 transition-opacity cursor-pointer"
                                     />
                                     {service.images.length > 1 && (
                                         <span className="absolute bottom-2 right-2 px-2 py-1 bg-black/70 text-white text-[10px]">
