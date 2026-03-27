@@ -159,7 +159,7 @@ const ServiceDetail = () => {
                 </div>
 
                 <a
-                    href={`/artisan/${service.artisan.id}`}
+                    href={`/artisans/${service.artisan.id}`}
                     className="bg-white border border-gray-200 p-4 block hover:border-[#1B4F72] transition-all group"
                 >
                     <div className="flex items-start gap-3 mb-3">
