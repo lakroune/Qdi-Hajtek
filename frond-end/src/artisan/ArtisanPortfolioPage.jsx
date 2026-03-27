@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import {
-    Star, MapPin, Phone, Mail, Clock,
+    Star, MapPin, Clock,
     Briefcase, Heart, Share2,
     ChevronLeft, ChevronRight,
     X, MessageSquare, Calendar
 } from 'lucide-react';
+import { useParams } from 'react-router-dom';
+import axiosClient from '../api/axios-client';
 
 const ArtisanPortfolioPage = () => {
     const [activeTab, setActiveTab] = useState('portfolio');
@@ -17,6 +19,31 @@ const ArtisanPortfolioPage = () => {
         date: '',
         address: ''
     });
+
+
+    const { id } = useParams();
+
+
+
+    useEffect(() => {
+        const fetchArtisan = async () => {
+            try {
+                const response = await axiosClient.get(`/artisans/${id}`);
+                // setData(response.data);
+            } catch (error) {
+                console.error('Error fetching artisan:', error);
+            }
+
+        }
+        fetchArtisan();
+    }, [id]);
+
+
+
+
+
+
+
     const handleConfirmDemande = (e) => {
         e.preventDefault();
         console.log("Données envoyées:", requestData);

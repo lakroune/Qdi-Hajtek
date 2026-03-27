@@ -54,7 +54,9 @@ Route::middleware('auth:api')->group(function () {
     //mazal hta hada 
     Route::post('offres/{offre}/propositions', [PropositionController::class, 'store']);
 
-
+    //mazal  potection 
+    Route::get('artisans/{artisan}',[ArtisanController::class,'show']);
+    
     Route::patch('propositions/{id}/accept', [PropositionController::class, 'accept']);
 
     Route::get('artisans/{artisan}/disponibilites', [DisponibiliteController::class, 'show']);

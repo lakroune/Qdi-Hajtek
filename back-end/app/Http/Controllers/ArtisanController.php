@@ -7,9 +7,15 @@ use App\DTO\ArtisanRegistrationDTO;
 use App\Models\Artisan;
 use App\Http\Requests\StoreArtisanRequest;
 use App\Http\Requests\UpdateArtisanRequest;
+use App\Services\ArtisanService;
 
 class ArtisanController extends Controller
 {
+
+    public function __construct(private ArtisanService $artisanService)
+    {
+        // 
+    }
     /**
      * Display a listing of the resource.
      */
@@ -56,7 +62,12 @@ class ArtisanController extends Controller
      */
     public function show(Artisan $artisan)
     {
-        //
+        $artisan = $this->artisanService->getArtisan($artisan->id);
+        return response()->json([
+            'success' =>  $artisan ? true : false,
+            'message' => $artisan ? 'Artisan found successfully' : 'Artisan not found',
+            'data' => $artisan
+        ]);
     }
 
     /**
