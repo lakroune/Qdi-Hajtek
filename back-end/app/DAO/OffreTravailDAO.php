@@ -41,7 +41,7 @@ class OffreTravailDAO
 
     public function find($id)
     {
-        return OffreTravail::where('id', $id)->first();
+        return OffreTravail::with('images', 'categorie', 'client')->findOrFail($id);
     }
 
     public function getAll()

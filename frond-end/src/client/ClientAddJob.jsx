@@ -83,7 +83,7 @@ const ClientAddJob = () => {
 
         try {
             setIsLoading(true);
-            const response = await axiosClient.post('/offres-travail', data);
+            const response = await axiosClient.post('/offres', data);
 
             if (response.data.success) {
                 setSuccess(true);

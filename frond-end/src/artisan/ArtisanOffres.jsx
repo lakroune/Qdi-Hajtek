@@ -54,7 +54,7 @@ const ArtisanOffres = () => {
                 lightColor: 'bg-gray-100 text-gray-600 border-gray-200'
             }
         };
-        return tableUrgence[name] ;
+        return tableUrgence[name];
     };
 
 
@@ -94,7 +94,7 @@ const ArtisanOffres = () => {
 
                         {search && (
                             <button
-                                onClick={clearFilters}
+                                // onClick={() => setSearch('')}
                                 className="px-3 py-2 bg-gray-100 hover:bg-red-50 text-gray-500 hover:text-red-500   transition-colors"
                                 title="Réinitialiser"
                             >

@@ -45,8 +45,8 @@ Route::middleware('auth:api')->group(function () {
     // mazal  potection artisan envoi lui meme
     Route::post('demandes-directes', [DemandeDirecteController::class, 'store']);
 
-    //mazal  potection artisan envoi lui meme
-    Route::get('offres', [OffreTravailController::class, 'index']);
+    //mazal  potection artisan envoi lui meme 
+    Route::apiResource('offres', OffreTravailController::class)->only('store', 'show', 'index');
 
 
     Route::get('artisans/{artisan}/disponibilites', [DisponibiliteController::class, 'show']);
@@ -56,7 +56,6 @@ Route::middleware('auth:api')->group(function () {
 
 
 
-    Route::apiResource('offres-travail', OffreTravailController::class)->only('store');
     Route::post('propositions', [PropositionController::class, 'store']);
 
     Route::patch('propositions/{id}/accept', [PropositionController::class, 'accept']);

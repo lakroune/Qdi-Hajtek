@@ -13,7 +13,8 @@ class OffreTravailController extends Controller
 {
 
     public function __construct(
-        private OffreTravailService $offreTravailService, private CategorieService $categorieService
+        private OffreTravailService $offreTravailService,
+        private CategorieService $categorieService
     ) {
         // 
     }
@@ -41,8 +42,8 @@ class OffreTravailController extends Controller
 
         $offreTravail = $this->offreTravailService->createOffreTravail($dto, $photos);
         return response()->json([
-            'success' => true,
-            'message' => 'Offre de travail created successfully',
+            'success' => $offreTravail ? true : false,
+            'message' =>  $offreTravail ? 'Offre de travail created successfully' : 'Offre de travail not created',
             'data' => $offreTravail
         ]);
     }
@@ -52,7 +53,12 @@ class OffreTravailController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $offreTravail = $this->offreTravailService->findOffreTravail($id);
+        return response()->json([
+            'success' => $offreTravail ? true : false,
+            'message' =>  $offreTravail ? 'Offre de travail fetched successfully' : 'Offre de travail not found',
+            'data' => $offreTravail
+        ]);
     }
 
     /**
