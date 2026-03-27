@@ -33,12 +33,11 @@ const ArtisanOffreDetail = () => {
 
     // Config Urgence (Matching Database Values)
     const urgencyConfig = {
-        urgent: { label: 'Urgent', color: 'bg-red-100 text-red-700 border-red-200' },
-        moyen: { label: 'Standard', color: 'bg-blue-100 text-blue-700 border-blue-200' },
-        bas: { label: 'Planifié', color: 'bg-gray-100 text-gray-700 border-gray-200' }
+        urgent: { label: 'Urgent', color: ' text-red-700  ' },
+        moyen: { label: 'Standard', color: ' text-blue-700  ' },
+        bas: { label: 'Planifié', color: ' text-gray-700  ' }
     };
 
-    // Fetch Data
     useEffect(() => {
         const fetchOffre = async () => {
             try {
@@ -52,21 +51,58 @@ const ArtisanOffreDetail = () => {
         };
         if (id) fetchOffre();
     }, [id]);
+
+
+
+
     const getImageURL = (imagePath) => {
         if (!imagePath) return null;
         let cleanPath = imagePath.replace(/\\/g, '');
 
         return `http://127.0.0.1:8000/storage/${cleanPath}`;
     };
+
+
+
     const updateField = (field, value) => {
         setProposition(prev => ({ ...prev, [field]: value }));
         if (errors[field]) setErrors(prev => ({ ...prev, [field]: null }));
     };
 
-   
-   
+    const validateProposition = () => {
+        const newErrors = {};
+        if (!proposition.price || proposition.price <= 0) newErrors.price = 'Prix requis';
+        if (!proposition.duration || proposition.duration <= 0) newErrors.duration = 'Durée requise';
+        if (!proposition.startDate) newErrors.startDate = 'Date de début requise';
+        if (!proposition.message.trim()) newErrors.message = 'Message requis';
+        if (proposition.message.length < 20) newErrors.message = 'Minimum 20 caractères';
 
-    // Loading View
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
+    const handleSubmitProposition = async () => {
+        if (!validateProposition()) return;
+
+        setIsSubmitting(true);
+        try {
+            await axiosClient.post(`/offres/${id}/propositions`, {
+                montant: proposition.price,
+                duree_estime: proposition.duration,
+                unite_duree: proposition.durationUnit,
+                message: proposition.message,
+                date_debut: proposition.startDate
+            });
+            setSuccess(true);
+            setShowPropositionModal(false);
+        } catch (error) {
+            console.error('Submission error:', error);
+            setErrors({ api: "Une erreur est survenue lors de l'envoi." });
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
     if (isLoading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -75,7 +111,6 @@ const ArtisanOffreDetail = () => {
         );
     }
 
-    // Success View
     if (success) {
         return (
             <SuccessModel
@@ -88,7 +123,6 @@ const ArtisanOffreDetail = () => {
 
     return (
         <div className="min-h-screen bg-gray-50 pt-10">
-            {/* Header */}
             <div className="bg-white border-b border-gray-200 sticky top-0 z-10">
                 <div className="w-[95%] max-w-5xl mx-auto px-4 py-4 flex items-center gap-3">
                     <button onClick={() => navigate(-1)} className="p-2 hover:bg-gray-100 transition-colors">
@@ -103,30 +137,39 @@ const ArtisanOffreDetail = () => {
 
             {/* Content */}
             <div className="w-[95%] max-w-5xl mx-auto px-4 py-6 space-y-6">
-                <div className="bg-white border border-gray-200 p-6 space-y-6 shadow-sm">
+                <div className="bg-white p-6 ">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div>
+
+                            <h2 className="text-[20px] font-bold text-[#1B4F72] leading-tight">{offre.titre}</h2>
                             <div className="flex items-center gap-2 mb-2">
-                                <span className={`px-2 py-1 text-[10px] font-medium border ${urgencyConfig[offre.niveau_urgence]?.color}`}>
-                                    {urgencyConfig[offre.niveau_urgence]?.label}
-                                </span>
+
                                 <span className="text-[11px] text-gray-500 flex items-center gap-1">
                                     <Briefcase className="w-3 h-3" />
                                     {offre.categorie?.nom_categorie}
                                 </span>
+                                <span className={`px-2 py-1 text-[10px] font-medium   ${urgencyConfig[offre.niveau_urgence]?.color}`}>
+                                    {urgencyConfig[offre.niveau_urgence]?.label}
+                                </span>
                             </div>
-                            <h2 className="text-[20px] font-bold text-[#1B4F72] leading-tight">{offre.titre}</h2>
-                            <p className="text-[12px] text-gray-500">Client ID: {offre.client_id}</p>
+                            <p className="text-[12px] text-gray-500">Client:
+                                <span className="font-bold">
+                                    {offre.client?.user?.lastname} {offre.client?.user?.firstname}
+                                </span>
+                                <span className="font-italic">
+                                    {offre.created_at ? `(${new Date(offre.created_at).toLocaleDateString('fr-FR')})` : ''}
+                                </span>
+                            </p>
                         </div>
                         <button
                             onClick={() => setShowPropositionModal(true)}
-                            className="px-6 py-3 bg-[#D35400] hover:bg-[#1B4F72] text-white text-[13px] font-bold transition-all shadow-md"
+                            className="px-6 py-3 bg-[#D35400] hover:bg-[#1B4F72] text-white text-[13px] font-bold transition-colors"
                         >
                             Faire une proposition
                         </button>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-3 gap-4">
                         <div className="bg-gray-50 p-4 border border-gray-100">
                             <div className="flex items-center gap-2 text-gray-500 mb-1">
                                 <DollarSign className="w-4 h-4" />
@@ -143,15 +186,16 @@ const ArtisanOffreDetail = () => {
                                 {new Date(offre.preferred_date).toLocaleDateString('fr-FR')}
                             </p>
                         </div>
-                    </div>
-
-                    <div className="flex items-start gap-3 p-4 bg-blue-50/30 border border-blue-100">
-                        <MapPin className="w-5 h-5 text-[#1B4F72] flex-shrink-0 mt-0.5" />
-                        <div>
-                            <p className="text-[13px] font-medium text-[#1B4F72]">Ville ID: {offre.ville}</p>
-                            <p className="text-[12px] text-gray-500 mt-0.5">{offre.address}</p>
+                        <div className="flex items-start gap-3 p-4 bg-blue-50/30 border border-blue-100">
+                            <MapPin className="w-5 h-5 text-[#1B4F72] flex-shrink-0 mt-0.5" />
+                            <div>
+                                <p className="text-[13px] font-medium text-[#1B4F72]"> {offre.ville}</p>
+                                <p className="text-[12px] text-gray-500 mt-0.5">{offre.address}</p>
+                            </div>
                         </div>
                     </div>
+
+
 
                     <div>
                         <h3 className="text-[13px] font-bold text-[#1B4F72] mb-2 flex items-center gap-2">
