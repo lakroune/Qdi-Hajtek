@@ -54,9 +54,9 @@ class OffreTravailService
         return $this->offreTravailDAO->find($id);
     }
 
-    public function findAllOffreTravail()
+    public function getAllOffreTravail()
     {
-        return $this->offreTravailDAO->findAll();
+        return $this->offreTravailDAO->getAll();
     }
 
     public function findByClient($id)

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\DTO\OffreTravailDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StroreOffreTravailRequest;
+use App\Services\CategorieService;
 use App\Services\OffreTravailService;
 use Illuminate\Http\Request;
 
@@ -12,7 +13,7 @@ class OffreTravailController extends Controller
 {
 
     public function __construct(
-        private OffreTravailService $offreTravailService
+        private OffreTravailService $offreTravailService, private CategorieService $categorieService
     ) {
         // 
     }
@@ -21,7 +22,12 @@ class OffreTravailController extends Controller
      */
     public function index()
     {
-        //
+        return [
+            'success' => true,
+            'message' => 'Offre de travail fetched successfully',
+            'offres' => $this->offreTravailService->getAllOffreTravail(),
+            'categories' => $this->categorieService->listActiveCategories()
+        ];
     }
 
     /**

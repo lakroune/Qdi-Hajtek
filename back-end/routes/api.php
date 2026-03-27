@@ -45,6 +45,9 @@ Route::middleware('auth:api')->group(function () {
     // mazal  potection artisan envoi lui meme
     Route::post('demandes-directes', [DemandeDirecteController::class, 'store']);
 
+    //mazal  potection artisan envoi lui meme
+    Route::get('offres', [OffreTravailController::class, 'index']);
+
 
     Route::get('artisans/{artisan}/disponibilites', [DisponibiliteController::class, 'show']);
     Route::post('artisans/{artisan}/disponibilites', [DisponibiliteController::class, 'store']);

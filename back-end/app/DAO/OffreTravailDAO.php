@@ -44,9 +44,9 @@ class OffreTravailDAO
         return OffreTravail::where('id', $id)->first();
     }
 
-    public function findAll()
+    public function getAll()
     {
-        return OffreTravail::all();
+        return OffreTravail::with('categorie')->paginate(10);
     }
     public function findByClient($id)
     {

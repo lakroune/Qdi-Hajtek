@@ -20,7 +20,7 @@ const MessagesPage = () => {
 
                 const mappedData = response.data.data.map(conv => ({
                     id: conv.id,
-                    subject: conv.subject || "بدون عنوان",
+                    subject: conv.subject || " sujet inconnu",
                     type: conv.conversable_type ? conv.conversable_type.split('\\').pop() : 'General',
                     time: conv.last_message_at ? new Date(conv.last_message_at).toLocaleTimeString('ar-MA', {
                         hour: '2-digit',
@@ -64,6 +64,7 @@ const MessagesPage = () => {
                             {loading ? (
                                 <p className="text-center text-[11px] mt-4">Chargement...</p>
                             ) : filteredConversations.map((conv) => (
+
                                 <Link
                                     key={conv.id}
                                     to={`/messages/${conv.id}`}
@@ -96,6 +97,10 @@ const MessagesPage = () => {
                                     </div>
                                 </Link>
                             ))}
+                            {filteredConversations.length === 0 && !loading && (
+                                <p className="text-center text-[11px] mt-4">Aucune conversation trouvée</p>
+                            )}
+
                         </div>
                     </div>
 

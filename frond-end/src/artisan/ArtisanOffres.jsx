@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, use } from 'react';
 import {
     Briefcase, MapPin, DollarSign, Calendar,
     Search, Star, User, X, ArrowRight, Loader2, Eye,
     Camera, Clock
 } from 'lucide-react';
+import axiosClient from '../api/axios-client';
 
 const ArtisanOffres = () => {
     const [isLoading, setIsLoading] = useState(true);
@@ -27,99 +28,20 @@ const ArtisanOffres = () => {
         { id: 'menage', label: 'Ménage' }
     ];
 
+
     useEffect(() => {
-        setTimeout(() => {
-            const mockOffres = [
-                {
-                    id: 1,
-                    title: "Réparation fuite d'eau urgente salle de bain",
-                    category: "plomberie",
-                    categoryLabel: "Plomberie",
-                    description: "J'ai une fuite d'eau importante sous le lavabo...",
-                    urgency: "urgent",
-                    budgetMin: 300,
-                    budgetMax: 600,
-                    preferredDate: "2025-03-15",
-                    location: "Casablanca",
-                    address: "Maarif",
-                    createdAt: "Il y a 2 heures",
-                    client: { name: "Ahmed B.", rating: 4.8, jobs: 12 },
-                    proposalsCount: 3,
-                    hasPhoto: true
-                },
-                {
-                    id: 2,
-                    title: "Installation électrique complète appartement",
-                    category: "electricite",
-                    categoryLabel: "Électricité",
-                    description: "Refaire l'installation électrique d'un appartement de 80m²...",
-                    urgency: "planned",
-                    budgetMin: 8000,
-                    budgetMax: 12000,
-                    preferredDate: "2025-04-01",
-                    location: "Rabat",
-                    address: "Agdal",
-                    createdAt: "Il y a 5 heures",
-                    client: { name: "Fatima Z.", rating: 4.9, jobs: 5 },
-                    proposalsCount: 0,
-                    hasPhoto: false
-                },
-                {
-                    id: 3,
-                    title: "Menuiserie: Porte sur mesure en bois massif",
-                    category: "menuiserie",
-                    categoryLabel: "Menuiserie",
-                    description: "Besoin d'une porte en bois massif sur mesure...",
-                    urgency: "standard",
-                    budgetMin: 2500,
-                    budgetMax: 4000,
-                    preferredDate: "2025-03-20",
-                    location: "Casablanca",
-                    address: "Ain Diab",
-                    createdAt: "Il y a 1 jour",
-                    client: { name: "Karim M.", rating: 4.5, jobs: 8 },
-                    proposalsCount: 1,
-                    hasPhoto: true
-                },
-                {
-                    id: 4,
-                    title: "Peinture salon et chambre 40m²",
-                    category: "peinture",
-                    categoryLabel: "Peinture",
-                    description: "Repeindre 2 pièces, environ 40m² au total...",
-                    urgency: "standard",
-                    budgetMin: 1500,
-                    budgetMax: 2500,
-                    preferredDate: "2025-03-25",
-                    location: "Marrakech",
-                    address: "Gueliz",
-                    createdAt: "Il y a 1 jour",
-                    client: { name: "Sara L.", rating: 4.7, jobs: 3 },
-                    proposalsCount: 5,
-                    hasPhoto: false
-                },
-                {
-                    id: 5,
-                    title: "Climatisation: Installation de 2 splits",
-                    category: "climatisation",
-                    categoryLabel: "Climatisation",
-                    description: "Installation de 2 splits dans un salon et une chambre...",
-                    urgency: "urgent",
-                    budgetMin: 4000,
-                    budgetMax: 6000,
-                    preferredDate: "2025-03-16",
-                    location: "Casablanca",
-                    address: "Sidi Maarouf",
-                    createdAt: "Il y a 3 heures",
-                    client: { name: "Youssef A.", rating: 4.6, jobs: 15 },
-                    proposalsCount: 0,
-                    hasPhoto: true
-                }
-            ];
-            setOffres(mockOffres);
-            setFilteredOffres(mockOffres);
-            setIsLoading(false);
-        }, 1000);
+
+        const fetchOffres = async () => {
+            try {
+                const response = await axiosClient.get('/offres');
+                setOffres(response.data.offres.data);
+                setIsLoading(false);
+            } catch (error) {
+
+            }
+        }
+        fetchOffres();
+
     }, []);
 
     useEffect(() => {
@@ -127,7 +49,7 @@ const ArtisanOffres = () => {
 
         if (search) {
             result = result.filter(o =>
-                o.title.toLowerCase().includes(search.toLowerCase()) ||
+                o.titre.toLowerCase().includes(search.toLowerCase()) ||
                 o.description.toLowerCase().includes(search.toLowerCase())
             );
         }
@@ -144,25 +66,25 @@ const ArtisanOffres = () => {
         setCategory('');
     };
 
-    const getUrgencyConfig = (urgency) => {
-        const configs = {
+    const badgeUrgence = (name) => {
+        const tableUrgence = {
             urgent: {
-                label: 'Urgent',
+                titre: 'Urgent',
                 color: 'bg-red-500 text-white',
                 lightColor: 'bg-red-50 text-red-600 border-red-200'
             },
-            standard: {
-                label: 'Standard',
+            moyen: {
+                titre: 'Standard',
                 color: 'bg-blue-500 text-white',
                 lightColor: 'bg-blue-50 text-blue-600 border-blue-200'
             },
-            planned: {
-                label: 'Planifié',
+            faible: {
+                titre: 'Planifié',
                 color: 'bg-gray-500 text-white',
                 lightColor: 'bg-gray-100 text-gray-600 border-gray-200'
             }
         };
-        return configs[urgency] || configs.planned;
+        return tableUrgence[name] || tableUrgence.planned;
     };
 
     const hasFilters = search || category;
@@ -236,15 +158,15 @@ const ArtisanOffres = () => {
                 ) : (
                     <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                         {filteredOffres.map((offre) => {
-                            const urgency = getUrgencyConfig(offre.urgency);
+                            const urgency = badgeUrgence(offre?.niveau_urgence);
                             return (
                                 <div
                                     key={offre.id}
                                     className="bg-white     hover:  border border-gray-100 transition-all duration-300 overflow-hidden group"
                                 >
                                     <div className="relative">
-                                        <div className={`absolute top-3 left-3 px-2.5 py-1   text-[10px] font-bold uppercase tracking-wide ${urgency.color}`}>
-                                            {urgency.label}
+                                        <div className={`absolute top-3 left-3 px-2.5 py-1  ${urgency.color}  text-[10px] font-bold uppercase tracking-wide  `}>
+                                            {urgency.titre}
                                         </div>
 
                                         <div className="h-24 bg-gradient-to-br from-[#1B4F72]/10 to-[#D35400]/10 flex items-center justify-center">
@@ -255,17 +177,17 @@ const ArtisanOffres = () => {
                                     <div className="p-4 space-y-3">
 
                                         <div className="flex items-center justify-between">
-                                            <span className="text-[11px] text-[#D35400] font-medium bg-orange-50 px-2 py-1  ">
-                                                {offre.categoryLabel}
+                                            <span className="text-[11px] text-[#D35400] font-medium  px-2 py-1  ">
+                                                {offre?.categorie?.nom_categorie}
                                             </span>
                                             <span className="text-[10px] text-gray-400 flex items-center gap-1">
                                                 <Clock className="w-3 h-3" />
-                                                {offre.createdAt}
+                                                {offre.updated_at && new Date(offre.updated_at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
                                             </span>
                                         </div>
 
                                         <h2 className="text-[14px] font-bold text-gray-800 leading-snug line-clamp-2 group-hover:text-[#1B4F72] transition-colors">
-                                            {offre.title}
+                                            {offre.titre}
                                         </h2>
 
 
@@ -277,12 +199,12 @@ const ArtisanOffres = () => {
                                             </div>
                                             <div className="flex items-center gap-2 text-[11px] text-gray-600">
                                                 <Calendar className="w-3.5 h-3.5 text-gray-400" />
-                                                <span>{new Date(offre.preferredDate).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}</span>
+                                                <span>{new Date(offre.preferred_date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}</span>
                                             </div>
                                             <div>
                                                 <p className="text-[10px] text-gray-400 mb-0.5">Budget</p>
                                                 <p className="text-[14px] font-bold text-[#D35400]">
-                                                    {offre.budgetMin.toLocaleString()} - {offre.budgetMax.toLocaleString()} <span className="text-[10px]">DH</span>
+                                                    {offre.budget_estime.toLocaleString()} -   <span className="text-[10px]">DH</span>
                                                 </p>
                                             </div>
                                         </div>
