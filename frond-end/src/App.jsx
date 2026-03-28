@@ -102,7 +102,7 @@ function App() {
 
 
         <Route path="/admin" element={<AdminLayout />}>
-          <Route element={<ProtectedRoute roles={['admin']} />}>
+          {/* <Route element={<ProtectedRoute roles={['admin']} />}> */}
             <Route index element={<DashboardHome />} />
             <Route path='reports' element={<ReportsManagement />} />
             <Route path='reviews' element={<ReviewsManagement />} />
@@ -112,7 +112,7 @@ function App() {
             <Route path='jobs' element={<JobsManagement />} />
             <Route path='categories' element={<ManageCategories />} />
           </Route>
-        </Route>
+        {/* </Route> */}
 
 
 
