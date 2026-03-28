@@ -136,25 +136,24 @@ const ServicesManagement = () => {
 
 
             {selectedService && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 overflow-y-auto">
+                <div className="fixed inset-0 z-50 flex items-center justify-center   bg-black/50 overflow-y-auto">
                     <div className="bg-white w-full max-w-4xl my-8 border border-gray-200">
 
 
-                        <div className="p-4 border-b border-gray-200 flex items-center justify-between sticky top-0 bg-white">
+                        <div className="p-4 border-b border-gray-200 flex items-center justify-between  sticky top-0 z-10 bg-white">
                             <div>
 
                                 <h3 className="text-[16px] font-bold text-[#1B4F72]">{selectedService.titre}</h3>
-                                <p className="text-[11px] text-gray-500">#{selectedService.id}</p>
                             </div>
                             <button onClick={() => setSelectedService(null)} className="p-2 text-gray-400 hover:text-[#D35400]">
                                 <XCircle className="w-6 h-6" />
                             </button>
                         </div>
 
-                        <div className="grid lg:grid-cols-2 gap-0">
-                            <div className="p-4 space-y-4 border-r border-gray-200">
+                        <div className="grid lg:grid-cols-2 gap-0 mt-[140px] p-2">
+                            <div className="p-8 space-y-4 border-r border-gray-200">
                                 <div className="space-y-2">
-                                    <div className="h-64 bg-gray-100 relative">
+                                    <div className="aspect-[4/3] bg-gray-100 relative">
 
                                         {selectedService.images?.[0]?.url ? (
                                             <img
@@ -180,19 +179,18 @@ const ServicesManagement = () => {
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-3">
-                                    <div className="bg-[#D35400]/10 p-3 border border-[#D35400]/20">
+                                    <div className="  p-1 ">
                                         <p className="text-[10px] text-gray-500">Tarif</p>
 
                                         <p className="text-[20px] font-bold text-[#D35400]">{selectedService.tarif} DH</p>
                                         <p className="text-[11px] text-gray-600">/{selectedService.type_tarif}</p>
                                     </div>
-                                    <div className="bg-gray-50 p-3 border border-gray-200">
+                                    <div className=" p-2 ">
                                         <p className="text-[10px] text-gray-500">Durée estimée</p>
 
-                                        <p className="text-[14px] font-semibold text-[#1B4F72]">{selectedService.estimation_duree} h</p>
+                                        <p className="text-[14px] font-semibold text-[#1B4F72]">{selectedService.estimation_duree} Heurs</p>
                                     </div>
                                 </div>
-
                                 <div className="space-y-2 text-[11px]">
                                     <div className="flex justify-between py-2 border-b border-gray-100">
                                         <span className="text-gray-500">Matériaux</span>
@@ -211,11 +209,17 @@ const ServicesManagement = () => {
                                             {selectedService.artisan?.is_verified ? 'Vérifié ✓' : 'Non vérifié'}
                                         </span>
                                     </div>
+                                    <div className="flex justify-between py-2 border-b border-gray-100">
+                                        <span className="text-gray-500">date de création</span>
+
+                                        <span className="font-medium text-[#1B4F72]">
+                                            {selectedService.created_at ? new Date(selectedService.created_at).toLocaleDateString() : '—'}                                        </span>
+                                    </div>
                                 </div>
                             </div>
 
 
-                            <div className="p-4 space-y-4">
+                            <div className="p-5 space-y-1 ">
 
 
                                 <div className={`p-3 border ${selectedService.is_active ? 'bg-green-50 border-green-200' : 'bg-gray-50 border-gray-200'}`}>
@@ -288,27 +292,14 @@ const ServicesManagement = () => {
                                     </div>
 
 
-                                    {selectedService.artisan?.bio && (
-                                        <div className="mt-3 p-3 bg-gray-50 border border-gray-200">
-                                            <p className="text-[11px] text-gray-600 italic">"{selectedService.artisan.bio}"</p>
-                                        </div>
-                                    )}
 
 
-                                    <div className="mt-3">
-                                        <p className="text-[10px] text-gray-500 mb-2">Documents vérifiés :</p>
-                                        <div className="flex flex-wrap gap-2">
-                                            {['CIN', 'Attestation métier'].map((doc) => (
-                                                <span key={doc} className="px-2 py-1 bg-[#1B4F72]/10 text-[10px] text-[#1B4F72]">
-                                                    {doc}
-                                                </span>
-                                            ))}
-                                        </div>
-                                    </div>
+
+
                                 </div>
 
 
-                                <div className="border border-gray-200 p-4">
+                                <div className="  p-4">
                                     <h4 className="text-[12px] font-bold text-[#1B4F72] mb-2">Description du service</h4>
 
                                     <p className="text-[12px] text-gray-700 leading-relaxed">{selectedService.description}</p>
