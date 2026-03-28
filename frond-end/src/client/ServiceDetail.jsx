@@ -3,7 +3,9 @@ import {
     ArrowLeft, Heart, MapPin, Star, Clock, Shield,
     MessageSquare, Calendar, X, ChevronLeft, ChevronRight,
     ArrowRight,
-    LoaderCircle
+    LoaderCircle,
+    Link,
+    DollarSign
 } from 'lucide-react';
 import axiosClient from '../api/axios-client';
 import { useParams } from 'react-router-dom';
@@ -98,7 +100,7 @@ const ServiceDetail = () => {
 
                 <div className="bg-white border border-gray-200 overflow-hidden">
 
-                    <div className="grid grid-cols-3 gap-0 border-t border-gray-200">
+                    <div className="grid lg:grid-cols-6 md:grid-cols-4 sm:grid-cols-3 grid-cols-2 gap-0 border-t border-gray-200">
                         {service.images.map((img, i) => (
                             <div key={i} className="aspect-square bg-gray-100 border-r border-gray-200 last:border-r-0 cursor-pointer" onClick={() => { setImgIdx(i); setSelectedImg(i); }}>
                                 <img src={`${STORAGE_URL}${img.url}`} alt="" className={`w-full h-full object-cover ${imgIdx === i ? 'opacity-100' : 'opacity-60 hover:opacity-100'}`} />
@@ -107,32 +109,50 @@ const ServiceDetail = () => {
                     </div>
                 </div>
 
-                <div className="bg-white border border-gray-200 p-4 flex items-center justify-between">
-                    <div>
-                        <p className="text-[11px] text-gray-500">{service.type_tarif}</p>
-                        <p className="text-[24px] font-bold text-[#D35400]">{service.tarif} DH</p>
-                    </div>
-                    <button
-                        onClick={() => setShowDemand(true)}
-                        className="px-5 py-3 bg-[#1B4F72] hover:bg-[#D35400] text-white text-[13px] font-bold transition-colors"
-                    >
-                        Demander maintenant
-                    </button>
-                </div>
+
 
                 <div className="bg-white border border-gray-200 p-4">
                     <div className="flex items-center gap-2 text-[11px] text-gray-500 mb-3 pb-3 border-b border-gray-100">
-                        <span className="uppercase tracking-wide">{service.categorie.nom_categorie}</span>
+
+                        <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                                <h3 className="text-[15px] font-bold text-gray-800 group-hover:text-[#1B4F72] transition-colors"> <a href={`/artisans/${service.artisan.user.id}`}>  {service.artisan.user.firstname} {service.artisan.user.lastname}  </ a></h3>
+                                <p className="text-[12px] text-[#D35400] font-medium">{service.artisan.specialite}</p>
+                            </div>
+                            <div className="flex items-center gap-3 mt-2">
+                                <div className="flex items-center gap-1">
+                                    <Star className="w-3.5 h-3.5 text-yellow-500 fill-yellow-500" />
+                                    <span className="text-[12px] font-bold text-gray-700">{service.artisan.note}</span>
+                                </div>
+                                <span className="text-gray-300">|</span>
+                                <span className="uppercase tracking-wide">{service.categorie.nom_categorie}</span>
+                            </div>
+                        </div>
+
+                        <button
+                            onClick={() => setShowDemand(true)}
+                            className=" py-2 px-4 bg-[#1B4F72] hover:bg-[#D35400] text-white text-[11px] font-bold transition-colors"
+                        >
+                            Demander maintenant
+                        </button>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div className="md:col-span-2">
-                            <h2 className="text-[14px] font-bold text-[#1B4F72] mb-2">À propos de ce service</h2>
+                            <h2 className="text-[14px] font-bold text-[#1B4F72] mb-2">À propos de ce service  <span className=' text-[9px] '> {new Date(service.created_at).toLocaleDateString('fr-FR') }</span></h2>
+                           
                             <p className="text-[13px] text-gray-600 leading-relaxed">
                                 {service.description}
                             </p>
                         </div>
                         <div className="space-y-2">
+                            <div className="flex items-center gap-2 p-2 bg-gray-50">
+                                <DollarSign className="w-4 h-4 text-[#D35400]" />
+                                <div>
+                                    <p className="text-[10px] text-gray-500">Prix</p>
+                                    <p className="text-[12px] font-bold text-gray-700">{service.tarif} DH <span>/ {service.type_tarif} </span></p>
+                                </div>
+                            </div>
                             <div className="flex items-center gap-2 p-2 bg-gray-50">
                                 <Clock className="w-4 h-4 text-[#D35400]" />
                                 <div>
@@ -158,33 +178,7 @@ const ServiceDetail = () => {
                     </div>
                 </div>
 
-                <a
-                    href={`/artisans/${service.artisan.id}`}
-                    className="bg-white border border-gray-200 p-4 block hover:border-[#1B4F72] transition-all group"
-                >
-                    <div className="flex items-start gap-3 mb-3">
-                        <div className="w-14 h-14 bg-[#1B4F72] flex items-center justify-center text-white text-[20px] font-bold group-hover:bg-[#D35400] transition-colors">
-                            <img src={`${STORAGE_URL}${service.artisan.user.client?.avastar ?? 'https://placehold.co/150x150/1B4F72/ffffff?text=A'}`} alt="" className="w-full h-full object-cover" />
-                        </div>
-                        <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-1">
-                                <h3 className="text-[15px] font-bold text-gray-800 group-hover:text-[#1B4F72] transition-colors">{service.artisan.user.firstname} {service.artisan.user.lastname}</h3>
-                                <p className="text-[11px] text-[#D35400] font-medium">{service.artisan.specialite}</p>
-                            </div>
-                            <div className="flex items-center gap-3 mt-2">
-                                <div className="flex items-center gap-1">
-                                    <Star className="w-3.5 h-3.5 text-yellow-500 fill-yellow-500" />
-                                    <span className="text-[12px] font-bold text-gray-700">{service.artisan.note}</span>
-                                </div>
-                                <span className="text-gray-300">|</span>
-                                <span className="text-[11px] text-gray-500">{service.artisan.is_verified ? 'Vérifié' : 'Non vérifié'}</span>
-                            </div>
-                        </div>
-                        <ArrowRight className="w-5 h-5 text-gray-300 group-hover:text-[#D35400] transition-colors" />
-                    </div>
-                    <p className="text-[12px] text-gray-600 leading-relaxed">{service.artisan.bio}</p>
 
-                </a>
 
             </div>
 

@@ -15,7 +15,7 @@ import Input from '../components/inputs/Input';
 import FileUpload from '../components/inputs/FileUpload';
 import Submit from '../components/buttons/Submit';
 import axiosClient from '../api/axios-client';
-
+import { toast } from 'react-hot-toast';
 const PageParametres = () => {
     const [ongletActif, setOngletActif] = useState('profil');
     const [chargement, setChargement] = useState(false);
@@ -159,8 +159,9 @@ const PageParametres = () => {
             const response = await axiosClient.patch('/profile', formData);
 
             if (response.status === 200) {
-                setMessageSucces('Votre profil a été mis à jour avec succès !');
-                // setDonneesUtilisateur(response.data.user);
+                toast.success('Votre profil a été mis à jour avec succès !');
+            } else {
+                toast.error('Une erreur est survenue lors de la mise à jour du profil');
             }
         } catch (error) {
             console.error('Erreur lors de la mise à jour du profil');
@@ -175,8 +176,7 @@ const PageParametres = () => {
 
         }
         setChargement(true);
-        setMessageSucces('');
-        setMessageErreur('');
+       
 
         try {
             const response = await axiosClient.put('/profile/update-password', {
@@ -188,7 +188,7 @@ const PageParametres = () => {
 
             if (response.status === 200) {
                 if (response.data.success) {
-                    setMessageSucces(response.data.message);
+                    toast.success(response.data.message);
                     setDonneesSecurite({
                         motDePasseActuel: '',
                         nouveauMotDePasse: '',
@@ -196,11 +196,11 @@ const PageParametres = () => {
                     });
                 }
                 else {
-                    setMessageErreur(response.data.message);
+                    toast.error(response.data.message);
                 }
             }
         } catch (error) {
-            console.error('Erreur lors de la mise à jour du mot de passe', error);
+            console.error('Erreur lors de la mise à jour du mot de passe');
         } finally {
             setChargement(false);
         }
@@ -209,8 +209,7 @@ const PageParametres = () => {
     const becomeArtisanSave = async (e) => {
         e.preventDefault();
 
-        setMessageSucces('');
-        setMessageErreur('');
+       
 
         // Validation
         if (!formulaireArtisan.specialite || !formulaireArtisan.experience || !formulaireArtisan.description) {
@@ -286,19 +285,7 @@ const PageParametres = () => {
                     <p className="text-[11px] text-gray-500 mt-1">Gérez vos informations et devenez artisan</p>
                 </div>
 
-                {messageSucces && (
-                    <div className="mb-4 p-3 border border-green-200 bg-green-50 flex items-center gap-2 text-green-700 text-[12px]">
-                        <CheckCircle className="w-4 h-4" />
-                        {messageSucces}
-                    </div>
-                )}
 
-                {messageErreur && (
-                    <div className="mb-4 p-3 border border-red-200 bg-red-50 flex items-center gap-2 text-red-700 text-[12px]">
-                        <XCircle className="w-4 h-4" />
-                        {messageErreur}
-                    </div>
-                )}
 
                 <div className="grid lg:grid-cols-4 gap-4">
                     <div className="lg:col-span-1">

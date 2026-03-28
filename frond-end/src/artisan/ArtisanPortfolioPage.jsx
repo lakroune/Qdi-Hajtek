@@ -4,9 +4,10 @@ import {
     Briefcase, Heart, Share2,
     ChevronLeft, ChevronRight,
     X, MessageSquare, Calendar,
-    LoaderCircle
+    LoaderCircle,
+    Eye
 } from 'lucide-react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import axiosClient from '../api/axios-client';
 
 const ArtisanPortfolioPage = () => {
@@ -66,82 +67,7 @@ const ArtisanPortfolioPage = () => {
         setCurrentImageIndex((prev) => (prev - 1 + currentServiceImages.length) % currentServiceImages.length);
     };
 
-    const PopUpDemander = ({ service }) => {
-        if (!isPopUpOpen) return null;
 
-        return (
-            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-                <div className="bg-white w-full max-w-md shadow-2xl border border-gray-200">
-                    <div className="flex items-center justify-between p-4 border-b border-gray-100">
-                        <div>
-                            <h3 className="text-[14px] font-bold text-[#1B4F72]">Nouvelle Demande</h3>
-                            <p className="text-[10px] text-[#D35400] font-medium">{service?.titre}</p>
-                        </div>
-                        <button onClick={() => setIsPopUpOpen(false)} className="p-1 hover:bg-gray-100 rounded-full transition-colors">
-                            <X className="w-5 h-5 text-gray-400" />
-                        </button>
-                    </div>
-
-                    <form onSubmit={handleConfirmDemande} className="p-5 space-y-4">
-                        <div className="space-y-1">
-                            <label className="text-[11px] font-bold text-[#1B4F72] flex items-center gap-1.5">
-                                <MessageSquare className="w-3.5 h-3.5" /> Description du problème
-                            </label>
-                            <textarea
-                                required
-                                className="w-full border border-gray-200 p-3 text-[12px] focus:outline-none focus:border-[#D35400] bg-gray-50 min-h-[100px]"
-                                placeholder="Détaillez votre besoin ici..."
-                                value={requestData.description}
-                                onChange={(e) => setRequestData({ ...requestData, description: e.target.value })}
-                            />
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-1">
-                                <label className="text-[11px] font-bold text-[#1B4F72] flex items-center gap-1.5">
-                                    <Calendar className="w-3.5 h-3.5" /> Date souhaitée
-                                </label>
-                                <input
-                                    type="date"
-                                    required
-                                    className="w-full border border-gray-200 p-2 text-[12px] focus:outline-none focus:border-[#D35400] bg-gray-50"
-                                    onChange={(e) => setRequestData({ ...requestData, date: e.target.value })}
-                                />
-                            </div>
-                            <div className="space-y-1">
-                                <label className="text-[11px] font-bold text-[#1B4F72] flex items-center gap-1.5">
-                                    <MapPin className="w-3.5 h-3.5" /> Votre Ville
-                                </label>
-                                <input
-                                    type="text"
-                                    required
-                                    placeholder="ex: Casablanca"
-                                    className="w-full border border-gray-200 p-2 text-[12px] focus:outline-none focus:border-[#D35400] bg-gray-50"
-                                    onChange={(e) => setRequestData({ ...requestData, address: e.target.value })}
-                                />
-                            </div>
-                        </div>
-
-                        <div className="flex gap-2 pt-2">
-                            <button
-                                type="button"
-                                onClick={() => setIsPopUpOpen(false)}
-                                className="flex-1 py-2.5 border border-gray-200 text-[12px] font-medium text-gray-600 hover:bg-gray-50"
-                            >
-                                Annuler
-                            </button>
-                            <button
-                                type="submit"
-                                className="flex-1 py-2.5 bg-[#1B4F72] text-white text-[12px] font-bold hover:bg-[#154360] shadow-md transition-all active:scale-95"
-                            >
-                                Confirmer la Demande
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        );
-    };
 
     return (
         <div className="min-h-screen bg-white">
@@ -242,9 +168,9 @@ const ArtisanPortfolioPage = () => {
                                     )}
                                 </div>
 
-                                {service.images.length > 1 && (
+                                {service.images.length > 0 && (
                                     <div className="flex gap-1 p-2 border-t border-gray-100">
-                                        {service.images.slice(1, 4).map((img, idx) => (
+                                        {service.images.slice(0, 5).map((img, idx) => (
                                             <div key={idx} className="w-16 h-16 flex-shrink-0 border border-gray-200 overflow-hidden">
                                                 <img
                                                     src={BASE_URL + img?.url}
@@ -277,12 +203,12 @@ const ArtisanPortfolioPage = () => {
                                             {service.tarif} MAD
                                             <span className="text-[10px] text-gray-400 ml-1">/ {service.type_tarif}</span>
                                         </p>
-                                        <button
+                                        <Link
+                                            to={`/services/${service.id}`}
                                             className="px-4 py-2 bg-[#1B4F72] text-white text-[11px] font-medium hover:bg-[#154360] transition-colors"
-                                            onClick={() => { setIsPopUpOpen(true); setData(service); }}
                                         >
-                                            Demander
-                                        </button>
+                                            <Eye className="w-4 h-4 " />
+                                        </Link>
                                     </div>
                                 </div>
                             </div>
@@ -349,7 +275,7 @@ const ArtisanPortfolioPage = () => {
                 </div>
             )}
 
-            <PopUpDemander service={data} />
+
         </div>
     );
 };
