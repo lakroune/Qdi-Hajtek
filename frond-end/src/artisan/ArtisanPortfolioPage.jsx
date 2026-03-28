@@ -5,7 +5,8 @@ import {
     ChevronLeft, ChevronRight,
     X, MessageSquare, Calendar,
     LoaderCircle,
-    Eye
+    Eye,
+    LocateFixed
 } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
 import axiosClient from '../api/axios-client';
@@ -110,6 +111,17 @@ const ArtisanPortfolioPage = () => {
                                             <MapPin className="w-3 h-3" />
                                             {artisan.city}
                                         </span>
+                                        <span className="text-gray-300">|</span>
+                                        <span className="flex items-center gap-0.5">
+                                            <LocateFixed className="w-3 h-3" />
+                                            {artisan?.artisan?.rayon_action} km
+                                        </span>
+
+                                    </div>
+                                    <div>
+                                        <p className="text-[11px] text-gray-600 mt-2">
+                                            {artisan?.artisan?.bio}
+                                        </p>
                                     </div>
                                 </div>
 

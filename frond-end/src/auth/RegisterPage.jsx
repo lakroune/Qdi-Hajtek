@@ -208,7 +208,7 @@ const RegisterPage = () => {
                                     >
                                         <option value="">choisissez votre ville</option>
                                         {villes.map((ville) => (
-                                            <option key={ville.id} value={ville.id}>
+                                            <option key={ville.id} value={ville.ville}>
                                                 {ville.ville}
                                             </option>
                                         ))}
