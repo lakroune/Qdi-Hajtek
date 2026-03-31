@@ -34,7 +34,7 @@ Route::post('/categories', [CategorieController::class, 'store']);
 Route::get('artisans/{artisan}', [ArtisanController::class, 'show']);
 Route::get('artisans', [ArtisanController::class, 'index']);
 Route::patch('/artisans/{userId}/approve', [ArtisanController::class, 'approve']);
-
+Route::post('/artisans/{user}/reject', [ArtisanController::class, 'reject']);
 
 
 

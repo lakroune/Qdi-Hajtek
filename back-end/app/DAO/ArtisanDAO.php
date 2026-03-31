@@ -70,4 +70,13 @@ class ArtisanDAO
             return $user->artisan->update(['is_verified' => true]);
         });
     }
+
+    public function rejectArtisan(int $artisanId)
+    {
+        return  DB::transaction(function () use ($artisanId) {
+            $user =  User::where('id', $artisanId)->first();
+            $user->removeRole('artisan');
+            return $user->artisan->delete();
+        });
+    }
 }

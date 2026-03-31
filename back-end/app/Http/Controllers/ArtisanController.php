@@ -100,4 +100,14 @@ class ArtisanController extends Controller
             'data' => $artisan
         ]);
     }
+    // reject
+    public function reject(int $artisanId)
+    {
+        $artisan = $this->artisanService->rejectArtisan($artisanId);
+        return response()->json([
+            'success' =>  $artisan ? true : false,
+            'message' => $artisan ? 'Artisan rejected successfully' : 'Artisan not found',
+            'data' => $artisan
+        ]);
+    }
 }

@@ -1,6 +1,6 @@
 $kind: http-request
 name: add category
-url: http://127.0.0.1:8000/api/categorie
+url: http://127.0.0.1:8000/api/categories
 method: POST
 headers:
   Authorization: "{{token-g}}"
@@ -8,7 +8,7 @@ body:
   type: json
   content: "{\r
 
-    \    \"nom_categorie\": \"Pslsoambseise\",\r
+    \    \"nom_categorie\": \"Ploambie\",\r
 
     \    \"description\": \"Tous les services liés à la tuyauterie et
     robinetterie\",\r

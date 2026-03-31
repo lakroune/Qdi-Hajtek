@@ -117,8 +117,60 @@ const ArtisanRequests = () => {
         }
     };
 
-    const onReject = async (id) => {
-        console.log("Reject artisan ID:", id);
+    const onReject = async (userId) => {
+        const { value: reason, isConfirmed } = await Swal.fire({
+            title: 'Rejeter la demande',
+            input: 'textarea',
+            inputLabel: 'Raison du rejet',
+            inputPlaceholder: 'Expliquez pourquoi la demande est rejetée...',
+            inputAttributes: {
+                'aria-label': 'Expliquez pourquoi la demande est rejetée'
+            },
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#gray',
+            confirmButtonText: 'Confirmer le rejet',
+            cancelButtonText: 'Annuler',
+            inputValidator: (value) => {
+                if (!value) {
+                    return 'Vous devez spécifier une raison !';
+                }
+            }
+        });
+
+        if (isConfirmed && reason) {
+            try {
+                Swal.fire({
+                    title: 'Traitement en cours...',
+                    allowOutsideClick: false,
+                    didOpen: () => { Swal.showLoading(); }
+                });
+                const response = await axiosClient.post(`/artisans/${userId}/reject`, {
+                    reason: reason
+                });
+
+                if (response.status === 200) {
+                    setArtisans(prev => prev.filter(user => user.id !== userId));
+
+                    if (selectedRequest?.id === userId) setSelectedRequest(null);
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Rejeté',
+                        text: "La demande a été rejetée et l'artisan sera notifié.",
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                }
+            } catch (error) {
+                console.error(error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erreur',
+                    text: "Une erreur est survenue lors du rejet."
+                });
+            }
+        }
     };
 
     return (

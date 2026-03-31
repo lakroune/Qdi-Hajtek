@@ -29,4 +29,9 @@ class ArtisanService
     {
         return $this->artisanDAO->approveArtisan($artisanId);
     }
+
+    public function rejectArtisan(int $artisanId)
+    {
+        return $this->artisanDAO->rejectArtisan($artisanId);
+    }
 }
