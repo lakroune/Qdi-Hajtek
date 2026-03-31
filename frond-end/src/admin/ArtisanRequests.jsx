@@ -65,7 +65,7 @@ const ArtisanRequests = () => {
         );
     };
 
- 
+
     const openRejectModal = (userId) => {
         setRejectingId(userId);
         setRejectReason('');
@@ -130,7 +130,8 @@ const ArtisanRequests = () => {
     return (
 
 
-        <div className="space-y-4 max-h-screen">
+        <div className="bg-gray-50 w-full max-h-[85vh] ">
+            {/* Approuver l'artisan */}
             {isApproveModalOpen && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
                     <div className="bg-white w-full max-w-sm border border-gray-200 shadow-xl">
@@ -168,6 +169,7 @@ const ArtisanRequests = () => {
                     </div>
                 </div>
             )}
+            {/* Reject Modal */}
             {isRejectModalOpen && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
                     <div className="bg-white w-full max-w-sm border border-gray-200 shadow-xl">
@@ -211,48 +213,51 @@ const ArtisanRequests = () => {
                     </div>
                 </div>
             )}
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-[18px] font-bold text-[#1B4F72]">Demandes Artisan</h1>
-                </div>
-                <div className="flex items-center gap-2">
-                    <div className="relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                        <input
-                            type="text"
-                            placeholder="Rechercher..."
-                            className="pl-9 pr-4 py-2 text-[12px] border border-gray-200 focus:border-[#1B4F72] focus:outline-none w-48"
-                        />
+            {/* Header */}
+            <div className='sticky  -top-3 z-50 bg-white px-1 py-1 p-4   '>
+                <div className="flex items-center justify-between gap-2">
+                    <div>
+                        <h1 className="text-[18px] font-bold text-[#1B4F72]">Demandes Artisan</h1>
                     </div>
-                    <select
-                        value={filter}
-                        onChange={(e) => setFilter(e.target.value)}
-                        className="px-3 py-2 text-[12px] border border-gray-200 focus:border-[#1B4F72] focus:outline-none bg-white"
-                    >
-                        <option value="all">Toutes</option>
-                        <option value="pending">En attente</option>
-                        <option value="approved">Approuvées</option>
-                    </select>
+                    <div className="flex items-center gap-2">
+                        <div className="relative">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                            <input
+                                type="text"
+                                placeholder="Rechercher..."
+                                className="pl-9 pr-4 py-2 text-[12px] border border-gray-200 focus:border-[#1B4F72] focus:outline-none w-48"
+                            />
+                        </div>
+                        <select
+                            value={filter}
+                            onChange={(e) => setFilter(e.target.value)}
+                            className="px-3 py-2 text-[12px] border border-gray-200 focus:border-[#1B4F72] focus:outline-none bg-white"
+                        >
+                            <option value="all">Toutes</option>
+                            <option value="pending">En attente</option>
+                            <option value="approved">Approuvées</option>
+                        </select>
+                    </div>
                 </div>
-            </div>
 
-            <div className="grid grid-cols-4 bg-amber-50 rounded-lg gap-4">
-                {[
-                    { label: 'Total', value: artisans.length, color: 'bg-[#1B4F72]' },
-                    { label: 'En attente', value: artisans.filter(a => !a.artisan?.is_verified).length, color: 'bg-yellow-500' },
-                    { label: 'Approuvées', value: artisans.filter(a => a.artisan?.is_verified).length, color: 'bg-green-500' },
-                    { label: 'Rejetées', value: 0, color: 'bg-red-500' },
-                ].map((stat) => (
-                    <div key={stat.label} className="bg-white border rounded-lg border-gray-200 p-3 flex items-center gap-3">
-                        <div className={`w-10 h-10 ${stat.color} flex items-center justify-center rounded-full`}>
-                            <User className="w-5 h-5 text-white" />
+                <div className="grid grid-cols-4 p-2  gap-4">
+                    {[
+                        { label: 'Total', value: artisans.length, color: 'bg-[#1B4F72]' },
+                        { label: 'En attente', value: artisans.filter(a => !a.artisan?.is_verified).length, color: 'bg-yellow-500' },
+                        { label: 'Approuvées', value: artisans.filter(a => a.artisan?.is_verified).length, color: 'bg-green-500' },
+                        { label: 'Rejetées', value: 0, color: 'bg-red-500' },
+                    ].map((stat) => (
+                        <div key={stat.label} className="bg-white border rounded-lg border-gray-200 p-3 flex items-center gap-3">
+                            <div className={`w-10 h-10 ${stat.color} flex items-center justify-center rounded-full`}>
+                                <User className="w-5 h-5 text-white" />
+                            </div>
+                            <div>
+                                <p className="text-[18px] font-bold text-[#1B4F72]">{stat.value}</p>
+                                <p className=" hidden lg:block text-[10px] text-gray-500">{stat.label}</p>
+                            </div>
                         </div>
-                        <div>
-                            <p className="text-[18px] font-bold text-[#1B4F72]">{stat.value}</p>
-                            <p className=" hidden lg:block text-[10px] text-gray-500">{stat.label}</p>
-                        </div>
-                    </div>
-                ))}
+                    ))}
+                </div>
             </div>
 
             <div className="bg-white border border-gray-200">
@@ -270,7 +275,7 @@ const ArtisanRequests = () => {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100">
-                            {artisans.length === 0 ? (
+                            {isloading ? (
                                 <tr>
                                     <td colSpan="7" className="px-4 py-10 text-center">
                                         <div className="flex flex-col items-center justify-center gap-2">
@@ -315,6 +320,14 @@ const ArtisanRequests = () => {
                                     </td>
                                 </tr>
                             ))}
+
+                            {!isloading && filteredArtisans.length === 0 && (
+                                <tr>
+                                    <td colSpan="7" className="px-4 py-10 text-center">
+                                        <p className="text-[12px] text-gray-500">Aucune demande d'artisan trouvée.</p>
+                                    </td>
+                                </tr>
+                            )}
                         </tbody>
                     </table>
                 </div>
