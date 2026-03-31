@@ -89,4 +89,15 @@ class ArtisanController extends Controller
     {
         //
     }
+
+
+    public function approve(int $artisanId)
+    {
+        $artisan = $this->artisanService->approveArtisan($artisanId);
+        return response()->json([
+            'success' =>  $artisan ? true : false,
+            'message' => $artisan ? 'Artisan approved successfully' : 'Artisan not found',
+            'data' => $artisan
+        ]);
+    }
 }

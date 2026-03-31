@@ -2,11 +2,13 @@ import React, { useEffect, useState } from 'react';
 import {
     User, Search, CheckCircle, XCircle, Eye,
     FileText, Clock, MapPin, Phone, Mail,
-    
-    CircleAlertIcon
+
+    CircleAlertIcon,
+    CircleAlert
 } from 'lucide-react';
 import axiosClient from '../api/axios-client';
-
+import toast from 'react-hot-toast';
+import Swal from 'sweetalert2';
 const ArtisanRequests = () => {
     const [selectedRequest, setSelectedRequest] = useState(null);
     const [filter, setFilter] = useState('pending');
@@ -59,8 +61,60 @@ const ArtisanRequests = () => {
         );
     };
 
-    const onApprove = async (id) => {
-        console.log("Approve artisan ID:", id);
+
+    const onApprove = async (userId) => {
+        const result = await Swal.fire({
+            title: 'Approuver l\'artisan ?',
+            text: "Voulez-vous vraiment confirmer l'inscription de cet artisan ?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#1B4F72',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Oui, approuver',
+            cancelButtonText: 'Annuler',
+            reverseButtons: true
+        });
+
+        if (result.isConfirmed) {
+            try {
+                Swal.fire({
+                    title: 'Traitement en cours...',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                const response = await axiosClient.patch(`/artisans/${userId}/approve`);
+
+                if (response.status === 200) {
+                    setArtisans(prev =>
+                        prev.map(user =>
+                            user.id === userId
+                                ? { ...user, artisan: { ...user.artisan, is_verified: true } }
+                                : user
+                        )
+                    );
+
+                    if (selectedRequest?.id === userId) setSelectedRequest(null);
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Approuvé !',
+                        text: "L'artisan a été approuvé avec succès.",
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                }
+            } catch (error) {
+                console.error(error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erreur',
+                    text: "Une erreur est survenue lors de l'opération."
+                });
+            }
+        }
     };
 
     const onReject = async (id) => {
@@ -128,7 +182,16 @@ const ArtisanRequests = () => {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100">
-                            {isloading ? <CircleAlertIcon className="w-6 h-6 text-[#1B4F72] animate-spin" /> : filteredArtisans.map((user) => (
+                            {artisans.length === 0 ? (
+                                <tr>
+                                    <td colSpan="7" className="px-4 py-10 text-center">
+                                        <div className="flex flex-col items-center justify-center gap-2">
+                                            <CircleAlert className="w-6 h-6 text-[#1B4F72] animate-spin" />
+                                            <p className="text-[12px] text-gray-500">Chargement des données...</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ) : filteredArtisans.map((user) => (
                                 <tr key={user.id} className="hover:bg-gray-50">
                                     <td className="px-4 py-3">
                                         <div className="flex items-center gap-2">
@@ -249,7 +312,7 @@ const ArtisanRequests = () => {
                                                 className="flex items-center gap-1 text-[10px] text-[#D35400] hover:underline"
                                             >
                                                 <Eye className="w-3.5 h-3.5" />
-                                                
+
                                             </a>
                                         </div>
                                     ))}

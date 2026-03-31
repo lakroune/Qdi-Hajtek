@@ -24,4 +24,9 @@ class ArtisanService
     {
         return $this->artisanDAO->getArtisans();
     }
+
+    public function approveArtisan(int $artisanId)
+    {
+        return $this->artisanDAO->approveArtisan($artisanId);
+    }
 }

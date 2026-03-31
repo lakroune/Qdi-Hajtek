@@ -61,4 +61,13 @@ class ArtisanDAO
     {
         return User::with('artisan.documents', 'client')->whereHas('artisan')->get();
     }
+
+    public function approveArtisan(int $artisanId)
+    {
+        return    DB::transaction(function () use ($artisanId) {
+            $user =  User::where('id', $artisanId)->first();
+            $user->assignRole('artisan');
+            return $user->artisan->update(['is_verified' => true]);
+        });
+    }
 }
