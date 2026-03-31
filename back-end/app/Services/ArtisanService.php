@@ -19,4 +19,9 @@ class ArtisanService
     {
         return $this->artisanDAO->getArtisan($artisanId);
     }
+
+    public function getArtisans()
+    {
+        return $this->artisanDAO->getArtisans();
+    }
 }

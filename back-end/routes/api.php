@@ -24,6 +24,23 @@ Route::get('/villes', function () {
 
 Route::get('/categories', [CategorieController::class, 'index']);
 Route::post('/categories', [CategorieController::class, 'store']);
+
+
+
+
+
+
+
+Route::get('artisans/{artisan}', [ArtisanController::class, 'show']);
+Route::get('artisans', [ArtisanController::class, 'index']);
+
+
+
+
+
+
+
+
 Route::middleware('auth:api')->group(function () {
 
     Route::post('verifier-email', [AuthController::class, 'verifierEmail']);
@@ -55,8 +72,9 @@ Route::middleware('auth:api')->group(function () {
     Route::post('offres/{offre}/propositions', [PropositionController::class, 'store']);
 
     //mazal  potection 
-    Route::get('artisans/{artisan}',[ArtisanController::class,'show']);
-    
+
+
+
     Route::patch('propositions/{id}/accept', [PropositionController::class, 'accept']);
 
     Route::get('artisans/{artisan}/disponibilites', [DisponibiliteController::class, 'show']);

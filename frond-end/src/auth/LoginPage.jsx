@@ -45,8 +45,15 @@ const LoginPage = () => {
         sameSite: 'strict'
       });
       Cookies.set('USER_DATA', JSON.stringify(response.data.user), { expires: 7 });
+      response.data.user.roles.forEach(role => {
+        if (role.name === 'admin') {
+          navigate('/admin');
+        }
+      })
       navigate('/');
-      console.log(response.data.user);
+    } else {
+      setEstEnChargement(false);
+      setErreur(response.data.message);
     }
     setEstEnChargement(false);
 

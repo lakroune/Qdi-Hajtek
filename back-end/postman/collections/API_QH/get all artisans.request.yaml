@@ -1,0 +1,7 @@
+$kind: http-request
+name: get all artisans
+url: http://127.0.0.1:8000/api/artisans
+method: GET
+auth:
+  type: noauth
+order: 12886

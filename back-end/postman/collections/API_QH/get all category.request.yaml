@@ -5,4 +5,4 @@ method: GET
 headers:
   Authorization: "{{token-g}}"
 examples: .resources/get all category.resources/examples
-order: 7575
+order: 7000

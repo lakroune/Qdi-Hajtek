@@ -21,7 +21,11 @@ class ArtisanController extends Controller
      */
     public function index()
     {
-        //
+        $artisans = $this->artisanService->getArtisans();
+        return response()->json([
+            'message' => 'Artisans found successfully',
+            'data' => $artisans
+        ]);
     }
 
     /**

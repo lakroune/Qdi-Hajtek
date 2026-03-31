@@ -56,4 +56,9 @@ class ArtisanDAO
     {
         return User::with('artisan.services.images', 'client')->where('id', $artisanId)->get();
     }
+
+    public function getArtisans()
+    {
+        return User::with('artisan.documents', 'client')->whereHas('artisan')->get();
+    }
 }

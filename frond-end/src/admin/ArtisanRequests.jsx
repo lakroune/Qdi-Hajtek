@@ -1,75 +1,47 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     User, Search, CheckCircle, XCircle, Eye,
-    FileText, Star, Clock, MapPin, Phone, Mail,
-    Download, MoreHorizontal
+    FileText, Clock, MapPin, Phone, Mail,
+    
+    CircleAlertIcon
 } from 'lucide-react';
-
+import axiosClient from '../api/axios-client';
 
 const ArtisanRequests = () => {
     const [selectedRequest, setSelectedRequest] = useState(null);
     const [filter, setFilter] = useState('pending');
+    const [artisans, setArtisans] = useState([]);
+    const [isloading, setIsLoading] = useState(true);
 
-    const requests = [
-        {
-            id: 1,
-            firstName: 'Smail',
-            lastName: 'lakhdhar',
-            email: 'smail@email.com',
-            phone: '+212 6 12 34 56 78',
-            specialty: 'Électricité',
-            experience: '5-10 ans',
-            city: 'Safi',
-            submittedAt: '2026-03-15 09:30',
-            status: 'pending',
-            documents: {
-                cinFront: 'cin_front.pdf',
-                cinBack: 'cin_back.pdf',
-                diplomas: ['diplome.pdf'],
-                certificates: ['attestation_1.pdf', 'attestation_2.pdf']
-            },
-            bio: 'Électricien professionnel avec plus de 7 ans d\'expérience dans le bâtiment et l\'industrie.'
-        }, {
-            id: 1,
-            firstName: 'Smail',
-            lastName: 'lakhdhar',
-            email: 'smail@email.com',
-            phone: '+212 6 12 34 56 78',
-            specialty: 'Électricité',
-            experience: '5-10 ans',
-            city: 'Safi',
-            submittedAt: '2026-03-15 09:30',
-            status: 'pending',
-            documents: {
-                cinFront: 'cin_front.pdf',
-                cinBack: 'cin_back.pdf',
-                diplomas: ['diplome.pdf'],
-                certificates: ['attestation_1.pdf', 'attestation_2.pdf']
-            },
-            bio: 'Électricien professionnel avec plus de 7 ans d\'expérience dans le bâtiment et l\'industrie.'
-        }, {
-            id: 1,
-            firstName: 'Smail',
-            lastName: 'lakhdhar',
-            email: 'smail@email.com',
-            phone: '+212 6 12 34 56 78',
-            specialty: 'Électricité',
-            experience: '5-10 ans',
-            city: 'Safi',
-            submittedAt: '2026-03-15 09:30',
-            status: 'pending',
-            documents: {
-                cinFront: 'cin_front.pdf',
-                cinBack: 'cin_back.pdf',
-                diplomas: ['diplome.pdf'],
-                certificates: ['attestation_1.pdf', 'attestation_2.pdf']
-            },
-            bio: 'Électricien professionnel avec plus de 7 ans d\'expérience dans le bâtiment et l\'industrie.'
-        },
+    useEffect(() => {
+        const fetchArtisans = async () => {
+            try {
+                const response = await axiosClient.get('/artisans');
+                setArtisans(response.data.data);
+            } catch (error) {
+                console.error('Error fetching artisans:', error);
+            }
+            finally {
+                setIsLoading(false);
+            }
+        };
+        fetchArtisans();
+    }, []);
 
-    ];
+    const filteredArtisans = artisans.filter(artisan => {
+        if (filter === 'all') return true;
+        if (filter === 'pending') return artisan.artisan?.is_verified === false || artisan.artisan?.is_verified === 0;
+        if (filter === 'approved') return artisan.artisan?.is_verified === true || artisan.artisan?.is_verified === 1;
+        return true;
+    });
+    const getImageUrl = (imagePath) => {
+        if (!imagePath) return null;
+        const cleanPath = imagePath.replace(/^\//, '');
+        return `http://127.0.0.1:8000/storage/${cleanPath}`;
+    };
 
-    const getStatusBadge = (status) => {
+    const getStatusBadge = (isVerified) => {
+        const status = isVerified ? 'approved' : 'pending';
         const styles = {
             pending: 'bg-yellow-100 text-yellow-700 border-yellow-200',
             approved: 'bg-green-100 text-green-700 border-green-200',
@@ -85,6 +57,14 @@ const ArtisanRequests = () => {
                 {labels[status]}
             </span>
         );
+    };
+
+    const onApprove = async (id) => {
+        console.log("Approve artisan ID:", id);
+    };
+
+    const onReject = async (id) => {
+        console.log("Reject artisan ID:", id);
     };
 
     return (
@@ -110,18 +90,16 @@ const ArtisanRequests = () => {
                         <option value="all">Toutes</option>
                         <option value="pending">En attente</option>
                         <option value="approved">Approuvées</option>
-                        <option value="rejected">Rejetées</option>
                     </select>
                 </div>
             </div>
 
-            {/* Stats */}
             <div className="grid grid-cols-4 bg-amber-50 rounded-lg gap-4">
                 {[
-                    { label: 'Total', value: 48, color: 'bg-[#1B4F72]' },
-                    { label: 'En attente', value: 5, color: 'bg-yellow-500' },
-                    { label: 'Approuvées', value: 38, color: 'bg-green-500' },
-                    { label: 'Rejetées', value: 5, color: 'bg-red-500' },
+                    { label: 'Total', value: artisans.length, color: 'bg-[#1B4F72]' },
+                    { label: 'En attente', value: artisans.filter(a => !a.artisan?.is_verified).length, color: 'bg-yellow-500' },
+                    { label: 'Approuvées', value: artisans.filter(a => a.artisan?.is_verified).length, color: 'bg-green-500' },
+                    { label: 'Rejetées', value: 0, color: 'bg-red-500' },
                 ].map((stat) => (
                     <div key={stat.label} className="bg-white border rounded-lg border-gray-200 p-3 flex items-center gap-3">
                         <div className={`w-10 h-10 ${stat.color} flex items-center justify-center rounded-full`}>
@@ -140,7 +118,7 @@ const ArtisanRequests = () => {
                     <table className="w-full">
                         <thead className="bg-gray-50 border-b border-gray-200">
                             <tr>
-                                <th className="px-4 py-3 text-left text-[11px] font-semibold text-gray-600">Condidat</th>
+                                <th className="px-4 py-3 text-left text-[11px] font-semibold text-gray-600">Candidat</th>
                                 <th className="px-4 py-3 text-left text-[11px] font-semibold text-gray-600">Spécialité</th>
                                 <th className="px-4 py-3 text-left text-[11px] font-semibold text-gray-600">Expérience</th>
                                 <th className="px-4 py-3 text-left text-[11px] font-semibold text-gray-600">Ville</th>
@@ -150,54 +128,37 @@ const ArtisanRequests = () => {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100">
-                            {requests.map((req) => (
-                                <tr key={req.id} className="hover:bg-gray-50">
+                            {isloading ? <CircleAlertIcon className="w-6 h-6 text-[#1B4F72] animate-spin" /> : filteredArtisans.map((user) => (
+                                <tr key={user.id} className="hover:bg-gray-50">
                                     <td className="px-4 py-3">
                                         <div className="flex items-center gap-2">
                                             <div className="w-8 h-8 bg-[#1B4F72]/10 flex items-center justify-center">
                                                 <span className="text-[12px] font-bold text-[#1B4F72]">
-                                                    {req.firstName.charAt(0)}{req.lastName.charAt(0)}
+                                                    <img src={getImageUrl(user?.client?.avatar)} alt="" />
                                                 </span>
                                             </div>
                                             <div>
                                                 <p className="text-[12px] font-medium text-[#1B4F72]">
-                                                    {req.firstName} {req.lastName}
+                                                    {user.firstname} {user.lastname}
                                                 </p>
-                                                <p className="text-[10px] text-gray-500">{req.email}</p>
+                                                <p className="text-[10px] text-gray-500">{user.email}</p>
                                             </div>
                                         </div>
                                     </td>
-                                    <td className="px-4 py-3 text-[11px] text-gray-700">{req.specialty}</td>
-                                    <td className="px-4 py-3 text-[11px] text-gray-700">{req.experience}</td>
-                                    <td className="px-4 py-3 text-[11px] text-gray-700">{req.city}</td>
-                                    <td className="px-4 py-3 text-[11px] text-gray-500">{req.submittedAt}</td>
-                                    <td className="px-4 py-3">{getStatusBadge(req.status)}</td>
+                                    <td className="px-4 py-3 text-[11px] text-gray-700">{user.artisan?.specialite}</td>
+                                    <td className="px-4 py-3 text-[11px] text-gray-700">{user.artisan?.experience || 'N/A'} ans</td>
+                                    <td className="px-4 py-3 text-[11px] text-gray-700">{user.city}</td>
+                                    <td className="px-4 py-3 text-[11px] text-gray-500">{new Date(user.created_at).toLocaleDateString()}</td>
+                                    <td className="px-4 py-3">{getStatusBadge(user.artisan?.is_verified)}</td>
                                     <td className="px-4 py-3">
-                                        <div className="flex items-center gap-1">
+                                        <div className="flex  justify-end gap-1">
 
-                                            <div className="flex flex-col items-center gap-1 flex-shrink-0">
-                                                <button
-                                                    onClick={() => onApprove(service.id)}
-                                                    className=" w-full p-1.5 text-white bg-green-600 text-[10px]  hover:bg-green-800 transition-colors"
-                                                    title="Approuver"
-                                                >
-                                                    approuver
-                                                </button>
-                                                <button
-                                                    onClick={() => onReject(service.id)}
-                                                    className="w-full p-1.5 text-white bg-red-600 text-[10px] hover:bg-red-800 transition-colors"
-                                                    title="Rejeter"
-                                                >
-                                                    rejeter
-                                                </button>
-                                                <button
-                                                    onClick={() => setSelectedRequest(req)}
-                                                    className="w-full p-1.5 text-white bg-gray-600 text-[10px] hover:bg-gray-800 transition-colors"
-                                                    title="Voir détails"
-                                                >
-                                                    Voir
-                                                </button>
-                                            </div>
+                                            <button
+                                                onClick={() => setSelectedRequest(user)}
+                                                className=" "
+                                            >
+                                                <Eye className="w-5 h-5 text-gray-400 hover:text-[#D35400]" />
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
@@ -214,10 +175,7 @@ const ArtisanRequests = () => {
                             <h3 className="text-[14px] font-bold text-[#1B4F72]">
                                 Demande #{selectedRequest.id}
                             </h3>
-                            <button
-                                onClick={() => setSelectedRequest(null)}
-                                className="text-gray-400 hover:text-[#D35400]"
-                            >
+                            <button onClick={() => setSelectedRequest(null)} className="text-gray-400 hover:text-[#D35400]">
                                 <XCircle className="w-5 h-5" />
                             </button>
                         </div>
@@ -226,14 +184,14 @@ const ArtisanRequests = () => {
                             <div className="flex items-start gap-4 pb-4 border-b border-gray-100">
                                 <div className="w-16 h-16 bg-[#1B4F72]/10 flex items-center justify-center">
                                     <span className="text-[20px] font-bold text-[#1B4F72]">
-                                        {selectedRequest.firstName.charAt(0)}{selectedRequest.lastName.charAt(0)}
+                                        <img src={getImageUrl(selectedRequest?.client?.avatar)} alt="" />
                                     </span>
                                 </div>
                                 <div className="flex-1">
                                     <h4 className="text-[16px] font-bold text-[#1B4F72]">
-                                        {selectedRequest.firstName} {selectedRequest.lastName}
+                                        {selectedRequest.firstname} {selectedRequest.lastname}
                                     </h4>
-                                    <p className="text-[11px] text-[#D35400] font-medium">{selectedRequest.specialty}</p>
+                                    <p className="text-[11px] text-[#D35400] font-medium">{selectedRequest.artisan?.specialite}</p>
                                     <div className="flex items-center gap-4 mt-2 text-[11px] text-gray-500">
                                         <span className="flex items-center gap-1">
                                             <MapPin className="w-3.5 h-3.5" />
@@ -241,13 +199,11 @@ const ArtisanRequests = () => {
                                         </span>
                                         <span className="flex items-center gap-1">
                                             <Clock className="w-3.5 h-3.5" />
-                                            {selectedRequest.experience}
+                                            Exp: {selectedRequest.artisan?.experience || 0} ans
                                         </span>
                                     </div>
                                 </div>
-                                <div>
-                                    {getStatusBadge(selectedRequest.status)}
-                                </div>
+                                <div>{getStatusBadge(selectedRequest.artisan?.is_verified)}</div>
                             </div>
 
                             <div className="grid grid-cols-2 gap-3">
@@ -263,62 +219,50 @@ const ArtisanRequests = () => {
                                         <Phone className="w-3.5 h-3.5" />
                                         Téléphone
                                     </div>
-                                    <p className="text-[12px] text-[#1B4F72]">{selectedRequest.phone}</p>
+                                    <p className="text-[12px] text-[#1B4F72]">{selectedRequest.client?.phone}</p>
                                 </div>
                             </div>
 
                             <div>
                                 <h5 className="text-[12px] font-semibold text-[#1B4F72] mb-2">Présentation</h5>
                                 <p className="p-3 bg-gray-50 border border-gray-200 text-[12px] text-gray-700 leading-relaxed">
-                                    {selectedRequest.bio}
+                                    {selectedRequest.artisan?.bio}
                                 </p>
                             </div>
 
                             <div>
                                 <h5 className="text-[12px] font-semibold text-[#1B4F72] mb-2">Documents</h5>
                                 <div className="space-y-2">
-                                    <div className="flex items-center justify-between p-3 border border-gray-200">
-                                        <div className="flex items-center gap-2">
-                                            <FileText className="w-4 h-4 text-[#1B4F72]" />
-                                            <span className="text-[11px] text-gray-700">CNI Recto</span>
-                                        </div>
-                                        <button className="flex items-center gap-1 text-[10px] text-[#D35400] hover:underline">
-                                            <Download className="w-3.5 h-3.5" />
-                                            Télécharger
-                                        </button>
-                                    </div>
-                                    <div className="flex items-center justify-between p-3 border border-gray-200">
-                                        <div className="flex items-center gap-2">
-                                            <FileText className="w-4 h-4 text-[#1B4F72]" />
-                                            <span className="text-[11px] text-gray-700">CNI Verso</span>
-                                        </div>
-                                        <button className="flex items-center gap-1 text-[10px] text-[#D35400] hover:underline">
-                                            <Download className="w-3.5 h-3.5" />
-                                            Télécharger
-                                        </button>
-                                    </div>
-                                    {selectedRequest.documents.diplomas.map((doc, i) => (
-                                        <div key={i} className="flex items-center justify-between p-3 border border-gray-200">
+                                    {selectedRequest.artisan?.documents.map((doc) => (
+                                        <div key={doc.id} className="flex items-center justify-between p-3 border border-gray-200">
                                             <div className="flex items-center gap-2">
                                                 <FileText className="w-4 h-4 text-[#1B4F72]" />
-                                                <span className="text-[11px] text-gray-700">Diplôme {i + 1}</span>
+                                                <div>
+                                                    <p className="text-[11px] text-gray-700">{doc.titre_document}</p>
+                                                    <p className="text-[9px] text-gray-400 uppercase">{doc.type_document}</p>
+                                                </div>
                                             </div>
-                                            <button className="flex items-center gap-1 text-[10px] text-[#D35400] hover:underline">
-                                                <Download className="w-3.5 h-3.5" />
-                                                Télécharger
-                                            </button>
+                                            <a
+                                                href={`http://localhost:8000/storage/${doc.file_path}`}
+                                                target="_blank"
+                                                rel="noreferrer"
+                                                className="flex items-center gap-1 text-[10px] text-[#D35400] hover:underline"
+                                            >
+                                                <Eye className="w-3.5 h-3.5" />
+                                                
+                                            </a>
                                         </div>
                                     ))}
                                 </div>
                             </div>
 
-                            {selectedRequest.status === 'pending' && (
+                            {!selectedRequest.artisan?.is_verified && (
                                 <div className="flex gap-3 pt-4 border-t border-gray-200">
-                                    <button className="flex-1 py-3 bg-green-500 hover:bg-green-600 text-white text-[11px] font-medium transition-colors flex items-center justify-center gap-2">
+                                    <button onClick={() => onApprove(selectedRequest.id)} className="flex-1 py-3 bg-green-500 hover:bg-green-600 text-white text-[11px] font-medium transition-colors flex items-center justify-center gap-2">
                                         <CheckCircle className="w-4 h-4" />
                                         Approuver la demande
                                     </button>
-                                    <button className="flex-1 py-3 border border-red-500 text-red-500 hover:bg-red-50 text-[11px] font-medium transition-colors flex items-center justify-center gap-2">
+                                    <button onClick={() => onReject(selectedRequest.id)} className="flex-1 py-3 border border-red-500 text-red-500 hover:bg-red-50 text-[11px] font-medium transition-colors flex items-center justify-center gap-2">
                                         <XCircle className="w-4 h-4" />
                                         Rejeter
                                     </button>
