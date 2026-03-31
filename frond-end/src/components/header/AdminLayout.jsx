@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import {
-    LayoutDashboard, Flag, Star,  Briefcase,
-    FileText, DollarSign, Settings, 
-    Menu, X, LogOut, User
+    LayoutDashboard, Flag, Star, Briefcase,
+    FileText, DollarSign, Settings,
+    Menu, X, LogOut, User,
+    Tag,
+    TagsIcon
 } from 'lucide-react';
 import { Link, useLocation, Outlet } from 'react-router-dom';
 import Logo from '../logo/Logo';
@@ -14,13 +16,12 @@ const AdminLayout = () => {
 
     const menuItems = [
         { id: 'dashboard', label: 'Tableau de bord', icon: LayoutDashboard, path: '/admin' },
-        { id: 'reports', label: 'Signalements', icon: Flag, path: '/admin/reports' },
-        { id: 'reviews', label: 'Avis & Notes', icon: Star, path: '/admin/reviews' },
-        { id: 'artisan-requests', label: 'Devenir Artisan', icon: User, path: '/admin/artisan-requests' },
-        { id: 'services', label: 'Services', icon: Briefcase, path: '/admin/services' },
-        { id: 'jobs', label: 'Offres d\'emploi', icon: FileText, path: '/admin/jobs' },
         { id: 'accounts', label: 'Comptes', icon: DollarSign, path: '/admin/accounts' },
-        { id: 'settings', label: 'Paramètres', icon: Settings, path: '/admin/settings' },
+        { id: 'categories', label: 'Categories', icon: TagsIcon, path: '/admin/categories' },
+        { id: 'artisan-requests', label: 'Devenir Artisan', icon: User, path: '/admin/artisan-requests' },
+        { id: 'reports', label: 'Signalements', icon: Flag, path: '/admin/reports' },
+        { id: 'services', label: 'Services', icon: Briefcase, path: '/admin/services' },
+        { id: 'users', label: 'Utilisateurs', icon: User, path: '/admin/users' },
     ];
 
     const isActive = (path) => location.pathname === path;
@@ -50,7 +51,7 @@ const AdminLayout = () => {
                         >
                             <item.icon className="w-5 h-5 flex-shrink-0" />
                             <span className={`${!sidebarOpen && 'lg:hidden'}`}>{item.label}</span>
-                           
+
                         </Link>
                     ))}
                 </nav>
@@ -80,7 +81,7 @@ const AdminLayout = () => {
                         </button>
                     </div>
                 </header>
-                <main className="flex-1 overflow-auto p-4 lg:p-6">
+                <main className="flex-1 overflow-auto p-0  ">
                     <Outlet />
                 </main>
             </div>

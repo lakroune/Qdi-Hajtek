@@ -23,9 +23,6 @@ Route::get('/villes', function () {
 
 
 Route::get('/categories', [CategorieController::class, 'index']);
-Route::post('/categories', [CategorieController::class, 'store']);
-
-
 
 
 
@@ -41,6 +38,19 @@ Route::post('/artisans/{user}/reject', [ArtisanController::class, 'reject']);
 
 
 Route::middleware('auth:api')->group(function () {
+
+    // mazal  potection artisan envoi lui meme
+    Route::put('/categories/{id}', [CategorieController::class, 'update']);
+    Route::delete('/categories/{id}', [CategorieController::class, 'destroy']);
+
+    Route::post('/categories', [CategorieController::class, 'store']);
+
+
+
+
+
+
+
 
     Route::post('verifier-email', [AuthController::class, 'verifierEmail']);
     Route::post('logout', [AuthController::class, 'logout']);

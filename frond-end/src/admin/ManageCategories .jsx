@@ -1,24 +1,45 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import {
-    Plus, Search, Edit2, Trash2, Save, X, Banknote
+    Plus, Search, Edit2, Trash2, Banknote
 } from 'lucide-react';
+import axiosClient from '../api/axios-client';
 
 const ManageCategories = () => {
+    // States
+    const [categories, setCategories] = useState([]);
     const [search, setSearch] = useState('');
-    const [editing, setEditing] = useState(null);
+    const [editing, setEditing] = useState(null); // { isNew: boolean, id?: number }
     const [deletingId, setDeletingId] = useState(null);
-
-    const [categories, setCategories] = useState([
-        { id: 1, n: "Plomberie", desc: "Réparation fuite...", icon: "🔧", a: true, sc: 156 },
-        { id: 2, n: "Électricité", desc: "Installation...", icon: "⚡", a: true, sc: 142 },
-        { id: 3, n: "Menuiserie", desc: "Portes, fenêtres...", icon: "🪚", a: true, sc: 89 },
-        { id: 4, n: "Peinture", desc: "Intérieur...", icon: "🎨", a: false, sc: 67 },
-        { id: 5, n: "Climatisation", desc: "Installation split...", icon: "❄️", a: true, sc: 98 },
-    ]);
-
     const [form, setForm] = useState({ n: '', desc: '', icon: '', a: true });
 
-    const filtered = categories.filter(c => c.n.toLowerCase().includes(search.toLowerCase()));
+    const fetchCategories = async () => {
+        try {
+            const response = await axiosClient.get('/categories');
+            const mapped = response.data.data.map(c => ({
+                id: c.id,
+                n: c.nom_categorie,
+                desc: c.description,
+                icon: c.icon_url || '',
+                a: c.is_active,
+                sc: c.services_count
+            }));
+            setCategories(mapped);
+        } catch (error) {
+            console.error('Error fetching categories:', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchCategories();
+    }, []);
+
+    const filtered = useMemo(() => {
+        return categories.filter(c =>
+            c.n.toLowerCase().includes(search.toLowerCase()) ||
+            c.desc.toLowerCase().includes(search.toLowerCase())
+        );
+    }, [categories, search]);
+
     const activeCount = categories.filter(c => c.a).length;
 
     const openNew = () => {
@@ -26,36 +47,55 @@ const ManageCategories = () => {
         setEditing({ isNew: true });
     };
 
-    const openEdit = (cat) => {
-        setForm({ n: cat.n, desc: cat.desc, icon: cat.icon, a: cat.a });
-        setEditing(cat);
+    const openEdit = (category) => {
+        setForm({ ...category });
+        setEditing({ isNew: false, id: category.id });
     };
 
-    const saveCategory = (e) => {
+    const saveCategory = async (e) => {
         e.preventDefault();
-        const now = new Date().toISOString().slice(0, 7);
+        const payload = {
+            nom_categorie: form.n,
+            description: form.desc,
+            icon: form.icon,
+            is_active: form.a
+        };
 
-        if (editing?.isNew) {
-            const newId = categories.length ? Math.max(...categories.map(c => c.id)) + 1 : 1;
-            setCategories([...categories, { id: newId, ...form, c: now, u: now, sc: 0 }]);
-        } else {
-            setCategories(categories.map(c => c.id === editing.id ? { ...c, ...form, u: now } : c));
+        try {
+            if (editing.isNew) {
+                await axiosClient.post('/categories', payload);
+            } else {
+                await axiosClient.put(`/categories/${editing.id}`, payload);
+            }
+            fetchCategories();
+            setEditing(null);
+        } catch (error) {
+            console.error("Erreur lors de l'enregistrement:", error);
         }
-        setEditing(null);
     };
 
-    const toggleStatus = (id) => {
-        setCategories(categories.map(c => c.id === id ? { ...c, a: !c.a } : c));
+    const deleteCategory = async (id) => {
+        try {
+            await axiosClient.delete(`/categories/${id}`);
+            setCategories(categories.filter(c => c.id !== id));
+            setDeletingId(null);
+        } catch (error) {
+            console.error("Erreur de suppression:", error);
+        }
     };
 
-    const deleteCategory = (id) => {
-        setCategories(categories.filter(c => c.id !== id));
-        setDeletingId(null);
+    const toggleStatus = async (id) => {
+        const cat = categories.find(c => c.id === id);
+        try {
+            await axiosClient.patch(`/categories/${id}/toggle`, { is_active: !cat.a });
+            setCategories(categories.map(c => c.id === id ? { ...c, a: !c.a } : c));
+        } catch (error) {
+            fetchCategories();
+        }
     };
 
     return (
         <div className="min-h-screen bg-gray-50">
-
             <header className="bg-white border-b px-6 py-4">
                 <div className="flex justify-between items-center">
                     <div>
@@ -79,7 +119,7 @@ const ManageCategories = () => {
             </header>
 
             <div className="px-6 py-4">
-                <div className="bg-white border border-gray-200">
+                <div className="bg-white border border-gray-200 overflow-x-auto">
                     <table className="w-full text-[12px]">
                         <thead className="bg-gray-50 border-b border-gray-200">
                             <tr>
@@ -111,7 +151,7 @@ const ManageCategories = () => {
                                     <td className="px-4 py-3">
                                         <button
                                             onClick={() => toggleStatus(c.id)}
-                                            className={`px-3 py-1 text-[10px] font-bold uppercase ${c.a ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}`}
+                                            className={`px-3 py-1 text-[10px] font-bold uppercase transition-colors ${c.a ? 'bg-green-100 text-green-700 hover:bg-green-200' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
                                         >
                                             {c.a ? 'Active' : 'Inactive'}
                                         </button>
@@ -140,128 +180,88 @@ const ManageCategories = () => {
             </div>
 
             {editing && (
-                <div className="fixed inset-0 z-[999] flex items-center justify-center p-4" role="dialog" aria-modal="true">
-                    <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] transition-opacity animate-in fade-in duration-200" />
-                    <div className="relative w-full max-w-sm bg-white shadow-2xl border border-gray-100 transform transition-all animate-in zoom-in-95 duration-200">
-
-                        <div className="p-6">
-                            <div className="flex items-center gap-4 mb-6">
-                                <div className="w-10 h-10 bg-[#D35400]/10 flex items-center justify-center">
-                                    <Banknote className="w-5 h-5 text-[#D35400]" />
-                                </div>
-                                <div>
-                                    <h3 className="text-[14px] font-bold text-[#1B4F72]">
-                                        {editing.isNew ? 'Nouvelle catégorie' : 'Modifier catégorie'}
-                                    </h3>
-                                    <p className="text-[11px] text-gray-400 leading-none mt-1">
-                                        {editing.isNew ? 'Créer une nouvelle entrée' : 'Modification des données'}
-                                    </p>
-                                </div>
+                <div className="fixed inset-0 z-[999] flex items-center justify-center p-4">
+                    <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]" onClick={() => setEditing(null)} />
+                    <div className="relative w-full max-w-sm bg-white shadow-2xl border border-gray-100 p-6 animate-in zoom-in-95 duration-200">
+                        <div className="flex items-center gap-4 mb-6">
+                            <div className="w-10 h-10 bg-[#D35400]/10 flex items-center justify-center">
+                                <Banknote className="w-5 h-5 text-[#D35400]" />
                             </div>
-
-                            <form onSubmit={saveCategory} className="space-y-3">
-                                <div>
-                                    <label className="text-[11px] text-gray-500 mb-1 block">Nom</label>
-                                    <input
-                                        required
-                                        value={form.n}
-                                        onChange={e => setForm({ ...form, n: e.target.value })}
-                                        placeholder="Ex: Plomberie"
-                                        className="w-full border border-gray-300 p-2 text-[12px] focus:ring-1 focus:ring-[#D35400] outline-none"
-                                    />
-                                </div>
-
-                                <div>
-                                    <label className="text-[11px] text-gray-500 mb-1 block">Description</label>
-                                    <textarea
-                                        value={form.desc}
-                                        onChange={e => setForm({ ...form, desc: e.target.value })}
-                                        placeholder="Description..."
-                                        rows={2}
-                                        className="w-full border border-gray-300 p-2 text-[12px] focus:ring-1 focus:ring-[#D35400] outline-none resize-none"
-                                    />
-                                </div>
-
-                                <div>
-                                    <label className="text-[11px] text-gray-500 mb-1 block">Icône</label>
-                                    <input
-                                        value={form.icon}
-                                        onChange={e => setForm({ ...form, icon: e.target.value })}
-                                        placeholder="Emoji ou URL..."
-                                        className="w-full border border-gray-300 p-2 text-[12px] focus:ring-1 focus:ring-[#D35400] outline-none"
-                                    />
-                                </div>
-
-                                <label className="flex items-center gap-2 mt-2">
-                                    <input
-                                        type="checkbox"
-                                        checked={form.a}
-                                        onChange={e => setForm({ ...form, a: e.target.checked })}
-                                        className="w-4 h-4 border-gray-300"
-                                    />
-                                    <span className="text-[12px] text-gray-600">Catégorie active</span>
-                                </label>
-
-                                <div className="grid grid-cols-2 gap-3 mt-6">
-                                    <button
-                                        type="button"
-                                        onClick={() => setEditing(null)}
-                                        className="py-2 text-[12px] text-gray-400 hover:text-gray-600 font-medium transition-colors"
-                                    >
-                                        Annuler
-                                    </button>
-                                    <button
-                                        type="submit"
-                                        className="py-2 bg-[#1B4F72] text-white text-[12px] font-bold hover:bg-[#D35400] transition-colors"
-                                    >
-                                        Confirmer
-                                    </button>
-                                </div>
-                            </form>
+                            <div>
+                                <h3 className="text-[14px] font-bold text-[#1B4F72]">
+                                    {editing.isNew ? 'Nouvelle catégorie' : 'Modifier catégorie'}
+                                </h3>
+                                <p className="text-[11px] text-gray-400 leading-none mt-1">
+                                    {editing.isNew ? 'Créer une nouvelle entrée' : 'Modification des données'}
+                                </p>
+                            </div>
                         </div>
+
+                        <form onSubmit={saveCategory} className="space-y-3">
+                            <div>
+                                <label className="text-[11px] text-gray-500 mb-1 block">Nom</label>
+                                <input
+                                    required
+                                    value={form.n}
+                                    onChange={e => setForm({ ...form, n: e.target.value })}
+                                    className="w-full border border-gray-300 p-2 text-[12px] focus:border-[#D35400] outline-none"
+                                />
+                            </div>
+                            <div>
+                                <label className="text-[11px] text-gray-500 mb-1 block">Description</label>
+                                <textarea
+                                    value={form.desc}
+                                    onChange={e => setForm({ ...form, desc: e.target.value })}
+                                    rows={2}
+                                    className="w-full border border-gray-300 p-2 text-[12px] focus:border-[#D35400] outline-none resize-none"
+                                />
+                            </div>
+                            <div>
+                                <label className="text-[11px] text-gray-500 mb-1 block">Icône (Emoji)</label>
+                                <input
+                                    value={form.icon}
+                                    onChange={e => setForm({ ...form, icon: e.target.value })}
+                                    className="w-full border border-gray-300 p-2 text-[12px] focus:border-[#D35400] outline-none"
+                                />
+                            </div>
+                            <label className="flex items-center gap-2 mt-2 cursor-pointer">
+                                <input
+                                    type="checkbox"
+                                    checked={form.a}
+                                    onChange={e => setForm({ ...form, a: e.target.checked })}
+                                    className="w-4 h-4 accent-[#D35400]"
+                                />
+                                <span className="text-[12px] text-gray-600">Catégorie active</span>
+                            </label>
+
+                            <div className="grid grid-cols-2 gap-3 mt-6">
+                                <button type="button" onClick={() => setEditing(null)} className="py-2 text-[12px] text-gray-400 hover:text-gray-600 font-medium">
+                                    Annuler
+                                </button>
+                                <button type="submit" className="py-2 bg-[#1B4F72] text-white text-[12px] font-bold hover:bg-[#D35400]">
+                                    Confirmer
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             )}
 
             {deletingId && (
-                <div className="fixed inset-0 z-[999] flex items-center justify-center p-4" role="dialog" aria-modal="true">
-                    <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] transition-opacity animate-in fade-in duration-200" />
-                    <div className="relative w-full max-w-xs bg-white shadow-2xl border border-gray-100 transform transition-all animate-in zoom-in-95 duration-200">
-
-                        <div className="p-6">
-                            <div className="flex items-center gap-4 mb-6">
-                                <div className="w-10 h-10 bg-red-100 flex items-center justify-center">
-                                    <Trash2 className="w-5 h-5 text-red-500" />
-                                </div>
-                                <div>
-                                    <h3 className="text-[14px] font-bold text-[#1B4F72]">Confirmation</h3>
-                                    <p className="text-[11px] text-gray-400 leading-none mt-1">Suppression définitive</p>
-                                </div>
-                            </div>
-
-                            <p className="text-[12px] text-gray-600 mb-6">
-                                Voulez-vous vraiment supprimer <strong className="text-[#D35400]">"{categories.find(c => c.id === deletingId)?.n}"</strong> ?
-                            </p>
-
-                            <div className="grid grid-cols-2 gap-3">
-                                <button
-                                    onClick={() => setDeletingId(null)}
-                                    className="py-2 text-[12px] text-gray-400 hover:text-gray-600 font-medium transition-colors"
-                                >
-                                    Non
-                                </button>
-                                <button
-                                    onClick={() => deleteCategory(deletingId)}
-                                    className="py-2 bg-red-500 text-white text-[12px] font-bold hover:bg-red-600 transition-colors"
-                                >
-                                    Confirmer
-                                </button>
-                            </div>
+                <div className="fixed inset-0 z-[999] flex items-center justify-center p-4">
+                    <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]" onClick={() => setDeletingId(null)} />
+                    <div className="relative w-full max-w-xs bg-white p-6 shadow-2xl">
+                        <h3 className="text-[14px] font-bold text-[#1B4F72] mb-2">Confirmation</h3>
+                        <p className="text-[12px] text-gray-600 mb-6">
+                            Supprimer <strong className="text-[#D35400]">"{categories.find(c => c.id === deletingId)?.n}"</strong> ?
+                        </p>
+                        <div className="grid grid-cols-2 gap-3">
+                            <button onClick={() => setDeletingId(null)} className="py-2 text-[12px] text-gray-400 font-medium">Non</button>
+                            <button onClick={() => deleteCategory(deletingId)} className="py-2 bg-red-500 text-white text-[12px] font-bold">Confirmer</button>
                         </div>
                     </div>
                 </div>
             )}
-
         </div>
     );
 };
