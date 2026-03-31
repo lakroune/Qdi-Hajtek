@@ -186,12 +186,47 @@ const ArtisanRequests = () => {
 
 
         <div className="space-y-4 max-h-screen">
+            {isApproveModalOpen && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+                    <div className="bg-white w-full max-w-sm border border-gray-200 shadow-xl">
+                        <div className="p-6">
+                            <div className="flex items-center gap-4 mb-6">
+                                <div className="w-10 h-10 bg-green-50 flex items-center justify-center rounded-lg">
+                                    <CheckCircle className="w-5 h-5 text-green-600" />
+                                </div>
+                                <div>
+                                    <h3 className="text-[14px] font-bold text-[#1B4F72]">Approuver l'artisan</h3>
+                                    <p className="text-[11px] text-gray-400 leading-none mt-1">Validation du profil</p>
+                                </div>
+                            </div>
 
+                            <p className="text-[12px] text-gray-600 mb-6 leading-relaxed">
+                                Voulez-vous vraiment confirmer l'inscription de cet artisan ? Il pourra désormais accéder à toutes les fonctionnalités.
+                            </p>
+
+                            <div className="grid grid-cols-2 gap-3">
+                                <button
+                                    onClick={() => setIsApproveModalOpen(false)}
+                                    className="py-2 text-[12px] text-gray-400 hover:text-gray-600 font-medium border border-transparent hover:bg-gray-50 transition-all"
+                                >
+                                    Annuler
+                                </button>
+                                <button
+                                    onClick={confirmApprove}
+                                    disabled={isloading}
+                                    className="py-2 bg-[#1B4F72] text-white text-[12px] font-bold hover:bg-[#D35400] transition-colors flex items-center justify-center"
+                                >
+                                    {isloading ? "En cours..." : "Oui, approuver"}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
             {isRejectModalOpen && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
                     <div className="bg-white w-full max-w-sm border border-gray-200 shadow-xl">
                         <div className="p-6">
-                            {/* Header بنفس الستايل */}
                             <div className="flex items-center gap-4 mb-6">
                                 <div className="w-10 h-10 bg-[#D35400]/10 flex items-center justify-center rounded-lg">
                                     <CircleAlertIcon className="w-5 h-5 text-[#D35400]" />
@@ -202,7 +237,6 @@ const ArtisanRequests = () => {
                                 </div>
                             </div>
 
-                            {/* Textarea مخصص */}
                             <div className="space-y-2 mb-6">
                                 <p className="text-[12px] text-gray-600">Raison du rejet :</p>
                                 <textarea
@@ -213,7 +247,6 @@ const ArtisanRequests = () => {
                                 />
                             </div>
 
-                            {/* الأزرار بنفس الستايل والألوان */}
                             <div className="grid grid-cols-2 gap-3">
                                 <button
                                     onClick={() => setIsRejectModalOpen(false)}
