@@ -65,62 +65,7 @@ const ArtisanRequests = () => {
         );
     };
 
-
-    const onApprove = async (userId) => {
-        const result = await Swal.fire({
-            title: 'Approuver l\'artisan ?',
-            text: "Voulez-vous vraiment confirmer l'inscription de cet artisan ?",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#1B4F72',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Oui, approuver',
-            cancelButtonText: 'Annuler',
-            reverseButtons: true
-        });
-
-        if (result.isConfirmed) {
-            try {
-                Swal.fire({
-                    title: 'Traitement en cours...',
-                    allowOutsideClick: false,
-                    didOpen: () => {
-                        Swal.showLoading();
-                    }
-                });
-
-                const response = await axiosClient.patch(`/artisans/${userId}/approve`);
-
-                if (response.status === 200) {
-                    setArtisans(prev =>
-                        prev.map(user =>
-                            user.id === userId
-                                ? { ...user, artisan: { ...user.artisan, is_verified: true } }
-                                : user
-                        )
-                    );
-
-                    if (selectedRequest?.id === userId) setSelectedRequest(null);
-
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Approuvé !',
-                        text: "L'artisan a été approuvé avec succès.",
-                        timer: 2000,
-                        showConfirmButton: false
-                    });
-                }
-            } catch (error) {
-                console.error(error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Erreur',
-                    text: "Une erreur est survenue lors de l'opération."
-                });
-            }
-        }
-    };
-
+ 
     const openRejectModal = (userId) => {
         setRejectingId(userId);
         setRejectReason('');
@@ -465,7 +410,7 @@ const ArtisanRequests = () => {
 
                             {!selectedRequest.artisan?.is_verified && (
                                 <div className="flex gap-3 pt-4 border-t border-gray-200">
-                                    <button onClick={() => onApprove(selectedRequest.id)} className="flex-1 py-3 bg-green-500 hover:bg-green-600 text-white text-[11px] font-medium transition-colors flex items-center justify-center gap-2">
+                                    <button onClick={() => openApproveModal(selectedRequest.id)} className="flex-1 py-3 bg-green-500 hover:bg-green-600 text-white text-[11px] font-medium transition-colors flex items-center justify-center gap-2">
                                         <CheckCircle className="w-4 h-4" />
                                         Approuver la demande
                                     </button>
