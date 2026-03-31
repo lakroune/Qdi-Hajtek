@@ -19,6 +19,7 @@ const ArtisanRequests = () => {
     const [rejectingId, setRejectingId] = useState(null);
     const [isApproveModalOpen, setIsApproveModalOpen] = useState(false);
     const [approvingId, setApprovingId] = useState(null);
+    const [searchQuery, setSearchQuery] = useState('');
     useEffect(() => {
         const fetchArtisans = async () => {
             try {
@@ -34,11 +35,21 @@ const ArtisanRequests = () => {
         fetchArtisans();
     }, []);
 
-    const filteredArtisans = artisans.filter(artisan => {
-        if (filter === 'all') return true;
-        if (filter === 'pending') return artisan.artisan?.is_verified === false || artisan.artisan?.is_verified === 0;
-        if (filter === 'approved') return artisan.artisan?.is_verified === true || artisan.artisan?.is_verified === 1;
-        return true;
+    const filteredArtisans = artisans.filter(user => {
+        const matchesStatus =
+            filter === 'all' ? true :
+                filter === 'pending' ? (user.artisan?.is_verified === false || user.artisan?.is_verified === 0) :
+                    filter === 'approved' ? (user.artisan?.is_verified === true || user.artisan?.is_verified === 1) :
+                        true;
+
+        const searchLower = searchQuery.toLowerCase();
+        const matchesSearch =
+            user.firstname?.toLowerCase().includes(searchLower) ||
+            user.lastname?.toLowerCase().includes(searchLower) ||
+            user.email?.toLowerCase().includes(searchLower) ||
+            user.artisan?.specialite?.toLowerCase().includes(searchLower);
+
+        return matchesStatus && matchesSearch;
     });
     const getImageUrl = (imagePath) => {
         if (!imagePath) return null;
@@ -224,9 +235,19 @@ const ArtisanRequests = () => {
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                             <input
                                 type="text"
-                                placeholder="Rechercher..."
-                                className="pl-9 pr-4 py-2 text-[12px] border border-gray-200 focus:border-[#1B4F72] focus:outline-none w-48"
+                                placeholder="Rechercher par nom, email..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                className="pl-9 pr-4 py-2 text-[12px] border border-gray-200 focus:border-[#1B4F72] focus:outline-none w-48 lg:w-64 transition-all"
                             />
+                            {searchQuery && (
+                                <button
+                                    onClick={() => setSearchQuery('')}
+                                    className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                                >
+                                    <XCircle className="w-3.5 h-3.5" />
+                                </button>
+                            )}
                         </div>
                         <select
                             value={filter}
