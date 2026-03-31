@@ -14,7 +14,11 @@ const ArtisanRequests = () => {
     const [filter, setFilter] = useState('pending');
     const [artisans, setArtisans] = useState([]);
     const [isloading, setIsLoading] = useState(true);
-
+    const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
+    const [rejectReason, setRejectReason] = useState('');
+    const [rejectingId, setRejectingId] = useState(null);
+    const [isApproveModalOpen, setIsApproveModalOpen] = useState(false);
+const [approvingId, setApprovingId] = useState(null);
     useEffect(() => {
         const fetchArtisans = async () => {
             try {
@@ -117,64 +121,89 @@ const ArtisanRequests = () => {
         }
     };
 
-    const onReject = async (userId) => {
-        const { value: reason, isConfirmed } = await Swal.fire({
-            title: 'Rejeter la demande',
-            input: 'textarea',
-            inputLabel: 'Raison du rejet',
-            inputPlaceholder: 'Expliquez pourquoi la demande est rejetée...',
-            inputAttributes: {
-                'aria-label': 'Expliquez pourquoi la demande est rejetée'
-            },
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#gray',
-            confirmButtonText: 'Confirmer le rejet',
-            cancelButtonText: 'Annuler',
-            inputValidator: (value) => {
-                if (!value) {
-                    return 'Vous devez spécifier une raison !';
-                }
+    const openRejectModal = (userId) => {
+        setRejectingId(userId);
+        setRejectReason('');
+        setIsRejectModalOpen(true);
+    };
+
+    const confirmReject = async () => {
+        if (!rejectReason.trim()) {
+            toast.error("Veuillez spécifier une raison !");
+            return;
+        }
+
+        setIsLoading(true);
+        try {
+            const response = await axiosClient.post(`/artisans/${rejectingId}/reject`, {
+                reason: rejectReason
+            });
+
+            if (response.status === 200) {
+                setArtisans(prev => prev.filter(user => user.id !== rejectingId));
+                if (selectedRequest?.id === rejectingId) setSelectedRequest(null);
+                setIsRejectModalOpen(false);
+                toast.success("Demande rejetée avec succès");
             }
-        });
-
-        if (isConfirmed && reason) {
-            try {
-                Swal.fire({
-                    title: 'Traitement en cours...',
-                    allowOutsideClick: false,
-                    didOpen: () => { Swal.showLoading(); }
-                });
-                const response = await axiosClient.post(`/artisans/${userId}/reject`, {
-                    reason: reason
-                });
-
-                if (response.status === 200) {
-                    setArtisans(prev => prev.filter(user => user.id !== userId));
-
-                    if (selectedRequest?.id === userId) setSelectedRequest(null);
-
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Rejeté',
-                        text: "La demande a été rejetée et l'artisan sera notifié.",
-                        timer: 2000,
-                        showConfirmButton: false
-                    });
-                }
-            } catch (error) {
-                console.error(error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Erreur',
-                    text: "Une erreur est survenue lors du rejet."
-                });
-            }
+        } catch (error) {
+            console.error(error);
+            toast.error("Une erreur est survenue");
+        } finally {
+            setIsLoading(false);
         }
     };
 
     return (
+
+
         <div className="space-y-4 max-h-screen">
+
+            {isRejectModalOpen && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+                    <div className="bg-white w-full max-w-sm border border-gray-200 shadow-xl">
+                        <div className="p-6">
+                            {/* Header بنفس الستايل */}
+                            <div className="flex items-center gap-4 mb-6">
+                                <div className="w-10 h-10 bg-[#D35400]/10 flex items-center justify-center rounded-lg">
+                                    <CircleAlertIcon className="w-5 h-5 text-[#D35400]" />
+                                </div>
+                                <div>
+                                    <h3 className="text-[14px] font-bold text-[#1B4F72]">Rejeter la demande</h3>
+                                    <p className="text-[11px] text-gray-400 leading-none mt-1">Action irréversible</p>
+                                </div>
+                            </div>
+
+                            {/* Textarea مخصص */}
+                            <div className="space-y-2 mb-6">
+                                <p className="text-[12px] text-gray-600">Raison du rejet :</p>
+                                <textarea
+                                    value={rejectReason}
+                                    onChange={(e) => setRejectReason(e.target.value)}
+                                    placeholder="Expliquez pourquoi..."
+                                    className="w-full p-3 text-[12px] border border-gray-200 focus:border-[#1B4F72] focus:outline-none min-h-[100px] bg-gray-50"
+                                />
+                            </div>
+
+                            {/* الأزرار بنفس الستايل والألوان */}
+                            <div className="grid grid-cols-2 gap-3">
+                                <button
+                                    onClick={() => setIsRejectModalOpen(false)}
+                                    className="py-2 text-[12px] text-gray-400 hover:text-gray-600 font-medium border border-transparent hover:bg-gray-50 transition-all"
+                                >
+                                    Annuler
+                                </button>
+                                <button
+                                    onClick={confirmReject}
+                                    disabled={isloading}
+                                    className="py-2 bg-[#1B4F72] text-white text-[12px] font-bold hover:bg-[#D35400] transition-colors flex items-center justify-center"
+                                >
+                                    {isloading ? "En cours..." : "Confirmer"}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-[18px] font-bold text-[#1B4F72]">Demandes Artisan</h1>
@@ -270,6 +299,7 @@ const ArtisanRequests = () => {
 
                                             <button
                                                 onClick={() => setSelectedRequest(user)}
+
                                                 className=" "
                                             >
                                                 <Eye className="w-5 h-5 text-gray-400 hover:text-[#D35400]" />
@@ -377,7 +407,7 @@ const ArtisanRequests = () => {
                                         <CheckCircle className="w-4 h-4" />
                                         Approuver la demande
                                     </button>
-                                    <button onClick={() => onReject(selectedRequest.id)} className="flex-1 py-3 border border-red-500 text-red-500 hover:bg-red-50 text-[11px] font-medium transition-colors flex items-center justify-center gap-2">
+                                    <button onClick={() => openRejectModal(selectedRequest.id)} className="flex-1 py-3 border border-red-500 text-red-500 hover:bg-red-50 text-[11px] font-medium transition-colors flex items-center justify-center gap-2">
                                         <XCircle className="w-4 h-4" />
                                         Rejeter
                                     </button>
