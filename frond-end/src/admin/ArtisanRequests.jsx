@@ -18,7 +18,7 @@ const ArtisanRequests = () => {
     const [rejectReason, setRejectReason] = useState('');
     const [rejectingId, setRejectingId] = useState(null);
     const [isApproveModalOpen, setIsApproveModalOpen] = useState(false);
-const [approvingId, setApprovingId] = useState(null);
+    const [approvingId, setApprovingId] = useState(null);
     useEffect(() => {
         const fetchArtisans = async () => {
             try {
@@ -152,7 +152,36 @@ const [approvingId, setApprovingId] = useState(null);
             setIsLoading(false);
         }
     };
+    const openApproveModal = (userId) => {
+        setApprovingId(userId);
+        setIsApproveModalOpen(true);
+    };
 
+    const confirmApprove = async () => {
+        setIsLoading(true);
+        try {
+            const response = await axiosClient.patch(`/artisans/${approvingId}/approve`);
+
+            if (response.status === 200) {
+                setArtisans(prev =>
+                    prev.map(user =>
+                        user.id === approvingId
+                            ? { ...user, artisan: { ...user.artisan, is_verified: true } }
+                            : user
+                    )
+                );
+
+                if (selectedRequest?.id === approvingId) setSelectedRequest(null);
+                setIsApproveModalOpen(false);
+                toast.success("Artisan approuvé avec succès !");
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error("Erreur lors de l'approbation");
+        } finally {
+            setIsLoading(false);
+        }
+    };
     return (
 
 
