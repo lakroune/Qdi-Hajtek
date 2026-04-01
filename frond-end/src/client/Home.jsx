@@ -15,7 +15,50 @@ const HomePage = () => {
 
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('');
+    const [favs, setFavs] = useState([1, 3]);
+    const [isloading, setIsLoading] = useState(true);
+    const [selectedRating, setSelectedRating] = useState(0);
+    const [selectedPrice, setSelectedPrice] = useState(0);
 
+    const getImageUrl = (imagePath) => {
+        if (!imagePath) return null;
+        const cleanPath = imagePath.replace(/^\//, '');
+        return `http://127.0.0.1:8000/storage/${cleanPath}`;
+    };
+
+
+
+
+    const searchServices = async () => {
+        setLoading(true);
+        try {
+            const response = await axiosClient.get('/services', {
+                params: {
+                    search: searchQuery || undefined,
+                    category: selectedCategory || undefined,
+                    rating: selectedRating > 0 ? selectedRating : undefined,
+                    price: selectedPrice > 0 ? selectedPrice : undefined,
+                    page: 1,
+                    limit: 10
+                }
+            });
+
+            setServices(response.data.data || response.data);
+        } catch (error) {
+            console.error('Error fetching services:', error);
+            setServices([]);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        const delayDebounceFn = setTimeout(() => {
+            searchServices();
+        }, 400);
+
+        return () => clearTimeout(delayDebounceFn);
+    }, [searchQuery, selectedCategory, selectedRating, selectedPrice]);
 
     useEffect(() => {
         const fetchCategories = async () => {
@@ -30,54 +73,11 @@ const HomePage = () => {
     }, []);
 
 
-    const searchServices = async (query, category = '') => {
-        if (!query) {
-            setServices([]);
-            return;
-        }
-
-        setLoading(true);
-        try {
-            const response = await axiosClient.get('/services', {
-                params: {
-                    search: query,
-                    category: category || undefined
-                }
-            });
-
-            setServices(response.data.data || response.data);
-        } catch (error) {
-            console.error('Error fetching services:', error);
-            setServices([]);
-        } finally {
-            setLoading(false);
-        }
-    };
-
 
     const handleSearch = (e) => {
         e.preventDefault();
-        searchServices(searchQuery, selectedCategory);
+        // searchServices(); 
     };
-
-    const [favs, setFavs] = useState([1, 3]);
-    const [isloading, setIsLoading] = useState(true);
-
-    useEffect(() => {
-        const fetchServices = async () => {
-            try {
-                const response = await axiosClient.get('/services');
-                setServices(response.data.data);
-            } catch (error) {
-                console.error('Error fetching services:', error);
-            }
-            finally {
-                setIsLoading(false);
-            }
-        }
-        fetchServices();
-    }, []);
-
     const toggleFav = (id) => {
         setFavs(favs.includes(id) ? favs.filter(f => f !== id) : [...favs, id]);
     };
@@ -110,10 +110,7 @@ const HomePage = () => {
                             <input
                                 type="text"
                                 value={searchQuery}
-                                onChange={(e) => {
-                                    setSearchQuery(e.target.value);
-                                    searchServices(e.target.value, selectedCategory);
-                                }}
+                                onChange={(e) => setSearchQuery(e.target.value)}
                                 placeholder="Que cherchez-vous ?"
                                 className="w-full py-2.5 bg-transparent focus:outline-none text-[12px] text-white placeholder:text-gray-300"
                             />
@@ -124,11 +121,8 @@ const HomePage = () => {
                                 <SlidersHorizontal className="text-amber-50 w-4 h-4" />
                                 <select
                                     value={selectedCategory}
-                                    onChange={(e) => {
-                                        setSelectedCategory(e.target.value);
-                                        searchServices(searchQuery, e.target.value);
-                                    }}
-                                    className="w-full py-2 bg-transparent text-[11px] text-white appearance-none"
+                                    onChange={(e) => setSelectedCategory(e.target.value)}
+                                    className="w-full outline-none py-2 bg-transparent text-[11px] text-white appearance-none"
                                 >
                                     <option value="" className="text-black">
                                         Toutes les catégories
@@ -143,15 +137,31 @@ const HomePage = () => {
 
                             <div className="flex items-center gap-2 border border-amber-50/30 bg-white/10 px-3">
                                 <StarIcon className="text-amber-50 w-4 h-4" />
-                                <select className="w-full py-2 bg-transparent text-[11px] text-white appearance-none">
-                                    <option className="text-black">Toutes les notes</option>
+                                <select className="w-full outline-none py-2 bg-transparent text-[11px] text-white appearance-none"
+                                    value={selectedRating}
+                                    onChange={(e) => setSelectedRating(e.target.value)}
+                                >
+                                    <option value="0">Toutes les notes</option>
+                                    {[1, 2, 3, 4, 5].map((star) => (
+                                        <option key={star} value={star}>
+                                            {star} stars et plus
+                                        </option>
+                                    ))}
                                 </select>
                             </div>
 
                             <div className="flex items-center gap-2 border border-amber-50/30 bg-white/10 px-3">
                                 <DollarSign className="text-amber-50 w-4 h-4" />
-                                <select className="w-full py-2 bg-transparent text-[11px] text-white appearance-none">
-                                    <option className="text-black">Tous les prix</option>
+                                <select className="w-full py-2 bg-transparent text-[11px] text-white appearance-none outline-none"
+                                    value={selectedPrice}
+                                    onChange={(e) => setSelectedPrice(e.target.value)}
+                                >
+                                    <option value="0">Tous les prix</option>
+                                    {[200, 500, 1000, 2000].map((price) => (
+                                        <option key={price} value={price}>
+                                            {price} DH et moins
+                                        </option>
+                                    ))}
                                 </select>
                             </div>
                         </div>
@@ -232,13 +242,22 @@ const HomePage = () => {
                         </div>
                     </div>
                 ) : (
-                    searchQuery && (
-                        <div className="text-center py-10 border border-dashed rounded-lg">
-                            <p className="text-gray-400 text-[11px]">
-                                Aucun artisan trouvé pour "{searchQuery}"
-                            </p>
+                    <div className="text-center py-20 border border-dashed rounded-lg bg-white mx-4">
+                        <div className="flex justify-center mb-4 text-gray-300">
+                            <SearchIcon size={48} />
                         </div>
-                    )
+                        <p className="text-gray-500 text-[14px]">
+                            {searchQuery
+                                ? `Aucun artisan trouvé pour "${searchQuery}"`
+                                : "Aucun service disponible pour le moment."}
+                        </p>
+                        <button
+                            onClick={() => { setSearchQuery(''); setSelectedCategory(''); setSelectedRating(0); setSelectedPrice(0); }}
+                            className="mt-4 text-[#1B4F72] text-[12px] font-bold underline"
+                        >
+                            Réinitialiser les filtres
+                        </button>
+                    </div>
                 )}
             </main>
         </div>
