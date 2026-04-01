@@ -252,26 +252,36 @@ const ClientOffreDetail = () => {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="text-right">
-                                            <p className="text-[20px] font-bold text-[#D35400]">
-                                                {prop.prix_propose}<span className="text-[12px]">DH</span>
+                                        <div className="text-right p-1">
+                                            <p className="text-[14px] font-bold text-[#D35400]">
+                                                {prop.prix_propose}<span className="text-[11px]">DH</span>
                                             </p>
+                                            <p className="text-[11px] text-gray-500">Prix proposé</p>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div className="p-5 space-y-4 flex-1">
-                                    <div className="grid grid-cols-2 gap-2">
-                                        <div className="text-center p-2.5 bg-gray-50 border border-gray-100">
-                                            <Clock className="w-4 h-4 text-gray-400 mx-auto mb-1" />
+                                <div className="p-5   flex-1">
+                                    <div className="">
+                                        <div className="  py-1 flex items-center gap-2" >
+                                            <Clock className=" text-gray-600 w-5 h-5 " />
                                             <p className="text-[10px] text-gray-500">Délai</p>
                                             <p className="text-[11px] font-bold text-gray-800">{prop.delai_execution} jours</p>
                                         </div>
-                                        <div className="text-center p-2.5 bg-gray-50 border border-gray-100">
-                                            <Calendar className="w-4 h-4 text-gray-400 mx-auto mb-1" />
-                                            <p className="text-[10px] text-gray-500">Disponibilité</p>
+                                        {/* date_disponibilite */}
+
+                                        <div className=" py-1 flex items-center gap-2" >
+                                            <Clock className=" text-gray-600 w-5 h-5 " />
+                                            <p className="text-[10px] text-gray-500">Date de disponibilité</p>
                                             <p className="text-[11px] font-bold text-gray-800">{prop.date_disponibilite}</p>
                                         </div>
+                                        {/* conditions_speciales */}
+
+                                        <div className=" py-1 flex items-center gap-2" >
+                                            <Clock className=" text-gray-600 w-5 h-5 " />
+                                            <p className="text-[10px] text-gray-500">Conditions speciales</p>
+                                            <p className="text-[11px] font-bold text-gray-800">{prop.conditions_speciales??"Aucune"}</p>
+                                        </div>  
                                     </div>
 
                                     <div className="p-3 bg-blue-50/50 border border-blue-100">
