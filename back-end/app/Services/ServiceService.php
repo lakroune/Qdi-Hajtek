@@ -56,8 +56,8 @@ class ServiceService
         return $this->serviceDAO->getServiceDetails($serviceId);
     }
 
-    public function getServices()
+    public function getServices( array $data)
     {
-        return $this->serviceDAO->getServices();
+        return $this->serviceDAO->getServices( $data);
     }
 }

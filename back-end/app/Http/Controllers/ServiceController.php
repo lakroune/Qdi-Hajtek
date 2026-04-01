@@ -7,6 +7,7 @@ use App\Models\Service;
 use App\Http\Requests\StoreServiceRequest;
 use App\Http\Requests\UpdateServiceRequest;
 use App\Services\ServiceService;
+use Illuminate\Http\Request;
 
 class ServiceController extends Controller
 {
@@ -17,9 +18,9 @@ class ServiceController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $services = $this->serviceService->getServices();
+        $services = $this->serviceService->getServices($request->all());
         return response()->json([
             'message' => 'Services found successfully',
             'data' => $services

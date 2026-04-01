@@ -33,8 +33,27 @@ class ServiceDAO
     {
         return Service::with(['images', 'artisan.user.client', 'categorie'])->where('is_active', true)->findOrFail($serviceId);
     }
-    public  function getServices()
+    public  function getServices(array $filters = [])
     {
-        return Service::with(['images', 'artisan.user.client', 'categorie'])->where('is_active', true)->get();
+        $query = Service::query()
+            ->where('is_active', true)
+            ->with(['artisan.user', 'categorie', 'images']);
+
+        if (!empty($filters['search'])) {
+            $query->where('titre', 'like', '%' . $filters['search'] . '%')
+                ->orWhere('description', 'like', '%' . $filters['search'] . '%');
+        }
+        if (!empty($filters['category'])) {
+            $query->where('categorie_id', $filters['category']);
+        }
+        // if (!empty($filters['rating'])) {
+        //     $query->whereHas('artisan', function ($q) use ($filters) {
+        //         $q->where('note', '>=', $filters['rating']);
+        //     });
+        // }
+        if (!empty($filters['price'])) {
+            $query->where('tarif', '<=', $filters['price']);
+        }
+        return $query->latest()->get();
     }
 }

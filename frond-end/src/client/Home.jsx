@@ -6,6 +6,7 @@ import {
     MapPin,
     DollarSign,
     StarIcon, Star, Heart,
+    BadgeX,
 } from 'lucide-react';
 
 const HomePage = () => {
@@ -76,7 +77,6 @@ const HomePage = () => {
 
     const handleSearch = (e) => {
         e.preventDefault();
-        // searchServices(); 
     };
     const toggleFav = (id) => {
         setFavs(favs.includes(id) ? favs.filter(f => f !== id) : [...favs, id]);
@@ -172,7 +172,12 @@ const HomePage = () => {
             <main className="max-w-6xl mx-auto  py-6 overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
                 {loading ? (
                     <div className="text-center text-[#1B4F72] text-[12px] animate-pulse">
-                        Recherche des artisans...
+                        <div className="flex justify-center mb-4 text-gray-300">
+                            <BadgeX className='w-12 h-12 text-[#94a8b6]   animate-spin' />
+                        </div>
+                        <p className="text-gray-500 text-[14px]">
+                            Chargement en cours...
+                        </p>
                     </div>
                 ) : services.length > 0 ? (
                     <div className="w-full mx-auto px-4 py-6">
@@ -242,14 +247,12 @@ const HomePage = () => {
                         </div>
                     </div>
                 ) : (
-                    <div className="text-center py-20 border border-dashed rounded-lg bg-white mx-4">
+                    <div className="text-center ">
                         <div className="flex justify-center mb-4 text-gray-300">
-                            <SearchIcon size={48} />
+                            <BadgeX className='w-12 h-12 text-[#94a8b6]   animate-bounce' />
                         </div>
                         <p className="text-gray-500 text-[14px]">
-                            {searchQuery
-                                ? `Aucun artisan trouvé pour "${searchQuery}"`
-                                : "Aucun service disponible pour le moment."}
+                            Aucun resultat pour votre recherche
                         </p>
                         <button
                             onClick={() => { setSearchQuery(''); setSelectedCategory(''); setSelectedRating(0); setSelectedPrice(0); }}
