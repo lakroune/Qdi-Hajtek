@@ -91,7 +91,7 @@ const ClientListOffres = () => {
                 </div>
             </div>
 
-            <div className="w-[90%] mx-auto px-4 py-6">
+            <div className="w-full mx-auto px-4 py-6">
                 {offres.length === 0 ? (
                     <div className="text-center py-16">
                         <div className="w-24 h-24 bg-gray-100 flex items-center justify-center mx-auto mb-4">
@@ -102,7 +102,7 @@ const ClientListOffres = () => {
                         
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
                         {offres.map((job) => {
                             const status = getStatusConfig(job.statut);
                             const StatusIcon = status.icon;
@@ -117,7 +117,7 @@ const ClientListOffres = () => {
                                         <div className="flex flex-col items-center justify-center h-full bg-gray-100 text-gray-400">
                                             <Briefcase className="w-12 h-12 text-[#1B4F72]/30" />
                                         </div>
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                                        <div className="absolute inset-0   from-black/50 to-transparent" />
                                         <div className="absolute top-3 left-3">
                                             <span className="px-2.5 py-1 bg-white/90 backdrop-blur text-[10px] font-bold text-[#1B4F72]">
                                                 {job.categorie?.nom_categorie}
@@ -146,27 +146,24 @@ const ClientListOffres = () => {
                                             </button>
                                         </div>
 
-                                        <p className="text-[11px] text-gray-500 line-clamp-2 leading-relaxed">
-                                            {job.description}
-                                        </p>
+                                        
 
-                                        <div className="grid grid-cols-2 gap-2 pt-2">
+                                        <div className=" flex flex-col gap-2">
                                             <div className="flex items-center gap-1.5 text-[11px] text-gray-600">
                                                 <MapPin className="w-3.5 h-3.5 text-gray-400" />
-                                                <span className="truncate">{job.address || 'Adresse non spécifiée'}</span>
+                                                <span className="truncate"> {job.ville  } ,{ job.address  }</span>
                                             </div>
                                             <div className="flex items-center gap-1.5 text-[11px] text-gray-600">
                                                 <Calendar className="w-3.5 h-3.5 text-gray-400" />
                                                 <span>{new Date(job.preferred_date).toLocaleDateString('fr-FR')}</span>
                                             </div>
+                                             <div className="flex items-center gap-1.5 text-[11px] text-gray-600">
+                                                <DollarSign className="w-3.5 h-3.5 text-gray-400" />
+                                                <span> {job.budget_estime} DH</span>
+                                            </div>
                                         </div>
 
-                                        <div className="flex items-center gap-2 p-2 bg-gray-50">
-                                            <DollarSign className="w-4 h-4 text-[#D35400]" />
-                                            <span className="text-[13px] font-bold text-[#D35400]">
-                                                {job.budget_estime} DH
-                                            </span>
-                                        </div>
+                                        
 
                                         <div className="flex items-center gap-2 pt-2">
                                             {job.statut === 'ouvert' && (
