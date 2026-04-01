@@ -35,7 +35,7 @@ const Services = () => {
             <p className="text-[18px] font-bold text-[#94a8b6] mb-2">
                 Aucun service disponible
             </p>
-        
+
         </div>;
     }
     return (
