@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import {
     Briefcase, MapPin, DollarSign, Calendar,
-     Camera, X, CheckCircle,
-    AlertCircle,  Loader2
+    Camera, X, CheckCircle,
+    AlertCircle, Loader2,
+    Tag,
+    ClockAlertIcon,
+    MapPinCheck
 } from 'lucide-react';
 import Input from '../components/inputs/Input';
 import FileUpload from '../components/inputs/FileUpload';
@@ -15,7 +18,7 @@ const ClientAddJob = () => {
     const [success, setSuccess] = useState(false);
     const [categories, setCategories] = useState([]);
     const [villes, setVilles] = useState([]);
-    const {navigate}=useNavigate();
+    const { navigate } = useNavigate();
     const [formData, setFormData] = useState({
         title: '',
         category: '',
@@ -62,12 +65,41 @@ const ClientAddJob = () => {
     ];
 
 
-
+    const validationInput = () => {
+        const errors = {};
+        if (!formData.title) {
+            errors.title = 'Le titre de l\'offre est obligatoire';
+        }
+        if (!formData.category) {
+            errors.category = 'La categorie de l\'offre est obligatoire';
+        }
+        if (!formData.description) {
+            errors.description = 'La description de l\'offre est obligatoire';
+        }
+        if (!formData.budget_estime) {
+            errors.budget_estime = 'Le budget estime de l\'offre est obligatoire';
+        }
+        if (!formData.preferredDate) {
+            errors.preferredDate = 'La date de l\'offre est obligatoire';
+        }
+        if (!formData.ville) {
+            errors.ville = 'La ville de l\'offre est obligatoire';
+        }
+        if (!formData.address) {
+            errors.address = 'L\'adresse de l\'offre est obligatoire';
+        }
+        setErrors(errors);
+        return Object.keys(errors).length === 0;
+    }
 
 
 
 
     const publierOffre = async () => {
+
+        if (!validationInput()) {
+            return;
+        }
         const data = new FormData();
         data.append('titre', formData.title);
         data.append('categorie_id', formData.category);
@@ -94,11 +126,16 @@ const ClientAddJob = () => {
                 toast.error('Une erreur est survenue');
             }
         } catch (error) {
-            if (error.response && error.response.status === 422) {
-                setErrors(error.response.data.errors);
+            if (error.response && error.response.data && error.response.data.errors) {
+                const validationErrors = error.response.data.errors;
+
+                Object.values(validationErrors).forEach((errorMessages) => {
+                    errorMessages.forEach((message) => {
+                        toast.error(message);
+                    });
+                });
             } else {
-                console.error('Error creating job:', error);
-                toast.error('Une erreur est survenue');
+                toast.error("Une erreur inattendue est survenue.");
             }
         } finally {
             setIsLoading(false);
@@ -135,28 +172,28 @@ const ClientAddJob = () => {
                                 placeholder="Ex: Réparation fuite d'eau urgente"
                                 required
                                 Icon={Briefcase}
+                                error={errors.title}
                             />
-                            {errors.title && (
-                                <p className="mt-1 text-[10px] text-red-500 flex items-center gap-1">
-                                    <AlertCircle className="w-3 h-3" /> {errors.title}
-                                </p>
-                            )}
+
                         </div>
 
                         <div className='w-full'>
                             <label className="block text-[11px] font-medium text-[#1B4F72] mb-1.5">
                                 Catégorie <span className="text-[#D35400]">*</span>
                             </label>
-                            <select
-                                value={formData.category}
-                                onChange={(e) => updateField('category', e.target.value)}
-                                className="w-full px-3 py-2 text-[12px] border border-gray-200 focus:border-[#D35400] focus:outline-none bg-white"
-                            >
-                                <option value="">Sélectionnez une catégorie</option>
-                                {categories.map(cat => (
-                                    <option key={cat.id} value={cat.id}>{cat.nom_categorie}</option>
-                                ))}
-                            </select>
+                            <div className=' flex relative  '>
+                                <Tag className="  left-3  absolute top-[20px] -translate-y-1/2 text-gray-400 w-4 h-4" />
+                                <select
+                                    value={formData.category}
+                                    onChange={(e) => updateField('category', e.target.value)}
+                                    className=" pl-10 w-full px-3 py-2 text-[12px] border border-gray-200 focus:border-[#D35400] focus:outline-none bg-white"
+                                >
+                                    <option value="">Sélectionnez une catégorie</option>
+                                    {categories.map(cat => (
+                                        <option key={cat.id} value={cat.id}>{cat.nom_categorie}</option>
+                                    ))}
+                                </select>
+                            </div>
                             {errors.category && (
                                 <p className="mt-1 text-[10px] text-red-500 flex items-center gap-1">
                                     <AlertCircle className="w-3 h-3" /> {errors.category}
@@ -212,6 +249,7 @@ const ClientAddJob = () => {
                                     <p className="text-[10px] opacity-80">{urg.desc}</p>
                                 </button>
                             ))}
+
                         </div>
                     </div>
 
@@ -228,6 +266,7 @@ const ClientAddJob = () => {
                                     onChange={(e) => updateField('budget_estime', e.target.value)}
                                     placeholder="Min"
                                     Icon={DollarSign}
+                                    error={errors.budget_estime}
                                 />
                             </div>
 
@@ -240,6 +279,7 @@ const ClientAddJob = () => {
                                     onChange={(e) => updateField('preferredDate', e.target.value)}
                                     required
                                     Icon={Calendar}
+                                    error={errors.preferredDate}
                                 />
                             </div>
                         </div>
@@ -253,18 +293,19 @@ const ClientAddJob = () => {
                             <label className="block text-[11px] font-medium text-[#1B4F72] mb-1.5">
                                 Ville <span className="text-[#D35400]">*</span>
                             </label>
-                            <select
+                            <div className="relative">
+                                <MapPinCheck className="absolute left-3 top-[20px] -translate-y-1/2 text-gray-400 w-4 h-4" />
+                                <select
                                 value={formData.ville}
                                 onChange={(e) => updateField('ville', e.target.value)}
-                                className="w-full px-3 py-2 text-[12px] border border-gray-200 focus:border-[#D35400] focus:outline-none bg-white"
+                                className="w-full pl-10 px-3 py-2 text-[12px] border border-gray-200 focus:border-[#D35400] focus:outline-none bg-white"
                             >
                                 <option value="">Sélectionnez une ville</option>
-                                {villes.map((ville) => (
-                                    <option key={ville.id} value={ville.id}>
-                                        {ville.ville}
-                                    </option>
+                                {villes.map(city => (
+                                    <option key={city.id} value={city.ville}>{city.ville}</option>
                                 ))}
                             </select>
+                            </div>
                             {errors.ville && (
                                 <p className="mt-1 text-[10px] text-red-500 flex items-center gap-1">
                                     <AlertCircle className="w-3 h-3" /> {errors.ville}
@@ -279,6 +320,8 @@ const ClientAddJob = () => {
                                 onChange={(e) => updateField('address', e.target.value)}
                                 placeholder="Quartier, rue, n°"
                                 Icon={MapPin}
+                                required
+                                error={errors.address}
                             />
                         </div>
                     </div>

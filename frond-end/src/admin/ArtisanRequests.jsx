@@ -141,7 +141,7 @@ const ArtisanRequests = () => {
     return (
 
 
-        <div className="bg-gray-50 w-full max-h-[85vh] ">
+        <div className="bg-gray-50   ">
             {/* Approuver l'artisan */}
             {isApproveModalOpen && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
@@ -225,7 +225,7 @@ const ArtisanRequests = () => {
                 </div>
             )}
             {/* Header */}
-            <div className='sticky  -top-3 z-50 bg-white px-1 py-1 p-4   '>
+            <div className='sticky  -top-3  bg-white px-1 py-1 p-4   '>
                 <div className="flex items-center justify-between gap-2">
                     <div>
                         <h1 className="text-[18px] font-bold text-[#1B4F72]">Demandes Artisan</h1>

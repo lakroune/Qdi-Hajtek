@@ -21,7 +21,7 @@ const Input = ({
 
             <div className="relative">
                 {Icon && (
-                    <Icon className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+                    <Icon className="absolute left-3 top-[20px] -translate-y-1/2 text-gray-400 w-4 h-4" />
                 )}
                 <input
                     type={type}
