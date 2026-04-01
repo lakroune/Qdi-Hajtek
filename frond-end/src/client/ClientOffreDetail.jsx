@@ -6,7 +6,10 @@ import {
     Clipboard,
     RefreshCw,
     MapPin,
-    Briefcase
+    Briefcase,
+    Drone,
+    SquareCheckBig,
+    XCircle
 } from 'lucide-react';
 import { useParams } from 'react-router-dom';
 import axiosClient from '../api/axios-client';
@@ -19,7 +22,7 @@ const ClientOffreDetail = () => {
     const [showAcceptModal, setShowAcceptModal] = useState(false);
     const { id } = useParams();
     const [isModalShowImage, setIsModalShowImage] = useState(false);
-
+    const [isShowOptionOffre, setIsShowOptionOffre] = useState(false);
     useEffect(() => {
         const fetchOffreTravail = async () => {
             try {
@@ -75,6 +78,18 @@ const ClientOffreDetail = () => {
         } catch (error) {
         }
     };
+
+    const handleUpdateStatus = async (status) => {
+        try {
+            const response = await axiosClient.patch(`/offres/${id}`, { status: status });
+            if (response.status === 200) {
+                const updatedOffre = { ...offre };
+                updatedOffre.statut = status;
+                setOffre(updatedOffre);
+            }
+        } catch (error) {
+        }
+    }
     return (
         <div className="min-h-screen bg-gray-50 mt-20 pb-8 overflow-y-scroll [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             {isModalShowImage && (
@@ -109,8 +124,42 @@ const ClientOffreDetail = () => {
                         </div>
                     </div>
                     <div>
-                        <MoreVertical className="w-5 h-5 text-[#1B4F72]" />
+                        <button className="p-2 hover:bg-gray-100 transition-colors " onClick={() => setIsShowOptionOffre(!isShowOptionOffre)} >
+                            <MoreVertical className="w-5 h-5 text-[#1B4F72]" />
+                        </button>
                     </div>
+                    {isShowOptionOffre && (
+                        <div className="absolute top-12 right-22 bg-white border border-gray-200   w-[200px] z-50 overflow-hidden">
+                            <div className='w-full flex flex-col'>
+                                <div className="px-4 py-2 border-b border-gray-100">
+                                    <span className="text-[11px] font-bold uppercase text-gray-400 tracking-wider">
+                                        Options de l'offre
+                                    </span>
+                                </div>
+                                <button
+                                    onClick={() => handleUpdateStatus('complete')}
+                                    className="flex items-center gap-3 w-full p-3 hover:bg-green-50 transition-colors text-[13px] text-[#1B4F72] border-b border-gray-50"
+                                >
+                                    <SquareCheckBig className="w-4 h-4 text-green-600" />
+                                    <span>Marquer comme complet</span>
+                                </button>
+
+                                <button
+                                    onClick={() => handleUpdateStatus('annule')}
+                                    className="flex items-center gap-3 w-full p-3 hover:bg-red-50 transition-colors text-[13px] text-[#1B4F72]"
+                                >
+                                    <XCircle className="w-4 h-4 text-red-600" />
+                                    <span>Marquer comme annuler</span>
+                                </button>
+                                <div className="px-4 py-3 bg-blue-50/50 border-t border-gray-100">
+                                    <p className="text-[11px] text-gray-500 leading-relaxed">
+                                        <span className="font-semibold text-blue-600">Remarque :</span>
+                                        {" "}Une fois l'offre clôturée, elle n'apparaîtra plus dans la liste des recherches.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
 

@@ -29,9 +29,11 @@ class OffreTravailDAO
         });
     }
 
-    public function update($id, $data)
+    public function update($id, $status)
     {
-        return OffreTravail::where('id', $id)->update($data);
+        return OffreTravail::where('id', $id)->update([
+            'statut' => $status,
+        ]);
     }
 
     public function delete($id)

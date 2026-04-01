@@ -66,7 +66,15 @@ class OffreTravailController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+       $data = $request->validate([
+            'status' => 'required|in:complete,annule'
+        ]);
+        $offreTravail = $this->offreTravailService->updateOffreTravail($id, $data['status']);
+        return response()->json([
+            'success' => $offreTravail ? true : false,
+            'message' =>  $offreTravail ? 'Offre de travail updated successfully' : 'Offre de travail not updated',
+            'data' => $offreTravail
+        ]);
     }
 
     /**

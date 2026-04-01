@@ -144,9 +144,7 @@ const ClientListOffres = () => {
                                             <h3 className="text-[14px] font-bold text-gray-800 leading-snug line-clamp-2 group-hover:text-[#1B4F72] transition-colors">
                                                 {job.titre}
                                             </h3>
-                                            <button className="p-2 text-gray-300 hover:text-gray-600 hover:bg-gray-100    transition-colors">
-                                                <MoreVertical className="w-4 h-4" />
-                                            </button>
+                                           
                                         </div>
 
 

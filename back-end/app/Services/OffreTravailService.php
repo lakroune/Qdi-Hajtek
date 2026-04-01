@@ -40,9 +40,9 @@ class OffreTravailService
         }
     }
 
-    public function updateOffreTravail($id, OffreTravailDTO $offreTravailDTO)
+    public function updateOffreTravail($id, string $status)
     {
-        return $this->offreTravailDAO->update($id, $offreTravailDTO->toArray());
+        return $this->offreTravailDAO->update($id, $status);
     }
     public function deleteOffreTravail($id)
     {

@@ -1,13 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { data, Link } from 'react-router-dom';
+import {  Link } from 'react-router-dom';
 import {
-    Mail, Lock, ArrowRight, Check, Shield,
-    Clock, User, Eye, EyeOff, AlertCircle,
-    MapPin,
+    Mail, Lock, ArrowRight ,
+  User, Eye, EyeOff, AlertCircle,
     IdCard,
-    ClipboardType,
-    LocationEdit,
-    LocateOffIcon,
     Locate
 } from 'lucide-react';
 import Input from '../components/inputs/Input';
