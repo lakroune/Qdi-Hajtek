@@ -14,8 +14,8 @@ const ManageCategories = () => {
     // States
     const [categories, setCategories] = useState([]);
     const [search, setSearch] = useState('');
-    const [editing, setEditing] = useState(null); // { isNew: boolean, id?: number }
-    const [deletingId, setDeletingId] = useState(null);
+    const [editing, setEditing] = useState(null);  
+   
     const [form, setForm] = useState({ n: '', desc: '', icon: '', a: true });
 
     const fetchCategories = async () => {
@@ -80,15 +80,7 @@ const ManageCategories = () => {
         }
     };
 
-    const deleteCategory = async (id) => {
-        try {
-            await axiosClient.delete(`/categories/${id}`);
-            setCategories(categories.filter(c => c.id !== id));
-            setDeletingId(null);
-        } catch (error) {
-            console.error("Erreur de suppression:", error);
-        }
-    };
+    
 
     const toggleStatus = async (id) => {
         const cat = categories.find(c => c.id === id);
@@ -165,9 +157,7 @@ const ManageCategories = () => {
                                             <button onClick={() => openEdit(c)} className="p-2 hover:bg-gray-100 transition-colors">
                                                 <Edit2 className="w-4 h-4 text-gray-400" />
                                             </button>
-                                            <button onClick={() => setDeletingId(c.id)} className="p-2 hover:bg-red-50 transition-colors">
-                                                <Trash2 className="w-4 h-4 text-red-400" />
-                                            </button>
+                                          
                                         </div>
                                     </td>
                                 </tr>
@@ -251,21 +241,7 @@ const ManageCategories = () => {
                 </div>
             )}
 
-            {deletingId && (
-                <div className="fixed inset-0 z-[999] flex items-center justify-center p-4">
-                    <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]" onClick={() => setDeletingId(null)} />
-                    <div className="relative w-full max-w-xs bg-white p-6 shadow-2xl">
-                        <h3 className="text-[14px] font-bold text-[#1B4F72] mb-2">Confirmation</h3>
-                        <p className="text-[12px] text-gray-600 mb-6">
-                            Supprimer <strong className="text-[#D35400]">"{categories.find(c => c.id === deletingId)?.n}"</strong> ?
-                        </p>
-                        <div className="grid grid-cols-2 gap-3">
-                            <button onClick={() => setDeletingId(null)} className="py-2 text-[12px] text-gray-400 font-medium">Non</button>
-                            <button onClick={() => deleteCategory(deletingId)} className="py-2 bg-red-500 text-white text-[12px] font-bold">Confirmer</button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            
         </div>
     );
 };

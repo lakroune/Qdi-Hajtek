@@ -6,7 +6,7 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class StoreCategorieRequest extends FormRequest
+class CategorieRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,7 +25,7 @@ class StoreCategorieRequest extends FormRequest
     {
         return [
             'nom_categorie' => 'required|string|unique:categories,nom_categorie',
-            'description' => 'required|string|max:255',
+            'description' => 'nullable|string|max:255',
             'icon' => 'required|string|unique:categories,icon_url',
         ];
     }
@@ -35,7 +35,6 @@ class StoreCategorieRequest extends FormRequest
         return [
             'nom_categorie.unique' => 'name already exists.',
             'icon.unique' => 'icon already exists.',
-            'description.required' => 'description is required.',
             'icon.required' => 'icon is required.',
             'nom_categorie.required' => 'name is required.',
         ];
@@ -47,7 +46,7 @@ class StoreCategorieRequest extends FormRequest
             response()->json([
                 'success' => false,
                 'message' => 'Validation errors',
-                'data' => $validator->errors()
+                'errors' => $validator->errors()
             ], 422)
         );
     }

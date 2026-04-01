@@ -41,8 +41,6 @@ Route::middleware('auth:api')->group(function () {
 
     // mazal  potection artisan envoi lui meme
     Route::put('/categories/{id}', [CategorieController::class, 'update']);
-    Route::delete('/categories/{id}', [CategorieController::class, 'destroy']);
-
     Route::post('/categories', [CategorieController::class, 'store']);
 
 

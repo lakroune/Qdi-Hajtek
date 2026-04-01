@@ -27,4 +27,8 @@ class CategorieService
     {
         return $this->categorieDAO->findWithServices($id);
     }
+    public function updateCategorie(int $id, array $data)
+    {
+        return $this->categorieDAO->update($id, $data);
+    }
 }

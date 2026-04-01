@@ -4,9 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\DTO\CategorieDTO;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CategorieRequest;
 use App\Models\Categorie;
-use App\Http\Requests\StoreCategorieRequest;
-use App\Http\Requests\UpdateCategorieRequest;
 use App\Services\CategorieService;
 
 class CategorieController extends Controller
@@ -35,7 +34,7 @@ class CategorieController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreCategorieRequest $request)
+    public function store(CategorieRequest $request)
     {
         $tdo = CategorieDTO::fromRequest($request);
         $categorie = $this->categorieService->createCategorie($tdo->toArray());
@@ -60,9 +59,14 @@ class CategorieController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateCategorieRequest $request, Categorie $categorie)
-    {
-        //
+    public function update(CategorieRequest $request, Categorie $categorie)
+    {   
+        $categorie = $this->categorieService->updateCategorie($categorie->id, $request->all());
+        return response()->json([
+            'message' => 'Categorie updated successfully',
+            'data' => $categorie
+        ]);
+
     }
 
     /**
