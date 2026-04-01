@@ -15,7 +15,7 @@ const ClientOffreDetail = () => {
     const [offre, setOffre] = useState(null);
     const [loading, setLoading] = useState(true);
     const [selectedImage, setSelectedImage] = useState(0);
-    const [selectedProposal, setSelectedProposal] = useState(null);
+    const [selectedProposition, setSelectedProposition] = useState(null);
     const [showAcceptModal, setShowAcceptModal] = useState(false);
     const { id } = useParams();
     const [isModalShowImage, setIsModalShowImage] = useState(false);
@@ -50,7 +50,7 @@ const ClientOffreDetail = () => {
     };
 
     const handleAccept = (proposalId) => {
-        setSelectedProposal(proposalId);
+        setSelectedProposition(proposalId);
         setShowAcceptModal(true);
     };
 
@@ -60,7 +60,21 @@ const ClientOffreDetail = () => {
     if (!offre) return <div className="text-center mt-40">Offre introuvable.</div>;
 
     const urgency = getUrgencyConfig(offre.niveau_urgence);
+    const accepetProposition = async (id) => {
+        try {
+            const response = await axiosClient.patch(`/propositions/${id}/accept`);
 
+            if (response.status === 200) {
+                setShowAcceptModal(false);
+
+                const updatedOffre = { ...offre };
+                updatedOffre.statut = 'accepted';
+                setOffre(updatedOffre);
+
+            }
+        } catch (error) {
+        }
+    };
     return (
         <div className="min-h-screen bg-gray-50 mt-20 pb-8 overflow-y-scroll [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             {isModalShowImage && (
@@ -280,8 +294,8 @@ const ClientOffreDetail = () => {
                                         <div className=" py-1 flex items-center gap-2" >
                                             <Clock className=" text-gray-600 w-5 h-5 " />
                                             <p className="text-[10px] text-gray-500">Conditions speciales</p>
-                                            <p className="text-[11px] font-bold text-gray-800">{prop.conditions_speciales??"Aucune"}</p>
-                                        </div>  
+                                            <p className="text-[11px] font-bold text-gray-800">{prop.conditions_speciales ?? "Aucune"}</p>
+                                        </div>
                                     </div>
 
                                     <div className="p-3 bg-blue-50/50 border border-blue-100">
@@ -295,7 +309,7 @@ const ClientOffreDetail = () => {
                                 <div className="p-5 pt-0">
                                     <button
                                         onClick={() => handleAccept(prop.id)}
-                                        className="w-full flex items-center justify-center gap-2 py-3 bg-green-500 hover:bg-green-600 text-white text-[13px] font-bold transition-colors"
+                                        className="w-full flex items-center justify-center gap-2 py-3 bg-green-500 hover:bg-green-600 text-white text-[11px] font-bold transition-colors"
                                     >
                                         Accepter cette proposition
                                     </button>
@@ -309,21 +323,21 @@ const ClientOffreDetail = () => {
             {/* Modal */}
             {showAcceptModal && (
                 <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-                    <div className="bg-white max-w-md w-full p-6 shadow-2xl">
+                    <div className="bg-white max-w-md w-full p-6  ">
                         <div className="text-center mb-6">
                             <div className="w-16 h-16 bg-green-100 flex items-center justify-center mx-auto mb-3">
                                 <CheckCircle2 className="w-8 h-8 text-green-600" />
                             </div>
-                            <h3 className="text-[20px] font-bold text-gray-800 mb-2">Confirmer l'acceptation ?</h3>
-                            <p className="text-[13px] text-gray-500">
+                            <h3 className="text-[14px] font-bold text-gray-800 mb-2">Confirmer l'acceptation ?</h3>
+                            <p className="text-[12px] text-gray-500">
                                 Vous allez accepter la proposition de <strong className="text-[#1B4F72]">
-                                    {offre.propositions.find(p => p.id === selectedProposal)?.artisan.user.firstname}
+                                    {offre.propositions.find(p => p.id === selectedProposition)?.artisan.user.firstname}
                                 </strong>
                             </p>
                         </div>
                         <div className="flex gap-3">
-                            <button onClick={() => setShowAcceptModal(false)} className="flex-1 py-3 border border-gray-200 text-gray-600 font-semibold">Annuler</button>
-                            <button onClick={() => setShowAcceptModal(false)} className="flex-1 py-3 bg-green-500 text-white font-semibold">Confirmer</button>
+                            <button onClick={() => setShowAcceptModal(false)} className="flex-1 py-2   border text-[12px] border-gray-200 text-gray-600 font-semibold">Annuler</button>
+                            <button onClick={() => accepetProposition(selectedProposition)} className="flex-1  py-2 bg-green-500  text-[12px] text-white font-semibold">Confirmer</button>
                         </div>
                     </div>
                 </div>

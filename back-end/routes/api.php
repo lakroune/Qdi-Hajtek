@@ -81,7 +81,7 @@ Route::middleware('auth:api')->group(function () {
     //mazal  potection 
 
 
-
+// mazal  potection 
     Route::patch('propositions/{id}/accept', [PropositionController::class, 'accept']);
 
     Route::get('artisans/{artisan}/disponibilites', [DisponibiliteController::class, 'show']);
