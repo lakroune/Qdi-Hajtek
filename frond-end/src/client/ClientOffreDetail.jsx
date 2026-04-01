@@ -100,32 +100,32 @@ const ClientOffreDetail = () => {
                 </div>
             </div>
 
-            <div className="  ">
+            <div className="    bg-gray-50 ">
                 <div className="bg-white border border-gray-200">
                     <div className="relative w-full bg-gray-100">
                         {offre.images && offre.images.length > 0 ? (
-                           
 
-                                <div className="grid grid-cols-6 gap-0 border-t border-gray-200">
-                                    {offre.images.map((img, idx) => (
-                                        <button
-                                            key={img.id}
-                                            onClick={() => { setSelectedImage(idx); setIsModalShowImage(true) }}
-                                            className={`relative aspect-square overflow-hidden ${selectedImage === idx
-                                                ? 'ring-2 ring-[#D35400] ring-inset z-10'
-                                                : 'opacity-60 hover:opacity-100'
-                                                }`}
-                                        >
-                                            <img src={getImageUrl(img.url)} alt="" className="w-full h-full object-cover" />
-                                        </button>
-                                    ))}
-                                </div>
-                             
+
+                            <div className="grid grid-cols-6 gap-0 border-t border-gray-200">
+                                {offre.images.map((img, idx) => (
+                                    <button
+                                        key={img.id}
+                                        onClick={() => { setSelectedImage(idx); setIsModalShowImage(true) }}
+                                        className={`relative aspect-square overflow-hidden ${selectedImage === idx
+                                            ? 'ring-2 ring-[#D35400] ring-inset z-10'
+                                            : 'opacity-60 hover:opacity-100'
+                                            }`}
+                                    >
+                                        <img src={getImageUrl(img.url)} alt="" className="w-full h-full object-cover" />
+                                    </button>
+                                ))}
+                            </div>
+
                         ) : (
                             <div className="aspect-video flex items-center justify-center text-gray-400">Aucune image</div>
                         )}
                     </div>
-                    
+
                 </div>
 
                 <div className="bg-white border border-gray-200 p-5 space-y-4">
@@ -138,7 +138,7 @@ const ClientOffreDetail = () => {
                                     <Briefcase className="w-4 h-4" />
                                     <span className="text-[10px] uppercase font-bold">  {offre.titre}</span>
                                 </div>
-                                 
+
                             </div>
                             <div className="flex items-center gap-2 text-[#1B4F72] mb-2">
                                 <Clipboard className="w-4 h-4" />
@@ -223,12 +223,12 @@ const ClientOffreDetail = () => {
                 </div>
 
                 {/* Proposals Section */}
-                <div>
-                    <h3 className="text-[18px] font-bold text-[#1B4F72] mb-5">
+                <div className="p-4 bg-gray-50 border border-gray-100">
+                    <h3 className="text-[14px] font-bold text-[#1B4F72] mb-5">
                         Propositions reçues ({offre.propositions?.length || 0})
                     </h3>
 
-                    <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2 xl:grid-cols-4 gap-4 ">
                         {offre.propositions?.map((prop) => (
                             <div key={prop.id} className="bg-white border border-gray-200 overflow-hidden hover:border-[#1B4F72] transition-all flex flex-col">
                                 <div className="p-5 border-b border-gray-100 bg-gray-50/50">
