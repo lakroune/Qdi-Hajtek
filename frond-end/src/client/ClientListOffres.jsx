@@ -4,7 +4,10 @@ import {
     AlertCircle, CheckCircle2, Timer, Eye,
     MoreVertical, Plus,
     ChevronRight, Star,
-    LoaderCircle
+    LoaderCircle,
+    Pointer,
+    RefreshCcw,
+    RefreshCw
 } from 'lucide-react';
 import axiosClient from '../api/axios-client';
 import toast from 'react-hot-toast';
@@ -70,7 +73,7 @@ const ClientListOffres = () => {
     };
 
     if (isLoading) {
-        return <div className="flex justify-center items-center h-screen"><LoaderCircle className="animate-spin w-12 h-12 text-[#D35400]" /></div>;
+        return <div className="flex justify-center items-center h-screen"><RefreshCw className="animate-spin  w-12 h-12 text-[#D35400]" /></div>;
     }
     return (
         <div className="min-h-screen bg-gray-50 mt-20 pb-8">
@@ -99,7 +102,7 @@ const ClientListOffres = () => {
                         </div>
                         <h3 className="text-[16px] font-bold text-[#1B4F72] mb-2">Aucune offre</h3>
                         <p className="text-[12px] text-gray-500 mb-6">Commencez par créer votre première demande</p>
-                        
+
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
@@ -111,7 +114,7 @@ const ClientListOffres = () => {
                             return (
                                 <div
                                     key={job.id}
-                                    className="bg-white hover:border-[#D35400] border border-gray-100 transition-all duration-300 overflow-hidden group"
+                                    className="bg-white   border border-gray-100 transition-all duration-300 overflow-hidden group"
                                 >
                                     <div className="relative h-24 overflow-hidden">
                                         <div className="flex flex-col items-center justify-center h-full bg-gray-100 text-gray-400">
@@ -146,32 +149,38 @@ const ClientListOffres = () => {
                                             </button>
                                         </div>
 
-                                        
+
 
                                         <div className=" flex flex-col gap-2">
                                             <div className="flex items-center gap-1.5 text-[11px] text-gray-600">
                                                 <MapPin className="w-3.5 h-3.5 text-gray-400" />
-                                                <span className="truncate"> {job.ville  } ,{ job.address  }</span>
+                                                <span className="truncate"> {job.ville} ,{job.address}</span>
                                             </div>
                                             <div className="flex items-center gap-1.5 text-[11px] text-gray-600">
                                                 <Calendar className="w-3.5 h-3.5 text-gray-400" />
                                                 <span>{new Date(job.preferred_date).toLocaleDateString('fr-FR')}</span>
                                             </div>
-                                             <div className="flex items-center gap-1.5 text-[11px] text-gray-600">
+                                            <div className="flex items-center gap-1.5 text-[11px] text-gray-600">
                                                 <DollarSign className="w-3.5 h-3.5 text-gray-400" />
                                                 <span> {job.budget_estime} DH</span>
                                             </div>
+                                            <div className="flex items-center gap-1.5 text-[11px] text-gray-600">
+                                                <Pointer className="w-3.5 h-3.5 text-gray-400" />
+                                                <span> {job.propositions_count} propositions</span>
+                                            </div>
                                         </div>
 
-                                        
+
 
                                         <div className="flex items-center gap-2 pt-2">
                                             {job.statut === 'ouvert' && (
-                                                <button className="flex-1 flex items-center justify-center gap-1.5 py-2 bg-[#D35400] hover:bg-[#A04000] text-white text-[11px] font-semibold transition-colors">
-                                                    <Eye className="w-3.5 h-3.5" />
-                                                    Voir les propositions
-                                                    <ChevronRight className="w-3.5 h-3.5" />
-                                                </button>
+                                                <a href={`/mes-offres/${job.id}`} className='flex-1 flex items-center justify-center   bg-[#D35400] hover:bg-[#A04000] text-white text-[11px] font-semibold transition-colors'>
+                                                    <button className="flex-1 flex items-center justify-center gap-1.5 py-2 bg-[#D35400] hover:bg-[#A04000] text-white text-[11px] font-semibold transition-colors">
+                                                        <Eye className="w-3.5 h-3.5" />
+                                                        Voir les propositions
+                                                        <ChevronRight className="w-3.5 h-3.5" />
+                                                    </button>
+                                                </a>
                                             )}
                                             {job.is_completed && (
                                                 <button className="flex items-center gap-1 px-3 py-2 bg-[#1B4F72] hover:bg-[#D35400] text-white text-[11px] font-semibold transition-colors">

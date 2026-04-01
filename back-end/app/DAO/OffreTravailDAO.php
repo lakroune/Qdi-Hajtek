@@ -41,7 +41,7 @@ class OffreTravailDAO
 
     public function find($id)
     {
-        return OffreTravail::with('images', 'categorie', 'client.user')->findOrFail($id);
+        return OffreTravail::with('images', 'categorie', 'client.user', 'propositions.artisan.user.client')->findOrFail($id);
     }
 
     public function getAll()
@@ -50,7 +50,7 @@ class OffreTravailDAO
     }
     public function findByClient($id)
     {
-        return OffreTravail::where('client_id', $id)->with('categorie', 'client.user')->get();
+        return OffreTravail::where('client_id', $id)->with('categorie' )->withCount('propositions')->get();
     }
     public function findByCategorie($id)
     {
