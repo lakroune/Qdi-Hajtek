@@ -9,13 +9,14 @@ import {
     TagsIcon
 } from 'lucide-react';
 import axiosClient from '../api/axios-client';
+import toast from 'react-hot-toast';
 
 const ManageCategories = () => {
     // States
     const [categories, setCategories] = useState([]);
     const [search, setSearch] = useState('');
-    const [editing, setEditing] = useState(null);  
-   
+    const [editing, setEditing] = useState(null);
+
     const [form, setForm] = useState({ n: '', desc: '', icon: '', a: true });
 
     const fetchCategories = async () => {
@@ -69,18 +70,43 @@ const ManageCategories = () => {
 
         try {
             if (editing.isNew) {
-                await axiosClient.post('/categories', payload);
+                const response = await axiosClient.post('/categories', payload);
+                if (response.status === 201) {
+
+                    toast.success("Categorie ajoute avec success");
+                    fetchCategories();
+                }
+                else {
+                    toast.error(" une erreur est survenue");
+                }
             } else {
-                await axiosClient.put(`/categories/${editing.id}`, payload);
+                const response = await axiosClient.put(`/categories/${editing.id}`, payload);
+                if (response.status === 200) {
+                    toast.success("Categorie modifie avec success");
+                    fetchCategories();
+                }
+                else {
+                    toast.error(" une erreur est survenue");
+                }
             }
-            fetchCategories();
+
             setEditing(null);
         } catch (error) {
-            console.error("Erreur lors de l'enregistrement:", error);
+            if (error.response && error.response.data && error.response.data.errors) {
+                const validationErrors = error.response.data.errors;
+
+                Object.values(validationErrors).forEach((errorMessages) => {
+                    errorMessages.forEach((message) => {
+                        toast.error(message);
+                    });
+                });
+            } else {
+                toast.error("Une erreur inattendue est survenue.");
+            }
         }
     };
 
-    
+
 
     const toggleStatus = async (id) => {
         const cat = categories.find(c => c.id === id);
@@ -157,7 +183,7 @@ const ManageCategories = () => {
                                             <button onClick={() => openEdit(c)} className="p-2 hover:bg-gray-100 transition-colors">
                                                 <Edit2 className="w-4 h-4 text-gray-400" />
                                             </button>
-                                          
+
                                         </div>
                                     </td>
                                 </tr>
@@ -241,7 +267,7 @@ const ManageCategories = () => {
                 </div>
             )}
 
-            
+
         </div>
     );
 };

@@ -59,14 +59,13 @@ class CategorieController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(CategorieRequest $request, Categorie $categorie)
-    {   
-        $categorie = $this->categorieService->updateCategorie($categorie->id, $request->all());
+    public function update(CategorieRequest $request, int $categorieId)
+    {
+        $categorie = $this->categorieService->updateCategorie($categorieId, $request->all());
         return response()->json([
             'message' => 'Categorie updated successfully',
             'data' => $categorie
         ]);
-
     }
 
     /**

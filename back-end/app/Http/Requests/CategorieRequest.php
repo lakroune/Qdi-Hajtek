@@ -24,7 +24,7 @@ class CategorieRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nom_categorie' => 'required|string|unique:categories,nom_categorie',
+            'nom_categorie' => 'required|string', //|unique:categories,nom_categorie',
             'description' => 'nullable|string|max:255',
             'icon' => 'required|string|unique:categories,icon_url',
         ];
