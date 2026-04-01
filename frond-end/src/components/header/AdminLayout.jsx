@@ -27,7 +27,7 @@ const AdminLayout = () => {
     const isActive = (path) => location.pathname === path;
 
     return (
-        <div className="min-h-screen bg-[#F1F5F9] flex">
+        <div className="min-h-screen max-h-screen  bg-[#F1F5F9] flex">
             <aside className={`
                 fixed lg:static inset-y-0 left-0 z-50 w-64 bg-[#0F172A] text-white transition-transform duration-300
                 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0 lg:w-20'}
@@ -81,7 +81,7 @@ const AdminLayout = () => {
                         </button>
                     </div>
                 </header>
-                <main className="flex-1 overflow-auto p-0  ">
+                <main className="flex-1 max-h-screen overflow-auto overflow-y-scroll [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] p-0  ">
                     <Outlet />
                 </main>
             </div>

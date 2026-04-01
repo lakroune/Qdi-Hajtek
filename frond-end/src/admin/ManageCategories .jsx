@@ -1,6 +1,12 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import {
-    Plus, Search, Edit2, Trash2, Banknote
+    Plus, Search, Edit2, Trash2, Banknote,
+    AlertTriangle,
+    AlertTriangleIcon,
+    CassetteTape,
+    TagIcon,
+    HdIcon,
+    TagsIcon
 } from 'lucide-react';
 import axiosClient from '../api/axios-client';
 
@@ -95,27 +101,25 @@ const ManageCategories = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50">
-            <header className="bg-white border-b px-6 py-4">
+        <div className="min-h-screen max-h-screen relative bg-gray-50 w-full overflow-auto overflow-y-scroll [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+            <header className="bg-white border-b px-6 py-2  sticky top-0   ">
                 <div className="flex justify-between items-center">
-                    <div>
-                        <h1 className="text-[18px] font-bold text-[#1B4F72]">Catégories</h1>
-                        <p className="text-[11px] text-gray-500">{categories.length} total • {activeCount} actives</p>
+
+                    <div className="mt-3 relative max-w-sm">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                        <input
+                            value={search}
+                            onChange={e => setSearch(e.target.value)}
+                            placeholder="Rechercher..."
+                            className="w-full pl-9 pr-3 py-2 text-[12px] border border-gray-200 outline-none focus:border-[#D35400]"
+                        />
                     </div>
                     <button onClick={openNew} className="flex items-center gap-2 px-4 py-2 bg-[#D35400] text-white text-[12px] font-medium hover:bg-[#A04000] transition-colors">
                         <Plus className="w-4 h-4" /> Nouveau
                     </button>
                 </div>
 
-                <div className="mt-3 relative max-w-sm">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                    <input
-                        value={search}
-                        onChange={e => setSearch(e.target.value)}
-                        placeholder="Rechercher..."
-                        className="w-full pl-9 pr-3 py-2 text-[12px] border border-gray-200 outline-none focus:border-[#D35400]"
-                    />
-                </div>
+
             </header>
 
             <div className="px-6 py-4">
@@ -185,7 +189,7 @@ const ManageCategories = () => {
                     <div className="relative w-full max-w-sm bg-white shadow-2xl border border-gray-100 p-6 animate-in zoom-in-95 duration-200">
                         <div className="flex items-center gap-4 mb-6">
                             <div className="w-10 h-10 bg-[#D35400]/10 flex items-center justify-center">
-                                <Banknote className="w-5 h-5 text-[#D35400]" />
+                                <TagsIcon className="w-5 h-5 text-[#D35400]" />
                             </div>
                             <div>
                                 <h3 className="text-[14px] font-bold text-[#1B4F72]">
@@ -199,16 +203,16 @@ const ManageCategories = () => {
 
                         <form onSubmit={saveCategory} className="space-y-3">
                             <div>
-                                <label className="text-[11px] text-gray-500 mb-1 block">Nom</label>
+                                <label className="text-[11px] text-gray-500 mb-1 block">Nom de la catégorie  <span className="text-[#D35400]">*</span> </label>
                                 <input
                                     required
                                     value={form.n}
                                     onChange={e => setForm({ ...form, n: e.target.value })}
-                                    className="w-full border border-gray-300 p-2 text-[12px] focus:border-[#D35400] outline-none"
+                                    className="w-full border border-gray-300 p-1 text-[12px] focus:border-[#D35400] outline-none"
                                 />
                             </div>
                             <div>
-                                <label className="text-[11px] text-gray-500 mb-1 block">Description</label>
+                                <label className="text-[11px] text-gray-500 mb-1 block">Description <span className="text-[#D35400]"></span> <span className="text-[10px] text-gray-400">(Facultatif)</span></label>
                                 <textarea
                                     value={form.desc}
                                     onChange={e => setForm({ ...form, desc: e.target.value })}
@@ -217,11 +221,11 @@ const ManageCategories = () => {
                                 />
                             </div>
                             <div>
-                                <label className="text-[11px] text-gray-500 mb-1 block">Icône (Emoji)</label>
+                                <label className="text-[11px] text-gray-500 mb-1 block">Icône <span className="text-[#D35400]">*</span>  <span className="text-[10px] text-gray-400">(nom de l'icône)</span> </label>
                                 <input
                                     value={form.icon}
                                     onChange={e => setForm({ ...form, icon: e.target.value })}
-                                    className="w-full border border-gray-300 p-2 text-[12px] focus:border-[#D35400] outline-none"
+                                    className="w-full border border-gray-300 p-1 text-[12px] focus:border-[#D35400] outline-none"
                                 />
                             </div>
                             <label className="flex items-center gap-2 mt-2 cursor-pointer">
