@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Heart, LoaderCircle, MapPin, Star } from 'lucide-react';
+import { Badge, BadgeX, Heart, LoaderCircle, MapPin, Star } from 'lucide-react';
 import axiosClient from '../api/axios-client';
 
 const Services = () => {
@@ -30,6 +30,14 @@ const Services = () => {
         return <div className="flex justify-center items-center h-screen"><LoaderCircle className="animate-spin w-12 h-12 text-[#D35400]" /></div>;
     }
 
+    if (services.length === 0) {
+        return <div className="flex  flex-col  gap-2 justify-center items-center h-screen"><BadgeX className="animate-spin w-12 h-12 text-[#94a8b6]" />
+            <p className="text-[18px] font-bold text-[#94a8b6] mb-2">
+                Aucun service disponible
+            </p>
+        
+        </div>;
+    }
     return (
         <div className="min-h-screen bg-gray-50 mt-20 pb-8">
             <div className="w-[90%] mx-auto px-4 py-6">

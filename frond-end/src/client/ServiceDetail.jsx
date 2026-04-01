@@ -5,7 +5,9 @@ import {
     ArrowRight,
     LoaderCircle,
     Link,
-    DollarSign
+    DollarSign,
+    Badge,
+    BadgeX
 } from 'lucide-react';
 import axiosClient from '../api/axios-client';
 import { useParams } from 'react-router-dom';
@@ -71,7 +73,15 @@ const ServiceDetail = () => {
     if (isCharging) {
         return <div className="flex justify-center items-center h-screen"><LoaderCircle className="animate-spin w-12 h-12 text-[#D35400]" /></div>;
     }
-
+    if (!service) {
+        return <div className="flex flex-col gap-1.5     justify-center items-center h-screen">
+            <BadgeX className=" animate-spin w-6 h-6 text-[#D35400]" />
+            <span className='text-[15px]'> Ce service n'existe pas</span>
+            <p className='text-[15px]'>
+                Voullez-vous <a href="/services" className="text-[#D35400]">retourner a la page des services</a>
+            </p>
+        </div>;
+    }
 
 
     if (!service) return null;
@@ -139,8 +149,8 @@ const ServiceDetail = () => {
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div className="md:col-span-2">
-                            <h2 className="text-[14px] font-bold text-[#1B4F72] mb-2">À propos de ce service  <span className=' text-[9px] '> {new Date(service.created_at).toLocaleDateString('fr-FR') }</span></h2>
-                           
+                            <h2 className="text-[14px] font-bold text-[#1B4F72] mb-2">À propos de ce service  <span className=' text-[9px] '> {new Date(service.created_at).toLocaleDateString('fr-FR')}</span></h2>
+
                             <p className="text-[13px] text-gray-600 leading-relaxed">
                                 {service.description}
                             </p>

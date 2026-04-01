@@ -60,7 +60,15 @@ const ClientOffreDetail = () => {
     if (loading) {
         return <div className="flex justify-center items-center h-screen"><RefreshCw className="animate-spin  w-12 h-12 text-[#D35400]" /></div>;
     }
-    if (!offre) return <div className="text-center mt-40">Offre introuvable.</div>;
+    if (!offre) return <div className="flex flex-col justify-center items-center h-screen"><XCircle className="animate-spin  w-6 h-6 text-[#D35400]" />
+        <h1 className=' text-[#D35400] p-2 py-2 px-2' >
+            Offre Introuvable
+        </h1>
+        <p className=' text-gray-500'>
+            La offre que vous recherchez n'a pas été trouvee
+            <br />
+        </p>
+    </div>;
 
     const urgency = getUrgencyConfig(offre.niveau_urgence);
     const accepetProposition = async (id) => {

@@ -15,7 +15,7 @@ class ServiceDAO
         //
     }
     public function create(array $data, array $imageUrls)
-    { 
+    {
         return DB::transaction(function () use ($data, $imageUrls) {
             $data['artisan_id'] = auth('api')->user()->id;
             $service = Service::create($data);
@@ -31,10 +31,10 @@ class ServiceDAO
     }
     public function getServiceDetails(int $serviceId)
     {
-        return Service::with(['images', 'artisan.user.client', 'categorie'])->findOrFail($serviceId);
+        return Service::with(['images', 'artisan.user.client', 'categorie'])->where('is_active', true)->findOrFail($serviceId);
     }
     public  function getServices()
     {
-        return Service::with(['images', 'artisan.user.client', 'categorie'])->get();
+        return Service::with(['images', 'artisan.user.client', 'categorie'])->where('is_active', true)->get();
     }
 }
