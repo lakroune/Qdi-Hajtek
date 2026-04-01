@@ -45,7 +45,7 @@ class OffreTravailController extends Controller
             'success' => $offreTravail ? true : false,
             'message' =>  $offreTravail ? 'Offre de travail created successfully' : 'Offre de travail not created',
             'data' => $offreTravail
-        ]);
+        ], 201);
     }
 
     /**

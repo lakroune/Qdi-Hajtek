@@ -118,12 +118,11 @@ const ClientAddJob = () => {
             setIsLoading(true);
             const response = await axiosClient.post('/offres', data);
 
-            if (response.data.success) {
-                setSuccess(true);
+            if (response.status == 201) {
                 toast.success('Offre publiée avec sucesse');
                 navigate('/mes-offres');
             } else {
-                toast.error('Une erreur est survenue');
+                toast.error('Une erreur inattendue est survenue .');
             }
         } catch (error) {
             if (error.response && error.response.data && error.response.data.errors) {
@@ -134,9 +133,7 @@ const ClientAddJob = () => {
                         toast.error(message);
                     });
                 });
-            } else {
-                toast.error("Une erreur inattendue est survenue.");
-            }
+            } 
         } finally {
             setIsLoading(false);
         }
@@ -296,15 +293,15 @@ const ClientAddJob = () => {
                             <div className="relative">
                                 <MapPinCheck className="absolute left-3 top-[20px] -translate-y-1/2 text-gray-400 w-4 h-4" />
                                 <select
-                                value={formData.ville}
-                                onChange={(e) => updateField('ville', e.target.value)}
-                                className="w-full pl-10 px-3 py-2 text-[12px] border border-gray-200 focus:border-[#D35400] focus:outline-none bg-white"
-                            >
-                                <option value="">Sélectionnez une ville</option>
-                                {villes.map(city => (
-                                    <option key={city.id} value={city.ville}>{city.ville}</option>
-                                ))}
-                            </select>
+                                    value={formData.ville}
+                                    onChange={(e) => updateField('ville', e.target.value)}
+                                    className="w-full pl-10 px-3 py-2 text-[12px] border border-gray-200 focus:border-[#D35400] focus:outline-none bg-white"
+                                >
+                                    <option value="">Sélectionnez une ville</option>
+                                    {villes.map(city => (
+                                        <option key={city.id} value={city.ville}>{city.ville}</option>
+                                    ))}
+                                </select>
                             </div>
                             {errors.ville && (
                                 <p className="mt-1 text-[10px] text-red-500 flex items-center gap-1">
