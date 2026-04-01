@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import {
-    MapPin, Calendar, DollarSign, Clock, ArrowLeft,
+    Calendar, DollarSign, Clock, ArrowLeft,
     CheckCircle2, MoreVertical, Star,
-    Briefcase, AlertCircle
+
+    Clipboard,
+    RefreshCw,
+    MapPin,
+    Briefcase
 } from 'lucide-react';
 import { useParams } from 'react-router-dom';
 import axiosClient from '../api/axios-client';
@@ -14,7 +18,7 @@ const ClientOffreDetail = () => {
     const [selectedProposal, setSelectedProposal] = useState(null);
     const [showAcceptModal, setShowAcceptModal] = useState(false);
     const { id } = useParams();
-    const [isModalShowImage, setIsModalShowImage] = useState(true);
+    const [isModalShowImage, setIsModalShowImage] = useState(false);
 
     useEffect(() => {
         const fetchOffreTravail = async () => {
@@ -50,7 +54,9 @@ const ClientOffreDetail = () => {
         setShowAcceptModal(true);
     };
 
-    if (loading) return <div className="text-center mt-40">Chargement...</div>;
+    if (loading) {
+        return <div className="flex justify-center items-center h-screen"><RefreshCw className="animate-spin  w-12 h-12 text-[#D35400]" /></div>;
+    }
     if (!offre) return <div className="text-center mt-40">Offre introuvable.</div>;
 
     const urgency = getUrgencyConfig(offre.niveau_urgence);
@@ -86,7 +92,6 @@ const ClientOffreDetail = () => {
                         </button>
                         <div>
                             <h1 className="text-[18px] font-bold text-[#1B4F72]">Détail de l'offre</h1>
-                            <p className="text-[11px] text-gray-500">#{offre.id} • {new Date(offre.created_at).toLocaleDateString()}</p>
                         </div>
                     </div>
                     <div>
@@ -95,17 +100,17 @@ const ClientOffreDetail = () => {
                 </div>
             </div>
 
-            <div className="w-[90%] mx-auto px-4 py-6 space-y-6">
+            <div className="  ">
                 <div className="bg-white border border-gray-200">
                     <div className="relative w-full bg-gray-100">
                         {offre.images && offre.images.length > 0 ? (
-                            <>
+                           
 
                                 <div className="grid grid-cols-6 gap-0 border-t border-gray-200">
                                     {offre.images.map((img, idx) => (
                                         <button
                                             key={img.id}
-                                            onClick={() => {setSelectedImage(idx) ; setIsModalShowImage(true)}}
+                                            onClick={() => { setSelectedImage(idx); setIsModalShowImage(true) }}
                                             className={`relative aspect-square overflow-hidden ${selectedImage === idx
                                                 ? 'ring-2 ring-[#D35400] ring-inset z-10'
                                                 : 'opacity-60 hover:opacity-100'
@@ -115,63 +120,104 @@ const ClientOffreDetail = () => {
                                         </button>
                                     ))}
                                 </div>
-                            </>
+                             
                         ) : (
                             <div className="aspect-video flex items-center justify-center text-gray-400">Aucune image</div>
                         )}
                     </div>
-                    <div className="p-5">
-                        <div className="flex items-center gap-2 mb-2">
-                            <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${urgency.lightColor}`}>
-                                {urgency.label}
-                            </span>
-                        </div>
-                        <h2 className="text-[20px] sm:text-[24px] md:text-[28px] font-bold text-[#1B4F72] leading-tight">
-                            {offre.titre}
-                        </h2>
-                    </div>
+                    
                 </div>
 
-                {/* Details Section */}
                 <div className="bg-white border border-gray-200 p-5 space-y-4">
-                    <p className="text-[14px] text-gray-600 leading-relaxed">
-                        {offre.description}
-                    </p>
 
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 pt-4 border-t border-gray-100">
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 pt-4 border-t border-gray-100">
                         <div className="p-4 bg-gray-50 border border-gray-100">
-                            <div className="flex items-center gap-2 text-[#1B4F72] mb-2">
-                                <DollarSign className="w-4 h-4" />
-                                <span className="text-[10px] uppercase font-bold">Budget</span>
+                            <div>
+                                <div className="flex items-center gap-2 text-[#1B4F72] mb-2">
+                                    <Briefcase className="w-4 h-4" />
+                                    <span className="text-[10px] uppercase font-bold">  {offre.titre}</span>
+                                </div>
+                                 
                             </div>
-                            <p className="text-[16px] font-bold text-[#D35400]">
-                                {offre.budget_estime} <span className="text-[12px]">DH</span>
+                            <div className="flex items-center gap-2 text-[#1B4F72] mb-2">
+                                <Clipboard className="w-4 h-4" />
+                                <span className="text-[10px] uppercase font-bold">Description</span>
+                            </div>
+                            <p className="text-[14px] text-gray-600 leading-relaxed">
+                                {offre.description}
                             </p>
                         </div>
 
-                        <div className="p-4 bg-gray-50 border border-gray-100">
-                            <div className="flex items-center gap-2 text-blue-600 mb-2">
-                                <MapPin className="w-4 h-4" />
-                                <span className="text-[10px] uppercase font-bold">Lieu</span>
-                            </div>
-                            <p className="text-[14px] font-semibold text-gray-800">{offre.client.user.city}</p>
-                            <p className="text-[11px] text-gray-500 mt-1">{offre.address}</p>
-                        </div>
+
 
                         <div className="p-4 bg-gray-50 border border-gray-100">
-                            <div className="flex items-center gap-2 text-green-600 mb-2">
-                                <Calendar className="w-4 h-4" />
-                                <span className="text-[10px] uppercase font-bold">Date souhaitée</span>
+                            <div className=' flex gap-2 '>
+                                <div className="flex items-center gap-2 text-purple-600 mb-2">
+                                    <Clock className="w-4 h-4" />
+                                    <span className="text-[11px] uppercase font-bold">Statut</span>
+                                </div>
+                                <span className="text-[11px] font-semibold text-gray-800 uppercase">{offre.statut}</span>
                             </div>
-                            <p className="text-[14px] font-semibold text-gray-800">{offre.preferred_date}</p>
-                        </div>
+                            <div className=' flex gap-2 '>
+                                <div className="flex items-center gap-2 text-orange-600 mb-2">
+                                    <DollarSign className="w-4 h-4" />
+                                    <span className="text-[11px] uppercase font-bold">Budjet</span>
+                                </div>
+                                <span className="text-[11px] font-semibold text-gray-800 uppercase">{offre.budget_estime}</span>
+                            </div>
 
-                        <div className="p-4 bg-gray-50 border border-gray-100">
-                            <div className="flex items-center gap-2 text-purple-600 mb-2">
-                                <Clock className="w-4 h-4" />
-                                <span className="text-[10px] uppercase font-bold">Statut</span>
+                            <div className=' flex gap-2 '>
+                                <div className="flex items-center gap-2 text-gray-600 mb-2">
+                                    <Calendar className="w-4 h-4" />
+                                    <span className="text-[11px] uppercase font-bold">Date de publication</span>
+                                </div>
+                                <span className="text-[11px] font-semibold text-gray-800 uppercase">{new Date(offre.created_at).toLocaleDateString()}</span>
                             </div>
-                            <p className="text-[14px] font-semibold text-gray-800 uppercase">{offre.statut}</p>
+                            {/* preferred_date */}
+                            <div className=' flex gap-2 '>
+                                <div className="flex items-center gap-2 text-gray-600 mb-2">
+                                    <Calendar className="w-4 h-4" />
+                                    <span className="text-[11px] uppercase font-bold">Date de livraison</span>
+                                </div>
+                                <span className="text-[11px] font-semibold text-gray-800 uppercase">{new Date(offre.preferred_date).toLocaleDateString()}</span>
+                            </div>
+                            {/* ville */}
+
+                            <div className=' flex gap-2 '>
+                                <div className="flex items-center gap-2 text-gray-600 mb-2">
+                                    <MapPin className="w-4 h-4" />
+                                    <span className="text-[11px] uppercase font-bold">Ville</span>
+                                </div>
+                                <span className="text-[11px] font-semibold text-gray-800 uppercase">{offre.ville}</span>
+                            </div>
+
+                            {/* address */}
+                            <div className=' flex gap-2 '>
+                                <div className="flex items-center gap-2 text-gray-600 mb-2">
+                                    <MapPin className="w-4 h-4" />
+                                    <span className="text-[11px] uppercase font-bold">Adresse</span>
+                                </div>
+                                <span className="text-[11px] font-semibold text-gray-800 uppercase">{offre.address}</span>
+                            </div>
+                            {/* niveau_urgence */}
+                            <div className=' flex gap-2 '>
+                                <div className="flex items-center gap-2 text-gray-600 mb-2">
+                                    <Clock className="w-4 h-4" />
+                                    <span className="text-[11px] uppercase font-bold">Niveau d'urgence</span>
+                                </div>
+                                <span className="text-[11px] font-semibold text-gray-800 uppercase">{offre.niveau_urgence}</span>
+                            </div>
+                            {/* is_completed */}
+
+                            <div className=' flex gap-2 '>
+                                <div className="flex items-center gap-2 text-gray-600 mb-2">
+                                    <Clock className="w-4 h-4" />
+                                    <span className="text-[11px] uppercase font-bold">Statut</span>
+                                </div>
+                                <span className="text-[11px] font-semibold text-gray-800 uppercase">{offre.statut}</span>
+                            </div>
+
                         </div>
                     </div>
                 </div>
