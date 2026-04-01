@@ -18,7 +18,7 @@ const ClientAddJob = () => {
     const [success, setSuccess] = useState(false);
     const [categories, setCategories] = useState([]);
     const [villes, setVilles] = useState([]);
-    const { navigate } = useNavigate();
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         title: '',
         category: '',
