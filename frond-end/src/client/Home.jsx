@@ -112,7 +112,7 @@ const HomePage = () => {
         e.preventDefault();
     };
     const favorieService = (id) => {
-        const response = axiosClient.post(`/services/${id}/favorie`);
+        const response = axiosClient.post(`/services/${id}/favorie` );
         console.log(response);
     };
 

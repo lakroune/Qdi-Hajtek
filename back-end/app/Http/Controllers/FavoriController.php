@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\FavoriRequest;
+use App\Models\Service;
 use App\services\FavoriService;
 use Illuminate\Http\Request;
 
@@ -24,9 +25,14 @@ class FavoriController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function favorieService(FavoriRequest $request)
+    public function favorieService($id)
     {
-        return $this->favoriService->favorieService($request->validated('service_id'));
+        $service = $this->favoriService->favorieService($id);
+        return response()->json([
+            'status' => true,
+            'message' => 'Service found successfully',
+            'data' => $service
+        ]);
     }
 
     /**

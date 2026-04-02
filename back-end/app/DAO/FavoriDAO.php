@@ -2,6 +2,8 @@
 
 namespace App\DAO;
 
+use App\Models\Client;
+
 class FavoriDAO
 {
     /**
@@ -14,6 +16,7 @@ class FavoriDAO
 
     public function favorieService(int $serviceId)
     {
-        return true;
+        $client =Client::find(auth()->user()->id);
+        return $client->services()->toggle($serviceId);
     }
 }
