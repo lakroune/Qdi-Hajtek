@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import axiosClient from '../api/axios-client.js';
 import {
     SearchIcon,
@@ -22,6 +22,8 @@ const HomePage = () => {
     const [selectedPrice, setSelectedPrice] = useState(0);
     const [nextpage, setNextPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
+
+    const loaderRef = useRef(null);
     const getImageUrl = (imagePath) => {
         if (!imagePath) return null;
         const cleanPath = imagePath.replace(/^\//, '');
@@ -86,7 +88,25 @@ const HomePage = () => {
         fetchCategories();
     }, []);
 
+    useEffect(() => {
+        if (!hasMore || loading) return;
 
+        const observer = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting) {
+                searchServices(false);
+            }
+        }, {
+            threshold: 0.1
+        });
+
+        if (loaderRef.current) {
+            observer.observe(loaderRef.current);
+        }
+
+        return () => {
+            if (loaderRef.current) observer.unobserve(loaderRef.current);
+        };
+    }, [hasMore, loading]);
 
     const handleSearch = (e) => {
         e.preventDefault();
@@ -276,20 +296,22 @@ const HomePage = () => {
 
                     </div>)
                 }
-                {hasMore && !loading && services.length > 0 && (
-                    <div className="flex justify-center ">
-                        <button
-                            onClick={() => searchServices(false)}
-                            className=" "
-                        >
-                            Charger plus
-                        </button>
-                    </div>
-                )}
+                <div ref={loaderRef} className="h-10 w-full flex justify-center items-center mt-4">
+                    {loading && hasMore && (
+                        <div className="flex flex-col items-center gap-2">
+                            <BadgeX className='w-8 h-8 text-[#1B4F72] animate-spin' />
+                            <p className="text-[12px] text-gray-500">Chargement de la suite...</p>
+                        </div>
+                    )}
 
-                {loading && nextpage > 1 && (
-                    <p className="text-center mt-4 text-[12px] text-gray-500">Chargement de la suite...</p>
-                )}
+                    {!hasMore && services.length > 0 && (
+                        <p className="text-gray-400 text-[11px] italic">
+                            Vous avez atteint la fin de la liste.
+                        </p>
+                    )}
+                </div>
+
+
             </main>
         </div>
     );
