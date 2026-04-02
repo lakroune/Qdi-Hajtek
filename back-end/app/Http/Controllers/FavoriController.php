@@ -3,12 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\FavoriRequest;
+use App\services\FavoriService;
 use Illuminate\Http\Request;
 
 class FavoriController extends Controller
 {
 
-    public function __construct()
+    public function __construct(private FavoriService $favoriService)
     {
         //
     }
@@ -25,7 +26,7 @@ class FavoriController extends Controller
      */
     public function favorieService(FavoriRequest $request)
     {
-        //
+        return $this->favoriService->favorieService($request->validated('service_id'));
     }
 
     /**

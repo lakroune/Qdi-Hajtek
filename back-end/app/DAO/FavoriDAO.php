@@ -11,4 +11,9 @@ class FavoriDAO
     {
         //
     }
+
+    public function favorieService(int $serviceId)
+    {
+        return true;
+    }
 }
