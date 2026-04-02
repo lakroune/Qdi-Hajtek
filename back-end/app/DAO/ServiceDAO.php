@@ -2,6 +2,7 @@
 
 namespace App\DAO;
 
+use App\Models\Client;
 use App\Models\Service;
 use Illuminate\Support\Facades\DB;
 
@@ -65,5 +66,10 @@ class ServiceDAO
             $query->where('tarif', '<=', $filters['price']);
         }
         return $query->latest()->paginate(8);
+    }
+    public function favorieService(int $serviceId)
+    {
+        $client = Client::find(auth()->user()->id);
+        return $client->services()->toggle($serviceId);
     }
 }
