@@ -75,7 +75,7 @@ function App() {
           <Route path="confirme-email" element={<ConfirmEmailPage />} />
         </Route>
         <Route element={<ProtectedRoute roles={['client', 'artisan']} />}>
-          <Route path="/" element={<div className="auth-layout"> <Header /><Outlet /> </div>}>
+          <Route path="/" element={<div className=""> <Header /><Outlet /> </div>}>
             <Route index element={<HomePage />} />
             <Route path="parametres" element={<SettingsPage />} />
             <Route path="messages" element={<MessagesPage />} />
