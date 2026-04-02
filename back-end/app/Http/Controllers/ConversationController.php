@@ -24,35 +24,12 @@ class ConversationController extends Controller
         ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function  acceptOffer($id)
     {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        $conversation = $this->conversationService->acceptOffer($id);
+        return response()->json([
+            'message' => 'Conversation found successfully',
+            'data' => $conversation
+        ]);
     }
 }

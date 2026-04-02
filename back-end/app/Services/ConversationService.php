@@ -15,7 +15,13 @@ class ConversationService
         // 
     }
 
-    public function getConversations(){
+    public function getConversations()
+    {
         return $this->conversationDAO->getConversations();
+    }
+
+    public function acceptOffer($id)
+    {
+        return $this->conversationDAO->acceptOffer($id);
     }
 }

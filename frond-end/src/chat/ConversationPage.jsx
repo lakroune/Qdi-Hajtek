@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import {
     ArrowLeft, Send, Banknote, Paperclip,
-    Check, CheckCheck,  MoreVertical,
+    Check, CheckCheck, MoreVertical,
     Star, CreditCard, CheckCircle2, ShieldCheck
 } from 'lucide-react';
 import axiosClient from '../api/axios-client';
@@ -13,7 +13,6 @@ const ConversationPage = () => {
     const [showAttachment, setShowAttachment] = useState(false);
     const [showStatusDommande, setShowStatusDommande] = useState(false);
 
-    // Form States
     const [status, setStatus] = useState('');
     const [isPaid, setIsPaid] = useState(false);
     const [isTerminated, setIsTerminated] = useState(false);
@@ -36,7 +35,6 @@ const ConversationPage = () => {
     }, [messages]);
 
 
-    // Récupération des messages
     useEffect(() => {
         const fetchMessages = async () => {
             try {
@@ -72,13 +70,13 @@ const ConversationPage = () => {
             fetchMessages();
         }
     }, [conversation_id]);
-    // Récupération des messages
+
+
     useEffect(() => {
         if (conversation_id && window.Echo && currentUserId) {
             const channel = window.Echo
                 .private(`chat.${conversation_id}`)
                 .listen('.message-sent', (e) => {
-                    console.log("New message received via socket:", e);
 
                     setMessages((prevMessages) => {
                         const isDuplicate = prevMessages.some(
@@ -108,6 +106,7 @@ const ConversationPage = () => {
             };
         }
     }, [conversation_id, currentUserId]);
+
     const sendeMessage = async (e) => {
         e.preventDefault();
         if (!newMessage.trim()) return;
@@ -149,6 +148,17 @@ const ConversationPage = () => {
         if (status === 'read') return <CheckCheck className="w-3 h-3 text-[#D35400]" />;
         return <Check className="w-3 h-3 text-gray-400" />;
     };
+
+    const acceptOffer = async () => {
+        try {
+            const response = await axiosClient.post(`/conversations/${conversation_id}/accept-offer`);
+            if (response.data) {
+                setIsTerminated(true);
+            }
+        } catch (error) {
+            console.error("Erreur lors de l'acceptation de l'offre", error);
+        }
+    }
 
     const RenderStatusDommande = () => (
         <div className="flex flex-col gap-6">
@@ -278,7 +288,7 @@ const ConversationPage = () => {
                         <div className="grid grid-cols-2 gap-3">
                             <button onClick={() => setShowModelAction(false)} className="py-2 text-[12px] text-gray-400 hover:text-gray-600 font-medium">Non</button>
                             <button
-                                onClick={() => { setStatus("accepter"); setShowModelAction(false); }}
+                                onClick={() => { acceptOffer(); }}
                                 className="py-2 bg-[#1B4F72] text-white text-[12px] font-bold hover:bg-[#D35400] transition-colors"
                             >
                                 Confirmer

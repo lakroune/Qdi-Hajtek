@@ -82,4 +82,35 @@ class ConversationDAO
 
             ->get();
     }
+
+
+
+    // acceptOffer
+
+    public function acceptOffer(int $id)
+    {
+        $conversation = Conversation::with('conversable')->find($id);
+
+        if (!$conversation || !$conversation->conversable) {
+            return false;
+        }
+
+        $model = $conversation->conversable;
+
+        // proposition
+        if ($model instanceof \App\Models\Proposition) {
+            return $model->update([
+                'statut_proposition' => 'accepte'
+            ]);
+        }
+
+        // demandeDirecte
+        if ($model instanceof \App\Models\DemandeDirecte) {
+            return $model->update([
+                'statut' => 'accepte'   
+            ]);
+        }
+
+        return false;
+    }
 }

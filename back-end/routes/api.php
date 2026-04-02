@@ -94,7 +94,7 @@ Route::middleware('auth:api')->group(function () {
 
 
 
-
+    Route::post('conversations/{id}/accept-offer', [ConversationController::class, 'acceptOffer']);
     Route::post('conversations/{id}/messages', [MessageController::class, 'store']);
     Route::get('conversations/{id}/messages', [MessageController::class, 'index']);
 
