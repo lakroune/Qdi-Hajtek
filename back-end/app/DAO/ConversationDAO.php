@@ -91,26 +91,12 @@ class ConversationDAO
     {
         $conversation = Conversation::with('conversable')->find($id);
 
-        if (!$conversation || !$conversation->conversable) {
-            return false;
+        if ($conversation->conversable_type == Proposition::class) {
+            $conversation->conversable->update(['statut_proposition' => 'accepte']);
         }
-
-        $model = $conversation->conversable;
-
-        // proposition
-        if ($model instanceof \App\Models\Proposition) {
-            return $model->update([
-                'statut_proposition' => 'accepte'
-            ]);
+        if ($conversation->conversable_type == DemandeDirecte::class) {
+            $conversation->conversable->update(['statut' => 'accepte']);
         }
-
-        // demandeDirecte
-        if ($model instanceof \App\Models\DemandeDirecte) {
-            return $model->update([
-                'statut' => 'accepte'   
-            ]);
-        }
-
-        return false;
+        return $conversation;
     }
 }
