@@ -6,7 +6,8 @@ import {
     X, MessageSquare, Calendar,
     LoaderCircle,
     Eye,
-    LocateFixed
+    LocateFixed,
+    ArrowLeft
 } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
 import axiosClient from '../api/axios-client';
@@ -164,7 +165,7 @@ const ArtisanPortfolioPage = () => {
                 </div>
 
                 {activeTab === 'portfolio' && (
-                    <div className="grid xl:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-4">
+                    <div className="grid xl:grid-cols-4 md:grid-cols-2 lg:grid-cols-3 grid-cols-1 gap-4">
                         {services.map((service) => (
                             <div key={service.id} className="border border-gray-200">
                                 <div className="aspect-[4/2] relative overflow-hidden bg-gray-100">
@@ -263,14 +264,14 @@ const ArtisanPortfolioPage = () => {
             </div>
 
             {selectedImage && (
-                <div className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4">
+                <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4">
                     <button
                         onClick={() => setSelectedImage(null)}
-                        className="absolute top-4 right-4 text-white/80 hover:text-white text-2xl"
+                        className="absolute top-4 left-4 text-white  bg-gray-800 hover:text-white text-2xl"
                     >
-                        ×
+                        <ArrowLeft className="w-6 h-6" />
                     </button>
-                    <button onClick={prevImage} className="absolute left-4 p-2 text-white/80 hover:text-white">
+                    <button onClick={prevImage} className="absolute left-4 p-2 text-white  bg-gray-800 hover:text-white">
                         <ChevronLeft className="w-6 h-6" />
                     </button>
                     <img
@@ -278,7 +279,7 @@ const ArtisanPortfolioPage = () => {
                         alt={selectedImage.titre}
                         className="max-w-full max-h-[85vh] object-contain"
                     />
-                    <button onClick={nextImage} className="absolute right-4 p-2 text-white/80 hover:text-white">
+                    <button onClick={nextImage} className="absolute right-4 p-2 bg-gray-800 text-white hover:text-white">
                         <ChevronRight className="w-6 h-6" />
                     </button>
                     <div className="absolute bottom-4 left-0 right-0 text-center">

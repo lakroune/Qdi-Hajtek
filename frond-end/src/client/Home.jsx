@@ -297,9 +297,8 @@ const HomePage = () => {
                     </div>)
                 }
                 <div ref={loaderRef} className="h-10 w-full flex justify-center items-center mt-4">
-                    {loading && hasMore && (
+                    {loading && hasMore && services.length > 0 && (
                         <div className="flex flex-col items-center gap-2">
-                            <BadgeX className='w-8 h-8 text-[#1B4F72] animate-spin' />
                             <p className="text-[12px] text-gray-500">Chargement de la suite...</p>
                         </div>
                     )}
