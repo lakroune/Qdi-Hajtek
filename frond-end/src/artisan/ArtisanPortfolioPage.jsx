@@ -190,7 +190,7 @@ const ArtisanPortfolioPage = () => {
                                                     alt="service image"
                                                     className="w-16 h-full object-cover hover:opacity-80 transition-opacity cursor-pointer"
                                                     onClick={() => {
-                                                        setCurrentImageIndex(idx + 1);
+                                                        setCurrentImageIndex(idx);
                                                         setSelectedImage({ src: BASE_URL + img?.url, titre: service.titre });
                                                         setData(service);
                                                     }}
@@ -277,7 +277,7 @@ const ArtisanPortfolioPage = () => {
                     <img
                         src={BASE_URL + (currentServiceImages[currentImageIndex]?.url || selectedImage.src)}
                         alt={selectedImage.titre}
-                        className="max-w-full max-h-[85vh] object-contain"
+                        className="max-w-full max-h-[80vh] min-h-[80vh]  object-cover "
                     />
                     <button onClick={nextImage} className="absolute right-4 p-2 bg-gray-800 text-white hover:text-white">
                         <ChevronRight className="w-6 h-6" />
