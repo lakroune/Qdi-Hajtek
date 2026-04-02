@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AimerController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CategorieController;
 use App\Http\Controllers\Api\DemandeDirecteController;
@@ -9,6 +10,7 @@ use App\Http\Controllers\Api\PropositionController;
 use App\Http\Controllers\ArtisanController;
 use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\DisponibiliteController;
+use App\Http\Controllers\FavoriController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ServiceController;
 use App\Models\Ville;
@@ -79,7 +81,8 @@ Route::middleware('auth:api')->group(function () {
     Route::post('offres/{offre}/propositions', [PropositionController::class, 'store']);
 
     //mazal  potection 
-
+    // /services/${id}/favorie
+    Route::post('services/{id}/favorie', [FavoriController::class, 'favorieService']);
 
 // mazal  potection 
     Route::patch('propositions/{id}/accept', [PropositionController::class, 'accept']);

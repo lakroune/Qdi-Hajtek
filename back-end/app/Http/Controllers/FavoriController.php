@@ -2,16 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\AimerRequest;
-use App\services\AimerService;
+use App\Http\Requests\FavoriRequest;
 use Illuminate\Http\Request;
 
-class AimerController extends Controller
+class FavoriController extends Controller
 {
-    public function __construct(
-        private AimerService $aimerService
-    ) {
-        // 
+
+    public function __construct()
+    {
+        //
     }
     /**
      * Display a listing of the resource.
@@ -24,8 +23,9 @@ class AimerController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(AimerRequest $request) {
-        return $this->aimerService->aimer($request->service_id);
+    public function favorieService(FavoriRequest $request)
+    {
+        //
     }
 
     /**

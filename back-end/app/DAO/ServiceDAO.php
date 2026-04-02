@@ -64,6 +64,6 @@ class ServiceDAO
         if (!empty($filters['price'])) {
             $query->where('tarif', '<=', $filters['price']);
         }
-        return $query->latest()->paginate(3);
+        return $query->latest()->paginate(8);
     }
 }
