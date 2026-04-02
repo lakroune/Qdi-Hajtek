@@ -46,14 +46,14 @@ class ServiceDAO
         if (!empty($filters['category'])) {
             $query->where('categorie_id', $filters['category']);
         }
-        // if (!empty($filters['rating'])) {
-        //     $query->whereHas('artisan', function ($q) use ($filters) {
-        //         $q->where('note', '>=', $filters['rating']);
-        //     });
-        // }
+        if (!empty($filters['rating'])) {
+            $query->whereHas('artisan', function ($q) use ($filters) {
+                $q->where('note', '>=', $filters['rating']);
+            });
+        }
         if (!empty($filters['price'])) {
             $query->where('tarif', '<=', $filters['price']);
         }
-        return $query->latest()->get();
+        return $query->latest()->paginate(5);
     }
 }

@@ -20,7 +20,8 @@ const HomePage = () => {
     const [isloading, setIsLoading] = useState(true);
     const [selectedRating, setSelectedRating] = useState(0);
     const [selectedPrice, setSelectedPrice] = useState(0);
-
+    const [nextpage, setNextPage] = useState(1);
+    const [hasMore, setHasMore] = useState(true);
     const getImageUrl = (imagePath) => {
         if (!imagePath) return null;
         const cleanPath = imagePath.replace(/^\//, '');
@@ -30,8 +31,10 @@ const HomePage = () => {
 
 
 
-    const searchServices = async () => {
-        setLoading(true);
+    const searchServices = async (isNewSearch = false) => {
+        // setLoading(true);
+        const pageToFetch = isNewSearch ? 1 : nextpage;
+
         try {
             const response = await axiosClient.get('/services', {
                 params: {
@@ -39,23 +42,33 @@ const HomePage = () => {
                     category: selectedCategory || undefined,
                     rating: selectedRating > 0 ? selectedRating : undefined,
                     price: selectedPrice > 0 ? selectedPrice : undefined,
-                    page: 1,
-                    limit: 10
+                    page: pageToFetch
                 }
             });
 
-            setServices(response.data.data || response.data);
+            const paginationData = response.data.data;
+            const newItems = paginationData.data;
+
+            if (isNewSearch) {
+                setServices(newItems);
+                setNextPage(2);
+            } else {
+                setServices((prev) => [...prev, ...newItems]);
+                setNextPage(paginationData.current_page + 1);
+            }
+
+            setHasMore(paginationData.current_page < paginationData.last_page);
+
         } catch (error) {
             console.error('Error fetching services:', error);
-            setServices([]);
+            if (isNewSearch) setServices([]);
         } finally {
             setLoading(false);
         }
     };
-
     useEffect(() => {
         const delayDebounceFn = setTimeout(() => {
-            searchServices();
+            searchServices(true);
         }, 400);
 
         return () => clearTimeout(delayDebounceFn);
@@ -251,16 +264,24 @@ const HomePage = () => {
                         <div className="flex justify-center mb-4 text-gray-300">
                             <BadgeX className='w-12 h-12 text-[#94a8b6]   animate-bounce' />
                         </div>
-                        <p className="text-gray-500 text-[14px]">
-                            Aucun resultat pour votre recherche
-                        </p>
+                        
+                        
+                    </div>
+                )}
+
+                {hasMore && !loading && (
+                    <div className="flex justify-center ">
                         <button
-                            onClick={() => { setSearchQuery(''); setSelectedCategory(''); setSelectedRating(0); setSelectedPrice(0); }}
-                            className="mt-4 text-[#1B4F72] text-[12px] font-bold underline"
+                            onClick={() => searchServices(false)}
+                            className=" "
                         >
-                            Réinitialiser les filtres
+                            Charger plus
                         </button>
                     </div>
+                )}
+
+                {loading == false && nextpage  (
+                    <p className="text-center mt-4 text-[12px] text-gray-500">Chargement de la suite...</p>
                 )}
             </main>
         </div>
