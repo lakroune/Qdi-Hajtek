@@ -40,8 +40,18 @@ class ServiceDAO
             ->with(['artisan.user', 'categorie', 'images']);
 
         if (!empty($filters['search'])) {
-            $query->where('titre', 'like', '%' . $filters['search'] . '%')
-                ->orWhere('description', 'like', '%' . $filters['search'] . '%');
+            $search = $filters['search'];
+            $query->where(function ($q) use ($search) {
+                $q->where('titre', 'like', '%' . $search . '%')
+                    ->orWhere('description', 'like', '%' . $search . '%');
+                $q->orWhereHas('artisan', function ($q2) use ($search) {
+                    $q2->whereHas('user', function ($q3) use ($search) {
+                        $q3->where('firstname', 'like', '%' . $search . '%')
+                            ->orWhere('lastname', 'like', '%' . $search . '%')
+                            ->orWhere('city', 'like', '%' . $search . '%');
+                    });
+                });
+            });
         }
         if (!empty($filters['category'])) {
             $query->where('categorie_id', $filters['category']);
