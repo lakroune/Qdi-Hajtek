@@ -25,7 +25,7 @@ class StoreDemandeDirecteRequest extends FormRequest
     {
         return [
             'service_id' => 'required|exists:services,id',
-            'date_debut' => 'required|date',
+            'date_debut' => 'required|date|after_or_equal:today',
             'description_specifique' => 'nullable|string',
             'adresse' => 'nullable|string',
         ];
@@ -44,6 +44,7 @@ class StoreDemandeDirecteRequest extends FormRequest
             'description_specifique.max' => 'description_specifique must be less than 255 characters',
             'adresse.required' => 'adresse is required',
             'adresse.max' => 'adresse must be less than 255 characters',
+            'date_debut.after_or_equal' => 'date_debut must be equal or after today',
         ];
     }
 

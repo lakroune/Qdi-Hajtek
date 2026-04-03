@@ -23,10 +23,16 @@ class CreateConversationAfterAcceptance
     {
         $proposition = $event->proposition;
 
-        $proposition->conversation()->create(
+        $conversation = $proposition->conversation()->create(
             [
                 'last_message_at' => now(),
-                'subject' => $proposition->offreTravail->titre 
+                'subject' => $proposition->offreTravail->titre
+            ]
+        );
+        $conversation->messages()->create(
+            [
+                'contenu_message' => 'Bienvenue dans la conversation',
+                'sender_id' => auth()->user()->id,
             ]
         );
     }
