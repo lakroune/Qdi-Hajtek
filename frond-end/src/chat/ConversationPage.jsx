@@ -322,9 +322,9 @@ const ConversationPage = () => {
                             <button
                                 disabled={isAccepting}
                                 onClick={() => { acceptOffer(); }}
-                                className="py-2 bg-[#1B4F72] text-white text-[12px] font-bold hover:bg-[#D35400] transition-colors"
+                                className="py-2 bg-[#1B4F72] text-white text-[12px] font-bold hover:bg-[#D35400] transition-colors text-center  "
                             >
-                                {isAccepting ? <RefreshCw className="w-4 h-4" /> : 'Oui'}
+                                {isAccepting ? <div className="flex items-center justify-center gap-2"><RefreshCw className=" w-4 h-4  animate-spin" /> en cours</div> : 'Accepter'}
                             </button>
                         </div>
                     </div>
