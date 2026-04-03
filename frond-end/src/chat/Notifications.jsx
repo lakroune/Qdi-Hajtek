@@ -59,7 +59,7 @@ const Notifications = () => {
             }
 
             if (notif.type.includes('NewDemandeNotification')) {
-                navigate(`/demandes/${notif.data.demande_directe_id}`);
+                navigate(`/messages/${notif.data.demande_directe_id}`);
             }
             else if (notif.type.includes('PropositionAcceptedNotification')) {
                 navigate(`/chat/${notif.data.proposition_id}`);
