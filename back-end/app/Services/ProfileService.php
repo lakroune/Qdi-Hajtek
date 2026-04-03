@@ -87,4 +87,26 @@ class ProfileService
             'message' => $reslt ? 'Password updated successfully' : 'Invalid password',
         ];
     }
+
+    public function getCounts()
+    {
+        $user = auth('api')->user();
+
+        if (! $user) {
+            return [
+                'success' => false,
+                'message' => 'Unauthorized'
+            ];
+        }
+
+        return [
+            'success' => true,
+            'message' => 'Counts retrieved successfully',
+            'counts' => [
+                // 'conversations' => $user->count(),
+                'messages' => $user->messages()->where('is_read', false)->count(),
+                'notifications' => $user->unreadNotifications()->count(),
+            ]
+        ];
+    }
 }

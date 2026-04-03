@@ -1,10 +1,10 @@
-import  { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, User, Bell, LogOut, Settings, Heart, MessageCircle, Briefcase, Calendar } from 'lucide-react';
 import Logo from '../logo/Logo';
 import LogoutModal from '../models/LogoutModal';
 import { useNavigate } from 'react-router-dom';
-import Cookies from 'js-cookie';
+import axiosClient from '../../api/axios-client';
 const Header = ({
 }) => {
 
@@ -83,28 +83,25 @@ const Header = ({
   };
 
   const elementsMenuProfil = obtenirElementsMenuProfil();
-// websocket
-useEffect(() => {
-    const userId = localStorage.getItem('USER_ID'); 
 
-    if (estAuthentifie && window.Echo && userId) {
-      
-      const noticeChannel = window.Echo.private(`notice.${userId}`)
-        .listen('.notice-created', (data) => { 
-          console.log("notice-created(Event):", data);
-          
-          setNotifications(prev => prev + 1);
-          
-          if (typeUtilisateur === 'artisan') {
-             setDommandesEnAttente(prev => prev + 1);
-          }
-        });
+  useEffect(() => {
+    const fetchCounts = async () => {
+      try {
+        const response = await axiosClient.get('profile/me/counts');
+        const data = response.data.counts.counts;
 
-      return () => {
-        window.Echo.leave(`notice.${userId}`);
-      };
+        setNotifications(data.notifications || 0);
+        setMessages(data.messages || 0);
+        setDommandesEnAttente(data.conversations || 0);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    if (estAuthentifie) {
+      fetchCounts();
     }
-  }, [estAuthentifie]);
+  }, []);
 
   return (
     <>

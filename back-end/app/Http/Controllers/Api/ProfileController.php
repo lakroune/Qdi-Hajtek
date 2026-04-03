@@ -51,4 +51,14 @@ class ProfileController extends Controller
             'message' => $result['message'],
         ]);
     }
+
+    public function counts()
+    {
+        $counts = $this->profileService->getCounts();
+        return response()->json([
+            'success' => true,
+            'message' => 'Counts retrieved successfully',
+            'counts' =>  $counts
+        ]);
+    }
 }

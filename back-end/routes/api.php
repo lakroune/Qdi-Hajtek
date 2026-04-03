@@ -75,7 +75,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('offres/me', [OffreTravailController::class, 'mesOffres']);
 
     //mazal  potection artisan envoi lui meme 
-    Route::apiResource('offres', OffreTravailController::class)->only('store', 'show', 'index','update');
+    Route::apiResource('offres', OffreTravailController::class)->only('store', 'show', 'index', 'update');
 
     //mazal hta hada 
     Route::post('offres/{offre}/propositions', [PropositionController::class, 'store']);
@@ -84,7 +84,7 @@ Route::middleware('auth:api')->group(function () {
     // /services/${id}/favorie
     Route::post('services/{id}/favorie', [FavoriController::class, 'favorieService']);
 
-// mazal  potection 
+    // mazal  potection 
     Route::patch('propositions/{id}/accept', [PropositionController::class, 'accept']);
 
     Route::get('artisans/{artisan}/disponibilites', [DisponibiliteController::class, 'show']);
@@ -92,7 +92,8 @@ Route::middleware('auth:api')->group(function () {
 
     Route::get('conversations', [ConversationController::class, 'index']);
 
-
+    // ('profile/me/counts');
+    Route::get('profile/me/counts', [ProfileController::class, 'counts']);
 
     Route::post('conversations/{id}/accept-offer', [ConversationController::class, 'acceptOffer']);
     Route::post('conversations/{id}/messages', [MessageController::class, 'store']);
