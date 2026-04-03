@@ -29,7 +29,7 @@ class MessageDAO
                 ->with('sender:id,lastname,firstname')
                 ->orderBy('created_at', 'asc')
                 ->paginate($perPage),
-            'conversation' => Conversation::find($conversationId)->with('conversable')->first(),
+            'conversation' => Conversation::find($conversationId)->with('conversable')->where('id', $conversationId)->first(),
             'currentUser' => auth('api')->user()->only('id')
         ];
     }

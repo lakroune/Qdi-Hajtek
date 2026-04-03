@@ -24,9 +24,12 @@ class ConversationController extends Controller
         ]);
     }
 
-    public function  acceptOffer($id)
+    public function  acceptOffer(Request $request, int $id)
     {
-        $conversation = $this->conversationService->acceptOffer($id);
+        $request->validate([
+            'prix_final' => 'required|numeric|min:0'
+        ]);
+        $conversation = $this->conversationService->acceptOffer($id, $request->prix_final);
         return response()->json([
             'message' => 'Conversation found successfully',
             'data' => $conversation

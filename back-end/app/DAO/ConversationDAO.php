@@ -87,15 +87,15 @@ class ConversationDAO
 
     // acceptOffer
 
-    public function acceptOffer(int $id)
+    public function acceptOffer(int $id, float $prix_final)
     {
         $conversation = Conversation::with('conversable')->find($id);
 
         if ($conversation->conversable_type == Proposition::class) {
-            $conversation->conversable->update(['statut_proposition' => 'accepte']);
+            $conversation->conversable->update(['statut_proposition' => 'accepte', 'prix_final' => $prix_final]);
         }
         if ($conversation->conversable_type == DemandeDirecte::class) {
-            $conversation->conversable->update(['statut' => 'accepte']);
+            $conversation->conversable->update(['statut' => 'accepte', 'prix_final' => $prix_final]);
         }
         return $conversation;
     }

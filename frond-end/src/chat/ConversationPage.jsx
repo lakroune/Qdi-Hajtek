@@ -3,9 +3,11 @@ import { Link, useParams } from 'react-router-dom';
 import {
     ArrowLeft, Send, Banknote, Paperclip,
     Check, CheckCheck, MoreVertical,
-    Star, CreditCard, CheckCircle2, ShieldCheck
+    Star, CreditCard, CheckCircle2, ShieldCheck,
+    RefreshCw
 } from 'lucide-react';
 import axiosClient from '../api/axios-client';
+import toast from 'react-hot-toast';
 
 const ConversationPage = () => {
     const messagesEndRef = useRef(null);
@@ -24,9 +26,9 @@ const ConversationPage = () => {
     const [showModelAction, setShowModelAction] = useState(false);
     const [infoConversation, setInfoConversation] = useState({});
     const { conversation_id } = useParams();
-
+    const [amount, setAmount] = useState(0);
     const [currentUserId, setCurrentUserId] = useState(null);
-
+    const [isAccepting, setIsAccepting] = useState(false);
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -148,16 +150,38 @@ const ConversationPage = () => {
     };
 
     const acceptOffer = async () => {
+        setIsAccepting(true);
+        if (!amount || amount <= 0) {
+            toast.error("merci de fournir un montant valide");
+            return;
+        }
+
         try {
-            const response = await axiosClient.post(`/conversations/${conversation_id}/accept-offer`);
-            if (response.data) {
-                setIsTerminated(true);
+            const response = await axiosClient.post(`/conversations/${conversation_id}/accept-offer`, {
+                prix_final: amount
+            });
+
+            if (response.status === 200) {
+                toast.success("votre offre a ete acceptee");
+
+                setInfoConversation(prev => ({
+                    ...prev,
+                    conversable: {
+                        ...prev.conversable,
+                        statut: 'accepte',
+                        prix_final: amount
+                    }
+                }));
+                setShowModelAction(false);
             }
         } catch (error) {
-            console.error("Erreur lors de l'acceptation de l'offre", error);
+            const errorMsg = error.response?.data?.message || "Une erreur est survenue";
+            toast.error(errorMsg);
         }
-    }
-
+        finally {
+            setIsAccepting(false);
+        }
+    };
     const currentStatus = infoConversation?.conversable?.statut_proposition || infoConversation?.conversable?.statut;
 
     const isAccepted = currentStatus === 'accepte';
@@ -185,7 +209,7 @@ const ConversationPage = () => {
                         Accepter l'offre
                     </button>
                 )}
-                {isAccepted && <p className="text-[11px] text-green-600 font-medium">Offre acceptée ✓</p>}
+                {isAccepted && <p className="text-[11px] text-green-600 font-medium">Offre acceptée </p>}
             </div>
             {/* etp 2 */}
             <div className={`space-y-2 ${!isAccepted && 'opacity-40 pointer-events-none'}`}>
@@ -289,14 +313,18 @@ const ConversationPage = () => {
                             </div>
                         </div>
                         <p className="text-[12px] text-gray-600 mb-3">Voulez-vous vraiment accepter cette offre ?</p>
-                        <input type="number" placeholder="0000.00" className="border m-2 w-9/12 border-gray-300 p-1 text-center text-[11px] tracking-widest focus:ring-1 focus:ring-[#D35400] outline-none" />
+                        <input onChange={(e) => setAmount(e.target.value)}
+                            type="number"
+                            placeholder="0000.00"
+                            className="border m-2 w-9/12 border-gray-300 p-1 text-center text-[11px] tracking-widest focus:ring-1 focus:ring-[#D35400] outline-none" />
                         <div className="grid grid-cols-2 gap-3">
                             <button onClick={() => setShowModelAction(false)} className="py-2 text-[12px] text-gray-400 hover:text-gray-600 font-medium">Non</button>
                             <button
+                                disabled={isAccepting}
                                 onClick={() => { acceptOffer(); }}
                                 className="py-2 bg-[#1B4F72] text-white text-[12px] font-bold hover:bg-[#D35400] transition-colors"
                             >
-                                Confirmer
+                                {isAccepting ? <RefreshCw className="w-4 h-4" /> : 'Oui'}
                             </button>
                         </div>
                     </div>

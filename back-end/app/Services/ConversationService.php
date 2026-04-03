@@ -20,8 +20,8 @@ class ConversationService
         return $this->conversationDAO->getConversations();
     }
 
-    public function acceptOffer($id)
+    public function acceptOffer( int $id, float $prix_final)
     {
-        return $this->conversationDAO->acceptOffer($id);
+        return $this->conversationDAO->acceptOffer($id, $prix_final);
     }
 }

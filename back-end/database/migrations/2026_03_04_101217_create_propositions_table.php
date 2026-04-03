@@ -23,6 +23,7 @@ return new class extends Migration
                 ->onDelete('cascade');
 
             $table->float('prix_propose');
+            $table->float('prix_final');
             $table->string('delai_execution');
             $table->text('message_explicatif');
             $table->date('date_disponibilite');
