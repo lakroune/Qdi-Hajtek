@@ -13,7 +13,6 @@ const ConversationPage = () => {
     const [showAttachment, setShowAttachment] = useState(false);
     const [showStatusDommande, setShowStatusDommande] = useState(false);
 
-    const [status, setStatus] = useState('');
     const [isPaid, setIsPaid] = useState(false);
     const [isTerminated, setIsTerminated] = useState(false);
     const [confirmationCode, setConfirmationCode] = useState('');
@@ -22,7 +21,6 @@ const ConversationPage = () => {
     const [comment, setComment] = useState('');
 
     const [messages, setMessages] = useState([]);
-
     const [showModelAction, setShowModelAction] = useState(false);
     const [infoConversation, setInfoConversation] = useState({});
     const { conversation_id } = useParams();
@@ -160,40 +158,47 @@ const ConversationPage = () => {
         }
     }
 
+    const currentStatus = infoConversation?.conversable?.statut_proposition || infoConversation?.conversable?.statut;
+
+    const isAccepted = currentStatus === 'accepte';
+
     const RenderStatusDommande = () => (
         <div className="flex flex-col gap-6">
             <div className="flex items-center justify-between border-b pb-2">
                 <h3 className="text-[14px] font-bold text-[#1B4F72]">Suivi de Commande</h3>
                 <span className="text-[10px] bg-gray-100 px-2 py-1    text-gray-500 font-mono">#DM-001</span>
             </div>
-
             {/* etp 1 */}
             <div className="space-y-2">
                 <div className="flex items-center gap-2 text-[12px] font-semibold text-gray-700">
-                    <span className="w-5 h-5 flex items-center justify-center bg-[#1B4F72] text-white   -full text-[10px]">1</span>
+                    <span className={`w-5 h-5 flex items-center justify-center rounded-full text-[10px] ${isAccepted ? 'bg-green-500' : 'bg-[#1B4F72]'} text-white`}>
+                        {isAccepted ? <Check className="w-3 h-3" /> : '1'}
+                    </span>
                     Validation du devis
                 </div>
-                <button
-                    onClick={() => setShowModelAction(true)}
-                    className="w-full py-2 flex items-center justify-center gap-2 text-[12px] border    transition-colors bg-white border-gray-300 hover:bg-gray-50"
-                >
-                    <CheckCircle2 className="w-4 h-4" />
-                    Accepter
-                </button>
+                {!isAccepted && (
+                    <button
+                        onClick={() => setShowModelAction(true)}
+                        className="w-full py-2 flex items-center justify-center gap-2 text-[12px] border transition-colors bg-white border-gray-300 hover:bg-gray-50"
+                    >
+                        <CheckCircle2 className="w-4 h-4" />
+                        Accepter l'offre
+                    </button>
+                )}
+                {isAccepted && <p className="text-[11px] text-green-600 font-medium">Offre acceptée ✓</p>}
             </div>
-
             {/* etp 2 */}
-            <div className={`space-y-2 ${status !== 'accepter' && 'opacity-40 pointer-events-none'}`}>
+            <div className={`space-y-2 ${!isAccepted && 'opacity-40 pointer-events-none'}`}>
                 <div className="flex items-center gap-2 text-[12px] font-semibold text-gray-700">
-                    <span className="w-5 h-5 flex items-center justify-center bg-[#1B4F72] text-white   -full text-[10px]">2</span>
+                    <span className="w-5 h-5 flex items-center justify-center bg-[#1B4F72] text-white rounded-full text-[10px]">2</span>
                     Paiement
                 </div>
                 <button
                     onClick={() => setIsPaid(true)}
-                    className={`w-full py-2 flex items-center justify-center gap-2 text-[12px] border    transition-colors ${isPaid ? 'bg-green-50 border-green-500 text-green-700' : 'bg-white border-gray-300 hover:bg-gray-50'}`}
+                    className={`w-full py-2 flex items-center justify-center gap-2 text-[12px] border transition-colors ${isPaid ? 'bg-green-50 border-green-500 text-green-700' : 'bg-white border-gray-300 hover:bg-gray-50'}`}
                 >
                     <CreditCard className="w-4 h-4" />
-                    {isPaid ? 'Payé avec succès' : ' Payé'}
+                    {isPaid ? 'Payé avec succès' : 'Payer maintenant'}
                 </button>
             </div>
 
