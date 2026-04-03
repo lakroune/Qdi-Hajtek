@@ -12,6 +12,7 @@ use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\DisponibiliteController;
 use App\Http\Controllers\FavoriController;
 use App\Http\Controllers\MessageController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ServiceController;
 use App\Models\Ville;
 use Illuminate\Support\Facades\Route;
@@ -99,6 +100,9 @@ Route::middleware('auth:api')->group(function () {
     Route::post('conversations/{id}/messages', [MessageController::class, 'store']);
     Route::get('conversations/{id}/messages', [MessageController::class, 'index']);
 
+    //    Route::get('/notifications');
+    Route::get('/notifications', [NotificationController::class, 'index']);
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
 
 
     // Route::get('artisans/{artisanId}/services', [ServiceController::class, 'artisanServices']);
