@@ -33,6 +33,7 @@ import Services from './client/Services';
 import ServiceDetail from './client/ServiceDetail';
 import ProtectedRoute from './errors/ProtectedRoute';
 import { Toaster } from 'react-hot-toast';
+
 function App() {
 
 

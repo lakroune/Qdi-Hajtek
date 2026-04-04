@@ -9,7 +9,13 @@ import {
 import axiosClient from '../api/axios-client';
 import toast from 'react-hot-toast';
 import { formatDistanceToNow, parseISO } from 'date-fns';
-import { fr, is } from 'date-fns/locale';
+import { fr } from 'date-fns/locale';
+
+
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
+
 const ConversationPage = () => {
     const messagesEndRef = useRef(null);
     const [newMessage, setNewMessage] = useState('');
@@ -31,6 +37,16 @@ const ConversationPage = () => {
     const [currentUserId, setCurrentUserId] = useState(null);
     const [isAccepting, setIsAccepting] = useState(false);
     const [isLoadingMessages, setIsLoadingMessages] = useState(false);
+
+
+
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [clientSecret, setClientSecret] = useState('');
+    const [selectedAmount, setSelectedAmount] = useState(0);
+
+
+
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
@@ -206,6 +222,24 @@ const ConversationPage = () => {
     };
 
 
+    const handleOpenPayment = async (amountToPay) => {
+        try {
+            setSelectedAmount(amountToPay);
+            const res = await axiosClient.post('/payments/initiate', {
+                amount: amountToPay,
+                conversation_id: conversation_id
+            });
+
+            setClientSecret(res.data.clientSecret);
+            setIsModalOpen(true);
+        } catch (error) {
+            toast.error("Erreur lors de l'initialisation du paiement");
+            console.error(error);
+        }
+    };
+
+
+
     const RenderStatusDommande = () => (
         <div className="flex flex-col gap-6">
             <div className="flex items-center justify-between border-b pb-2">
@@ -238,16 +272,15 @@ const ConversationPage = () => {
                     <span className="w-5 h-5 flex items-center justify-center bg-[#1B4F72] text-white rounded-full text-[10px]">2</span>
                     Paiement
                 </div>
-                {
-                    infoConversation.statut === 'accepte' && infoConversation.is_client && (
-                        <button
-                            onClick={() => setIsPaid(true)}
-                            className={`w-full py-2 flex items-center justify-center gap-2 text-[12px] border transition-colors ${isPaid ? 'bg-green-50 border-green-500 text-green-700' : 'bg-white border-gray-300 hover:bg-gray-50'}`}
-                        >
-                            <CreditCard className="w-4 h-4" />
-                            {isPaid ? 'Payé avec succès' : 'Payer maintenant'}
-                        </button>
-                    )}
+                {infoConversation.statut === 'accepte' && infoConversation.is_client && (
+                    <button
+                        onClick={() => handleOpenPayment(infoConversation.prix_final)}
+                        className={`w-full py-2 flex items-center justify-center gap-2 text-[12px] border transition-colors ${isPaid ? 'bg-green-50 border-green-500 text-green-700' : 'bg-white border-gray-300 hover:bg-gray-50'}`}
+                    >
+                        <CreditCard className="w-4 h-4" />
+                        {isPaid ? 'Payé avec succès' : `Payer ${infoConversation.prix_final} MAD`}
+                    </button>
+                )}
 
                 {infoConversation.statut === 'accepte' && !infoConversation.is_client && (
                     <p className="text-[11px] text-orange-600 font-medium">  En attente de paiement </p>
@@ -329,6 +362,55 @@ const ConversationPage = () => {
         </div>
     );
 
+    {/* --- Modal payment --- */ }
+    const RenderPaymentModal = () => {
+        if (!isModalOpen || !clientSecret) return null;
+
+        return (
+            <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4">
+                <div
+                    className="absolute inset-0 bg-[#1B4F72]/40 backdrop-blur-md animate-in fade-in duration-300"
+                    onClick={() => setIsModalOpen(false)}
+                ></div>
+
+                <div className="relative bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in duration-300">
+                    <div className="bg-[#1B4F72] p-6 text-white flex justify-between items-center">
+                        <div>
+                            <h3 className="text-lg font-bold flex items-center gap-2">
+                                <ShieldCheck size={18} className="text-[#de843f]" />
+                                Paiement Sécurisé
+                            </h3>
+                            <p className="text-[10px] opacity-80 mt-1">Finalisez votre transaction via Stripe</p>
+                        </div>
+                        <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-white/10 rounded-full">
+                            <span className="text-xl">✕</span>
+                        </button>
+                    </div>
+
+                    <div className="p-8">
+                        <div className="flex justify-between items-center mb-6 p-4 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
+                            <span className="text-sm text-gray-500 font-medium">Total à payer</span>
+                            <span className="text-2xl font-black text-[#1B4F72]">
+                                {selectedAmount} <small className="text-sm font-normal">MAD</small>
+                            </span>
+                        </div>
+
+                        <div className="min-h-[250px]">
+                            <Elements stripe={stripePromise} options={{ clientSecret }}>
+                                <CheckoutForm
+                                    onSuccess={() => {
+                                        setIsModalOpen(false);
+                                        setIsPaid(true);
+                                        toast.success("Paiement effectué avec succès !");
+                                    }}
+                                />
+                            </Elements>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
     if (showModelAction)
         return (
 
@@ -376,6 +458,7 @@ const ConversationPage = () => {
 
     return (
         <div className="min-h-screen bg-gray-50">
+            <RenderPaymentModal />
             <div className="max-w-6xl mx-auto mt-16 h-[calc(100vh-64px)]">
                 <div className="flex h-full border border-gray-200 bg-white   ">
                     <div className="w-16 hidden md:flex border-r border-gray-100 bg-gray-50 flex-col items-center py-4">
