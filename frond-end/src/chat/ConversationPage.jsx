@@ -398,10 +398,18 @@ const ConversationPage = () => {
                         <div className="w-full min-h-[50vh] max-h-[50vh] overflow-y-scroll">
                             <Elements stripe={stripePromise} options={{ clientSecret }}>
                                 <CheckoutForm
-                                    onSuccess={() => {
-                                        setIsModalOpen(false);
-                                        setIsPaid(true);
-                                        toast.success("Paiement effectué avec succès !");
+                                    onSuccess={async () => {
+                                        try {
+                                            await axiosClient.post(`/payments/confirm`, {
+                                                stripe_payment_id: clientSecret.split('_secret')[0]
+                                            });
+
+                                            setIsPaid(true);
+                                            setIsModalOpen(false);
+                                            toast.success("Paiement réussi !");
+                                        } catch (e) {
+                                            toast.error("Erreur de confirmation");
+                                        }
                                     }}
                                 />
                             </Elements>

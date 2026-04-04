@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\DAO\PaiementDAO;
+use App\Models\Paiement;
 use Exception;
 use Stripe\PaymentIntent;
 use Stripe\Stripe;
@@ -41,5 +42,13 @@ class  PaiementService
         } catch (Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
+    }
+
+    public function confirmPayment(string $stripe_payment_id)
+    {
+        $paiement = Paiement::where('stripe_payment_id', $stripe_payment_id)->firstOrFail();
+        $paiement->statut = 'paid';
+        $paiement->save();
+        return $paiement;
     }
 }
