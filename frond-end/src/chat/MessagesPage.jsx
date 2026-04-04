@@ -53,7 +53,7 @@ const MessagesPage = () => {
             <div className="max-w-6xl mx-auto mt-16 h-[calc(100vh-64px)]">
                 <div className="flex h-full border border-gray-200 bg-white">
 
-                    <div className="w-full md:w-1/3 border-r border-gray-200 flex flex-col">
+                    <div className="w-full md:w-1/2 border-r border-gray-200 flex flex-col">
                         <div className="p-4 border-b border-gray-200">
                             <h1 className="text-[15px] font-bold text-[#1B4F72] mb-3">Messages</h1>
                             <div className="relative">

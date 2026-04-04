@@ -9,7 +9,7 @@ import {
 import axiosClient from '../api/axios-client';
 import toast from 'react-hot-toast';
 import { formatDistanceToNow, parseISO } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { fr, is } from 'date-fns/locale';
 const ConversationPage = () => {
     const messagesEndRef = useRef(null);
     const [newMessage, setNewMessage] = useState('');
@@ -30,7 +30,7 @@ const ConversationPage = () => {
     const [amount, setAmount] = useState(0);
     const [currentUserId, setCurrentUserId] = useState(null);
     const [isAccepting, setIsAccepting] = useState(false);
-
+    const [isLoadingMessages, setIsLoadingMessages] = useState(false);
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
@@ -38,6 +38,7 @@ const ConversationPage = () => {
 
     useEffect(() => {
         const fetchMessages = async () => {
+            setIsLoadingMessages(true);
             try {
                 const response = await axiosClient.get(
                     `/conversations/${conversation_id}/messages`
@@ -46,10 +47,26 @@ const ConversationPage = () => {
                 const apiData = response.data.data;
                 const messagesArray = apiData.messages.data;
                 const userId = apiData.currentUser.id;
-
+                const type = apiData.conversation.conversable_type.split('\\').pop();
+                const isClient = apiData.conversation.conversable.client_id ? apiData.conversation.conversable.client_id === userId && type === 'DemandeDirecte' : false;
+                const isArtisan = apiData.conversation.conversable.artisan_id ? apiData.conversation.conversable.artisan_id === userId && type === 'Proposition' : false;
+                const prix_final = apiData.conversation.conversable.prix_final ?? 0;
+                const offre_service_id = apiData.conversation.conversable.service_id ?? apiData.conversation.conversable.offreTravail_id;
+                const statut = apiData.conversation.conversable.statut ?? apiData.conversation.conversable.statut_proposition;
                 setCurrentUserId(userId);
-                setInfoConversation(apiData.conversation);
 
+                const conversation = {
+                    subject: apiData.conversation.subject,
+                    type: type,
+                    statut: statut,
+                    offre_service_id: offre_service_id,
+                    prix_final: prix_final,
+                    is_client: isClient,
+                    is_artisan: isArtisan
+
+                }
+                setInfoConversation(conversation);
+                console.log("conversation", conversation);
                 const formattedMessages = messagesArray.map(msg => ({
                     id: msg.id,
                     text: msg.contenu_message,
@@ -60,12 +77,15 @@ const ConversationPage = () => {
                         locale: fr
                     }),
                     status: msg.is_read ? 'read' : 'sent',
-                    senderName: `${msg.sender.firstname} ${msg.sender.lastname}`
+                    senderName: msg.sender_id === userId ? 'You' : `${msg.sender.firstname} ${msg.sender.lastname}`
                 }));
 
                 setMessages(formattedMessages);
             } catch (error) {
                 console.error("Erreur lors du chargement des messages", error);
+            }
+            finally {
+                setIsLoadingMessages(false);
             }
         };
         if (conversation_id) {
@@ -185,9 +205,7 @@ const ConversationPage = () => {
             setIsAccepting(false);
         }
     };
-    const currentStatus = infoConversation?.conversable?.statut_proposition || infoConversation?.conversable?.statut;
 
-    const isAccepted = currentStatus === 'accepte';
 
     const RenderStatusDommande = () => (
         <div className="flex flex-col gap-6">
@@ -198,12 +216,12 @@ const ConversationPage = () => {
             {/* etp 1 */}
             <div className="space-y-2">
                 <div className="flex items-center gap-2 text-[12px] font-semibold text-gray-700">
-                    <span className={`w-5 h-5 flex items-center justify-center rounded-full text-[10px] ${isAccepted ? 'bg-green-500' : 'bg-[#1B4F72]'} text-white`}>
-                        {isAccepted ? <Check className="w-3 h-3" /> : '1'}
+                    <span className={`w-5 h-5 flex items-center justify-center rounded-full text-[10px] ${infoConversation.statut === 'accepte' ? 'bg-green-500' : 'bg-[#1B4F72]'} text-white`}>
+                        {infoConversation.statut == 'accepte' ? <Check className="w-3 h-3" /> : '1'}
                     </span>
                     Validation du devis
                 </div>
-                {!isAccepted && (
+                {infoConversation.statut === 'en_attente' && (
                     <button
                         onClick={() => setShowModelAction(true)}
                         className="w-full py-2 flex items-center justify-center gap-2 text-[12px] border transition-colors bg-white border-gray-300 hover:bg-gray-50"
@@ -212,10 +230,10 @@ const ConversationPage = () => {
                         Accepter l'offre
                     </button>
                 )}
-                {isAccepted && <p className="text-[11px] text-green-600 font-medium">Offre acceptée </p>}
+                {infoConversation.statut === 'accepte' && <p className="text-[11px] text-green-600 font-medium">Offre acceptée </p>}
             </div>
             {/* etp 2 */}
-            <div className={`space-y-2 ${!isAccepted && 'opacity-40 pointer-events-none'}`}>
+            <div className={`space-y-2 ${infoConversation.statut === 'accepte' && 'opacity-40 pointer-events-none'}`}>
                 <div className="flex items-center gap-2 text-[12px] font-semibold text-gray-700">
                     <span className="w-5 h-5 flex items-center justify-center bg-[#1B4F72] text-white rounded-full text-[10px]">2</span>
                     Paiement
@@ -289,6 +307,20 @@ const ConversationPage = () => {
             </div>
         </div>
     );
+    const RenderStatusDommandeCharger = () => (
+        <div className="flex flex-col gap-6">
+            <div className="flex items-center justify-between border-b pb-2">
+                <h3 className="text-[14px] font-bold text-[#1B4F72]">Suivi de Commande</h3>
+                <span className="text-[10px] bg-gray-100 px-2 py-1    text-gray-500 font-mono"></span>
+            </div>
+            <div className=" h-[15vh] w-full bg-gray-200 p-3 animate-pulse  ">
+            </div><div className=" h-[15vh] w-full bg-gray-200 p-3 animate-pulse  ">
+            </div><div className=" h-[15vh] w-full bg-gray-200 p-3 animate-pulse  ">
+            </div><div className=" h-[15vh] w-full bg-gray-200 p-3 animate-pulse  ">
+            </div><div className=" h-[15vh] w-full bg-gray-200 p-3 animate-pulse  ">
+            </div>
+        </div>
+    );
 
     if (showModelAction)
         return (
@@ -350,7 +382,7 @@ const ConversationPage = () => {
                                 <div className="w-10 h-10 bg-[#1B4F72]/10 flex items-center justify-center   -full font-bold text-[#1B4F72] text-sm">
                                     {infoConversation?.subject?.charAt(0)}
                                 </div>
-                                <h2 className="text-[13px] font-semibold text-[#1B4F72]"> </h2>
+                                <h2 className="text-[13px] font-semibold text-[#1B4F72]"> {infoConversation?.subject}</h2>
                             </div>
                             <button onClick={() => setShowStatusDommande(!showStatusDommande)} className="lg:hidden p-2 text-gray-400"><MoreVertical className="w-5 h-5" /></button>
                         </div>
@@ -358,7 +390,8 @@ const ConversationPage = () => {
                         <div className="flex-1 overflow-y-auto p-4 bg-gray-50 space-y-4">
                             {messages.map((msg) => (
                                 <div key={msg.id} className={`flex ${msg.isMe ? 'justify-end' : 'justify-start'}`}>
-                                    <div className={`max-w-[75%] px-3 py-2   -lg    ${msg.isMe ? 'bg-[#1B4F72] text-white' : 'bg-white border border-gray-100 text-gray-700'}`}>
+                                    <div className={`max-w-[75%] px-3 py-2  border rounded  ${msg.isMe ? 'bg-[#150b50] text-white' : ' bg-[#d5d3d2] border border-gray-100 text-gray-700'}`}>
+                                        <p className="text-[12px] font-semibold">{!msg.isMe && msg.senderName} </p>
                                         <p className="text-[12px]">{msg.text}</p>
                                         <div className={`flex items-center justify-end gap-1 mt-1 text-[9px] ${msg.isMe ? 'text-white/70' : 'text-gray-400'}`}>
                                             {msg.time} {msg.isMe && getStatusIcon(msg.status)}
@@ -366,6 +399,7 @@ const ConversationPage = () => {
                                     </div>
                                 </div>
                             ))}
+                            {isLoadingMessages && <div className="flex items-center justify-center mt-4"><RefreshCw className="w-4 h-4 animate-spin text-[#D35400]" /></div>}
                             <div ref={messagesEndRef} />
                         </div>
 
@@ -379,13 +413,17 @@ const ConversationPage = () => {
                     </div>
 
                     <div className="w-80 border-l border-gray-100 bg-white p-5 hidden lg:block overflow-y-auto">
-                        <RenderStatusDommande />
+                        {
+                            isLoadingMessages ?
+                                <RenderStatusDommandeCharger /> :
+                                <RenderStatusDommande />
+                        }
                     </div>
                     {showStatusDommande && (
                         <div className="fixed inset-0 bg-black/50 z-50 lg:hidden flex items-end">
                             <div className="bg-white w-full max-h-[90vh]   -t-2xl p-6 overflow-y-auto">
                                 <div className="w-12 h-1.5 bg-gray-200   -full mx-auto mb-6" onClick={() => setShowStatusDommande(false)}></div>
-                                <RenderStatusDommande />
+                                {isLoadingMessages ? <RenderStatusDommandeCharger /> : <RenderStatusDommande />}
                             </div>
                         </div>
                     )}
