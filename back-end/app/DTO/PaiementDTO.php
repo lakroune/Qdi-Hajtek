@@ -2,7 +2,7 @@
 
 namespace App\DTO;
 
-class PaymentDTO
+class PaiementDTO
 {
     /**
      * Create a new class instance.

@@ -2,16 +2,17 @@
 
 namespace App\Services;
 
-use App\DAO\PaymentDAO;
+use App\DAO\PaiementDAO;
+use Exception;
 use Stripe\PaymentIntent;
 use Stripe\Stripe;
 
-class PaymentService
+class  PaiementService
 {
     /**
      * Create a new class instance.
      */
-    public function __construct(private  PaymentDAO $paymentDAO)
+    public function __construct(private  PaiementDAO $paiementDAO)
     {
         //
         Stripe::setApiKey(config('services.stripe.secret'));
@@ -27,17 +28,17 @@ class PaymentService
                 'currency' => 'mad',
                 'metadata' => [
                     'conversation_id' => $data['conversation_id'],
-                    'user_id' => auth()->user()->id,
+                    'user_id' => $data['client_id'],
                 ],
                 'automatic_payment_methods' => [
                     'enabled' => true,
                 ],
             ]);
-
+            $this->paiementDAO->createPendingPayment($data, $paymentIntent->id);
             return response()->json([
                 'clientSecret' => $paymentIntent->client_secret,
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
