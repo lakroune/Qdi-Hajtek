@@ -25,8 +25,8 @@ class Conversation extends Model
     {
         return $this->hasMany(Message::class);
     }
-    public function sender()
+    public function paiement()
     {
-        return $this->belongsToMany(User::class);
+        return $this->hasOne(Paiement::class);
     }
 }

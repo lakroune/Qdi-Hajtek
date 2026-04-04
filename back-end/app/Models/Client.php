@@ -50,4 +50,8 @@ class Client extends Model
     {
         return $this->hasMany(OffreTravail::class);
     }
+    public function paiements()
+    {
+        return $this->hasMany(Paiement::class, 'client_id');
+    }
 }
