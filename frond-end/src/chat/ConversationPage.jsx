@@ -65,7 +65,6 @@ const ConversationPage = () => {
                 const userId = apiData.currentUser.id;
                 const type = apiData.conversation.conversable_type.split('\\').pop();
                 const isClient = (apiData.conversation.conversable?.client_id === userId && type === 'DemandeDirecte') || (apiData.conversation.conversable?.artisan_id !== userId && type === 'Proposition');
-                // const isArtisan = apiData.conversation.conversable.artisan_id ? apiData.conversation.conversable.artisan_id === userId && type === 'Proposition' : false;
                 const prix_final = apiData.conversation.conversable.prix_final ?? 0;
                 const offre_service_id = apiData.conversation.conversable.service_id ?? apiData.conversation.conversable.offreTravail_id;
                 const statut = apiData.conversation.conversable.statut ?? apiData.conversation.conversable.statut_proposition;
