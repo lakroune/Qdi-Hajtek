@@ -22,7 +22,7 @@ class DemandeDirecteService
         $data['code_confirmation'] = strtoupper(Str::random(6));
         $demande =  $this->demandeDirecteDAO->create($data);
         // event to send notification(websocket , email)
-        // event(new DemandeCreated($demande));
+        event(new DemandeCreated($demande));
         return $demande;
     }
 }

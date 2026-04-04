@@ -34,7 +34,7 @@ const CheckoutForm = ({ onSuccess }) => {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6 ">
             <div className="p-4 bg-white border border-gray-100 rounded-xl shadow-sm">
                 <PaymentElement />
             </div>

@@ -368,7 +368,7 @@ const ConversationPage = () => {
         if (!isModalOpen || !clientSecret) return null;
 
         return (
-            <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4">
+            <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4  ">
                 <div
                     className="absolute inset-0 bg-[#1B4F72]/40 backdrop-blur-md animate-in fade-in duration-300"
                     onClick={() => setIsModalOpen(false)}
@@ -379,7 +379,7 @@ const ConversationPage = () => {
                         <div>
                             <h3 className="text-lg font-bold flex items-center gap-2">
                                 <Logo className=" h-6" />
-                               
+
                             </h3>
                         </div>
                         <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-white/10 rounded-full">
@@ -394,8 +394,8 @@ const ConversationPage = () => {
                                 {selectedAmount} <small className="text-sm font-normal">MAD</small>
                             </span>
                         </div>
-
-                        <div className="min-h-[250px]">
+                        {/* scroll */}
+                        <div className="w-full min-h-[50vh] max-h-[50vh] overflow-y-scroll">
                             <Elements stripe={stripePromise} options={{ clientSecret }}>
                                 <CheckoutForm
                                     onSuccess={() => {

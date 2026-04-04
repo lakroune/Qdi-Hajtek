@@ -24,13 +24,31 @@ class MessageDAO
 
     public function getByConversation(int $conversationId, int $perPage = 20)
     {
+        $userId = auth('api')->id();
+
+        $conversation = Conversation::with(['conversable','paiement'])->findOrFail($conversationId);
+
+        $isParticipant = (
+            $conversation->conversable->client_id == $userId ||
+            $conversation->conversable->artisan_id == $userId
+        );
+
+        if (!$isParticipant) {
+            return response()->json([
+                'message' => 'Action non autorisée. Vous n\'êtes pas membre de cette conversation.'
+            ], 403);
+        }
+
+        $messages = Message::where('conversation_id', $conversationId)
+            ->with('sender:id,lastname,firstname')
+            ->orderBy('created_at', 'asc')
+            ->paginate($perPage);
+
         return [
-            'messages' => Message::where('conversation_id', $conversationId)
-                ->with('sender:id,lastname,firstname')
-                ->orderBy('created_at', 'asc')
-                ->paginate($perPage),
-            'conversation' => Conversation::find($conversationId)->with('conversable')->where('id', $conversationId)->first(),
-            'currentUser' => auth('api')->user()->only('id')
+            'messages' => $messages,
+            'conversation' => $conversation,
+            'currentUser' => [
+                'id' => $userId,]
         ];
     }
     public function markAsRead(int $conversationId): void
