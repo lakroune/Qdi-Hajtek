@@ -14,6 +14,8 @@ import { fr } from 'date-fns/locale';
 
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
+import CheckoutForm from '../components/CheckoutForm/CheckoutForm';
+import Logo from '../components/logo/Logo';
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 const ConversationPage = () => {
@@ -372,14 +374,13 @@ const ConversationPage = () => {
                     onClick={() => setIsModalOpen(false)}
                 ></div>
 
-                <div className="relative bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in duration-300">
+                <div className="relative bg-white w-full max-w-md  shadow-2xl overflow-hidden animate-in zoom-in duration-300">
                     <div className="bg-[#1B4F72] p-6 text-white flex justify-between items-center">
                         <div>
                             <h3 className="text-lg font-bold flex items-center gap-2">
-                                <ShieldCheck size={18} className="text-[#de843f]" />
-                                Paiement Sécurisé
+                                <Logo className=" h-6" />
+                               
                             </h3>
-                            <p className="text-[10px] opacity-80 mt-1">Finalisez votre transaction via Stripe</p>
                         </div>
                         <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-white/10 rounded-full">
                             <span className="text-xl">✕</span>
@@ -387,7 +388,7 @@ const ConversationPage = () => {
                     </div>
 
                     <div className="p-8">
-                        <div className="flex justify-between items-center mb-6 p-4 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
+                        <div className="flex justify-between items-center mb-6 p-4 bg-gray-50    border-gray-200">
                             <span className="text-sm text-gray-500 font-medium">Total à payer</span>
                             <span className="text-2xl font-black text-[#1B4F72]">
                                 {selectedAmount} <small className="text-sm font-normal">MAD</small>
