@@ -17,10 +17,10 @@ class ConversationService
 
     public function getConversations()
     {
-        return $this->conversationDAO->getConversations();
+        return $this->conversationDAO->getConversations(auth('api')->user()->id);
     }
 
-    public function acceptOffer( int $id, float $prix_final)
+    public function acceptOffer(int $id, float $prix_final)
     {
         return $this->conversationDAO->acceptOffer($id, $prix_final);
     }

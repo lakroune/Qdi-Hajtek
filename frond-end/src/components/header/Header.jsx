@@ -89,7 +89,7 @@ const Header = ({
       try {
         const response = await axiosClient.get('profile/me/counts');
         setNotifications(response.data.notifications);
-        setMessages(response.messages);
+        setMessages(response.data.messages);
       } catch (error) {
 
       }

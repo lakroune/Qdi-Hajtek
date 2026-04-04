@@ -35,9 +35,9 @@ class ConversationDAO
     {
         return Conversation::where('id', $id)->delete();
     }
-    public function getConversations()
+    public function getConversations($userId)
     {
-        $userId = auth()->user()->id;
+
 
         return Conversation::where(function ($query) use ($userId) {
 
@@ -75,10 +75,10 @@ class ConversationDAO
                             $q2->where('artisan_id', $userId);
                         });
                 });
-        })->with(['messages' => function ($q) {
-            $q->latest()->limit(1);
-        }, 'conversable'])
-            ->orderBy('created_at', 'desc')
+        })->orderBy('updated_at', 'desc')
+            ->with('messages', function ($q) {
+                $q->latest()->limit(1);
+            })
 
             ->get();
     }
@@ -98,5 +98,21 @@ class ConversationDAO
             $conversation->conversable->update(['statut' => 'accepte', 'prix_final' => $prix_final]);
         }
         return $conversation;
+    }
+
+
+    public function countMessagesNotRead(int $userId)
+    {
+        $conversations = $this->getConversations($userId);
+        $count = 0;
+        foreach ($conversations as $conversation) {
+            $messages = $conversation->messages;
+            foreach ($messages as $message) {
+                if (!$message->is_read && $message->sender_id != $userId) {
+                    $count++;
+                }
+            }
+        }
+        return $count;
     }
 }

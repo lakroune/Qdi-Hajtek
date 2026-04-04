@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\DAO\ClientDAO;
+use App\DAO\ConversationDAO;
 use App\DAO\UserDAO;
 
 class ProfileService
@@ -10,7 +11,7 @@ class ProfileService
     /**
      * Create a new class instance.
      */
-    public function __construct(private UserDAO $userDAO, private ClientDAO $clientDAO)
+    public function __construct(private UserDAO $userDAO,  private ConversationDAO $conversationDAO)
     {
         //
     }
@@ -100,7 +101,7 @@ class ProfileService
         }
 
         return response()->json([
-            'messages' => $user->messages()->where('is_read', false)->count(),
+            'messages' => $this->conversationDAO->countMessagesNotRead($user->id),
             'notifications' => $user->unreadNotifications()->count(),
         ]);
     }

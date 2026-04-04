@@ -18,21 +18,23 @@ const MessagesPage = () => {
             try {
                 const response = await axiosClient.get('/conversations');
 
-                const mappedData = response.data.data.map(conv => ({
-                    id: conv.id,
-                    subject: conv.subject || " sujet inconnu",
-                    type: conv.conversable_type ? conv.conversable_type.split('\\').pop() : 'General',
-                    time: conv.last_message_at ? new Date(conv.last_message_at).toLocaleTimeString('ar-MA', {
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    }) : '',
-                    status: conv.conversable?.statut || 'unknown',
-                    clientId: conv.conversable?.client_id
-                }));
+                const mappedData = response.data.data.map(conv => {
+                    const lastMessage = conv.messages && conv.messages.length > 0
+                        ? conv.messages[0]
+                        : null;
+
+                    return {
+                        id: conv.id,
+                        subject: conv.subject || 'Général',
+                        type: conv.conversable_type ? (conv.conversable_type.split('\\').pop()).charAt(0).toUpperCase() : 'I',
+                        time: new Date(conv.last_message_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                        message: lastMessage ? lastMessage.contenu_message : 'Aucun message',
+                    };
+                });
 
                 setConversations(mappedData);
             } catch (error) {
-                console.error("Erreur lors du chargement des conversations", error);
+                console.error('Error fetching conversations:', error);
             } finally {
                 setLoading(false);
             }
@@ -74,9 +76,9 @@ const MessagesPage = () => {
                                         ${selectedConv === conv.id ? 'bg-[#D35400]/5 border-l-4 border-l-[#D35400]' : ''}
                                     `}
                                 >
-                                    <div className="w-10 h-10 bg-[#1B4F72]/10 flex items-center justify-center shrink-0 rounded-sm">
+                                    <div className={`w-10 h-10 ${conv.type === 'P' ? 'bg-[#81abc7]' : conv.type === 'D' ? 'bg-[#f3d5a1]' : 'bg-[#dad9d293]'} bg-[#1B4F72]/10 flex items-center justify-center shrink-0  `}>
                                         <span className="text-[14px] font-bold text-[#1B4F72]">
-                                            {conv.subject.charAt(0).toUpperCase()}
+                                            {conv.type}
                                         </span>
                                     </div>
 
@@ -91,7 +93,7 @@ const MessagesPage = () => {
                                         <div className="flex items-center gap-2">
 
                                             <p className="text-[10px] truncate text-gray-400">
-                                                message
+                                                {conv.message}
                                             </p>
                                         </div>
                                     </div>

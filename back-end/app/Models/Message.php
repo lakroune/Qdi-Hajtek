@@ -10,7 +10,7 @@ class Message extends Model
     /** @use HasFactory<\Database\Factories\MessageFactory> */
     use HasFactory;
     protected $table = 'messages';
-
+protected $touches = ['conversation'];
     protected $fillable = [
         'conversation_id',
         'sender_id',
