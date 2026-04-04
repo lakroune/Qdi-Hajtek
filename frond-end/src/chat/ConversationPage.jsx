@@ -8,7 +8,8 @@ import {
 } from 'lucide-react';
 import axiosClient from '../api/axios-client';
 import toast from 'react-hot-toast';
-
+import { formatDistanceToNow, parseISO } from 'date-fns';
+import { fr } from 'date-fns/locale';
 const ConversationPage = () => {
     const messagesEndRef = useRef(null);
     const [newMessage, setNewMessage] = useState('');
@@ -53,9 +54,10 @@ const ConversationPage = () => {
                     id: msg.id,
                     text: msg.contenu_message,
                     isMe: msg.sender_id === userId,
-                    time: new Date(msg.created_at).toLocaleTimeString([], {
-                        hour: '2-digit',
-                        minute: '2-digit'
+
+                    time: formatDistanceToNow(parseISO(msg.created_at), {
+                        addSuffix: true,
+                        locale: fr
                     }),
                     status: msg.is_read ? 'read' : 'sent',
                     senderName: `${msg.sender.firstname} ${msg.sender.lastname}`
@@ -88,9 +90,10 @@ const ConversationPage = () => {
                             id: e.message.id,
                             text: e.message.contenu_message,
                             isMe: e.message.sender_id === currentUserId,
-                            time: new Date(e.message.created_at).toLocaleTimeString([], {
-                                hour: '2-digit',
-                                minute: '2-digit'
+
+                            time: formatDistanceToNow(parseISO(e.message.created_at), {
+                                addSuffix: true,
+                                locale: fr
                             }),
                             status: e.message.is_read ? 'read' : 'sent',
                             senderName: `${e.message.sender.firstname || ''} ${e.message.sender.lastname || ''}`.trim()
@@ -126,9 +129,9 @@ const ConversationPage = () => {
                     id: msg.id,
                     text: msg.contenu_message,
                     isMe: true,
-                    time: new Date(msg.created_at).toLocaleTimeString([], {
-                        hour: '2-digit',
-                        minute: '2-digit'
+                    time: formatDistanceToNow(parseISO(msg.created_at), {
+                        addSuffix: true,
+                        locale: fr
                     }),
                     status: 'sent',
                     senderName: "You"

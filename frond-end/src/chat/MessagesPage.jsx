@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Search, Send } from 'lucide-react';
 import axiosClient from '../api/axios-client';
+import { formatDistanceToNow, parseISO } from 'date-fns';
+import { fr } from 'date-fns/locale';
 
 const MessagesPage = () => {
     const [conversations, setConversations] = useState([]);
@@ -27,7 +29,10 @@ const MessagesPage = () => {
                         id: conv.id,
                         subject: conv.subject || 'Général',
                         type: conv.conversable_type ? (conv.conversable_type.split('\\').pop()).charAt(0).toUpperCase() : 'I',
-                        time: new Date(conv.last_message_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                        time: formatDistanceToNow(parseISO(conv.last_message_at), {
+                            addSuffix: true,
+                            locale: fr
+                        }),
                         message: lastMessage ? lastMessage.contenu_message : 'Aucun message',
                         unread: conv.unread_count || 0
                     };
@@ -95,13 +100,13 @@ const MessagesPage = () => {
 
                                             <p className="text-[10px] truncate text-gray-400 flex justify-between w-full">
                                                 {conv.message}
-                                                
-                                                    {conv.unread > 0 && (
-                                                        <span className="text-[10px] font-bold text-[#ff103c] bg-[#ff103c]/10 px-2 py-0.5 rounded-full">
-                                                            {conv.unread}
-                                                        </span>
-                                                    )}
-                                                
+
+                                                {conv.unread > 0 && (
+                                                    <span className="text-[10px] font-bold text-[#ff103c] bg-[#ff103c]/10 px-2 py-0.5 rounded-full">
+                                                        {conv.unread}
+                                                    </span>
+                                                )}
+
                                             </p>
                                         </div>
                                     </div>
