@@ -55,10 +55,6 @@ class ProfileController extends Controller
     public function counts()
     {
         $counts = $this->profileService->getCounts();
-        return response()->json([
-            'success' => true,
-            'message' => 'Counts retrieved successfully',
-            'counts' =>  $counts
-        ]);
+        return  $counts;
     }
 }

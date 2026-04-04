@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, User, Bell, LogOut, Settings, Heart, MessageCircle, Briefcase, Calendar } from 'lucide-react';
+import { Menu, X, User, Bell, LogOut, Settings, Heart, MessageCircle, Briefcase, Calendar, Cookie } from 'lucide-react';
 import Logo from '../logo/Logo';
 import LogoutModal from '../models/LogoutModal';
 import { useNavigate } from 'react-router-dom';
@@ -14,12 +14,12 @@ const Header = ({
   const [afficherModalDeconnexion, setAfficherModalDeconnexion] = useState(false);
   const [estEnDeconnexion, setEstEnDeconnexion] = useState(false);
   const naviguer = useNavigate();
-  const [estAuthentifie, setEstAuthentifie] = useState(true);
-  const [dommandesEnAttente, setDommandesEnAttente] = useState(0);
   const [messages, setMessages] = useState(0);
   const [notifications, setNotifications] = useState(0);
   const [typeUtilisateur, setTypeUtilisateur] = useState('client');
   const [nomUtilisateur, setNomUtilisateur] = useState('ismail');
+  const [estAuthentifie, setEstAuthentifie] = useState(true);
+
   useEffect(() => {
     setEstMenuOuvert(false);
     setEstProfilOuvert(false);
@@ -88,21 +88,18 @@ const Header = ({
     const fetchCounts = async () => {
       try {
         const response = await axiosClient.get('profile/me/counts');
-        const data = response.data.counts.counts;
-
-        setNotifications(data.notifications || 0);
-        setMessages(data.messages || 0);
-        setDommandesEnAttente(data.conversations || 0);
+        setNotifications(response.data.notifications);
+        setMessages(response.messages);
       } catch (error) {
-        console.log(error);
+
       }
     };
 
     if (estAuthentifie) {
       fetchCounts();
     }
-  }, []);
 
+  }, [estAuthentifie]);
   return (
     <>
       <header

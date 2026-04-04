@@ -8,5 +8,5 @@ Broadcast::channel('chat.{conversation_id}', function ($user, $conversation_id) 
 }, ['guards' => ['api']]);
 
 Broadcast::channel('notice.{id}', function ($user, $id) {
-    return true; 
+    return (int) $user->id === (int) $id;
 });

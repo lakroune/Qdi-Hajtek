@@ -99,14 +99,9 @@ class ProfileService
             ];
         }
 
-        return [
-            'success' => true,
-            'message' => 'Counts retrieved successfully',
-            'counts' => [
-                // 'conversations' => $user->count(),
-                'messages' => $user->messages()->where('is_read', false)->count(),
-                'notifications' => $user->unreadNotifications()->count(),
-            ]
-        ];
+        return response()->json([
+            'messages' => $user->messages()->where('is_read', false)->count(),
+            'notifications' => $user->unreadNotifications()->count(),
+        ]);
     }
 }
