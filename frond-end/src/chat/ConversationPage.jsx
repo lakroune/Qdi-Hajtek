@@ -48,8 +48,8 @@ const ConversationPage = () => {
                 const messagesArray = apiData.messages.data;
                 const userId = apiData.currentUser.id;
                 const type = apiData.conversation.conversable_type.split('\\').pop();
-                const isClient = apiData.conversation.conversable.client_id ? apiData.conversation.conversable.client_id === userId && type === 'DemandeDirecte' : false;
-                const isArtisan = apiData.conversation.conversable.artisan_id ? apiData.conversation.conversable.artisan_id === userId && type === 'Proposition' : false;
+                const isClient = (apiData.conversation.conversable?.client_id === userId && type === 'DemandeDirecte') || (apiData.conversation.conversable?.artisan_id !== userId && type === 'Proposition');
+                // const isArtisan = apiData.conversation.conversable.artisan_id ? apiData.conversation.conversable.artisan_id === userId && type === 'Proposition' : false;
                 const prix_final = apiData.conversation.conversable.prix_final ?? 0;
                 const offre_service_id = apiData.conversation.conversable.service_id ?? apiData.conversation.conversable.offreTravail_id;
                 const statut = apiData.conversation.conversable.statut ?? apiData.conversation.conversable.statut_proposition;
@@ -62,7 +62,6 @@ const ConversationPage = () => {
                     offre_service_id: offre_service_id,
                     prix_final: prix_final,
                     is_client: isClient,
-                    is_artisan: isArtisan
 
                 }
                 setInfoConversation(conversation);
@@ -221,7 +220,7 @@ const ConversationPage = () => {
                     </span>
                     Validation du devis
                 </div>
-                {infoConversation.statut === 'en_attente' && (
+                {infoConversation.statut === 'en_attente' && !infoConversation.is_client && (
                     <button
                         onClick={() => setShowModelAction(true)}
                         className="w-full py-2 flex items-center justify-center gap-2 text-[12px] border transition-colors bg-white border-gray-300 hover:bg-gray-50"
@@ -231,20 +230,28 @@ const ConversationPage = () => {
                     </button>
                 )}
                 {infoConversation.statut === 'accepte' && <p className="text-[11px] text-green-600 font-medium">Offre acceptée </p>}
+                {infoConversation.statut === 'en_attente' && infoConversation.is_client && <p className="text-[11px] text-orange-600 font-medium">En attente de acceptation </p>}
             </div>
             {/* etp 2 */}
-            <div className={`space-y-2 ${infoConversation.statut === 'accepte' && 'opacity-40 pointer-events-none'}`}>
+            <div className={`space-y-2 ${infoConversation.statut === 'accepte' ?? 'opacity-40 pointer-events-none'}`}>
                 <div className="flex items-center gap-2 text-[12px] font-semibold text-gray-700">
                     <span className="w-5 h-5 flex items-center justify-center bg-[#1B4F72] text-white rounded-full text-[10px]">2</span>
                     Paiement
                 </div>
-                <button
-                    onClick={() => setIsPaid(true)}
-                    className={`w-full py-2 flex items-center justify-center gap-2 text-[12px] border transition-colors ${isPaid ? 'bg-green-50 border-green-500 text-green-700' : 'bg-white border-gray-300 hover:bg-gray-50'}`}
-                >
-                    <CreditCard className="w-4 h-4" />
-                    {isPaid ? 'Payé avec succès' : 'Payer maintenant'}
-                </button>
+                {
+                    infoConversation.statut === 'accepte' && infoConversation.is_client && (
+                        <button
+                            onClick={() => setIsPaid(true)}
+                            className={`w-full py-2 flex items-center justify-center gap-2 text-[12px] border transition-colors ${isPaid ? 'bg-green-50 border-green-500 text-green-700' : 'bg-white border-gray-300 hover:bg-gray-50'}`}
+                        >
+                            <CreditCard className="w-4 h-4" />
+                            {isPaid ? 'Payé avec succès' : 'Payer maintenant'}
+                        </button>
+                    )}
+
+                {infoConversation.statut === 'accepte' && !infoConversation.is_client && (
+                    <p className="text-[11px] text-orange-600 font-medium">  En attente de paiement </p>
+                )}
             </div>
 
             {/* etp 3 */}
