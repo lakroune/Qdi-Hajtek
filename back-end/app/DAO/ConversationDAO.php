@@ -76,9 +76,14 @@ class ConversationDAO
                         });
                 });
         })->orderBy('updated_at', 'desc')
-            ->with('messages', function ($q) {
+            ->with(['messages' => function ($q) {
                 $q->latest()->limit(1);
-            })
+            } ])
+
+            ->withCount(['messages as unread_count' => function ($q) use ($userId) {
+                $q->where('is_read', false)
+                    ->where('sender_id', '!=', $userId);
+            }])
 
             ->get();
     }

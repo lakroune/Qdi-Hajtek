@@ -29,6 +29,7 @@ const MessagesPage = () => {
                         type: conv.conversable_type ? (conv.conversable_type.split('\\').pop()).charAt(0).toUpperCase() : 'I',
                         time: new Date(conv.last_message_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                         message: lastMessage ? lastMessage.contenu_message : 'Aucun message',
+                        unread: conv.unread_count || 0
                     };
                 });
 
@@ -92,8 +93,15 @@ const MessagesPage = () => {
 
                                         <div className="flex items-center gap-2">
 
-                                            <p className="text-[10px] truncate text-gray-400">
+                                            <p className="text-[10px] truncate text-gray-400 flex justify-between w-full">
                                                 {conv.message}
+                                                
+                                                    {conv.unread > 0 && (
+                                                        <span className="text-[10px] font-bold text-[#ff103c] bg-[#ff103c]/10 px-2 py-0.5 rounded-full">
+                                                            {conv.unread}
+                                                        </span>
+                                                    )}
+                                                
                                             </p>
                                         </div>
                                     </div>
