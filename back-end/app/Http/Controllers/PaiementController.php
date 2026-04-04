@@ -6,7 +6,7 @@ use App\DTO\PaiementDTO;
 use App\Http\Requests\PaiementRequest;
 use App\Services\PaiementService;
 
-class PaymentController extends Controller
+class PaiementController extends Controller
 {
 
     public function __construct(private PaiementService $paiementService)

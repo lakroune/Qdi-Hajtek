@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\AimerController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CategorieController;
 use App\Http\Controllers\Api\DemandeDirecteController;
@@ -13,7 +12,7 @@ use App\Http\Controllers\DisponibiliteController;
 use App\Http\Controllers\FavoriController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\NotificationController;
-use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\PaiementController;
 use App\Http\Controllers\ServiceController;
 use App\Models\Ville;
 use Illuminate\Support\Facades\Route;
@@ -106,7 +105,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
 
 
-    Route::post('/payments/initiate', [PaymentController::class, 'initiate']);
+    Route::post('/payments/initiate', [PaiementController::class, 'initiate']);
 
     // Route::get('artisans/{artisanId}/services', [ServiceController::class, 'artisanServices']);
     // Route::patch('services/{service}/toggle-status', [ServiceController::class, 'toggleStatus']);
