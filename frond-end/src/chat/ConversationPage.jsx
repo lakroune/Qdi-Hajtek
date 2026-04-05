@@ -71,6 +71,7 @@ const ConversationPage = () => {
                 const statut = apiData.conversation.conversable.statut ?? apiData.conversation.conversable.statut_proposition;
                 const isPaid = apiData.conversation.paiement?.statut === 'paid';
                 const timePaid = apiData.conversation.paiement?.created_at;
+                const isCompleted = apiData.conversation.conversable.is_completed;
                 setCurrentUserId(userId);
 
                 const conversation = {
@@ -81,7 +82,9 @@ const ConversationPage = () => {
                     prix_final: prix_final,
                     is_client: isClient,
                     is_paid: isPaid,
-                    time_paid: timePaid
+                    time_paid: timePaid,
+                    is_completed: isCompleted
+
 
                 }
                 setInfoConversation(conversation);
@@ -307,37 +310,108 @@ const ConversationPage = () => {
         }
     };
 
+    const handleSendReview = async () => {
+        if (rating === 0 || !comment) {
+            toast.error("merci de fournir un avis valide");
+            return;
+        }
+
+        try {
+            const response = await axiosClient.post(`/conversations/${conversation_id}/review`, {
+                rating: rating,
+                comment: comment
+            });
+
+            if (response.status === 200) {
+                toast.success(" votre avis a ete envoye");
+
+                setInfoConversation(prev => ({
+                    ...prev,
+                    is_completed: true
+                }));
+
+                setRating(0);
+                setComment('');
+            }
+        } catch (error) {
+            const errorMsg = error.response?.data?.message || "Une erreur est survenue";
+            toast.error(errorMsg);
+            console.error("Erreur Review:", error);
+        }
+    };
+
     const RenderStatusDommande = () => (
         <div className="flex flex-col gap-6">
+            {/* Header */}
             <div className="flex items-center justify-between border-b pb-2">
                 <h3 className="text-[14px] font-bold text-[#1B4F72]">Suivi de Commande</h3>
-                <span className="text-[10px] bg-gray-100 px-2 py-1    text-gray-500 font-mono">#DM-001</span>
+                <span className="text-[10px] bg-gray-100 px-2 py-1 text-gray-500 font-mono">#DM-001</span>
             </div>
-            {/* etp 1 */}
+
+            {/* Etape 1: Validation du devis */}
             <div className="space-y-2">
                 <div className="flex items-center gap-2 text-[12px] font-semibold text-gray-700">
-                    <span className={`w-5 h-5 flex items-center justify-center rounded-full text-[10px] ${infoConversation.statut === 'accepte' ? 'bg-green-500' : 'bg-[#1B4F72]'} text-white`}>
-                        {infoConversation.statut == 'accepte' ? <Check className="w-3 h-3" /> : '1'}
+                    <span className={`w-5 h-5 flex items-center justify-center rounded-full text-[10px] 
+            ${(infoConversation.statut === 'accepte' || infoConversation.is_paid || infoConversation.statut === 'terminee' || infoConversation.statut === 'termine')
+                            ? 'bg-green-500'
+                            : 'bg-[#1B4F72]'} 
+            text-white transition-colors duration-300`}>
+                        {(infoConversation.statut === 'accepte' || infoConversation.is_paid || infoConversation.statut === 'terminee' || infoConversation.statut === 'termine')
+                            ? <Check className="w-3 h-3" />
+                            : '1'}
                     </span>
                     Validation du devis
                 </div>
+
                 {infoConversation.statut === 'en_attente' && !infoConversation.is_client && (
                     <button
                         onClick={() => setShowModelAction(true)}
-                        className="w-full py-2 flex items-center justify-center gap-2 text-[12px] border transition-colors bg-white border-gray-300 hover:bg-gray-50"
+                        className="w-full py-2 flex items-center justify-center gap-2 text-[12px] border transition-all bg-white border-gray-300 hover:bg-gray-50 hover:border-[#D35400] text-[#1B4F72]"
                     >
-                        <CheckCircle2 className="w-4 h-4" />
+                        <CheckCircle2 className="w-4 h-4 text-[#D35400]" />
                         Accepter l'offre
                     </button>
                 )}
-                {infoConversation.statut === 'accepte' && <p className="text-[11px] text-green-600 font-medium">Offre acceptée </p>}
-                {infoConversation.statut === 'en_attente' && infoConversation.is_client && <p className="text-[11px] text-orange-600 font-medium">En attente de acceptation </p>}
+
+                {infoConversation.statut === 'en_attente' && infoConversation.is_client && (
+                    <div className="flex items-center gap-2 p-2 bg-orange-50 border border-orange-100 rounded-sm">
+                        <RefreshCw className="w-3 h-3 text-orange-500 animate-spin" />
+                        <p className="text-[11px] text-orange-600 font-medium italic">
+                            En attente d'acceptation par l'artisan...
+                        </p>
+                    </div>
+                )}
+
+                {(infoConversation.statut === 'accepte' || infoConversation.is_paid || infoConversation.statut === 'terminee' || infoConversation.statut === 'termine') && (
+                    <div className="flex items-center gap-2 px-1">
+                        <p className="text-[11px] text-green-600 font-semibold flex items-center gap-1">
+                            <CheckCircle2 className="w-3 h-3" /> Offre acceptée
+                        </p>
+                        {infoConversation.prix_final > 0 && (
+                            <span className="text-[10px] text-gray-400 font-mono">
+                                ({infoConversation.prix_final} MAD)
+                            </span>
+                        )}
+                    </div>
+                )}
             </div>
-            {/* etp 2 */}
-            <div className={`space-y-2 ${infoConversation.statut !== 'accepte' ? 'opacity-40 pointer-events-none' : ''}`}>
+
+            {/* Etape 2: Paiement */}
+            <div className={`space-y-2 transition-all duration-300 
+    ${(infoConversation.statut !== 'accepte' && !infoConversation.is_paid && infoConversation.statut !== 'terminee' && infoConversation.statut !== 'termine')
+                    ? 'opacity-40 pointer-events-none'
+                    : ''}`}
+            >
                 <div className="flex items-center gap-2 text-[12px] font-semibold text-gray-700">
-                    <span className={`w-5 h-5 flex items-center justify-center rounded-full text-[10px] ${infoConversation.is_paid ? 'bg-green-500' : 'bg-[#1B4F72]'} text-white`}>
-                        {infoConversation.is_paid ? <Check className="w-3 h-3" /> : '2'}
+                    <span className={`w-5 h-5 flex items-center justify-center rounded-full text-[10px] 
+            ${infoConversation.is_paid || infoConversation.statut === 'terminee' || infoConversation.statut === 'termine'
+                            ? 'bg-green-500'
+                            : 'bg-[#1B4F72]'} 
+            text-white transition-colors`}
+                    >
+                        {infoConversation.is_paid || infoConversation.statut === 'terminee' || infoConversation.statut === 'termine'
+                            ? <Check className="w-3 h-3" />
+                            : '2'}
                     </span>
                     Paiement
                 </div>
@@ -345,107 +419,218 @@ const ConversationPage = () => {
                 {infoConversation.statut === 'accepte' && infoConversation.is_client && !infoConversation.is_paid && (
                     <button
                         onClick={() => handleOpenPayment(infoConversation.prix_final)}
-                        className="w-full py-2 flex items-center justify-center gap-2 text-[12px] border transition-colors bg-white border-gray-300 hover:bg-gray-50"
+                        className="w-full py-2 flex items-center justify-center gap-2 text-[12px] border-2 border-[#D35400] text-[#D35400] bg-white font-bold hover:bg-[#D35400] hover:text-white transition-all shadow-sm"
                     >
                         <CreditCard className="w-4 h-4" />
                         Payer {infoConversation.prix_final} MAD
                     </button>
                 )}
 
-                {infoConversation.statut === 'accepte' && (
-                    infoConversation.is_paid ? (
-                        <p className="text-[11px] text-green-600 font-medium flex items-center gap-1">
-                            <Check className="w-3 h-3" /> Paiement effectué
+                {infoConversation.statut === 'accepte' && !infoConversation.is_client && !infoConversation.is_paid && (
+                    <div className="flex items-center gap-2 p-2 bg-blue-50 border border-blue-100 rounded-sm">
+                        <RefreshCw className="w-3 h-3 text-blue-500 animate-spin" />
+                        <p className="text-[11px] text-blue-600 font-medium italic">
+                            En attente du paiement par le client...
                         </p>
-                    ) : (
-                        !infoConversation.is_client && (
-                            <p className="text-[11px] text-orange-600 font-medium">En attente de paiement du client</p>
-                        )
-                    )
+                    </div>
+                )}
+
+                {(infoConversation.is_paid || infoConversation.statut === 'terminee' || infoConversation.statut === 'termine') && (
+                    <div className="space-y-1 px-1">
+                        <p className="text-[11px] text-green-600 font-semibold flex items-center gap-1">
+                            <CheckCircle2 className="w-3 h-3" /> Paiement sécurisé effectué
+                        </p>
+                        {infoConversation.time_paid && (
+                            <p className="text-[9px] text-gray-400 font-mono">
+                                Payé le : {new Date(infoConversation.time_paid).toLocaleDateString('fr-FR')}
+                            </p>
+                        )}
+                    </div>
                 )}
             </div>
+            {/* Etape 3: Fin de mission */}
+            <div className={`space-y-2 transition-all duration-300 
+    ${(!infoConversation.is_paid) ? 'opacity-40 pointer-events-none' : ''}`}>
 
-            {/* etp 3 */}
-            {/* etp 3 */}
-            <div className={`space-y-2 ${(!infoConversation.is_paid) ? 'opacity-40 pointer-events-none' : ''}`}>
                 <div className="flex items-center gap-2 text-[12px] font-semibold text-gray-700">
-                    <span className={`w-5 h-5 flex items-center justify-center rounded-full text-[10px] ${(infoConversation.statut === 'terminee' || infoConversation.statut === 'termine') ? 'bg-green-500' : 'bg-[#1B4F72]'} text-white`}>
+                    <span className={`w-5 h-5 flex items-center justify-center rounded-full text-[10px] 
+            ${(infoConversation.statut === 'terminee' || infoConversation.statut === 'termine') ? 'bg-green-500' : 'bg-[#1B4F72]'} 
+            text-white transition-colors`}>
                         {(infoConversation.statut === 'terminee' || infoConversation.statut === 'termine') ? <Check className="w-3 h-3" /> : '3'}
                     </span>
-                    Fin de mission
+                    Réalisation & Fin de mission
                 </div>
 
                 {!infoConversation.is_client && infoConversation.statut !== 'terminee' && infoConversation.statut !== 'termine' && (
-                    <button
-                        onClick={() => setShowModelFinMission(true)}
-                        className="w-full py-2 flex items-center justify-center gap-2 text-[12px] border bg-white border-gray-300 hover:bg-gray-50 transition-colors"
-                    >
-                        <CheckCircle2 className="w-4 h-4" />
-                        Confirmer la fin du travail
-                    </button>
+                    <div className="space-y-2">
+                        <p className="text-[10px] text-gray-500 italic">Une fois le travail terminé, confirmez-le ici.</p>
+                        <button
+                            onClick={() => setShowModelFinMission(true)}
+                            className="w-full py-2 flex items-center justify-center gap-2 text-[12px] border-2 border-[#1B4F72] bg-white text-[#1B4F72] font-bold hover:bg-[#1B4F72] hover:text-white transition-all shadow-sm"
+                        >
+                            <CheckCircle2 className="w-4 h-4" />
+                            Confirmer la fin du travail
+                        </button>
+                    </div>
                 )}
 
                 {infoConversation.is_client && infoConversation.statut !== 'terminee' && infoConversation.statut !== 'termine' && (
-                    <p className="text-[11px] text-orange-600 font-medium italic">En attente de réalisation par l'artisan...</p>
+                    <div className="flex items-center gap-2 p-2 bg-blue-50 border border-blue-100 rounded-sm">
+                        <RefreshCw className="w-3 h-3 text-blue-500 animate-spin" />
+                        <p className="text-[11px] text-blue-600 font-medium italic">
+                            L'artisan travaille sur votre demande...
+                        </p>
+                    </div>
                 )}
 
                 {(infoConversation.statut === 'terminee' || infoConversation.statut === 'termine') && (
-                    <p className="text-[11px] text-green-600 font-medium">Mission accomplie !</p>
+                    <div className="p-2 bg-green-50 border border-green-100 rounded-sm">
+                        <p className="text-[11px] text-green-700 font-bold flex items-center gap-1">
+                            <CheckCircle2 className="w-3 h-3 text-green-600" />
+                            Mission accomplie par l'artisan !
+                        </p>
+                        <p className="text-[10px] text-green-600/70 mt-1">
+                            {infoConversation.is_client
+                                ? "Veuillez passer à l'étape suivante pour valider avec votre code."
+                                : "En attente de validation finale par le client."}
+                        </p>
+                    </div>
                 )}
             </div>
 
-            {/* etp 4 */}
-            <div className={`space-y-2 ${(infoConversation.statut !== 'terminee' && infoConversation.statut !== 'termine') || !infoConversation.is_client ? 'opacity-40 pointer-events-none' : ''}`}>
+            {/* Etape 4: Sécurité (Code PIN) */}
+            <div className={`space-y-2 transition-all duration-300 
+    ${((infoConversation.statut !== 'termine') && infoConversation.is_completed)
+                    ? 'opacity-40 pointer-events-none'
+                    : ''}`}
+            >
                 <div className="flex items-center gap-2 text-[12px] font-semibold text-gray-700">
-                    <span className={`w-5 h-5 flex items-center justify-center rounded-full text-[10px] ${isConfirmed ? 'bg-green-500' : 'bg-[#1B4F72]'} text-white`}>
-                        {isConfirmed ? <Check className="w-3 h-3" /> : '4'}
+                    <span className={`w-5 h-5 flex items-center justify-center rounded-full text-[10px] 
+            ${( infoConversation.is_completed && infoConversation.statut === 'termine') ? 'bg-green-500' : 'bg-[#1B4F72]'} 
+            text-white transition-colors`}>
+                        {(isConfirmed || infoConversation.statut === 'termine') ? <Check className="w-3 h-3" /> : '4'}
                     </span>
                     Sécurité (Code PIN)
                 </div>
 
                 {infoConversation.is_client ? (
-                    <>
-                        <p className="text-[10px] text-gray-500 mb-1">Entrez le code fourni par l'artisan pour valider.</p>
-                        <div className="flex gap-2">
-                            <input
-                                type="text" maxLength={6} placeholder="AB12CD"
-                                value={confirmationCode}
-                                onChange={(e) => setConfirmationCode(e.target.value)}
-                                className="flex-1 border border-gray-300 p-2 text-center text-[13px] tracking-widest focus:ring-1 focus:ring-[#D35400] outline-none"
-                            />
-                            <button
-                                onClick={() => handleConfirmCode()}
-                                disabled={confirmationCode.length !== 6}
-                                className="px-4 py-2 bg-[#D35400] text-white text-[12px] disabled:bg-gray-300"
-                            >
-                                {isConfirmed ? <ShieldCheck className="w-4 h-4" /> : 'OK'}
-                            </button>
-                        </div>
-                    </>
+                    <div className="space-y-3">
+                        {(!infoConversation.is_completed && infoConversation.statut === 'termine') ? (
+                            <>
+                                <p className="text-[10px] text-gray-500 leading-relaxed italic">
+                                    Veuillez fournir le code PIN de votre compte pour confirmer la fin de la mission.
+                                </p>
+                                <div className="flex gap-2">
+                                    <input
+                                        type="text"
+                                        maxLength={6}
+                                        placeholder="AB12CD"
+                                        value={confirmationCode}
+                                        onChange={(e) => setConfirmationCode(e.target.value.toUpperCase())}
+                                        className="flex-1 border-2 border-gray-200 p-2 text-center text-[14px] font-black tracking-[0.2em] focus:border-[#D35400] focus:ring-0 outline-none transition-all uppercase"
+                                    />
+                                    <button
+                                        onClick={() => handleConfirmCode()}
+                                        disabled={confirmationCode.length !== 6}
+                                        className="px-5 bg-[#D35400] text-white text-[12px] font-bold hover:bg-[#A04000] disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                                    >
+                                        ok
+                                    </button>
+                                </div>
+                            </>
+                        ) : (
+                            <div className="flex items-center gap-2 p-2 bg-green-50 border border-green-100 rounded-sm">
+                                <ShieldCheck className="w-4 h-4 text-green-600" />
+                                <p className="text-[11px] text-green-700 font-bold">Transaction sécurisée - Code validé</p>
+                            </div>
+                        )}
+                    </div>
                 ) : (
-                    <p className="text-[11px] text-blue-600 font-medium">Le client doit maintenant valider avec son code.</p>
+                    <div className="p-2 bg-gray-50 border border-gray-200 rounded-sm">
+                        {infoConversation.statut === 'termine' && infoConversation.is_completed ? (
+                            <p className="text-[11px] text-green-600 font-medium flex items-center gap-1">
+                                <CheckCircle2 className="w-3 h-3" /> Le client a validé le code. Paiement libéré !
+                            </p>
+                        ) : (
+                            <p className="text-[11px] text-[#1B4F72] font-medium flex items-center gap-2">
+                                <ShieldCheck className="w-4 h-4 text-[#D35400]" />
+                                Donnez votre code de validation au client.
+                            </p>
+                        )}
+                    </div>
                 )}
             </div>
 
-            {/* etp 5 - Avis    s */}
-            <div className={`space-y-2 ${!isConfirmed && 'opacity-40 pointer-events-none'}`}>
+            {/* Etape 5: Avis */}
+            <div className={`space-y-3 transition-all duration-300 
+             ${(infoConversation.statut !== 'termine' || infoConversation.is_completed) ? 'opacity-40 pointer-events-none' : ''}`}>
+
                 <div className="flex items-center gap-2 text-[12px] font-semibold text-gray-700">
-                    <span className="w-5 h-5 flex items-center justify-center bg-[#1B4F72] text-white   -full text-[10px]">5</span>
+                    <span className={`w-5 h-5 flex items-center justify-center rounded-full text-[10px] 
+            ${infoConversation.is_completed ? 'bg-green-500' : 'bg-[#1B4F72]'} 
+            text-white transition-colors`}>
+                        {infoConversation.is_completed ? <Check className="w-3 h-3" /> : '5'}
+                    </span>
                     Laisser un avis
                 </div>
-                <div className="bg-gray-50 p-3    border border-dashed border-gray-300 space-y-3">
-                    <div className="flex justify-center gap-1">
-                        {[1, 2, 3, 4, 5].map((s) => (
-                            <Star key={s} onClick={() => setRating(s)} className={`w-5 h-5 cursor-pointer ${s <= rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} />
-                        ))}
+
+                {infoConversation.is_client ? (
+                    <div className="bg-gray-50 p-4 border border-dashed border-gray-300 space-y-4 rounded-sm">
+                        <div className="flex flex-col items-center gap-2">
+                            <p className="text-[10px] text-gray-500 uppercase tracking-wider font-bold">Votre Note</p>
+                            <div className="flex justify-center gap-2">
+                                {[1, 2, 3, 4, 5].map((s) => (
+                                    <Star
+                                        key={s}
+                                        onClick={() => setRating(s)}
+                                        className={`w-6 h-6 cursor-pointer transition-transform hover:scale-110 
+                                ${s <= rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="space-y-1">
+                            <p className="text-[10px] text-gray-500 font-medium">Commentaire (Optionnel)</p>
+                            <textarea
+                                className="w-full border border-gray-200 p-3 text-[12px] focus:border-[#1B4F72] focus:ring-0 outline-none transition-all resize-none rounded-sm bg-white"
+                                placeholder="Comment s'est déroulée la prestation ?"
+                                rows={3}
+                                value={comment}
+                                onChange={(e) => setComment(e.target.value)}
+                            />
+                        </div>
+
+                        <button
+                            onClick={handleSendReview}
+                            disabled={rating === 0 || infoConversation.is_completed}
+                            className="w-full py-2.5 bg-[#1B4F72] text-white text-[12px] font-bold hover:bg-[#154360] transition-all shadow-md disabled:bg-gray-300 disabled:shadow-none"
+                        >
+                            {infoConversation.is_completed ? 'Avis déjà publié' : 'Publier mon avis'}
+                        </button>
                     </div>
-                    <textarea
-                        className="w-full border border-gray-200 p-2 text-[11px] focus:outline-none"
-                        placeholder="Commentaire..." rows={2}
-                        value={comment} onChange={(e) => setComment(e.target.value)}
-                    />
-                    <button className="w-full py-1.5 bg-[#1B4F72] text-white text-[11px]   ">Publier</button>
-                </div>
+                ) : (
+                    <div className="p-3 bg-gray-50 border border-gray-100 rounded-sm">
+                        {infoConversation.is_completed ? (
+                            <p className="text-[11px] text-green-600 font-medium flex items-center gap-2">
+                                <CheckCircle2 className="w-3 h-3" /> Merci ! Le client a laissé son évaluation.
+                            </p>
+                        ) : (
+                            <div className="flex items-center gap-2">
+                                <RefreshCw className="w-3 h-3 text-orange-400 animate-spin" />
+                                <p className="text-[11px] text-gray-500 italic">En attente de l'avis du client...</p>
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {infoConversation.is_completed && (
+                    <div className="mt-4 p-3 bg-green-600 text-white text-center rounded-sm shadow-inner animate-pulse">
+                        <p className="text-[12px] font-black uppercase tracking-widest flex items-center justify-center gap-2">
+                            <ShieldCheck className="w-4 h-4" /> Dossier Clôturé
+                        </p>
+                    </div>
+                )}
             </div>
         </div>
     );

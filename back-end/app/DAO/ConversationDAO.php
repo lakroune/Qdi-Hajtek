@@ -133,9 +133,10 @@ class ConversationDAO
     {
         $conversation = Conversation::findOrFail($id);
         if ($conversation->conversable->code_confirmation == $code) {
-            $conversation->conversable->is_confirmed = true;
+            $conversation->conversable->is_completed = true;
             $conversation->conversable->save();
+            return true;
         }
-        return $conversation;
+        return false;
     }
 }
