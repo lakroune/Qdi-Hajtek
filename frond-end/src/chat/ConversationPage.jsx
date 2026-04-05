@@ -39,6 +39,7 @@ const ConversationPage = () => {
     const [isAccepting, setIsAccepting] = useState(false);
     const [isLoadingMessages, setIsLoadingMessages] = useState(false);
 
+    const [showModelFinMission, setShowModelFinMission] = useState(false);
 
 
 
@@ -260,6 +261,24 @@ const ConversationPage = () => {
             toast.error("Erreur de confirmation");
         }
     }
+    const handleCompleteMission = async () => {
+        try {
+            const response = await axiosClient.post(`/conversations/${conversation_id}/complete-mission`);
+
+            if (response.status === 200) {
+                toast.success("Mission marquée comme terminée !");
+
+                setInfoConversation(prev => ({
+                    ...prev,
+                    statut: 'terminee'
+                }));
+                setIsTerminated(true);
+            }
+        } catch (error) {
+            console.error("Erreur:", error);
+            toast.error(error.response?.data?.message || "Erreur lors de la confirmation");
+        }
+    };
 
 
     const RenderStatusDommande = () => (
@@ -321,18 +340,27 @@ const ConversationPage = () => {
             </div>
 
             {/* etp 3 */}
-            <div className={`space-y-2 ${!infoConversation.isPaid && 'opacity-40 pointer-events-none'}`}>
+            <div className={`space-y-2 ${(!infoConversation.is_paid) ? 'opacity-40 pointer-events-none' : ''}`}>
                 <div className="flex items-center gap-2 text-[12px] font-semibold text-gray-700">
-                    <span className="w-5 h-5 flex items-center justify-center bg-[#1B4F72] text-white   -full text-[10px]">3</span>
+                    <span className={`w-5 h-5 flex items-center justify-center rounded-full text-[10px] ${infoConversation.statut === 'terminee' ? 'bg-green-500' : 'bg-[#1B4F72]'} text-white`}>
+                        {infoConversation.statut === 'terminee' ? <Check className="w-3 h-3" /> : '3'}
+                    </span>
                     Fin de mission
                 </div>
-                <button
-                    onClick={() => setIsTerminated(true)}
-                    className={`w-full py-2 flex items-center justify-center gap-2 text-[12px] border    transition-colors ${isTerminated ? 'bg-blue-50 border-blue-500 text-blue-700' : 'bg-white border-gray-300 hover:bg-gray-50'}`}
-                >
-                    <CheckCircle2 className="w-4 h-4" />
-                    {isTerminated ? 'Mission Terminée' : 'Confirmer la fin'}
-                </button>
+
+                {!infoConversation.is_client && infoConversation.statut !== 'terminee' && (
+                    <button
+                        onClick={() => setShowModelFinMission(true)}
+                        className="w-full py-2 flex items-center justify-center gap-2 text-[12px] border bg-white border-gray-300 hover:bg-gray-50 transition-colors"
+                    >
+                        <CheckCircle2 className="w-4 h-4" />
+                        Confirmer la fin du travail
+                    </button>
+                )}
+
+                {infoConversation.statut === 'terminee' && (
+                    <p className="text-[11px] text-green-600 font-medium">Mission accomplie !</p>
+                )}
             </div>
 
             {/* etp 4 */}
@@ -483,7 +511,46 @@ const ConversationPage = () => {
                 </div>
             </div>
         );
+    if (showModelFinMission)
+        return (
 
+            <div
+                className="fixed inset-0 z-[999] flex items-center justify-center p-4"
+                role="dialog"
+                aria-modal="true"
+            >
+                <div
+                    className="absolute inset-0 bg-black/40 backdrop-blur-[2px] transition-opacity animate-in fade-in duration-200"
+
+                />
+                <div className={`relative w-full max-w-xs  bg-white shadow-2xl border border-gray-100 transform transition-all animate-in zoom-in-95 duration-200`}>
+
+
+                    <div className="p-6">
+                        <div className="flex items-center gap-4 mb-6">
+                            <div className="w-10 h-10 bg-[#D35400]/10 flex items-center justify-center  ">
+                                <Banknote className="w-5 h-5 text-[#D35400]" />
+                            </div>
+                            <div>
+                                <h3 className="text-[14px] font-bold text-[#1B4F72]"> Fin de Mission</h3>
+                                <p className="text-[11px] text-gray-400 leading-none mt-1">Confirmation de la mission</p>
+                            </div>
+                        </div>
+                        <p className="text-[12px] text-gray-600 mb-3">Voulez-vous vraiment terminer cette mission ?</p>
+                        <div className="grid grid-cols-2 gap-3">
+                            <button onClick={() => setShowModelFinMission(false)} className="py-2 text-[12px] text-gray-400 hover:text-gray-600 font-medium">Non</button>
+                            <button
+                                disabled={isAccepting}
+                                onClick={() => { handleCompleteMission(); }}
+                                className="py-2 bg-[#1B4F72] text-white text-[12px] font-bold hover:bg-[#D35400] transition-colors text-center  "
+                            >
+                                {isAccepting ? <div className="flex items-center justify-center gap-2"><RefreshCw className=" w-4 h-4  animate-spin" /> en cours</div> : 'Accepter'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
     return (
         <div className="min-h-screen bg-gray-50">
             <RenderPaymentModal />
