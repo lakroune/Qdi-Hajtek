@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\DAO\PaiementDAO;
+use App\Http\Resources\PaiementResource;
 use App\Models\Paiement;
 use Exception;
 use Stripe\PaymentIntent;
@@ -50,5 +51,10 @@ class  PaiementService
         $paiement->statut = 'paid';
         $paiement->save();
         return $paiement;
+    }
+    public  function getPaiements()
+    {
+        $paiements = $this->paiementDAO->getPaiements();
+        return PaiementResource::collection($paiements);
     }
 }

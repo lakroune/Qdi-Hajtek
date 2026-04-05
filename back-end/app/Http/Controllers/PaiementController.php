@@ -30,4 +30,14 @@ class PaiementController extends Controller
         ]);
         return $this->paiementService->confirmPayment($data['stripe_payment_id']);
     }
+
+    public function getPaiementByConversationId(int $id)
+    {
+        // return Paiement::where('conversation_id', $id)->first();
+    }
+
+    public function getPaiements()
+    {
+        return $this->paiementService->getPaiements();
+    }
 }

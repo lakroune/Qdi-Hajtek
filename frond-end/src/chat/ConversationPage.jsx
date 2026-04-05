@@ -345,7 +345,7 @@ const ConversationPage = () => {
             {/* Header */}
             <div className="flex items-center justify-between border-b pb-2">
                 <h3 className="text-[14px] font-bold text-[#1B4F72]">Suivi de Commande</h3>
-                <span className="text-[10px] bg-gray-100 px-2 py-1 text-gray-500 font-mono">#DM-001</span>
+                <span className="text-[10px] bg-gray-100 px-2 py-1 text-gray-500 font-mono">#DM-{conversation_id}</span>
             </div>
 
             {/* Etape 1: Validation du devis */}
@@ -563,10 +563,9 @@ const ConversationPage = () => {
 
             {/* Etape 5: Avis */}
             <div className={`space-y-3 transition-all duration-300 
-             ${(infoConversation.statut !== 'termine' || infoConversation.is_completed) ? 'opacity-40 pointer-events-none' : ''}`}>
-
+             ${(infoConversation.statut == 'termine' &&  infoConversation.is_completed) ? '': 'opacity-40 pointer-events-none' }`}>
                 <div className="flex items-center gap-2 text-[12px] font-semibold text-gray-700">
-                    <span className={`w-5 h-5 flex items-center justify-center rounded-full text-[10px] 
+                    <span className={`w-5 h-5 flex items-center justify-center  text-[10px] 
             ${infoConversation.is_completed ? 'bg-green-500' : 'bg-[#1B4F72]'} 
             text-white transition-colors`}>
                         {infoConversation.is_completed ? <Check className="w-3 h-3" /> : '5'}
@@ -575,7 +574,7 @@ const ConversationPage = () => {
                 </div>
 
                 {infoConversation.is_client ? (
-                    <div className="bg-gray-50 p-4 border border-dashed border-gray-300 space-y-4 rounded-sm">
+                    <div className="bg-gray-50 p-4 border  border-gray-300 space-y-4 rounded-sm">
                         <div className="flex flex-col items-center gap-2">
                             <p className="text-[10px] text-gray-500 uppercase tracking-wider font-bold">Votre Note</p>
                             <div className="flex justify-center gap-2">
@@ -621,14 +620,6 @@ const ConversationPage = () => {
                                 <p className="text-[11px] text-gray-500 italic">En attente de l'avis du client...</p>
                             </div>
                         )}
-                    </div>
-                )}
-
-                {infoConversation.is_completed && (
-                    <div className="mt-4 p-3 bg-green-600 text-white text-center rounded-sm shadow-inner animate-pulse">
-                        <p className="text-[12px] font-black uppercase tracking-widest flex items-center justify-center gap-2">
-                            <ShieldCheck className="w-4 h-4" /> Dossier Clôturé
-                        </p>
                     </div>
                 )}
             </div>

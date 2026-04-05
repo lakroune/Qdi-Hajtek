@@ -107,6 +107,9 @@ Route::middleware('auth:api')->group(function () {
 
     Route::post('/payments/initiate', [PaiementController::class, 'initiate']);
     Route::post('/payments/confirm', [PaiementController::class, 'confirm']);
+    Route::get('/paiements', [PaiementController::class, 'getPaiements']);
+
+
 
     Route::post('/conversations/{conversation_id}/complete-mission', [ConversationController::class, 'completeMission']);
 

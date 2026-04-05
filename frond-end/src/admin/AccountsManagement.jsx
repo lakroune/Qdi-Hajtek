@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     ArrowRightLeft, Search, Filter, Eye,
     User, Briefcase, DollarSign, Calendar,
     CheckCircle, Clock, XCircle, Download
 } from 'lucide-react';
+import axiosClient from '../api/axios-client';
 
 const AccountsManagement = () => {
     const [filter, setFilter] = useState('all');
@@ -112,6 +113,18 @@ const AccountsManagement = () => {
            
     ];
 
+    useEffect(() => {
+        const fetchAmounts = async () => {
+            try {
+                const response = await axiosClient.get('/paiements');
+                setTransactions(response.data);
+            } catch (error) {
+                console.error('Error fetching amounts:', error);
+            }
+        }
+
+        fetchAmounts();
+    }, []);
     const filteredTransactions = transactions.filter(t => {
         if (filter === 'all') return true;
         if (filter === 'held') return t.paymentStatus === 'held';
