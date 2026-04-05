@@ -28,8 +28,10 @@ return new class extends Migration
             $table->text('message_explicatif');
             $table->date('date_disponibilite');
             $table->text('conditions_speciales')->nullable();
-            $table->enum('statut_proposition', ['en_attente', 'accepte', 'refuse', 'annule'])
+            $table->enum('statut_proposition', ['en_attente', 'accepte', 'refuse', 'annule', 'termine'])
                 ->default('en_attente');
+
+            $table->boolean('is_completed')->default(false);
 
             $table->timestamps();
         });

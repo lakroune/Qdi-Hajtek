@@ -9,7 +9,7 @@ import {
 import axiosClient from '../api/axios-client';
 import toast from 'react-hot-toast';
 import { formatDistanceToNow, parseISO } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { fi, fr } from 'date-fns/locale';
 
 
 import { Elements } from '@stripe/react-stripe-js';
@@ -24,7 +24,6 @@ const ConversationPage = () => {
     const [showAttachment, setShowAttachment] = useState(false);
     const [showStatusDommande, setShowStatusDommande] = useState(false);
 
-    const [isTerminated, setIsTerminated] = useState(false);
     const [confirmationCode, setConfirmationCode] = useState('');
     const [isConfirmed, setIsConfirmed] = useState(false);
     const [rating, setRating] = useState(0);
@@ -272,11 +271,12 @@ const ConversationPage = () => {
                     ...prev,
                     statut: 'terminee'
                 }));
-                setIsTerminated(true);
             }
         } catch (error) {
-            console.error("Erreur:", error);
-            toast.error(error.response?.data?.message || "Erreur lors de la confirmation");
+            toast.error("Erreur lors de la confirmation");
+        }
+        finally {
+            setShowModelFinMission(false);
         }
     };
 
@@ -340,15 +340,16 @@ const ConversationPage = () => {
             </div>
 
             {/* etp 3 */}
+            {/* etp 3 */}
             <div className={`space-y-2 ${(!infoConversation.is_paid) ? 'opacity-40 pointer-events-none' : ''}`}>
                 <div className="flex items-center gap-2 text-[12px] font-semibold text-gray-700">
-                    <span className={`w-5 h-5 flex items-center justify-center rounded-full text-[10px] ${infoConversation.statut === 'terminee' ? 'bg-green-500' : 'bg-[#1B4F72]'} text-white`}>
-                        {infoConversation.statut === 'terminee' ? <Check className="w-3 h-3" /> : '3'}
+                    <span className={`w-5 h-5 flex items-center justify-center rounded-full text-[10px] ${(infoConversation.statut === 'terminee' || infoConversation.statut === 'termine') ? 'bg-green-500' : 'bg-[#1B4F72]'} text-white`}>
+                        {(infoConversation.statut === 'terminee' || infoConversation.statut === 'termine') ? <Check className="w-3 h-3" /> : '3'}
                     </span>
                     Fin de mission
                 </div>
 
-                {!infoConversation.is_client && infoConversation.statut !== 'terminee' && (
+                {!infoConversation.is_client && infoConversation.statut !== 'terminee' && infoConversation.statut !== 'termine' && (
                     <button
                         onClick={() => setShowModelFinMission(true)}
                         className="w-full py-2 flex items-center justify-center gap-2 text-[12px] border bg-white border-gray-300 hover:bg-gray-50 transition-colors"
@@ -358,13 +359,17 @@ const ConversationPage = () => {
                     </button>
                 )}
 
-                {infoConversation.statut === 'terminee' && (
+                {infoConversation.is_client && infoConversation.statut !== 'terminee' && infoConversation.statut !== 'termine' && (
+                    <p className="text-[11px] text-orange-600 font-medium italic">En attente de réalisation par l'artisan...</p>
+                )}
+
+                {(infoConversation.statut === 'terminee' || infoConversation.statut === 'termine') && (
                     <p className="text-[11px] text-green-600 font-medium">Mission accomplie !</p>
                 )}
             </div>
 
             {/* etp 4 */}
-            <div className={`space-y-2 ${!isTerminated && 'opacity-40 pointer-events-none'}`}>
+            <div className={`space-y-2 ${infoConversation.statut !== 'termine' && 'opacity-40 pointer-events-none'}`}>
                 <div className="flex items-center gap-2 text-[12px] font-semibold text-gray-700">
                     <span className="w-5 h-5 flex items-center justify-center bg-[#1B4F72] text-white   -full text-[10px]">4</span>
                     Sécurité (Code PIN)

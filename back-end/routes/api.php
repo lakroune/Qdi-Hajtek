@@ -107,6 +107,8 @@ Route::middleware('auth:api')->group(function () {
 
     Route::post('/payments/initiate', [PaiementController::class, 'initiate']);
     Route::post('/payments/confirm', [PaiementController::class, 'confirm']);
+
+    Route::post('/conversations/{conversation_id}/complete-mission', [ConversationController::class, 'completeMission']);
     // Route::get('artisans/{artisanId}/services', [ServiceController::class, 'artisanServices']);
     // Route::patch('services/{service}/toggle-status', [ServiceController::class, 'toggleStatus']);
 });

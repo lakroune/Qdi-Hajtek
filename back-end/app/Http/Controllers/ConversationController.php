@@ -35,4 +35,15 @@ class ConversationController extends Controller
             'data' => $conversation
         ]);
     }
+
+
+
+    public function completeMission( int $id)
+    {
+        $conversation = $this->conversationService->completeMission($id);
+        return response()->json([
+            'message' => 'Conversation found successfully',
+            'data' => $conversation
+        ]);
+    }
 }

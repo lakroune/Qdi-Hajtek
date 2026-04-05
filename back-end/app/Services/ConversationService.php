@@ -24,4 +24,9 @@ class ConversationService
     {
         return $this->conversationDAO->acceptOffer($id, $prix_final);
     }
+
+    public function completeMission(int $id)
+    {
+        return $this->conversationDAO->completeMission($id);
+    }
 }

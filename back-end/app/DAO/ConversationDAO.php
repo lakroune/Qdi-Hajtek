@@ -78,7 +78,7 @@ class ConversationDAO
         })->orderBy('updated_at', 'desc')
             ->with(['messages' => function ($q) {
                 $q->latest()->limit(1);
-            } ])
+            }])
 
             ->withCount(['messages as unread_count' => function ($q) use ($userId) {
                 $q->where('is_read', false)
@@ -119,5 +119,13 @@ class ConversationDAO
             }
         }
         return $count;
+    }
+
+    public  function completeMission(int $id)
+    {
+        $conversation = Conversation::find($id);
+        // si demande directe or offre
+        $conversation->conversable->update(['statut' => 'termine']);
+        return $conversation;
     }
 }
