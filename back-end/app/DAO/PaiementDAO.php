@@ -2,6 +2,7 @@
 
 namespace App\DAO;
 
+use App\Models\Conversation;
 use App\Models\Paiement;
 
 class PaiementDAO
@@ -16,10 +17,12 @@ class PaiementDAO
 
     public function createPendingPayment(array $data, string $paymentIntentId)
     {
-        return Paiement::create([
+        $conversation = Conversation::findOrFail($data['conversation_id']);
+        return $conversation->paiement()->updateOrCreate([
+            'conversation_id' => $data['conversation_id'],
+        ], [
             'montant' => $data['amount'],
             'client_id' => $data['client_id'],
-            'conversation_id' => $data['conversation_id'],
             'stripe_payment_id' => $paymentIntentId,
         ]);
     }

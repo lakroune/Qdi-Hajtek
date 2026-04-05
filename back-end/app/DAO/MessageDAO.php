@@ -29,8 +29,10 @@ class MessageDAO
         $conversation = Conversation::with(['conversable','paiement'])->findOrFail($conversationId);
 
         $isParticipant = (
-            $conversation->conversable->client_id == $userId ||
-            $conversation->conversable->artisan_id == $userId
+            $conversation->conversable?->client_id === $userId ||
+            $conversation->conversable?->artisan_id === $userId||
+            $conversation->conversable?->offreTravail?->client_id === $userId||
+            $conversation->conversable?->service?->artisan_id === $userId
         );
 
         if (!$isParticipant) {

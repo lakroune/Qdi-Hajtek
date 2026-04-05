@@ -12,7 +12,6 @@ import toast from 'react-hot-toast';
 
 const ArtisanAddService = () => {
     const [isLoading, setIsLoading] = useState(false);
-    const [success, setSuccess] = useState(false);
     const [categories, setCategories] = useState([
 
     ]);
@@ -99,7 +98,7 @@ const ArtisanAddService = () => {
             if (formData.images && formData.images.length > 0) {
                 formData.images.forEach((image) => {
                     data.append('images[]', image);
-                }); 
+                });
             }
             data.forEach((value, key) => {
                 console.log(key, value);
@@ -175,6 +174,7 @@ const ArtisanAddService = () => {
                             onChange={(e) => updateField('categorie_id', e.target.value)}
                             className="w-full px-3 py-2 text-[12px] border border-gray-200 focus:border-[#D35400] focus:outline-none bg-white"
                         >
+                            <option value="" disabled>Choisissez une catégorie</option>
                             {categories.map(cat => (
                                 <option key={cat.id} value={cat.id}>{cat.nom_categorie}</option>
                             ))}

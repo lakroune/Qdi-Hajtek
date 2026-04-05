@@ -20,7 +20,6 @@ return new class extends Migration
             $table->decimal('montant', 10, 2);
             $table->string('devise')->default('mad');
             $table->string('statut')->default('pending');
-            $table->json('metadata')->nullable();
             $table->timestamps();
         });
     }

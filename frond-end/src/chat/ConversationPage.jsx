@@ -24,7 +24,6 @@ const ConversationPage = () => {
     const [showAttachment, setShowAttachment] = useState(false);
     const [showStatusDommande, setShowStatusDommande] = useState(false);
 
-    const [isPaid, setIsPaid] = useState(false);
     const [isTerminated, setIsTerminated] = useState(false);
     const [confirmationCode, setConfirmationCode] = useState('');
     const [isConfirmed, setIsConfirmed] = useState(false);
@@ -70,6 +69,8 @@ const ConversationPage = () => {
                 const prix_final = apiData.conversation.conversable.prix_final ?? 0;
                 const offre_service_id = apiData.conversation.conversable.service_id ?? apiData.conversation.conversable.offreTravail_id;
                 const statut = apiData.conversation.conversable.statut ?? apiData.conversation.conversable.statut_proposition;
+                const isPaid = apiData.conversation.paiement?.statut === 'paid';
+                const timePaid = apiData.conversation.paiement?.created_at;
                 setCurrentUserId(userId);
 
                 const conversation = {
@@ -79,6 +80,8 @@ const ConversationPage = () => {
                     offre_service_id: offre_service_id,
                     prix_final: prix_final,
                     is_client: isClient,
+                    is_paid: isPaid,
+                    time_paid: timePaid
 
                 }
                 setInfoConversation(conversation);
@@ -239,6 +242,24 @@ const ConversationPage = () => {
         }
     };
 
+    const confirmPayment = async () => {
+        try {
+            const res = await axiosClient.post(`/payments/confirm`, {
+                stripe_payment_id: clientSecret.split('_secret')[0]
+            });
+            if (res.status === 200) {
+                setInfoConversation(prev => ({
+                    ...prev,
+                    statut: 'paid'
+                }));
+                setIsModalOpen(false);
+                toast.success("Paiement réussi !");
+            }
+
+        } catch (e) {
+            toast.error("Erreur de confirmation");
+        }
+    }
 
 
     const RenderStatusDommande = () => (
@@ -268,28 +289,39 @@ const ConversationPage = () => {
                 {infoConversation.statut === 'en_attente' && infoConversation.is_client && <p className="text-[11px] text-orange-600 font-medium">En attente de acceptation </p>}
             </div>
             {/* etp 2 */}
-            <div className={`space-y-2 ${infoConversation.statut === 'accepte' ?? 'opacity-40 pointer-events-none'}`}>
+            <div className={`space-y-2 ${infoConversation.statut !== 'accepte' ? 'opacity-40 pointer-events-none' : ''}`}>
                 <div className="flex items-center gap-2 text-[12px] font-semibold text-gray-700">
-                    <span className="w-5 h-5 flex items-center justify-center bg-[#1B4F72] text-white rounded-full text-[10px]">2</span>
+                    <span className={`w-5 h-5 flex items-center justify-center rounded-full text-[10px] ${infoConversation.is_paid ? 'bg-green-500' : 'bg-[#1B4F72]'} text-white`}>
+                        {infoConversation.is_paid ? <Check className="w-3 h-3" /> : '2'}
+                    </span>
                     Paiement
                 </div>
-                {infoConversation.statut === 'accepte' && infoConversation.is_client && (
+
+                {infoConversation.statut === 'accepte' && infoConversation.is_client && !infoConversation.is_paid && (
                     <button
                         onClick={() => handleOpenPayment(infoConversation.prix_final)}
-                        className={`w-full py-2 flex items-center justify-center gap-2 text-[12px] border transition-colors ${isPaid ? 'bg-green-50 border-green-500 text-green-700' : 'bg-white border-gray-300 hover:bg-gray-50'}`}
+                        className="w-full py-2 flex items-center justify-center gap-2 text-[12px] border transition-colors bg-white border-gray-300 hover:bg-gray-50"
                     >
                         <CreditCard className="w-4 h-4" />
-                        {isPaid ? 'Payé avec succès' : `Payer ${infoConversation.prix_final} MAD`}
+                        Payer {infoConversation.prix_final} MAD
                     </button>
                 )}
 
-                {infoConversation.statut === 'accepte' && !infoConversation.is_client && (
-                    <p className="text-[11px] text-orange-600 font-medium">  En attente de paiement </p>
+                {infoConversation.statut === 'accepte' && (
+                    infoConversation.is_paid ? (
+                        <p className="text-[11px] text-green-600 font-medium flex items-center gap-1">
+                            <Check className="w-3 h-3" /> Paiement effectué
+                        </p>
+                    ) : (
+                        !infoConversation.is_client && (
+                            <p className="text-[11px] text-orange-600 font-medium">En attente de paiement du client</p>
+                        )
+                    )
                 )}
             </div>
 
             {/* etp 3 */}
-            <div className={`space-y-2 ${!isPaid && 'opacity-40 pointer-events-none'}`}>
+            <div className={`space-y-2 ${!infoConversation.isPaid && 'opacity-40 pointer-events-none'}`}>
                 <div className="flex items-center gap-2 text-[12px] font-semibold text-gray-700">
                     <span className="w-5 h-5 flex items-center justify-center bg-[#1B4F72] text-white   -full text-[10px]">3</span>
                     Fin de mission
@@ -398,19 +430,7 @@ const ConversationPage = () => {
                         <div className="w-full min-h-[50vh] max-h-[50vh] overflow-y-scroll">
                             <Elements stripe={stripePromise} options={{ clientSecret }}>
                                 <CheckoutForm
-                                    onSuccess={async () => {
-                                        try {
-                                            await axiosClient.post(`/payments/confirm`, {
-                                                stripe_payment_id: clientSecret.split('_secret')[0]
-                                            });
-
-                                            setIsPaid(true);
-                                            setIsModalOpen(false);
-                                            toast.success("Paiement réussi !");
-                                        } catch (e) {
-                                            toast.error("Erreur de confirmation");
-                                        }
-                                    }}
+                                    onSuccess={confirmPayment}
                                 />
                             </Elements>
                         </div>
