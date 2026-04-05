@@ -46,4 +46,16 @@ class ConversationController extends Controller
             'data' => $conversation
         ]);
     }
+
+    public function confirmCode(Request $request, int $id)
+    {
+        $request->validate([
+            'code' => 'required|string|min:6'
+        ]);
+        $conversation = $this->conversationService->confirmCode($id, $request->code);
+        return response()->json([
+            'message' => 'Conversation found successfully',
+            'data' => $conversation
+        ]);
+    }
 }

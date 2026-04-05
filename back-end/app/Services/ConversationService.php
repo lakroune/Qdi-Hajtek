@@ -29,4 +29,9 @@ class ConversationService
     {
         return $this->conversationDAO->completeMission($id);
     }
+
+    public function confirmCode(int $id, string $code)
+    {
+        return $this->conversationDAO->confirmCode($id, $code);
+    }
 }

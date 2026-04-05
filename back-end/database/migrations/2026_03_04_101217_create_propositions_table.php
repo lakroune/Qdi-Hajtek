@@ -30,7 +30,7 @@ return new class extends Migration
             $table->text('conditions_speciales')->nullable();
             $table->enum('statut_proposition', ['en_attente', 'accepte', 'refuse', 'annule', 'termine'])
                 ->default('en_attente');
-
+            $table->text('code_confirmation')->nullable();
             $table->boolean('is_completed')->default(false);
 
             $table->timestamps();

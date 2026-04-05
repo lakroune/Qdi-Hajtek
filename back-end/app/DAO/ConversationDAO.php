@@ -128,4 +128,14 @@ class ConversationDAO
         $conversation->conversable->update(['statut' => 'termine']);
         return $conversation;
     }
+
+    public function confirmCode(int $id, string $code)
+    {
+        $conversation = Conversation::findOrFail($id);
+        if ($conversation->conversable->code_confirmation == $code) {
+            $conversation->conversable->is_confirmed = true;
+            $conversation->conversable->save();
+        }
+        return $conversation;
+    }
 }

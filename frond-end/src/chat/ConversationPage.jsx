@@ -280,6 +280,32 @@ const ConversationPage = () => {
         }
     };
 
+    const handleConfirmCode = async () => {
+        if (confirmationCode.length !== 6) {
+            toast.error("merci de fournir un code de confirmation valide");
+            return;
+        }
+
+        try {
+            const response = await axiosClient.post(`/conversations/${conversation_id}/confirm-code`, {
+                code: confirmationCode
+            });
+
+            if (response.status === 200) {
+                toast.success("votre code de confirmation a ete acceptee");
+                setIsConfirmed(true);
+
+                setInfoConversation(prev => ({
+                    ...prev,
+                    statut: 'termine'
+                }));
+            }
+        } catch (error) {
+            const errorMsg = error.response?.data?.message || "Une erreur est survenue";
+            toast.error(errorMsg);
+            console.error("Erreur de confirmation:", error);
+        }
+    };
 
     const RenderStatusDommande = () => (
         <div className="flex flex-col gap-6">
@@ -369,26 +395,36 @@ const ConversationPage = () => {
             </div>
 
             {/* etp 4 */}
-            <div className={`space-y-2 ${infoConversation.statut !== 'termine' && 'opacity-40 pointer-events-none'}`}>
+            <div className={`space-y-2 ${(infoConversation.statut !== 'terminee' && infoConversation.statut !== 'termine') || !infoConversation.is_client ? 'opacity-40 pointer-events-none' : ''}`}>
                 <div className="flex items-center gap-2 text-[12px] font-semibold text-gray-700">
-                    <span className="w-5 h-5 flex items-center justify-center bg-[#1B4F72] text-white   -full text-[10px]">4</span>
+                    <span className={`w-5 h-5 flex items-center justify-center rounded-full text-[10px] ${isConfirmed ? 'bg-green-500' : 'bg-[#1B4F72]'} text-white`}>
+                        {isConfirmed ? <Check className="w-3 h-3" /> : '4'}
+                    </span>
                     Sécurité (Code PIN)
                 </div>
-                <div className="flex gap-2">
-                    <input
-                        type="text" maxLength={4} placeholder="0000"
-                        value={confirmationCode}
-                        onChange={(e) => setConfirmationCode(e.target.value)}
-                        className="flex-1 border border-gray-300 p-2 text-center text-[13px] tracking-widest focus:ring-1 focus:ring-[#D35400] outline-none"
-                    />
-                    <button
-                        onClick={() => setIsConfirmed(true)}
-                        disabled={confirmationCode.length !== 4 || isConfirmed}
-                        className="px-4 py-2 bg-[#D35400] text-white text-[12px]    disabled:bg-gray-300"
-                    >
-                        {isConfirmed ? <ShieldCheck className="w-4 h-4" /> : 'OK'}
-                    </button>
-                </div>
+
+                {infoConversation.is_client ? (
+                    <>
+                        <p className="text-[10px] text-gray-500 mb-1">Entrez le code fourni par l'artisan pour valider.</p>
+                        <div className="flex gap-2">
+                            <input
+                                type="text" maxLength={6} placeholder="AB12CD"
+                                value={confirmationCode}
+                                onChange={(e) => setConfirmationCode(e.target.value)}
+                                className="flex-1 border border-gray-300 p-2 text-center text-[13px] tracking-widest focus:ring-1 focus:ring-[#D35400] outline-none"
+                            />
+                            <button
+                                onClick={() => handleConfirmCode()}
+                                disabled={confirmationCode.length !== 6}
+                                className="px-4 py-2 bg-[#D35400] text-white text-[12px] disabled:bg-gray-300"
+                            >
+                                {isConfirmed ? <ShieldCheck className="w-4 h-4" /> : 'OK'}
+                            </button>
+                        </div>
+                    </>
+                ) : (
+                    <p className="text-[11px] text-blue-600 font-medium">Le client doit maintenant valider avec son code.</p>
+                )}
             </div>
 
             {/* etp 5 - Avis    s */}
@@ -606,14 +642,14 @@ const ConversationPage = () => {
                         {
                             isLoadingMessages ?
                                 <RenderStatusDommandeCharger /> :
-                                <RenderStatusDommande />
+                                RenderStatusDommande()
                         }
                     </div>
                     {showStatusDommande && (
                         <div className="fixed inset-0 bg-black/50 z-50 lg:hidden flex items-end">
                             <div className="bg-white w-full max-h-[90vh]   -t-2xl p-6 overflow-y-auto">
                                 <div className="w-12 h-1.5 bg-gray-200   -full mx-auto mb-6" onClick={() => setShowStatusDommande(false)}></div>
-                                {isLoadingMessages ? <RenderStatusDommandeCharger /> : <RenderStatusDommande />}
+                                {isLoadingMessages ? <RenderStatusDommandeCharger /> : RenderStatusDommande()}
                             </div>
                         </div>
                     )}
