@@ -17,21 +17,12 @@ const HomePage = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('');
     const [favs, setFavs] = useState([1, 3]);
-    const [isloading, setIsLoading] = useState(true);
     const [selectedRating, setSelectedRating] = useState(0);
     const [selectedPrice, setSelectedPrice] = useState(0);
     const [nextpage, setNextPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
 
     const loaderRef = useRef(null);
-    const getImageUrl = (imagePath) => {
-        if (!imagePath) return null;
-        const cleanPath = imagePath.replace(/^\//, '');
-        return `http://127.0.0.1:8000/storage/${cleanPath}`;
-    };
-
-
-
 
     const searchServices = async (isNewSearch = false) => {
         setLoading(true);
@@ -48,18 +39,19 @@ const HomePage = () => {
                 }
             });
 
-            const paginationData = response.data.data;
-            const newItems = paginationData.data;
+            // Nouvelle structure : data.data[] + meta
+            const newItems = response.data.data;
+            const meta = response.data.meta;
 
             if (isNewSearch) {
                 setServices(newItems);
                 setNextPage(2);
             } else {
                 setServices((prev) => [...prev, ...newItems]);
-                setNextPage(paginationData.current_page + 1);
+                setNextPage(meta.current_page + 1);
             }
 
-            setHasMore(paginationData.current_page < paginationData.last_page);
+            setHasMore(meta.current_page < meta.last_page);
 
         } catch (error) {
             console.error('Error fetching services:', error);
@@ -68,11 +60,11 @@ const HomePage = () => {
             setLoading(false);
         }
     };
+
     useEffect(() => {
         const delayDebounceFn = setTimeout(() => {
             searchServices(true);
         }, 400);
-
         return () => clearTimeout(delayDebounceFn);
     }, [searchQuery, selectedCategory, selectedRating, selectedPrice]);
 
@@ -95,13 +87,9 @@ const HomePage = () => {
             if (entries[0].isIntersecting) {
                 searchServices(false);
             }
-        }, {
-            threshold: 0.1
-        });
+        }, { threshold: 0.1 });
 
-        if (loaderRef.current) {
-            observer.observe(loaderRef.current);
-        }
+        if (loaderRef.current) observer.observe(loaderRef.current);
 
         return () => {
             if (loaderRef.current) observer.unobserve(loaderRef.current);
@@ -111,13 +99,14 @@ const HomePage = () => {
     const handleSearch = (e) => {
         e.preventDefault();
     };
+
     const favorieService = (id) => {
-        const response = axiosClient.post(`/services/${id}/favorie` );
+        const response = axiosClient.post(`/services/${id}/favorie`);
         console.log(response);
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 ">
+        <div className="min-h-screen bg-gray-50">
             <section className="relative bg-[#1b4f7296] pt-20 pb-12 overflow-hidden overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
                 <div
                     className="absolute inset-0 opacity-5"
@@ -158,9 +147,7 @@ const HomePage = () => {
                                     onChange={(e) => setSelectedCategory(e.target.value)}
                                     className="w-full outline-none py-2 bg-transparent text-[11px] text-white appearance-none"
                                 >
-                                    <option value="" className="text-black">
-                                        Toutes les catégories
-                                    </option>
+                                    <option value="" className="text-black">Toutes les catégories</option>
                                     {categories.map((cat) => (
                                         <option key={cat.id} value={cat.id} className="text-black uppercase">
                                             {cat.nom_categorie || cat.name}
@@ -171,30 +158,28 @@ const HomePage = () => {
 
                             <div className="flex items-center gap-2 border border-amber-50/30 bg-white/10 px-3">
                                 <StarIcon className="text-amber-50 w-4 h-4" />
-                                <select className="w-full outline-none py-2 bg-transparent text-[11px] text-white appearance-none"
+                                <select
+                                    className="w-full outline-none py-2 bg-transparent text-[11px] text-white appearance-none"
                                     value={selectedRating}
                                     onChange={(e) => setSelectedRating(e.target.value)}
                                 >
                                     <option value="0">Toutes les notes</option>
                                     {[1, 2, 3, 4, 5].map((star) => (
-                                        <option key={star} value={star}>
-                                            {star} stars et plus
-                                        </option>
+                                        <option key={star} value={star}>{star} stars et plus</option>
                                     ))}
                                 </select>
                             </div>
 
                             <div className="flex items-center gap-2 border border-amber-50/30 bg-white/10 px-3">
                                 <DollarSign className="text-amber-50 w-4 h-4" />
-                                <select className="w-full py-2 bg-transparent text-[11px] text-white appearance-none outline-none"
+                                <select
+                                    className="w-full py-2 bg-transparent text-[11px] text-white appearance-none outline-none"
                                     value={selectedPrice}
                                     onChange={(e) => setSelectedPrice(e.target.value)}
                                 >
                                     <option value="0">Tous les prix</option>
                                     {[200, 500, 1000, 2000].map((price) => (
-                                        <option key={price} value={price}>
-                                            {price} DH et moins
-                                        </option>
+                                        <option key={price} value={price}>{price} DH et moins</option>
                                     ))}
                                 </select>
                             </div>
@@ -203,10 +188,7 @@ const HomePage = () => {
                 </div>
             </section>
 
-            <main className="max-w-6xl mx-auto  py-6 overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-
-
-
+            <main className="max-w-6xl mx-auto py-6 overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
                 <div className="w-full mx-auto px-4 py-6">
                     <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                         {services.map(service => (
@@ -214,9 +196,11 @@ const HomePage = () => {
 
                                 <div className="relative h-40 bg-gray-100">
                                     <img
-                                        src={service.images.length > 0
-                                            ? `http://localhost:8000/storage/${service.images[0].url}`
-                                            : 'https://via.placeholder.com/400x300?text=No+Image'}
+                                        src={
+                                            service.images?.length > 0
+                                                ? service.images[0].url
+                                                : 'https://via.placeholder.com/400x300?text=No+Image'
+                                        }
                                         alt={service.titre}
                                         className="w-full h-full object-cover"
                                     />
@@ -224,7 +208,7 @@ const HomePage = () => {
                                         onClick={() => favorieService(service.id)}
                                         className={`absolute top-2 right-2 w-8 h-8 flex items-center justify-center transition-colors ${favs.includes(service.id) ? 'bg-[#D35400] text-white' : 'bg-white/90 text-gray-400 hover:text-[#D35400]'}`}
                                     >
-                                        <Heart className={`w-4 h-4 ${favs.includes(service.id) && 'fill-current'}`} />
+                                        <Heart className={`w-4 h-4 ${favs.includes(service.id) ? 'fill-current' : ''}`} />
                                     </button>
                                     <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-3">
                                         <span className="text-white text-[11px] font-medium flex items-center gap-1">
@@ -239,22 +223,26 @@ const HomePage = () => {
                                     </h3>
 
                                     <div className="flex items-center gap-2 mb-3">
-                                        <div className="w-7 h-7 bg-[#1B4F72] flex items-center justify-center text-white text-[10px] font-bold uppercase">
-                                            <img src={getImageUrl(service.artisan.user.client?.avatar)} alt={service.artisan.user.avatar} className="w-full h-full object-cover" />
+                                        <div className="w-7 h-7 bg-[#1B4F72] flex items-center justify-center text-white text-[10px] font-bold uppercase overflow-hidden">
+                                            {/* Pas d'avatar dans la nouvelle structure, on affiche les initiales */}
+                                            <span>
+                                                {service.artisan?.user?.firstname?.charAt(0)}
+                                                {service.artisan?.user?.lastname?.charAt(0)}
+                                            </span>
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <p className="text-[12px] text-gray-700 truncate">
-                                                {service.artisan.user.firstname} {service.artisan.user.lastname}
+                                                {service.artisan?.user?.firstname} {service.artisan?.user?.lastname}
                                             </p>
                                             <div className="flex items-center gap-1">
                                                 <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
-                                                <span className="text-[11px] text-gray-500">{service.artisan.note}</span>
+                                                <span className="text-[11px] text-gray-500">{service.artisan?.note}</span>
                                             </div>
                                         </div>
                                     </div>
 
                                     <div className="flex items-center gap-1 text-[11px] text-gray-500 mb-3">
-                                        <MapPin className="w-3 h-3" /> {service.artisan.user.city}
+                                        <MapPin className="w-3 h-3" /> {service.artisan?.user?.city}
                                     </div>
 
                                     <div className="flex items-center justify-between pt-3 border-t border-gray-100">
@@ -264,7 +252,11 @@ const HomePage = () => {
                                             </p>
                                             <p className="text-[16px] font-bold text-[#D35400]">{service.tarif} DH</p>
                                         </div>
-                                        <a href={`/services/${service.id}`} className="px-3 py-2 bg-[#1B4F72] hover:bg-[#D35400] text-white text-[11px] font-medium transition-colors">
+
+                                        <a
+                                            href={`/services/${service.id}`}
+                                            className="px-3 py-2 bg-[#1B4F72] hover:bg-[#D35400] text-white text-[11px] font-medium transition-colors"
+                                        >
                                             Voir
                                         </a>
                                     </div>
@@ -274,46 +266,42 @@ const HomePage = () => {
                     </div>
                 </div>
 
-                {services.length === 0 && loading &&
-                    (
+                {
+                    services.length === 0 && loading && (
                         <div className="text-center text-[#1B4F72] text-[12px] animate-pulse">
                             <div className="flex justify-center mb-4 text-gray-300">
-                                <BadgeX className='w-12 h-12 text-[#94a8b6]   animate-spin' />
+                                <BadgeX className="w-12 h-12 text-[#94a8b6] animate-spin" />
                             </div>
-                            <p className="text-gray-500 text-[14px]">
-                                Chargement en cours...
-                            </p>
+                            <p className="text-gray-500 text-[14px]">Chargement en cours...</p>
                         </div>
                     )
                 }
-                {services.length === 0 && !loading &&
-                    (<div className="text-center ">
-                        <div className="flex justify-center mb-4 text-gray-300">
-                            <BadgeX className='w-12 h-12 text-[#94a8b6]   animate-bounce' />
-                        </div>
-                        <p className="text-gray-500 text-[14px]">
-                            Aucun resultat pour votre recherche
-                        </p>
 
-                    </div>)
+                {
+                    services.length === 0 && !loading && (
+                        <div className="text-center">
+                            <div className="flex justify-center mb-4 text-gray-300">
+                                <BadgeX className="w-12 h-12 text-[#94a8b6] animate-bounce" />
+                            </div>
+                            <p className="text-gray-500 text-[14px]">Aucun resultat pour votre recherche</p>
+                        </div>
+                    )
                 }
+
                 <div ref={loaderRef} className="h-10 w-full flex justify-center items-center mt-4">
                     {loading && hasMore && services.length > 0 && (
                         <div className="flex flex-col items-center gap-2">
                             <p className="text-[12px] text-gray-500">Chargement de la suite...</p>
                         </div>
                     )}
-
                     {!hasMore && services.length > 0 && (
                         <p className="text-gray-400 text-[11px] italic">
                             Vous avez atteint la fin de la liste.
                         </p>
                     )}
                 </div>
-
-
-            </main>
-        </div>
+            </main >
+        </div >
     );
 };
 

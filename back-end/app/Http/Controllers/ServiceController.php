@@ -21,10 +21,9 @@ class ServiceController extends Controller
     public function index(Request $request)
     {
         $services = $this->serviceService->getServices($request->all());
-        return response()->json([
-            'message' => 'Services found successfully',
-            'data' => $services
-        ]);
+        return  $services
+            ->response()
+            ->setStatusCode(200);
     }
 
     /**

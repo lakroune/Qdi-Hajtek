@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\DAO\ServiceDAO;
+use App\Http\Resources\ServiceResource;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
@@ -56,8 +57,9 @@ class ServiceService
         return $this->serviceDAO->getServiceDetails($serviceId);
     }
 
-    public function getServices( array $data)
+    public function getServices(array $data)
     {
-        return $this->serviceDAO->getServices( $data);
+        $services = $this->serviceDAO->getServices($data);
+        return ServiceResource::collection($services);
     }
 }
