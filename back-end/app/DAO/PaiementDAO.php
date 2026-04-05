@@ -38,7 +38,7 @@ class PaiementDAO
                     DemandeDirecte::class => ['service.artisan.user']
                 ]);
             }
-        ],'client.user')
+        ],'client.user','paiement')
             ->where('statut', 'paid')
             ->get();
     }
