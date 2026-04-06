@@ -2,14 +2,12 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import {
-  Mail, Lock, ArrowRight, Eye, EyeOff,
-  Check, Shield, AlertCircle
+  Mail, Lock, ArrowRight, Eye, EyeOff, AlertCircle
 } from 'lucide-react';
 import Input from '../components/inputs/Input';
 import Logo from '../components/logo/Logo';
 import axiosClient from "../api/axios-client";
 import { useNavigate } from 'react-router-dom';
-
 
 const LoginPage = () => {
   const [afficherMotDePasse, setAfficherMotDePasse] = useState(false);
@@ -29,54 +27,67 @@ const LoginPage = () => {
       ...prev,
       [name]: type === 'checkbox' ? checked : value
     }));
-
     if (erreur) setErreur('');
   };
 
   const submitData = async (e) => {
     e.preventDefault();
     setEstEnChargement(true);
-    const response = await axiosClient.post('/login', dataForm);
-    if (response.status === 200) {
-      setEstEnChargement(false);
-      Cookies.set('ACCESS_TOKEN', response.data.token, {
-        expires: 7,
-        secure: true,
-        sameSite: 'strict'
-      });
-      Cookies.set('USER_DATA', JSON.stringify(response.data.user), { expires: 7 });
-      response.data.user.roles.forEach(role => {
-        if (role.name === 'admin') {
-          navigate('/admin');
-        }
-      })
-      navigate('/');
-    } else {
-      setEstEnChargement(false);
-      setErreur(response.data.message);
-    }
-    setEstEnChargement(false);
+    setErreur('');
 
+    try {
+      const response = await axiosClient.post('/login', {
+        email: dataForm.email,
+        password: dataForm.password,
+      });
+
+      if (response.data.success) {
+        const { token, user } = response.data;
+
+        const cookieOptions = {
+          expires: dataForm.seSouvenirDeMoi ? 30 : 7,
+          secure: true,
+          sameSite: 'strict'
+        };
+
+        Cookies.set('ACCESS_TOKEN', token, cookieOptions);
+        Cookies.set('USER_DATA', JSON.stringify(user), cookieOptions);
+
+        if (user.role === 'admin') {
+          navigate('/admin');
+        } else if (user.role === 'artisan') {
+          navigate('/');
+        } else {
+          navigate('/');
+        }
+      } else {
+        setErreur(response.data.message || 'Identifiants incorrects.');
+      }
+    } catch (error) {
+      const msg = error.response?.data?.message || 'Une erreur est survenue. Veuillez réessayer.';
+      setErreur(msg);
+    } finally {
+      setEstEnChargement(false);
+    }
   };
 
   return (
     <div className="min-h-screen flex">
 
       <div className="hidden lg:flex lg:w-1/2 relative bg-[#1B4F72]">
-        <div className="fixed z-10 flex flex-col justify-between p-12 w-1/2 text-white h-full bg-gray-900/60 bg-blend-overlay"
+        <div
+          className="fixed z-10 flex flex-col justify-between p-12 w-1/2 text-white h-full bg-gray-900/60 bg-blend-overlay"
           style={{
             backgroundImage: `url("/images/artisan-workspace.png")`,
             backgroundSize: 'cover',
             backgroundPosition: 'center'
-          }}></div>
-
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0F172A]/90 via-[#1B4F72]/50 to-transparent"></div>
-
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0F172A]/90 via-[#1B4F72]/50 to-transparent" />
         <div className="relative z-10 flex flex-col justify-between p-12 text-white h-full">
           <Link to="/" className="flex items-center gap-3">
             <Logo />
           </Link>
-
           <div className="max-w-md">
             <h1 className="text-[28px] font-bold leading-tight mb-4 text-white">
               Trouvez les meilleurs artisans près de chez vous
@@ -86,10 +97,7 @@ const LoginPage = () => {
               et suivre vos interventions en temps réel.
             </p>
           </div>
-
-          <div className="space-y-3">
-
-          </div>
+          <div className="space-y-3" />
         </div>
       </div>
 
@@ -111,7 +119,6 @@ const LoginPage = () => {
           )}
 
           <form onSubmit={submitData} className="space-y-5">
-
             <Input
               label="Adresse Email"
               type="email"
@@ -185,7 +192,7 @@ const LoginPage = () => {
 
           <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-200"></div>
+              <div className="w-full border-t border-gray-200" />
             </div>
             <div className="relative flex justify-center">
               <span className="px-4 bg-white text-[10px] text-gray-400 uppercase">

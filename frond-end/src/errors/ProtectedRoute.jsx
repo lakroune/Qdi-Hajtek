@@ -9,10 +9,9 @@ const ProtectedRoute = ({ roles }) => {
     if (!token) {
         return <Navigate to="/auth/login" replace />;
     }
-    const userRoleNames = user?.roles?.map(role => role.name) || [];
 
     if (roles) {
-        const hasAccess = roles.some(role => userRoleNames.includes(role));
+        const hasAccess = roles.includes(user?.role);
 
         if (!hasAccess) {
             return <Navigate to="/unauthorized" replace />;
