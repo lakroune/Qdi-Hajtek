@@ -19,13 +19,7 @@ class ProfileController extends Controller
     public function show()
     {
         $reslt = $this->profileService->getProfile();
-
-
-        return response()->json([
-            'success' => $reslt['success'],
-            'message' => $reslt['message'],
-            'data' => $reslt['profile']
-        ]);
+        return $reslt;
     }
 
     /**

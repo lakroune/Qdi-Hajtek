@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 class ArtisanResource extends JsonResource
 {
@@ -26,7 +27,7 @@ class ArtisanResource extends JsonResource
             'statut' => $this->client->statut ?? null,
             'phone' => $this->client->phone ?? null,
             'cin' => $this->client->cin ?? null,
-            'avatar' => $this->client->avatar ?? null,
+            'avatar' => $this->getUrlAttribute($this->client->avatar)?? null,
             'address' => $this->client->address ?? null,
             'rib' => $this->client->rib ?? null,
             'specialite' => $this->artisan->specialite ?? null,
@@ -38,5 +39,9 @@ class ArtisanResource extends JsonResource
             // 'disponibilites' => DisponibiliteResource::collection($this->disponibilites),
             // 'services' => ServiceResource::collection($this->services)
         ];
+    }
+    private function  getUrlAttribute($value)
+    {
+        return "http://127.0.0.1:8000" . Storage::url($value);
     }
 }

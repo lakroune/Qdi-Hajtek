@@ -20,17 +20,9 @@ class ProfileService
     {
         $user = auth('api')->user();
         if (!$user) {
-            return [
-                'success' => false,
-                'message' => 'Unauthorized'
-            ];
+            return null;
         }
-
-        return [
-            'success' => true,
-            'message' => 'Profile retrieved successfully',
-            'profile'  => $user->load(['client', 'artisan', 'admin']),
-        ];
+        return $user->load(['client', 'artisan.disponibilites',  'artisan.documents']);
     }
 
 
