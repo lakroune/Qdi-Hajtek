@@ -25,15 +25,19 @@ const MessagesPage = () => {
                         ? conv.messages[0]
                         : null;
 
+                    const typeLabel = conv.type
+                        ? conv.type.charAt(0).toUpperCase()
+                        : 'I';
+
                     return {
                         id: conv.id,
                         subject: conv.subject || 'Général',
-                        type: conv.conversable_type ? (conv.conversable_type.split('\\').pop()).charAt(0).toUpperCase() : 'I',
-                        time: formatDistanceToNow(parseISO(conv.last_message_at), {
+                        type: typeLabel,
+                        time: formatDistanceToNow(parseISO(conv.last_message_at.replace(' ', 'T')), {
                             addSuffix: true,
                             locale: fr
                         }),
-                        message: lastMessage ? lastMessage.contenu_message : 'Aucun message',
+                        message: lastMessage ? lastMessage.content : 'Aucun message',
                         unread: conv.unread_count || 0
                     };
                 });
@@ -48,14 +52,8 @@ const MessagesPage = () => {
         fetchConversations();
     }, []);
 
-
-
-
-
     return (
         <div className="min-h-screen bg-gray-50">
-
-            
             <div className="max-w-6xl mx-auto mt-16 h-[calc(100vh-64px)]">
                 <div className="flex h-full border border-gray-200 bg-white">
 
@@ -78,7 +76,6 @@ const MessagesPage = () => {
                             {loading ? (
                                 <p className="text-center text-[11px] mt-4">Chargement...</p>
                             ) : filteredConversations.map((conv) => (
-
                                 <Link
                                     key={conv.id}
                                     to={`/messages/${conv.id}`}
@@ -88,7 +85,9 @@ const MessagesPage = () => {
                                         ${selectedConv === conv.id ? 'bg-[#D35400]/5 border-l-4 border-l-[#D35400]' : ''}
                                     `}
                                 >
-                                    <div className={`w-10 h-10 ${conv.type === 'P' ? 'bg-[#81abc7]' : conv.type === 'D' ? 'bg-[#f3d5a1]' : 'bg-[#dad9d293]'} bg-[#1B4F72]/10 flex items-center justify-center shrink-0  `}>
+                                    <div className={`w-10 h-10 flex items-center justify-center shrink-0
+                                        ${conv.type === 'D' ? 'bg-[#f3d5a1]' : conv.type === 'P' ? 'bg-[#81abc7]' : 'bg-[#dad9d293]'}
+                                    `}>
                                         <span className="text-[14px] font-bold text-[#1B4F72]">
                                             {conv.type}
                                         </span>
@@ -103,25 +102,22 @@ const MessagesPage = () => {
                                         </div>
 
                                         <div className="flex items-center gap-2">
-
                                             <p className="text-[10px] truncate text-gray-400 flex justify-between w-full">
                                                 {conv.message}
-
                                                 {conv.unread > 0 && (
                                                     <span className="text-[10px] font-bold text-[#ff103c] bg-[#ff103c]/10 px-2 py-0.5 rounded-full">
                                                         {conv.unread}
                                                     </span>
                                                 )}
-
                                             </p>
                                         </div>
                                     </div>
                                 </Link>
                             ))}
+
                             {filteredConversations.length === 0 && !loading && (
                                 <p className="text-center text-[11px] mt-4">Aucune conversation trouvée</p>
                             )}
-
                         </div>
                     </div>
 

@@ -28,8 +28,6 @@ class ProfileService
         if (!$user) {
             return null;
         }
-        $user->load(['client', 'artisan.disponibilites', 'artisan.documents']);
-
 
         if ($user->hasOneRole('client')) {
             return new ClientResource($user);

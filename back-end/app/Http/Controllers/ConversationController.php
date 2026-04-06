@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ConversationResource;
 use App\services\ConversationService;
 use Illuminate\Http\Request;
 
@@ -18,10 +19,7 @@ class ConversationController extends Controller
     public function index()
     {
         $conversations = $this->conversationService->getConversations();
-        return response()->json([
-            'message' => 'Conversations found successfully',
-            'data' => $conversations
-        ]);
+        return ConversationResource::collection($conversations) ->response()->setStatusCode(200);
     }
 
     public function  acceptOffer(Request $request, int $id)
@@ -38,7 +36,7 @@ class ConversationController extends Controller
 
 
 
-    public function completeMission( int $id)
+    public function completeMission(int $id)
     {
         $conversation = $this->conversationService->completeMission($id);
         return response()->json([
