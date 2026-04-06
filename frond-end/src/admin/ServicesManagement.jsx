@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Briefcase, Search, Grid, List, CheckCircle, XCircle, Star } from 'lucide-react';
+import { Briefcase, Search, Grid, List, CheckCircle, XCircle, Star, Banknote, Check, RefreshCw, X } from 'lucide-react';
 import ServiceCard from '../components/cards/ServiceCard';
 import axiosClient from '../api/axios-client';
+import toast from 'react-hot-toast';
 
 const BASE_URL = 'http://localhost:8000/storage/';
 
@@ -33,6 +34,10 @@ const ServicesManagement = () => {
     const [viewMode, setViewMode] = useState('grid');
     const [filter, setFilter] = useState('all');
     const [selectedService, setSelectedService] = useState(null);
+    const [modelApproved, setModelApproved] = useState(false);
+    const [modelRejected, setModelRejected] = useState(false);
+    const [isProcessing, setIsProcessing] = useState(false);
+
 
     useEffect(() => {
         const fetchServices = async () => {
@@ -59,30 +64,36 @@ const ServicesManagement = () => {
 
     const handleApprove = async (id) => {
         try {
-            await axiosClient.patch(`/manager-services/${id}/approve`);
+            setIsProcessing(true);
+            const response = await axiosClient.patch(`/manager-services/${id}/approve`);
 
-            setServices(prevServices =>
-                prevServices.map(service =>
-                    service.id === id
-                        ? { ...service, status: { ...service.status, statut: 'approuve' } }
-                        : service
-                )
-            );
+            if (response.status === 200) {
+                setServices(prevServices =>
+                    prevServices.map(service =>
+                        service.id === id
+                            ? { ...service, status: { ...service.status, statut: 'approuve' } }
+                            : service
+                    )
+                );
 
-            if (selectedService?.id === id) {
-                setSelectedService(null);
+                if (selectedService?.id === id) {
+                    setSelectedService(null);
+                }
+
+                toast.success(`Service ${id} approuvé avec succès`);
             }
-
-            console.log(`Service ${id} approuvé avec succès`);
         } catch (error) {
-            console.error('Erreur lors de l\'approbation du service:', error);
-            alert('Une erreur est survenue lors de l\'approbation.');
+            toast.error('Une erreur est survenue lors de l\'approbation du service');
+        }
+        finally {
+            setIsProcessing(false);
+
         }
     };
 
     const handleReject = async (id) => {
         try {
-             await axiosClient.patch(`/manager-services/${id}/reject`);
+            await axiosClient.patch(`/manager-services/${id}/reject`);
 
             setServices(prevServices =>
                 prevServices.map(service =>
@@ -101,6 +112,70 @@ const ServicesManagement = () => {
             console.error('Erreur lors du rejet du service:', error);
         }
     };
+
+
+    if (modelApproved) return (
+        <div className="fixed inset-0 z-[999] flex items-center justify-center p-4" role="dialog" aria-modal="true">
+            <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] transition-opacity animate-in fade-in duration-200" />
+            <div className="relative w-full max-w-xs bg-white shadow-2xl border border-gray-100 transform transition-all animate-in zoom-in-95 duration-200">
+                <div className="p-6">
+                    <div className="flex items-center gap-4 mb-6">
+                        <div className="w-10 h-10 bg-[#1B4F72]/10 flex items-center justify-center">
+                            <Check className="w-5 h-5 text-green-600" />
+                        </div>
+                        <div>
+                            <h3 className="text-[14px] font-bold text-[#1B4F72]">Confirmation</h3>
+                            <p className="text-[12px] text-gray-600">Voulez-vous vraiment  approver ce service ?</p>
+                        </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                        <button onClick={() => setModelApproved(false)} className="py-2 text-[12px] text-gray-400 hover:text-gray-600 font-medium">Non</button>
+                        <button
+                            disabled={isProcessing}
+                            onClick={() => handleApprove(selectedService.id)}
+                            className="py-2 bg-[#1B4F72] text-white text-[12px] font-bold hover:bg-[#D35400] transition-colors text-center"
+                        >
+                            {isProcessing
+                                ? <div className="flex items-center justify-center gap-2"><RefreshCw className="w-4 h-4 animate-spin" /> en cours</div>
+                                : 'Approuver'}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+
+    if (modelRejected) return (
+        <div className="fixed inset-0 z-[999] flex items-center justify-center p-4" role="dialog" aria-modal="true">
+            <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] transition-opacity animate-in fade-in duration-200" />
+            <div className="relative w-full max-w-xs bg-white shadow-2xl border border-gray-100 transform transition-all animate-in zoom-in-95 duration-200">
+                <div className="p-6">
+                    <div className="flex items-center gap-4 mb-6">
+                        <div className="w-10 h-10 bg-[#D35400]/10 flex items-center justify-center">
+                            <X className="w-5 h-5 text-red-600" />
+                        </div>
+                        <div>
+                            <h3 className="text-[14px] font-bold text-[#1B4F72]">Confirmation</h3>
+                            <p className="text-[12px] text-gray-600">Voulez-vous vraiment  rejeter ce service ?</p>
+                        </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                        <button onClick={() => setModelRejected(false)} className="py-2 text-[12px] text-gray-400 hover:text-gray-600 font-medium">Non</button>
+                        <button
+                            disabled={isProcessing}
+                            onClick={() => handleReject(selectedService.id)}
+                            className="py-2 bg-[#1B4F72] text-white text-[12px] font-bold hover:bg-[#D35400] transition-colors text-center"
+                        >
+                            {isProcessing
+                                ? <div className="flex items-center justify-center gap-2"><RefreshCw className="w-4 h-4 animate-spin" /> en cours</div>
+                                : 'Rejeter'}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+
     return (
         <div className="space-y-4">
 
@@ -167,8 +242,6 @@ const ServicesManagement = () => {
                         <ServiceCard
                             key={service.id}
                             service={service}
-                            onApprove={handleApprove}
-                            onReject={handleReject}
                             onView={setSelectedService}
                             layout="grid"
                             {...computeServiceProps(service)}
@@ -339,14 +412,14 @@ const ServicesManagement = () => {
                                 {selectedProps.isPending && (
                                     <div className="flex gap-3">
                                         <button
-                                            onClick={() => handleApprove(selectedService.id)}
+                                            onClick={() => setModelApproved(true)}
                                             className="flex-1 py-3 bg-green-500 hover:bg-green-600 text-white text-[12px] font-medium transition-colors flex items-center justify-center gap-2"
                                         >
                                             <CheckCircle className="w-4 h-4" />
                                             Approuver le service
                                         </button>
                                         <button
-                                            onClick={() => handleReject(selectedService.id)}
+                                            onClick={() => setModelRejected(true)}
                                             className="flex-1 py-3 border border-red-500 text-red-500 hover:bg-red-50 text-[12px] font-medium transition-colors flex items-center justify-center gap-2"
                                         >
                                             <XCircle className="w-4 h-4" />

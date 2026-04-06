@@ -69,4 +69,15 @@ class ServiceService
         $services = $this->serviceDAO->getServicesByManager($data);
         return ServicesManagementResource::collection($services);
     }
+
+
+    public function approveService($serviceId)
+    {
+        return $this->serviceDAO->approveService($serviceId);
+    }
+    // rejectService
+    public function rejectService($serviceId)
+    {
+        return $this->serviceDAO->rejectService($serviceId);
+    }
 }

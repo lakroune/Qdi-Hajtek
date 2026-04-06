@@ -22,8 +22,24 @@ class ServiceManagerController extends Controller
             ->response()
             ->setStatusCode(200);
     }
-    public function approve(int $artisanId)
+    public function approve(int $servicesId)
     {
-        // 
+        $service = $this->serviceService->approveService($servicesId);
+        return response()->json([
+            'success' =>  $service ? true : false,
+            'message' => $service ? 'Service approved successfully' : 'Service not found',
+            'data' => $service
+        ], $service ? 200 : 404);
+    }
+
+    // reject
+    public function reject(int $servicesId)
+    {
+        $service = $this->serviceService->rejectService($servicesId);
+        return response()->json([
+            'success' =>  $service ? true : false,
+            'message' => $service ? 'Service rejected successfully' : 'Service not found',
+            'data' => $service
+        ], $service ? 200 : 404);
     }
 }

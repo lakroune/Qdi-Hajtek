@@ -12,8 +12,6 @@ const getStatusBadge = (statut) => {
 
 const ServiceCard = ({
     service,
-    onApprove,
-    onReject,
     onView,
     showActions = true,
     layout = 'grid',
@@ -76,12 +74,6 @@ const ServiceCard = ({
 
                 {showActions && isPending && (
                     <div className="flex flex-col items-center gap-1 flex-shrink-0">
-                        <button onClick={() => onApprove(service.id)} className="w-full p-1.5 text-white bg-green-600 text-[10px] hover:bg-green-800 transition-colors">
-                            Approuver
-                        </button>
-                        <button onClick={() => onReject(service.id)} className="w-full p-1.5 text-white bg-red-600 text-[10px] hover:bg-red-800 transition-colors">
-                            Rejeter
-                        </button>
                         <button onClick={() => onView(service)} className="w-full p-1.5 text-white bg-gray-600 text-[10px] hover:bg-gray-800 transition-colors">
                             Voir
                         </button>
@@ -151,20 +143,11 @@ const ServiceCard = ({
                         <p className="text-[12px] font-bold text-[#D35400]">{price} {currency}</p>
                     </div>
 
-                    {showActions && isPending ? (
-                        <div className="flex items-center gap-1">
-                            <button onClick={() => onApprove(service.id)} className="p-1.5 bg-green-500 hover:bg-green-600 text-[10px] text-white transition-colors">
-                                Approuver
-                            </button>
-                            <button onClick={() => onReject(service.id)} className="p-1.5 bg-red-500 hover:bg-red-600 text-[10px] text-white transition-colors">
-                                Rejeter
-                            </button>
-                        </div>
-                    ) : (
-                        <button onClick={() => onView(service)} className="px-3 py-2 bg-[#1B4F72] hover:bg-[#D35400] text-white text-[11px] font-medium transition-colors">
-                            Voir détails
-                        </button>
-                    )}
+
+                    <button onClick={() => onView(service)} className="px-3 py-2 bg-[#1B4F72] hover:bg-[#D35400] text-white text-[11px] font-medium transition-colors">
+                        Voir détails
+                    </button>
+
                 </div>
             </div>
         </div>

@@ -98,4 +98,17 @@ class ServiceDAO
 
         return $query->latest()->paginate(8);
     }
+
+
+    // approveService
+    public function approveService(int $serviceId)
+    {
+        return Service::where('id', $serviceId)->update(['statut' => 'approuve']);
+    }
+
+    // rejectService
+    public function rejectService(int $serviceId)
+    {
+        return Service::where('id', $serviceId)->update(['statut' => 'refuse']);
+    }
 }
