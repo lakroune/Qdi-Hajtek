@@ -1,17 +1,13 @@
 import React from 'react';
-import {
-    MapPin, Star, Clock, Briefcase,
-    User
-} from 'lucide-react';
+import { MapPin, Star, Clock, Briefcase, User } from 'lucide-react';
 
-const BASE_URL = 'http://localhost:8000/storage/';
-
-const getImageUrl = (path) => path ? `${BASE_URL}${path}` : null;
-
-const getStatusBadge = (isActive, isVerified) => {
-    if (isVerified) return <span className="px-2 py-0.5 text-[10px] font-medium bg-green-500 text-white">Vérifié</span>;
-    if (isActive) return <span className="px-2 py-0.5 text-[10px] font-medium bg-yellow-500 text-white">En attente</span>;
-    return <span className="px-2 py-0.5 text-[10px] font-medium bg-red-500 text-white">Inactif</span>;
+const getStatusBadge = (statut) => {
+    const map = {
+        approuve: <span className="px-2 py-0.5 text-[10px] font-medium bg-green-500 text-white">Approuvé</span>,
+        en_attente: <span className="px-2 py-0.5 text-[10px] font-medium bg-yellow-500 text-white">En attente</span>,
+        rejete: <span className="px-2 py-0.5 text-[10px] font-medium bg-red-500 text-white">Rejeté</span>,
+    };
+    return map[statut] ?? <span className="px-2 py-0.5 text-[10px] font-medium bg-gray-400 text-white">—</span>;
 };
 
 const ServiceCard = ({
@@ -20,20 +16,21 @@ const ServiceCard = ({
     onReject,
     onView,
     showActions = true,
-    layout = 'grid'
+    layout = 'grid',
+    imageUrl,
+    title,
+    category,
+    price,
+    currency,
+    duration,
+    location,
+    artisanName,
+    rating,
+    isActive,
+    isVerified,
+    isPending,
+    statut,
 }) => {
-    const imageUrl = getImageUrl(service.images?.[0]?.url);
-    const title = service.titre;
-    const category = service.categorie?.nom_categorie ?? '—';
-    const price = service.tarif;
-    const duration = `${service.estimation_duree ?? '?'} h`;
-    const location = service.artisan?.user?.city ?? '—';
-    const artisanName = `${service.artisan?.user?.firstname ?? ''} ${service.artisan?.user?.lastname ?? ''}`.trim();
-    const rating = service.artisan?.note ?? '—';
-    const isActive = service.is_active;
-    const isVerified = service.artisan?.is_verified;
-
-    const isPending = isActive && !isVerified;
 
     if (layout === 'list') {
         return (
@@ -47,7 +44,7 @@ const ServiceCard = ({
                         </div>
                     )}
                     <div className="absolute top-1 left-1">
-                        {getStatusBadge(isActive, isVerified)}
+                        {getStatusBadge(statut)}
                     </div>
                 </div>
 
@@ -73,7 +70,7 @@ const ServiceCard = ({
                             <Clock className="w-3.5 h-3.5" />
                             {duration}
                         </span>
-                        <span className="text-[11px] font-bold text-[#D35400]">{price} DH</span>
+                        <span className="text-[11px] font-bold text-[#D35400]">{price} {currency}</span>
                     </div>
                 </div>
 
@@ -94,6 +91,7 @@ const ServiceCard = ({
         );
     }
 
+    // layout === 'grid'
     return (
         <div className="bg-white border border-gray-200 hover:border-[#D35400] transition-all group">
             <div className="h-40 bg-gray-100 relative overflow-hidden">
@@ -109,7 +107,7 @@ const ServiceCard = ({
                     </div>
                 )}
                 <div className="absolute top-2 left-2">
-                    {getStatusBadge(isActive, isVerified)}
+                    {getStatusBadge(statut)}
                 </div>
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-3">
                     <p className="text-white text-[11px] font-medium flex items-center gap-1">
@@ -150,7 +148,7 @@ const ServiceCard = ({
                 <div className="flex items-center justify-between pt-3 border-t border-gray-100">
                     <div>
                         <span className="text-[10px] text-gray-400">À partir de</span>
-                        <p className="text-[12px] font-bold text-[#D35400]">{price} DH</p>
+                        <p className="text-[12px] font-bold text-[#D35400]">{price} {currency}</p>
                     </div>
 
                     {showActions && isPending ? (
