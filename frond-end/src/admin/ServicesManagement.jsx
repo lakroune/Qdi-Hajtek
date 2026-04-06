@@ -3,6 +3,7 @@ import { Briefcase, Search, Grid, List, CheckCircle, XCircle, Star, Banknote, Ch
 import ServiceCard from '../components/cards/ServiceCard';
 import axiosClient from '../api/axios-client';
 import toast from 'react-hot-toast';
+import { set } from 'date-fns';
 
 const BASE_URL = 'http://localhost:8000/storage/';
 
@@ -45,10 +46,10 @@ const ServicesManagement = () => {
     const [loading, setLoading] = useState(false);
 
     const fetchServices = async (isNewSearch = false) => {
-        if (isProcessing) return;
+        if (loading) return;
         try {
-            setIsProcessing(true);
-            const pageToFetch = isNewSearch ? 1 : nextpage;
+            setLoading(true);
+            const pageToFetch = isNewSearch ? 1 : nextPage;
 
             const response = await axiosClient.get('/manager-services', {
                 params: {
@@ -67,7 +68,7 @@ const ServicesManagement = () => {
         } catch (error) {
             toast.error('Erreur de chargement');
         } finally {
-            setIsProcessing(false);
+            setLoading(false);
         }
     };
 
@@ -75,6 +76,7 @@ const ServicesManagement = () => {
 
 
     useEffect(() => {
+        
         const delayDebounceFn = setTimeout(() => {
             fetchServices(true);
         }, 400);
@@ -84,17 +86,14 @@ const ServicesManagement = () => {
 
 
 
-    const filteredServices = filter === 'all'
-        ? services
-        : services.filter(s => s.status?.statut === filter);
-
+ 
 
 
 
 
     useEffect(() => {
-        if (!loaderRef.current || !hasMore || isProcessing) return;
-
+        if (!loaderRef.current || !hasMore || loading) return;
+            
         const observer = new IntersectionObserver((entries) => {
             if (entries[0].isIntersecting) {
                 fetchServices();
@@ -103,7 +102,7 @@ const ServicesManagement = () => {
 
         observer.observe(loaderRef.current);
         return () => observer.disconnect();
-    }, [hasMore, isProcessing, nextPage]);
+    }, [hasMore, loading, nextPage]);
 
 
 
@@ -287,7 +286,7 @@ const ServicesManagement = () => {
 
             {viewMode === 'grid' ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {filteredServices.map((service) => (
+                    {services.map((service) => (
                         <ServiceCard
                             key={service.id}
                             service={service}
@@ -299,7 +298,7 @@ const ServicesManagement = () => {
                 </div>
             ) : (
                 <div className="space-y-2">
-                    {filteredServices.map((service) => (
+                    {services.map((service) => (
                         <ServiceCard
                             key={service.id}
                             service={service}
@@ -313,12 +312,12 @@ const ServicesManagement = () => {
                 </div>
             )}
             <div ref={loaderRef} className="h-10 w-full flex justify-center items-center mt-4">
-                {loading && hasMore && filteredServices.length > 0 && (
+                {loading && hasMore && services.length > 0 && (
                     <div className="flex flex-col items-center gap-2">
                         <p className="text-[12px] text-gray-500">Chargement de la suite...</p>
                     </div>
                 )}
-                {!hasMore && filteredServices.length > 0 && (
+                {!hasMore && services.length > 0 && (
                     <p className="text-gray-400 text-[11px] italic">
                         Vous avez atteint la fin de la liste.
                     </p>
