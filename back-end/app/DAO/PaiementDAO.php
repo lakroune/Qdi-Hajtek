@@ -23,8 +23,11 @@ class PaiementDAO
         return $conversation->paiement()->updateOrCreate([
             'conversation_id' => $data['conversation_id'],
         ], [
-            'montant' => $data['amount'],
+            'montant_total' => $data['montant_total'],
             'client_id' => $data['client_id'],
+            'commission_admin' => $data['commission_admin'],
+            'statut' => 'pending',
+            'montant_artisan' => $data['montant_artisan'],
             'stripe_payment_id' => $paymentIntentId,
         ]);
     }
@@ -38,7 +41,7 @@ class PaiementDAO
                     DemandeDirecte::class => ['service.artisan.user']
                 ]);
             }
-        ],'client.user','paiement')
+        ], 'client.user', 'paiement')
             ->where('statut', 'paid')
             ->get();
     }

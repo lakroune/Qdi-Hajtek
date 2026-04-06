@@ -8,11 +8,13 @@ class Paiement extends Model
 {
     protected $table = 'paiements';
     protected $fillable = [
-        'client_id',
         'conversation_id',
-        'description',
+        'client_id',
         'stripe_payment_id',
-        'montant',
+        'montant_total',
+        'commission_admin',
+        'montant_artisan',
+        'devise',
         'statut'
     ];
     public function client()

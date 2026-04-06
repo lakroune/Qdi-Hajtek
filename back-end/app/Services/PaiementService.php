@@ -26,7 +26,7 @@ class  PaiementService
 
         try {
             $paymentIntent = PaymentIntent::create([
-                'amount' => $data['amount'] * 100,
+                'amount' => $data['montant_total'] * 100,
                 'currency' => 'mad',
                 'metadata' => [
                     'conversation_id' => $data['conversation_id'],
@@ -48,7 +48,8 @@ class  PaiementService
     public function confirmPayment(string $stripe_payment_id)
     {
         $paiement = Paiement::where('stripe_payment_id', $stripe_payment_id)->firstOrFail();
-        $paiement->statut = 'paid';
+        $paiement->statut = 'escrow';
+        $paiement->paid_at = now();
         $paiement->save();
         return $paiement;
     }
