@@ -39,7 +39,6 @@ const HomePage = () => {
                 }
             });
 
-            // Nouvelle structure : data.data[] + meta
             const newItems = response.data.data;
             const meta = response.data.meta;
 
@@ -224,15 +223,22 @@ const HomePage = () => {
 
                                     <div className="flex items-center gap-2 mb-3">
                                         <div className="w-7 h-7 bg-[#1B4F72] flex items-center justify-center text-white text-[10px] font-bold uppercase overflow-hidden">
-                                            {/* Pas d'avatar dans la nouvelle structure, on affiche les initiales */}
-                                            <span>
-                                                {service.artisan?.user?.firstname?.charAt(0)}
-                                                {service.artisan?.user?.lastname?.charAt(0)}
-                                            </span>
+                                            {service.artisan?.avatar ? (
+                                                <img
+                                                    src={service.artisan.avatar}
+                                                    alt={service.artisan.firstname}
+                                                    className="w-full h-full object-cover"
+                                                />
+                                            ) : (
+                                                <span>
+                                                    {service.artisan?.firstname?.charAt(0)}
+                                                    {service.artisan?.lastname?.charAt(0)}
+                                                </span>
+                                            )}
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <p className="text-[12px] text-gray-700 truncate">
-                                                {service.artisan?.user?.firstname} {service.artisan?.user?.lastname}
+                                                {service.artisan?.firstname} {service.artisan?.lastname}
                                             </p>
                                             <div className="flex items-center gap-1">
                                                 <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
@@ -242,7 +248,7 @@ const HomePage = () => {
                                     </div>
 
                                     <div className="flex items-center gap-1 text-[11px] text-gray-500 mb-3">
-                                        <MapPin className="w-3 h-3" /> {service.artisan?.user?.city}
+                                        <MapPin className="w-3 h-3" /> {service.artisan?.city}
                                     </div>
 
                                     <div className="flex items-center justify-between pt-3 border-t border-gray-100">
@@ -252,9 +258,8 @@ const HomePage = () => {
                                             </p>
                                             <p className="text-[16px] font-bold text-[#D35400]">{service.tarif} DH</p>
                                         </div>
-
-                                        <a
-                                            href={`/services/${service.id}`}
+                                        
+                                       <a     href={`/services/${service.id}`}
                                             className="px-3 py-2 bg-[#1B4F72] hover:bg-[#D35400] text-white text-[11px] font-medium transition-colors"
                                         >
                                             Voir
@@ -266,27 +271,23 @@ const HomePage = () => {
                     </div>
                 </div>
 
-                {
-                    services.length === 0 && loading && (
-                        <div className="text-center text-[#1B4F72] text-[12px] animate-pulse">
-                            <div className="flex justify-center mb-4 text-gray-300">
-                                <BadgeX className="w-12 h-12 text-[#94a8b6] animate-spin" />
-                            </div>
-                            <p className="text-gray-500 text-[14px]">Chargement en cours...</p>
+                {services.length === 0 && loading && (
+                    <div className="text-center text-[#1B4F72] text-[12px] animate-pulse">
+                        <div className="flex justify-center mb-4 text-gray-300">
+                            <BadgeX className="w-12 h-12 text-[#94a8b6] animate-spin" />
                         </div>
-                    )
-                }
+                        <p className="text-gray-500 text-[14px]">Chargement en cours...</p>
+                    </div>
+                )}
 
-                {
-                    services.length === 0 && !loading && (
-                        <div className="text-center">
-                            <div className="flex justify-center mb-4 text-gray-300">
-                                <BadgeX className="w-12 h-12 text-[#94a8b6] animate-bounce" />
-                            </div>
-                            <p className="text-gray-500 text-[14px]">Aucun resultat pour votre recherche</p>
+                {services.length === 0 && !loading && (
+                    <div className="text-center">
+                        <div className="flex justify-center mb-4 text-gray-300">
+                            <BadgeX className="w-12 h-12 text-[#94a8b6] animate-bounce" />
                         </div>
-                    )
-                }
+                        <p className="text-gray-500 text-[14px]">Aucun resultat pour votre recherche</p>
+                    </div>
+                )}
 
                 <div ref={loaderRef} className="h-10 w-full flex justify-center items-center mt-4">
                     {loading && hasMore && services.length > 0 && (
@@ -300,8 +301,8 @@ const HomePage = () => {
                         </p>
                     )}
                 </div>
-            </main >
-        </div >
+            </main>
+        </div>
     );
 };
 

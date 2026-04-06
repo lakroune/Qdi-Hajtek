@@ -27,7 +27,7 @@ class ServiceResource extends JsonResource
             'created_at' => $this->created_at,
 
             
-            'artisan' => new ArtisanResource($this->whenLoaded('artisan')),
+            'artisan' => new ArtisanResource($this->artisan->user),
             'categorie' =>   new CategorieResource($this->whenLoaded('categorie')),
             'images' =>  ImageResource::collection($this->whenLoaded('images')),
         ];
