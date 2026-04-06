@@ -22,7 +22,7 @@ class ServicesManagementResource extends JsonResource
 
             'pricing' => [
                 'amount' => (float) $this->tarif,
-                'unit' => $this->type_tarif, // e.g., prix_m2
+                'unit' => $this->type_tarif, 
                 'currency' => 'MAD',
             ],
             'duration' => [

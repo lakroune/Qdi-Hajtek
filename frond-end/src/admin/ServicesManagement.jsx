@@ -47,8 +47,9 @@ const ServicesManagement = () => {
 
     const fetchServices = async (isNewSearch = false) => {
         if (loading) return;
+
+        setLoading(true);
         try {
-            setLoading(true);
             const pageToFetch = isNewSearch ? 1 : nextPage;
 
             const response = await axiosClient.get('/manager-services', {
@@ -63,16 +64,16 @@ const ServicesManagement = () => {
             const meta = response.data.meta;
 
             setServices(prev => isNewSearch ? newItems : [...prev, ...newItems]);
+
             setNextPage(meta.current_page + 1);
             setHasMore(meta.current_page < meta.last_page);
+
         } catch (error) {
             toast.error('Erreur de chargement');
         } finally {
             setLoading(false);
         }
     };
-
-
 
 
     useEffect(() => {
@@ -92,19 +93,23 @@ const ServicesManagement = () => {
 
 
     useEffect(() => {
-        if (!loaderRef.current || !hasMore || loading) return;
+        if (!hasMore || loading) return;
 
         const observer = new IntersectionObserver((entries) => {
-            if (entries[0].isIntersecting) {
+            if (entries[0].isIntersecting && hasMore && !loading) {
                 fetchServices();
             }
-        }, { threshold: 1.0 });
+        }, {
+            threshold: 0.1,
+            rootMargin: '100px'
+        });
 
-        observer.observe(loaderRef.current);
+        if (loaderRef.current) {
+            observer.observe(loaderRef.current);
+        }
+
         return () => observer.disconnect();
-    }, [hasMore, loading, nextPage]);
-
-
+    }, [hasMore, loading, nextPage, searchQuery, filter]);
 
 
 
@@ -147,7 +152,7 @@ const ServicesManagement = () => {
                 setServices(prevServices =>
                     prevServices.map(service =>
                         service.id === id
-                            ? { ...service, status: { ...service.status, statut: 'rejete' } }
+                            ? { ...service, status: { ...service.status, statut: 'refuse' } }
                             : service
                     )
                 );
@@ -251,7 +256,7 @@ const ServicesManagement = () => {
                         <option value="all">Tous les statuts</option>
                         <option value="en_attente">En attente</option>
                         <option value="approuve">Approuvés</option>
-                        <option value="rejete">Rejetés</option>
+                        <option value="refuse">Rejetés</option>
                     </select>
                     <div className="flex border border-gray-200">
                         <button
@@ -274,7 +279,7 @@ const ServicesManagement = () => {
                 {[
                     { label: 'En attente', value: services.filter(s => s.status?.statut === 'en_attente').length, color: 'bg-yellow-500' },
                     { label: 'Approuvés', value: services.filter(s => s.status?.statut === 'approuve').length, color: 'bg-green-500' },
-                    { label: 'Rejetés', value: services.filter(s => s.status?.statut === 'rejete').length, color: 'bg-red-500' },
+                    { label: 'Rejetés', value: services.filter(s => s.status?.statut === 'refuse').length, color: 'bg-red-500' },
                     { label: 'Total', value: services.length, color: 'bg-[#1B4F72]' },
                 ].map((stat) => (
                     <div key={stat.label} className="bg-white border border-gray-200 p-4 flex items-center gap-3">
@@ -300,6 +305,8 @@ const ServicesManagement = () => {
                             {...computeServiceProps(service)}
                         />
                     ))}
+
+
                 </div>
             ) : (
                 <div className="space-y-2">
@@ -314,6 +321,18 @@ const ServicesManagement = () => {
                             {...computeServiceProps(service)}
                         />
                     ))}
+                </div>
+            )}
+            {services.length === 0 && hasMore && (
+                <div className="  grid grid-cols-3 gap-4">
+                    <div className=' h-100 bg-gray-200  animate-pulse'></div>
+                    <div className=' h-100 bg-gray-200 animate-pulse'></div>
+                    <div className='h-100 bg-gray-200 animate-pulse'></div>
+                </div>
+            )}
+            {services.length === 0 && !hasMore && (
+                <div className="flex flex-col items-center gap-2">
+                    <p className="text-[12px] text-gray-500">Aucun service trouvé.</p>
                 </div>
             )}
             <div ref={loaderRef} className="h-10 w-full flex justify-center items-center mt-4">
