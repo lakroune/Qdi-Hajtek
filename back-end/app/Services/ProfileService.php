@@ -5,6 +5,11 @@ namespace App\Services;
 use App\DAO\ClientDAO;
 use App\DAO\ConversationDAO;
 use App\DAO\UserDAO;
+use App\Http\Resources\ArtisanResource;
+use App\Http\Resources\ClientResource;
+use App\Http\Resources\DocumentResource;
+use App\Models\Artisan;
+use Dom\Document;
 
 class ProfileService
 {
@@ -19,10 +24,18 @@ class ProfileService
     public function getProfile()
     {
         $user = auth('api')->user();
+
         if (!$user) {
             return null;
         }
-        return $user->load(['client', 'artisan.disponibilites',  'artisan.documents']);
+        $user->load(['client', 'artisan.disponibilites', 'artisan.documents']);
+
+
+        if ($user->hasOneRole('client')) {
+            return new ClientResource($user);
+        }
+        if ($user->hasRole('artisan')) { // add document resource
+            return (new ArtisanResource($user)); }
     }
 
 

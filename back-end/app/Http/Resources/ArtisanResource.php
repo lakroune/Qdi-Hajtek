@@ -37,6 +37,8 @@ class ArtisanResource extends JsonResource
             'note' => $this->artisan->note ?? "0.0",
             'rayon_action' => $this->artisan->rayon_action ?? 0,
             'role' => 'artisan',
+            'disponibilites' => DisponibiliteResource::collection($this->artisan->disponibilites) ?? [],
+            'documents' => DocumentResource::collection($this->artisan->documents) ?? [],
         ];
     }
     private function  getUrlAttribute($value): string

@@ -18,8 +18,20 @@ class ProfileController extends Controller
      */
     public function show()
     {
-        $reslt = $this->profileService->getProfile();
-        return $reslt;
+
+        $profile = $this->profileService->getProfile();
+
+        if (!$profile) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Profile not found or unauthorized'
+            ], 404);
+        }
+
+        return $profile->additional([
+            'success' => true,
+            'message' => 'Profile retrieved successfully'
+        ])->response()->setStatusCode(200);
     }
 
     /**

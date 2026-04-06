@@ -258,8 +258,8 @@ const HomePage = () => {
                                             </p>
                                             <p className="text-[16px] font-bold text-[#D35400]">{service.tarif} DH</p>
                                         </div>
-                                        
-                                       <a     href={`/services/${service.id}`}
+
+                                        <a href={`/services/${service.id}`}
                                             className="px-3 py-2 bg-[#1B4F72] hover:bg-[#D35400] text-white text-[11px] font-medium transition-colors"
                                         >
                                             Voir
