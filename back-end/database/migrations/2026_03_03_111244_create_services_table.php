@@ -16,15 +16,15 @@ return new class extends Migration
             $table->foreignId('artisan_id')->constrained('artisans')->onDelete('cascade');
             $table->foreignId('categorie_id')->constrained('categories')->onDelete('cascade');
             $table->string('titre');
-            $table->text('description'); 
+            $table->text('description');
             $table->decimal('tarif', 8, 2);
             $table->enum('type_tarif', ['prix_fixe', 'prix_heure', 'prix_jour', 'prix_m2'])->default('prix_fixe');
-            $table->boolean('is_completed')->default(false);
+            $table->enum('statut', ['approuve', 'en_attente', 'refuse'])->default('en_attente');
             $table->boolean('is_active')->default(true);
             $table->integer('estimation_duree');
             $table->string('material')->nullable();
             $table->timestamps();
-        }); 
+        });
     }
 
     /**

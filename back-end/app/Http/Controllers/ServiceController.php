@@ -53,18 +53,13 @@ class ServiceController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * get services by manager
      */
-    public function update(UpdateServiceRequest $request, Service $service)
+    public function getServicesByManager(Request $request)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Service $service)
-    {
-        //
+        $services = $this->serviceService->getServicesByManager($request->all());
+        return  $services
+            ->response()
+            ->setStatusCode(200);
     }
 }

@@ -68,6 +68,7 @@ Route::middleware('auth:api')->group(function () {
 
     //service nadi (sauf toggel save)
     Route::apiResource('services', ServiceController::class)->only('store', 'index', 'show');
+    Route::get('manager-services',  [ServiceController::class, 'getServicesByManager']);
 
     // mazal  potection artisan envoi lui meme
     Route::post('demandes-directes', [DemandeDirecteController::class, 'store']);

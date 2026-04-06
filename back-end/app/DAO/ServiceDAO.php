@@ -38,6 +38,7 @@ class ServiceDAO
     {
         $query = Service::query()
             ->where('is_active', true)
+            ->where('statut', 'approuve')
             ->with(['artisan.user', 'categorie', 'images']);
 
         if (!empty($filters['search'])) {
@@ -71,5 +72,30 @@ class ServiceDAO
     {
         $client = Client::find(auth()->user()->id);
         return $client->services()->toggle($serviceId);
+    }
+
+    public function getServicesByManager()
+    {
+        $query = Service::query()
+            ->with(['artisan.user', 'categorie', 'images']);
+
+        if (!empty($filters['search'])) {
+            $search = $filters['search'];
+            $query->where(function ($q) use ($search) {
+                $q->where('titre', 'like', '%' . $search . '%')
+                    ->orWhere('description', 'like', '%' . $search . '%');
+                $q->orWhereHas('artisan', function ($q2) use ($search) {
+                    $q2->whereHas('user', function ($q3) use ($search) {
+                        $q3->where('firstname', 'like', '%' . $search . '%')
+                            ->orWhere('lastname', 'like', '%' . $search . '%')
+                            ->orWhere('city', 'like', '%' . $search . '%');
+                    });
+                });
+            });
+        }
+
+
+
+        return $query->latest()->paginate(8);
     }
 }
