@@ -74,7 +74,7 @@ class ServiceDAO
         return $client->services()->toggle($serviceId);
     }
 
-    public function getServicesByManager()
+    public function getServicesByManager( array $filters = [])
     {
         $query = Service::query()
             ->with(['artisan.user', 'categorie', 'images']);
@@ -94,19 +94,19 @@ class ServiceDAO
             });
         }
 
+        if (!empty($filters['statut'])) {
+            $query->where('statut', $filters['statut']);
+        }
 
-
-        return $query->latest()->paginate(8);
+        return $query->latest()->paginate(10);
     }
 
 
-    // approveService
     public function approveService(int $serviceId)
     {
         return Service::where('id', $serviceId)->update(['statut' => 'approuve']);
     }
 
-    // rejectService
     public function rejectService(int $serviceId)
     {
         return Service::where('id', $serviceId)->update(['statut' => 'refuse']);

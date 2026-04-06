@@ -91,7 +91,7 @@ function App() {
             <Route path='services/:id' element={<ServiceDetail />} />
           </Route>
         </Route>
-        <Route element={<ProtectedRoute roles={['client']} />}>
+        <Route element={<ProtectedRoute roles={['artisan']} />}>
           <Route path="/" element={<div className="auth-layout"><Header estAuthentifie={true} nomUtilisateur={"nom"} notifications={4} messages={3} typeUtilisateur={"artisan"} /><Outlet /> </div>}>
             <Route path="nouvelle-service" element={<ArtisanAddService />} />
             <Route path="offres" element={<ArtisanOffres />} />
