@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\DemandeDirecteController;
 use App\Http\Controllers\Api\OffreTravailController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\PropositionController;
+use App\Http\Controllers\Api\ServiceManagerController;
 use App\Http\Controllers\ArtisanController;
 use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\DisponibiliteController;
@@ -68,7 +69,12 @@ Route::middleware('auth:api')->group(function () {
 
     //service nadi (sauf toggel save)
     Route::apiResource('services', ServiceController::class)->only('store', 'index', 'show');
-    Route::get('manager-services',  [ServiceController::class, 'getServicesByManager']);
+    Route::get('manager-services',  [ServiceManagerController::class, 'index']);
+
+    Route::patch('/manager-services/{service}/approve', [ServiceManagerController::class, 'approve']);
+    Route::patch('/manager-services/{service}/reject', [ServiceManagerController::class, 'reject']);
+
+
 
     // mazal  potection artisan envoi lui meme
     Route::post('demandes-directes', [DemandeDirecteController::class, 'store']);

@@ -50,11 +50,57 @@ const ServicesManagement = () => {
         ? services
         : services.filter(s => s.status?.statut === filter);
 
-    const handleApprove = (id) => console.log('Approuver service', id);
-    const handleReject = (id) => console.log('Rejeter service', id);
 
     const selectedProps = selectedService ? computeServiceProps(selectedService) : null;
 
+
+
+
+
+    const handleApprove = async (id) => {
+        try {
+            await axiosClient.patch(`/manager-services/${id}/approve`);
+
+            setServices(prevServices =>
+                prevServices.map(service =>
+                    service.id === id
+                        ? { ...service, status: { ...service.status, statut: 'approuve' } }
+                        : service
+                )
+            );
+
+            if (selectedService?.id === id) {
+                setSelectedService(null);
+            }
+
+            console.log(`Service ${id} approuvé avec succès`);
+        } catch (error) {
+            console.error('Erreur lors de l\'approbation du service:', error);
+            alert('Une erreur est survenue lors de l\'approbation.');
+        }
+    };
+
+    const handleReject = async (id) => {
+        try {
+             await axiosClient.patch(`/manager-services/${id}/reject`);
+
+            setServices(prevServices =>
+                prevServices.map(service =>
+                    service.id === id
+                        ? { ...service, status: { ...service.status, statut: 'rejete' } }
+                        : service
+                )
+            );
+
+            if (selectedService?.id === id) {
+                setSelectedService(null);
+            }
+
+            console.log(`Service ${id} rejeté`);
+        } catch (error) {
+            console.error('Erreur lors du rejet du service:', error);
+        }
+    };
     return (
         <div className="space-y-4">
 

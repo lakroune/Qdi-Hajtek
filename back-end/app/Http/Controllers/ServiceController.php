@@ -55,11 +55,5 @@ class ServiceController extends Controller
     /**
      * get services by manager
      */
-    public function getServicesByManager(Request $request)
-    {
-        $services = $this->serviceService->getServicesByManager($request->all());
-        return  $services
-            ->response()
-            ->setStatusCode(200);
-    }
+   
 }
