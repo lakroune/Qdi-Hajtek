@@ -17,6 +17,11 @@ class Paiement extends Model
         'devise',
         'statut'
     ];
+    protected $casts = [
+        'paid_at' => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
     public function client()
     {
         return $this->belongsTo(Client::class, 'client_id');

@@ -9,18 +9,14 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class PaiementResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @return array<string, mixed>
-     */
     public function toArray(Request $request): array
     {
         $conversable = $this->conversation->conversable ?? null;
+        $artisan = $this->getArtisan($conversable);
 
-        $total = (float) $this->montant;
-        $commission = round($total * 0.10, 2);
-        $net = round($total - $commission, 2);
+        $total = (float) ($this->montant_total ?? 0);
+        $commission = (float) ($this->commission_admin ?? round($total * 0.10, 2));
+        $net = (float) ($this->montant_artisan ?? round($total - $commission, 2));
 
         return [
             'id' => $this->id,
@@ -31,17 +27,19 @@ class PaiementResource extends JsonResource
                 'total' => $total,
                 'commission' => $commission,
                 'net_artisan' => $net,
-                'currency' => strtoupper($this->devise),
+                'currency' => strtoupper($this->devise ?? 'MAD'),
             ],
 
-            'service' => [
+            'service_info' => [
                 'title' => $this->getServiceTitle($conversable),
-                'type' => class_basename($conversable),
+                'type' => $conversable ? class_basename($conversable) : 'N/A',
+                'status' => $conversable->statut ?? 'unknown',
             ],
 
             'status' => [
                 'payment' => $this->statut,
                 'payout' => ($conversable && $conversable->statut === 'termine') ? 'released' : 'held',
+                'paid_at' => $this->paid_at ? $this->paid_at->format('d/m/Y H:i') : null,
             ],
 
             'dates' => [
@@ -50,58 +48,57 @@ class PaiementResource extends JsonResource
             ],
 
             'artisan' => [
-                'id' => $this->getArtisan($conversable)->id ?? null,
-                'name' => $this->getArtisanName($conversable),
-                'city' => $this->getArtisan($conversable)->user->city ?? null,
+                'id' => $artisan->id ?? null,
+                'name' => $this->getArtisanFullname($artisan),
+                'city' => $artisan->user->city ?? null,
+                'specialite' => $artisan->specialite ?? null,
             ],
 
             'client' => [
                 'id' => $this->client_id,
-                'name' => $this->client->user->firstname . ' ' . $this->client->user->lastname,
-                'avatar' => $this->client->user->avatar_url ?? null,
+                'name' => ($this->client && $this->client->user)
+                    ? $this->client->user->firstname . ' ' . $this->client->user->lastname
+                    : 'Client inconnu',
+                'avatar' => $this->client->avatar ?? null,
             ],
 
-            'conversation' => [
-                'id' => $this->conversation_id,
+            'links' => [
+                'conversation_id' => $this->conversation_id,
             ],
         ];
     }
 
     protected function getServiceTitle($conversable): string
     {
-        if ($conversable instanceof \App\Models\Proposition) {
+        if ($conversable instanceof Proposition) {
             return $conversable->projet->titre ?? "Proposition de projet";
         }
 
-        if ($conversable instanceof \App\Models\DemandeDirecte) {
+        if ($conversable instanceof DemandeDirecte) {
             return $conversable->service->titre ?? "Service Direct";
         }
 
         return "Prestation de service";
     }
 
-    /**
-     * Helper pour récupérer l'artisan de manière sécurisée
-     */
     protected function getArtisan($conversable)
     {
-        if ($conversable instanceof \App\Models\Proposition) {
+        if ($conversable instanceof Proposition) {
             return $conversable->artisan;
         }
 
-        if ($conversable instanceof \App\Models\DemandeDirecte) {
+        if ($conversable instanceof DemandeDirecte) {
             return $conversable->service->artisan ?? null;
         }
 
         return null;
     }
 
-    public function getArtisanName($conversable)
+    protected function getArtisanFullname($artisan): string
     {
-        if ($conversable instanceof DemandeDirecte) {
-            return $conversable->service->artisan->user->firstname . ' ' . $conversable->service->artisan->user->lastname;
-        } elseif ($conversable instanceof Proposition) {
-            return $conversable->artisan->user->firstname . ' ' . $conversable->artisan->user->lastname;
+        if ($artisan && $artisan->user) {
+            return $artisan->user->firstname . ' ' . $artisan->user->lastname;
         }
+        return 'Artisan non assigné';
     }
 }

@@ -9,8 +9,7 @@ import {
 import axiosClient from '../api/axios-client';
 import toast from 'react-hot-toast';
 import { formatDistanceToNow, parseISO } from 'date-fns';
-import { fi, fr } from 'date-fns/locale';
-
+import { fr } from 'date-fns/locale';
 
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
@@ -37,21 +36,15 @@ const ConversationPage = () => {
     const [currentUserId, setCurrentUserId] = useState(null);
     const [isAccepting, setIsAccepting] = useState(false);
     const [isLoadingMessages, setIsLoadingMessages] = useState(false);
-
     const [showModelFinMission, setShowModelFinMission] = useState(false);
-
-
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [clientSecret, setClientSecret] = useState('');
     const [selectedAmount, setSelectedAmount] = useState(0);
 
-
-
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
-
 
     useEffect(() => {
         const fetchMessages = async () => {
@@ -64,85 +57,83 @@ const ConversationPage = () => {
                 const apiData = response.data.data;
                 const messagesArray = apiData.messages.data;
                 const userId = apiData.currentUser.id;
+
+                // type extrait depuis conversable_type (inchangé)
                 const type = apiData.conversation.conversable_type.split('\\').pop();
-                const isClient = (apiData.conversation.conversable?.client_id === userId && type === 'DemandeDirecte') || (apiData.conversation.conversable?.artisan_id !== userId && type === 'Proposition');
-                const prix_final = apiData.conversation.conversable.prix_final ?? 0;
-                const offre_service_id = apiData.conversation.conversable.service_id ?? apiData.conversation.conversable.offreTravail_id;
-                const statut = apiData.conversation.conversable.statut ?? apiData.conversation.conversable.statut_proposition;
-                const isPaid = apiData.conversation.paiement?.statut === 'paid';
-                const timePaid = apiData.conversation.paiement?.created_at;
-                const isCompleted = apiData.conversation.conversable.is_completed;
+                const conversable = apiData.conversation.conversable;
+
+                const isClient = (conversable?.client_id === userId && type === 'DemandeDirecte')
+                    || (conversable?.artisan_id !== userId && type === 'Proposition');
+
+                const prix_final = conversable?.prix_final ?? 0;
+                const offre_service_id = conversable?.service_id ?? conversable?.offreTravail_id;
+                const statut = conversable?.statut ?? conversable?.statut_proposition;
+                const isCompleted = conversable?.is_completed ?? false;
+
+                // Nouveau : paiement.statut peut être "escrow" ou "paid"
+                const paiement = apiData.conversation.paiement;
+                const isPaid = paiement?.statut === 'paid' || paiement?.statut === 'escrow';
+                const timePaid = paiement?.paid_at;
+
                 setCurrentUserId(userId);
 
-                const conversation = {
+                setInfoConversation({
                     subject: apiData.conversation.subject,
-                    type: type,
-                    statut: statut,
-                    offre_service_id: offre_service_id,
-                    prix_final: prix_final,
+                    type,
+                    statut,
+                    offre_service_id,
+                    prix_final,
                     is_client: isClient,
                     is_paid: isPaid,
                     time_paid: timePaid,
-                    is_completed: isCompleted
+                    is_completed: isCompleted,
+                });
 
-
-                }
-                setInfoConversation(conversation);
-                console.log("conversation", conversation);
                 const formattedMessages = messagesArray.map(msg => ({
                     id: msg.id,
                     text: msg.contenu_message,
                     isMe: msg.sender_id === userId,
-
                     time: formatDistanceToNow(parseISO(msg.created_at), {
                         addSuffix: true,
                         locale: fr
                     }),
                     status: msg.is_read ? 'read' : 'sent',
-                    senderName: msg.sender_id === userId ? 'You' : `${msg.sender.firstname} ${msg.sender.lastname}`
+                    senderName: msg.sender_id === userId
+                        ? 'You'
+                        : `${msg.sender.firstname} ${msg.sender.lastname}`
                 }));
 
                 setMessages(formattedMessages);
             } catch (error) {
                 console.error("Erreur lors du chargement des messages", error);
-            }
-            finally {
+            } finally {
                 setIsLoadingMessages(false);
             }
         };
-        if (conversation_id) {
-            fetchMessages();
-        }
-    }, [conversation_id]);
 
+        if (conversation_id) fetchMessages();
+    }, [conversation_id]);
 
     useEffect(() => {
         if (conversation_id && window.Echo && currentUserId) {
             const channel = window.Echo
                 .private(`chat.${conversation_id}`)
                 .listen('.message-sent', (e) => {
-
                     setMessages((prevMessages) => {
-                        const isDuplicate = prevMessages.some(
-                            msg => msg.id === e.message.id
-                        );
+                        const isDuplicate = prevMessages.some(msg => msg.id === e.message.id);
                         if (isDuplicate) return prevMessages;
 
-                        const receivedMessage = {
+                        return [...prevMessages, {
                             id: e.message.id,
                             text: e.message.contenu_message,
                             isMe: e.message.sender_id === currentUserId,
-
                             time: formatDistanceToNow(parseISO(e.message.created_at), {
                                 addSuffix: true,
                                 locale: fr
                             }),
                             status: e.message.is_read ? 'read' : 'sent',
                             senderName: `${e.message.sender.firstname || ''} ${e.message.sender.lastname || ''}`.trim()
-
-                        };
-
-                        return [...prevMessages, receivedMessage];
+                        }];
                     });
                 });
 
@@ -189,6 +180,7 @@ const ConversationPage = () => {
             setNewMessage(messageContent);
         }
     };
+
     const getStatusIcon = (status) => {
         if (status === 'read') return <CheckCheck className="w-3 h-3 text-[#D35400]" />;
         return <Check className="w-3 h-3 text-gray-400" />;
@@ -198,6 +190,7 @@ const ConversationPage = () => {
         setIsAccepting(true);
         if (!amount || amount <= 0) {
             toast.error("merci de fournir un montant valide");
+            setIsAccepting(false);
             return;
         }
 
@@ -208,26 +201,19 @@ const ConversationPage = () => {
 
             if (response.status === 200) {
                 toast.success("votre offre a ete acceptee");
-
                 setInfoConversation(prev => ({
                     ...prev,
-                    conversable: {
-                        ...prev.conversable,
-                        statut: 'accepte',
-                        prix_final: amount
-                    }
+                    statut: 'accepte',
+                    prix_final: amount
                 }));
                 setShowModelAction(false);
             }
         } catch (error) {
-            const errorMsg = error.response?.data?.message || "Une erreur est survenue";
-            toast.error(errorMsg);
-        }
-        finally {
+            toast.error(error.response?.data?.message || "Une erreur est survenue");
+        } finally {
             setIsAccepting(false);
         }
     };
-
 
     const handleOpenPayment = async (amountToPay) => {
         try {
@@ -236,12 +222,10 @@ const ConversationPage = () => {
                 amount: amountToPay,
                 conversation_id: conversation_id
             });
-
             setClientSecret(res.data.clientSecret);
             setIsModalOpen(true);
         } catch (error) {
             toast.error("Erreur lors de l'initialisation du paiement");
-            console.error(error);
         }
     };
 
@@ -251,34 +235,25 @@ const ConversationPage = () => {
                 stripe_payment_id: clientSecret.split('_secret')[0]
             });
             if (res.status === 200) {
-                setInfoConversation(prev => ({
-                    ...prev,
-                    statut: 'paid'
-                }));
+                setInfoConversation(prev => ({ ...prev, is_paid: true }));
                 setIsModalOpen(false);
                 toast.success("Paiement réussi !");
             }
-
         } catch (e) {
             toast.error("Erreur de confirmation");
         }
-    }
+    };
+
     const handleCompleteMission = async () => {
         try {
             const response = await axiosClient.post(`/conversations/${conversation_id}/complete-mission`);
-
             if (response.status === 200) {
                 toast.success("Mission marquée comme terminée !");
-
-                setInfoConversation(prev => ({
-                    ...prev,
-                    statut: 'terminee'
-                }));
+                setInfoConversation(prev => ({ ...prev, statut: 'terminee' }));
             }
         } catch (error) {
             toast.error("Erreur lors de la confirmation");
-        }
-        finally {
+        } finally {
             setShowModelFinMission(false);
         }
     };
@@ -293,20 +268,13 @@ const ConversationPage = () => {
             const response = await axiosClient.post(`/conversations/${conversation_id}/confirm-code`, {
                 code: confirmationCode
             });
-
             if (response.status === 200) {
                 toast.success("votre code de confirmation a ete acceptee");
                 setIsConfirmed(true);
-
-                setInfoConversation(prev => ({
-                    ...prev,
-                    statut: 'termine'
-                }));
+                setInfoConversation(prev => ({ ...prev, statut: 'termine' }));
             }
         } catch (error) {
-            const errorMsg = error.response?.data?.message || "Une erreur est survenue";
-            toast.error(errorMsg);
-            console.error("Erreur de confirmation:", error);
+            toast.error(error.response?.data?.message || "Une erreur est survenue");
         }
     };
 
@@ -318,47 +286,35 @@ const ConversationPage = () => {
 
         try {
             const response = await axiosClient.post(`/conversations/${conversation_id}/review`, {
-                rating: rating,
-                comment: comment
+                rating,
+                comment
             });
-
             if (response.status === 200) {
-                toast.success(" votre avis a ete envoye");
-
-                setInfoConversation(prev => ({
-                    ...prev,
-                    is_completed: true
-                }));
-
+                toast.success("votre avis a ete envoye");
+                setInfoConversation(prev => ({ ...prev, is_completed: true }));
                 setRating(0);
                 setComment('');
             }
         } catch (error) {
-            const errorMsg = error.response?.data?.message || "Une erreur est survenue";
-            toast.error(errorMsg);
-            console.error("Erreur Review:", error);
+            toast.error(error.response?.data?.message || "Une erreur est survenue");
         }
     };
 
     const RenderStatusDommande = () => (
         <div className="flex flex-col gap-6">
-            {/* Header */}
             <div className="flex items-center justify-between border-b pb-2">
                 <h3 className="text-[14px] font-bold text-[#1B4F72]">Suivi de Commande</h3>
                 <span className="text-[10px] bg-gray-100 px-2 py-1 text-gray-500 font-mono">#DM-{conversation_id}</span>
             </div>
 
-            {/* Etape 1: Validation du devis */}
+            {/* Étape 1 : Validation du devis */}
             <div className="space-y-2">
                 <div className="flex items-center gap-2 text-[12px] font-semibold text-gray-700">
-                    <span className={`w-5 h-5 flex items-center justify-center rounded-full text-[10px] 
-            ${(infoConversation.statut === 'accepte' || infoConversation.is_paid || infoConversation.statut === 'terminee' || infoConversation.statut === 'termine')
-                            ? 'bg-green-500'
-                            : 'bg-[#1B4F72]'} 
-            text-white transition-colors duration-300`}>
+                    <span className={`w-5 h-5 flex items-center justify-center rounded-full text-[10px] text-white transition-colors duration-300
+                        ${(infoConversation.statut === 'accepte' || infoConversation.is_paid || infoConversation.statut === 'terminee' || infoConversation.statut === 'termine')
+                            ? 'bg-green-500' : 'bg-[#1B4F72]'}`}>
                         {(infoConversation.statut === 'accepte' || infoConversation.is_paid || infoConversation.statut === 'terminee' || infoConversation.statut === 'termine')
-                            ? <Check className="w-3 h-3" />
-                            : '1'}
+                            ? <Check className="w-3 h-3" /> : '1'}
                     </span>
                     Validation du devis
                 </div>
@@ -388,30 +344,22 @@ const ConversationPage = () => {
                             <CheckCircle2 className="w-3 h-3" /> Offre acceptée
                         </p>
                         {infoConversation.prix_final > 0 && (
-                            <span className="text-[10px] text-gray-400 font-mono">
-                                ({infoConversation.prix_final} MAD)
-                            </span>
+                            <span className="text-[10px] text-gray-400 font-mono">({infoConversation.prix_final} MAD)</span>
                         )}
                     </div>
                 )}
             </div>
 
-            {/* Etape 2: Paiement */}
-            <div className={`space-y-2 transition-all duration-300 
-    ${(infoConversation.statut !== 'accepte' && !infoConversation.is_paid && infoConversation.statut !== 'terminee' && infoConversation.statut !== 'termine')
-                    ? 'opacity-40 pointer-events-none'
-                    : ''}`}
-            >
+            {/* Étape 2 : Paiement */}
+            <div className={`space-y-2 transition-all duration-300
+                ${(!infoConversation.is_paid && infoConversation.statut !== 'accepte' && infoConversation.statut !== 'terminee' && infoConversation.statut !== 'termine')
+                    ? 'opacity-40 pointer-events-none' : ''}`}>
                 <div className="flex items-center gap-2 text-[12px] font-semibold text-gray-700">
-                    <span className={`w-5 h-5 flex items-center justify-center rounded-full text-[10px] 
-            ${infoConversation.is_paid || infoConversation.statut === 'terminee' || infoConversation.statut === 'termine'
-                            ? 'bg-green-500'
-                            : 'bg-[#1B4F72]'} 
-            text-white transition-colors`}
-                    >
+                    <span className={`w-5 h-5 flex items-center justify-center rounded-full text-[10px] text-white transition-colors
+                        ${infoConversation.is_paid || infoConversation.statut === 'terminee' || infoConversation.statut === 'termine'
+                            ? 'bg-green-500' : 'bg-[#1B4F72]'}`}>
                         {infoConversation.is_paid || infoConversation.statut === 'terminee' || infoConversation.statut === 'termine'
-                            ? <Check className="w-3 h-3" />
-                            : '2'}
+                            ? <Check className="w-3 h-3" /> : '2'}
                     </span>
                     Paiement
                 </div>
@@ -429,9 +377,7 @@ const ConversationPage = () => {
                 {infoConversation.statut === 'accepte' && !infoConversation.is_client && !infoConversation.is_paid && (
                     <div className="flex items-center gap-2 p-2 bg-blue-50 border border-blue-100 rounded-sm">
                         <RefreshCw className="w-3 h-3 text-blue-500 animate-spin" />
-                        <p className="text-[11px] text-blue-600 font-medium italic">
-                            En attente du paiement par le client...
-                        </p>
+                        <p className="text-[11px] text-blue-600 font-medium italic">En attente du paiement par le client...</p>
                     </div>
                 )}
 
@@ -448,14 +394,12 @@ const ConversationPage = () => {
                     </div>
                 )}
             </div>
-            {/* Etape 3: Fin de mission */}
-            <div className={`space-y-2 transition-all duration-300 
-    ${(!infoConversation.is_paid) ? 'opacity-40 pointer-events-none' : ''}`}>
 
+            {/* Étape 3 : Fin de mission */}
+            <div className={`space-y-2 transition-all duration-300 ${!infoConversation.is_paid ? 'opacity-40 pointer-events-none' : ''}`}>
                 <div className="flex items-center gap-2 text-[12px] font-semibold text-gray-700">
-                    <span className={`w-5 h-5 flex items-center justify-center rounded-full text-[10px] 
-            ${(infoConversation.statut === 'terminee' || infoConversation.statut === 'termine') ? 'bg-green-500' : 'bg-[#1B4F72]'} 
-            text-white transition-colors`}>
+                    <span className={`w-5 h-5 flex items-center justify-center rounded-full text-[10px] text-white transition-colors
+                        ${(infoConversation.statut === 'terminee' || infoConversation.statut === 'termine') ? 'bg-green-500' : 'bg-[#1B4F72]'}`}>
                         {(infoConversation.statut === 'terminee' || infoConversation.statut === 'termine') ? <Check className="w-3 h-3" /> : '3'}
                     </span>
                     Réalisation & Fin de mission
@@ -477,9 +421,7 @@ const ConversationPage = () => {
                 {infoConversation.is_client && infoConversation.statut !== 'terminee' && infoConversation.statut !== 'termine' && (
                     <div className="flex items-center gap-2 p-2 bg-blue-50 border border-blue-100 rounded-sm">
                         <RefreshCw className="w-3 h-3 text-blue-500 animate-spin" />
-                        <p className="text-[11px] text-blue-600 font-medium italic">
-                            L'artisan travaille sur votre demande...
-                        </p>
+                        <p className="text-[11px] text-blue-600 font-medium italic">L'artisan travaille sur votre demande...</p>
                     </div>
                 )}
 
@@ -498,16 +440,12 @@ const ConversationPage = () => {
                 )}
             </div>
 
-            {/* Etape 4: Sécurité (Code PIN) */}
-            <div className={`space-y-2 transition-all duration-300 
-    ${((infoConversation.statut !== 'termine') && infoConversation.is_completed)
-                    ? 'opacity-40 pointer-events-none'
-                    : ''}`}
-            >
+            {/* Étape 4 : Code PIN */}
+            <div className={`space-y-2 transition-all duration-300
+                ${(infoConversation.statut !== 'terminee' && infoConversation.statut !== 'termine') ? 'opacity-40 pointer-events-none' : ''}`}>
                 <div className="flex items-center gap-2 text-[12px] font-semibold text-gray-700">
-                    <span className={`w-5 h-5 flex items-center justify-center rounded-full text-[10px] 
-            ${( infoConversation.is_completed && infoConversation.statut === 'termine') ? 'bg-green-500' : 'bg-[#1B4F72]'} 
-            text-white transition-colors`}>
+                    <span className={`w-5 h-5 flex items-center justify-center rounded-full text-[10px] text-white transition-colors
+                        ${(isConfirmed || infoConversation.statut === 'termine') ? 'bg-green-500' : 'bg-[#1B4F72]'}`}>
                         {(isConfirmed || infoConversation.statut === 'termine') ? <Check className="w-3 h-3" /> : '4'}
                     </span>
                     Sécurité (Code PIN)
@@ -530,7 +468,7 @@ const ConversationPage = () => {
                                         className="flex-1 border-2 border-gray-200 p-2 text-center text-[14px] font-black tracking-[0.2em] focus:border-[#D35400] focus:ring-0 outline-none transition-all uppercase"
                                     />
                                     <button
-                                        onClick={() => handleConfirmCode()}
+                                        onClick={handleConfirmCode}
                                         disabled={confirmationCode.length !== 6}
                                         className="px-5 bg-[#D35400] text-white text-[12px] font-bold hover:bg-[#A04000] disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
                                     >
@@ -561,20 +499,19 @@ const ConversationPage = () => {
                 )}
             </div>
 
-            {/* Etape 5: Avis */}
-            <div className={`space-y-3 transition-all duration-300 
-             ${(infoConversation.statut == 'termine' &&  infoConversation.is_completed) ? '': 'opacity-40 pointer-events-none' }`}>
+            {/* Étape 5 : Avis */}
+            <div className={`space-y-3 transition-all duration-300
+                ${(infoConversation.statut === 'termine' && infoConversation.is_completed) ? '' : 'opacity-40 pointer-events-none'}`}>
                 <div className="flex items-center gap-2 text-[12px] font-semibold text-gray-700">
-                    <span className={`w-5 h-5 flex items-center justify-center  text-[10px] 
-            ${infoConversation.is_completed ? 'bg-green-500' : 'bg-[#1B4F72]'} 
-            text-white transition-colors`}>
+                    <span className={`w-5 h-5 flex items-center justify-center text-[10px] text-white transition-colors
+                        ${infoConversation.is_completed ? 'bg-green-500' : 'bg-[#1B4F72]'}`}>
                         {infoConversation.is_completed ? <Check className="w-3 h-3" /> : '5'}
                     </span>
                     Laisser un avis
                 </div>
 
                 {infoConversation.is_client ? (
-                    <div className="bg-gray-50 p-4 border  border-gray-300 space-y-4 rounded-sm">
+                    <div className="bg-gray-50 p-4 border border-gray-300 space-y-4 rounded-sm">
                         <div className="flex flex-col items-center gap-2">
                             <p className="text-[10px] text-gray-500 uppercase tracking-wider font-bold">Votre Note</p>
                             <div className="flex justify-center gap-2">
@@ -582,8 +519,8 @@ const ConversationPage = () => {
                                     <Star
                                         key={s}
                                         onClick={() => setRating(s)}
-                                        className={`w-6 h-6 cursor-pointer transition-transform hover:scale-110 
-                                ${s <= rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
+                                        className={`w-6 h-6 cursor-pointer transition-transform hover:scale-110
+                                            ${s <= rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
                                     />
                                 ))}
                             </div>
@@ -625,175 +562,155 @@ const ConversationPage = () => {
             </div>
         </div>
     );
+
     const RenderStatusDommandeCharger = () => (
         <div className="flex flex-col gap-6">
             <div className="flex items-center justify-between border-b pb-2">
                 <h3 className="text-[14px] font-bold text-[#1B4F72]">Suivi de Commande</h3>
-                <span className="text-[10px] bg-gray-100 px-2 py-1    text-gray-500 font-mono"></span>
+                <span className="text-[10px] bg-gray-100 px-2 py-1 text-gray-500 font-mono"></span>
             </div>
-            <div className=" h-[15vh] w-full bg-gray-200 p-3 animate-pulse  ">
-            </div><div className=" h-[15vh] w-full bg-gray-200 p-3 animate-pulse  ">
-            </div><div className=" h-[15vh] w-full bg-gray-200 p-3 animate-pulse  ">
-            </div><div className=" h-[15vh] w-full bg-gray-200 p-3 animate-pulse  ">
-            </div><div className=" h-[15vh] w-full bg-gray-200 p-3 animate-pulse  ">
-            </div>
+            {[1, 2, 3, 4, 5].map(i => (
+                <div key={i} className="h-[15vh] w-full bg-gray-200 p-3 animate-pulse" />
+            ))}
         </div>
     );
 
-    {/* --- Modal payment --- */ }
     const RenderPaymentModal = () => {
         if (!isModalOpen || !clientSecret) return null;
-
         return (
-            <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4  ">
+            <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4">
                 <div
                     className="absolute inset-0 bg-[#1B4F72]/40 backdrop-blur-md animate-in fade-in duration-300"
                     onClick={() => setIsModalOpen(false)}
-                ></div>
-
-                <div className="relative bg-white w-full max-w-md  shadow-2xl overflow-hidden animate-in zoom-in duration-300">
+                />
+                <div className="relative bg-white w-full max-w-md shadow-2xl overflow-hidden animate-in zoom-in duration-300">
                     <div className="bg-[#1B4F72] p-6 text-white flex justify-between items-center">
-                        <div>
-                            <h3 className="text-lg font-bold flex items-center gap-2">
-                                <Logo className=" h-6" />
-
-                            </h3>
-                        </div>
+                        <Logo className="h-6" />
                         <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-white/10 rounded-full">
                             <span className="text-xl">✕</span>
                         </button>
                     </div>
-
                     <div className="p-8">
-                        <div className="flex justify-between items-center mb-6 p-4 bg-gray-50    border-gray-200">
+                        <div className="flex justify-between items-center mb-6 p-4 bg-gray-50 border border-gray-200">
                             <span className="text-sm text-gray-500 font-medium">Total à payer</span>
                             <span className="text-2xl font-black text-[#1B4F72]">
                                 {selectedAmount} <small className="text-sm font-normal">MAD</small>
                             </span>
                         </div>
-                        {/* scroll */}
                         <div className="w-full min-h-[50vh] max-h-[50vh] overflow-y-scroll">
                             <Elements stripe={stripePromise} options={{ clientSecret }}>
-                                <CheckoutForm
-                                    onSuccess={confirmPayment}
-                                />
+                                <CheckoutForm onSuccess={confirmPayment} />
                             </Elements>
                         </div>
                     </div>
                 </div>
             </div>
         );
-    }
-    if (showModelAction)
-        return (
+    };
 
-            <div
-                className="fixed inset-0 z-[999] flex items-center justify-center p-4"
-                role="dialog"
-                aria-modal="true"
-            >
-                <div
-                    className="absolute inset-0 bg-black/40 backdrop-blur-[2px] transition-opacity animate-in fade-in duration-200"
-
-                />
-                <div className={`relative w-full max-w-xs  bg-white shadow-2xl border border-gray-100 transform transition-all animate-in zoom-in-95 duration-200`}>
-
-
-                    <div className="p-6">
-                        <div className="flex items-center gap-4 mb-6">
-                            <div className="w-10 h-10 bg-[#D35400]/10 flex items-center justify-center  ">
-                                <Banknote className="w-5 h-5 text-[#D35400]" />
-                            </div>
-                            <div>
-                                <h3 className="text-[14px] font-bold text-[#1B4F72]"> Offre de travail</h3>
-                                <p className="text-[11px] text-gray-400 leading-none mt-1">confirmation de la mission</p>
-                            </div>
+    if (showModelAction) return (
+        <div className="fixed inset-0 z-[999] flex items-center justify-center p-4" role="dialog" aria-modal="true">
+            <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] transition-opacity animate-in fade-in duration-200" />
+            <div className="relative w-full max-w-xs bg-white shadow-2xl border border-gray-100 transform transition-all animate-in zoom-in-95 duration-200">
+                <div className="p-6">
+                    <div className="flex items-center gap-4 mb-6">
+                        <div className="w-10 h-10 bg-[#D35400]/10 flex items-center justify-center">
+                            <Banknote className="w-5 h-5 text-[#D35400]" />
                         </div>
-                        <p className="text-[12px] text-gray-600 mb-3">Voulez-vous vraiment accepter cette offre ?</p>
-                        <input onChange={(e) => setAmount(e.target.value)}
-                            type="number"
-                            placeholder="0000.00"
-                            className="border m-2 w-9/12 border-gray-300 p-1 text-center text-[11px] tracking-widest focus:ring-1 focus:ring-[#D35400] outline-none" />
-                        <div className="grid grid-cols-2 gap-3">
-                            <button onClick={() => setShowModelAction(false)} className="py-2 text-[12px] text-gray-400 hover:text-gray-600 font-medium">Non</button>
-                            <button
-                                disabled={isAccepting}
-                                onClick={() => { acceptOffer(); }}
-                                className="py-2 bg-[#1B4F72] text-white text-[12px] font-bold hover:bg-[#D35400] transition-colors text-center  "
-                            >
-                                {isAccepting ? <div className="flex items-center justify-center gap-2"><RefreshCw className=" w-4 h-4  animate-spin" /> en cours</div> : 'Accepter'}
-                            </button>
+                        <div>
+                            <h3 className="text-[14px] font-bold text-[#1B4F72]">Offre de travail</h3>
+                            <p className="text-[11px] text-gray-400 leading-none mt-1">confirmation de la mission</p>
                         </div>
+                    </div>
+                    <p className="text-[12px] text-gray-600 mb-3">Voulez-vous vraiment accepter cette offre ?</p>
+                    <input
+                        onChange={(e) => setAmount(e.target.value)}
+                        type="number"
+                        placeholder="0000.00"
+                        className="border m-2 w-9/12 border-gray-300 p-1 text-center text-[11px] tracking-widest focus:ring-1 focus:ring-[#D35400] outline-none"
+                    />
+                    <div className="grid grid-cols-2 gap-3">
+                        <button onClick={() => setShowModelAction(false)} className="py-2 text-[12px] text-gray-400 hover:text-gray-600 font-medium">Non</button>
+                        <button
+                            disabled={isAccepting}
+                            onClick={acceptOffer}
+                            className="py-2 bg-[#1B4F72] text-white text-[12px] font-bold hover:bg-[#D35400] transition-colors text-center"
+                        >
+                            {isAccepting
+                                ? <div className="flex items-center justify-center gap-2"><RefreshCw className="w-4 h-4 animate-spin" /> en cours</div>
+                                : 'Accepter'}
+                        </button>
                     </div>
                 </div>
             </div>
-        );
-    if (showModelFinMission)
-        return (
+        </div>
+    );
 
-            <div
-                className="fixed inset-0 z-[999] flex items-center justify-center p-4"
-                role="dialog"
-                aria-modal="true"
-            >
-                <div
-                    className="absolute inset-0 bg-black/40 backdrop-blur-[2px] transition-opacity animate-in fade-in duration-200"
-
-                />
-                <div className={`relative w-full max-w-xs  bg-white shadow-2xl border border-gray-100 transform transition-all animate-in zoom-in-95 duration-200`}>
-
-
-                    <div className="p-6">
-                        <div className="flex items-center gap-4 mb-6">
-                            <div className="w-10 h-10 bg-[#D35400]/10 flex items-center justify-center  ">
-                                <Banknote className="w-5 h-5 text-[#D35400]" />
-                            </div>
-                            <div>
-                                <h3 className="text-[14px] font-bold text-[#1B4F72]"> Fin de Mission</h3>
-                                <p className="text-[11px] text-gray-400 leading-none mt-1">Confirmation de la mission</p>
-                            </div>
+    if (showModelFinMission) return (
+        <div className="fixed inset-0 z-[999] flex items-center justify-center p-4" role="dialog" aria-modal="true">
+            <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] transition-opacity animate-in fade-in duration-200" />
+            <div className="relative w-full max-w-xs bg-white shadow-2xl border border-gray-100 transform transition-all animate-in zoom-in-95 duration-200">
+                <div className="p-6">
+                    <div className="flex items-center gap-4 mb-6">
+                        <div className="w-10 h-10 bg-[#D35400]/10 flex items-center justify-center">
+                            <Banknote className="w-5 h-5 text-[#D35400]" />
                         </div>
-                        <p className="text-[12px] text-gray-600 mb-3">Voulez-vous vraiment terminer cette mission ?</p>
-                        <div className="grid grid-cols-2 gap-3">
-                            <button onClick={() => setShowModelFinMission(false)} className="py-2 text-[12px] text-gray-400 hover:text-gray-600 font-medium">Non</button>
-                            <button
-                                disabled={isAccepting}
-                                onClick={() => { handleCompleteMission(); }}
-                                className="py-2 bg-[#1B4F72] text-white text-[12px] font-bold hover:bg-[#D35400] transition-colors text-center  "
-                            >
-                                {isAccepting ? <div className="flex items-center justify-center gap-2"><RefreshCw className=" w-4 h-4  animate-spin" /> en cours</div> : 'Accepter'}
-                            </button>
+                        <div>
+                            <h3 className="text-[14px] font-bold text-[#1B4F72]">Fin de Mission</h3>
+                            <p className="text-[11px] text-gray-400 leading-none mt-1">Confirmation de la mission</p>
                         </div>
+                    </div>
+                    <p className="text-[12px] text-gray-600 mb-3">Voulez-vous vraiment terminer cette mission ?</p>
+                    <div className="grid grid-cols-2 gap-3">
+                        <button onClick={() => setShowModelFinMission(false)} className="py-2 text-[12px] text-gray-400 hover:text-gray-600 font-medium">Non</button>
+                        <button
+                            disabled={isAccepting}
+                            onClick={handleCompleteMission}
+                            className="py-2 bg-[#1B4F72] text-white text-[12px] font-bold hover:bg-[#D35400] transition-colors text-center"
+                        >
+                            {isAccepting
+                                ? <div className="flex items-center justify-center gap-2"><RefreshCw className="w-4 h-4 animate-spin" /> en cours</div>
+                                : 'Confirmer'}
+                        </button>
                     </div>
                 </div>
             </div>
-        );
+        </div>
+    );
+
     return (
         <div className="min-h-screen bg-gray-50">
             <RenderPaymentModal />
             <div className="max-w-6xl mx-auto mt-16 h-[calc(100vh-64px)]">
-                <div className="flex h-full border border-gray-200 bg-white   ">
+                <div className="flex h-full border border-gray-200 bg-white">
                     <div className="w-16 hidden md:flex border-r border-gray-100 bg-gray-50 flex-col items-center py-4">
-                        <Link to="/messages" className="p-2 text-gray-400 hover:text-[#D35400] transition-colors"><ArrowLeft className="w-5 h-5" /></Link>
+                        <Link to="/messages" className="p-2 text-gray-400 hover:text-[#D35400] transition-colors">
+                            <ArrowLeft className="w-5 h-5" />
+                        </Link>
                     </div>
 
                     <div className="flex-1 flex flex-col">
                         <div className="flex items-center justify-between p-3 border-b border-gray-100 bg-white">
                             <div className="flex items-center gap-3">
-                                <Link to="/messages" className="md:hidden"><ArrowLeft className="w-5 h-5 text-gray-400" /></Link>
-                                <div className="w-10 h-10 bg-[#1B4F72]/10 flex items-center justify-center   -full font-bold text-[#1B4F72] text-sm">
+                                <Link to="/messages" className="md:hidden">
+                                    <ArrowLeft className="w-5 h-5 text-gray-400" />
+                                </Link>
+                                <div className="w-10 h-10 bg-[#1B4F72]/10 flex items-center justify-center font-bold text-[#1B4F72] text-sm">
                                     {infoConversation?.subject?.charAt(0)}
                                 </div>
-                                <h2 className="text-[13px] font-semibold text-[#1B4F72]"> {infoConversation?.subject}</h2>
+                                <h2 className="text-[13px] font-semibold text-[#1B4F72]">{infoConversation?.subject}</h2>
                             </div>
-                            <button onClick={() => setShowStatusDommande(!showStatusDommande)} className="lg:hidden p-2 text-gray-400"><MoreVertical className="w-5 h-5" /></button>
+                            <button onClick={() => setShowStatusDommande(!showStatusDommande)} className="lg:hidden p-2 text-gray-400">
+                                <MoreVertical className="w-5 h-5" />
+                            </button>
                         </div>
 
                         <div className="flex-1 overflow-y-auto p-4 bg-gray-50 space-y-4">
                             {messages.map((msg) => (
                                 <div key={msg.id} className={`flex ${msg.isMe ? 'justify-end' : 'justify-start'}`}>
-                                    <div className={`max-w-[75%] px-3 py-2  border rounded  ${msg.isMe ? 'bg-[#150b50] text-white' : ' bg-[#d5d3d2] border border-gray-100 text-gray-700'}`}>
-                                        <p className="text-[12px] font-semibold">{!msg.isMe && msg.senderName} </p>
+                                    <div className={`max-w-[75%] px-3 py-2 border rounded
+                                        ${msg.isMe ? 'bg-[#150b50] text-white' : 'bg-[#d5d3d2] border border-gray-100 text-gray-700'}`}>
+                                        <p className="text-[12px] font-semibold">{!msg.isMe && msg.senderName}</p>
                                         <p className="text-[12px]">{msg.text}</p>
                                         <div className={`flex items-center justify-end gap-1 mt-1 text-[9px] ${msg.isMe ? 'text-white/70' : 'text-gray-400'}`}>
                                             {msg.time} {msg.isMe && getStatusIcon(msg.status)}
@@ -801,37 +718,47 @@ const ConversationPage = () => {
                                     </div>
                                 </div>
                             ))}
-                            {isLoadingMessages && <div className="flex items-center justify-center mt-4"><RefreshCw className="w-4 h-4 animate-spin text-[#D35400]" /></div>}
+                            {isLoadingMessages && (
+                                <div className="flex items-center justify-center mt-4">
+                                    <RefreshCw className="w-4 h-4 animate-spin text-[#D35400]" />
+                                </div>
+                            )}
                             <div ref={messagesEndRef} />
                         </div>
 
                         <div className="p-4 border-t border-gray-100 bg-white">
                             <form onSubmit={sendeMessage} className="flex items-center gap-2">
-                                <button type="button" onClick={() => setShowAttachment(!showAttachment)} className="p-2 text-gray-400 hover:text-[#D35400]"><Paperclip className="w-5 h-5" /></button>
-                                <input type="text" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} placeholder="Message..." className="flex-1 px-4 py-2 text-[12px] border border-gray-200   -full focus:outline-none focus:border-[#D35400] bg-gray-50" />
-                                <button type="submit" disabled={!newMessage.trim()} className="p-2.5 bg-[#D35400] text-white   -full disabled:opacity-50"><Send className="w-4 h-4" /></button>
+                                <button type="button" onClick={() => setShowAttachment(!showAttachment)} className="p-2 text-gray-400 hover:text-[#D35400]">
+                                    <Paperclip className="w-5 h-5" />
+                                </button>
+                                <input
+                                    type="text"
+                                    value={newMessage}
+                                    onChange={(e) => setNewMessage(e.target.value)}
+                                    placeholder="Message..."
+                                    className="flex-1 px-4 py-2 text-[12px] border border-gray-200 focus:outline-none focus:border-[#D35400] bg-gray-50"
+                                />
+                                <button type="submit" disabled={!newMessage.trim()} className="p-2.5 bg-[#D35400] text-white disabled:opacity-50">
+                                    <Send className="w-4 h-4" />
+                                </button>
                             </form>
                         </div>
                     </div>
 
                     <div className="w-80 border-l border-gray-100 bg-white p-5 hidden lg:block overflow-y-auto">
-                        {
-                            isLoadingMessages ?
-                                <RenderStatusDommandeCharger /> :
-                                RenderStatusDommande()
-                        }
+                        {isLoadingMessages ? <RenderStatusDommandeCharger /> : RenderStatusDommande()}
                     </div>
+
                     {showStatusDommande && (
                         <div className="fixed inset-0 bg-black/50 z-50 lg:hidden flex items-end">
-                            <div className="bg-white w-full max-h-[90vh]   -t-2xl p-6 overflow-y-auto">
-                                <div className="w-12 h-1.5 bg-gray-200   -full mx-auto mb-6" onClick={() => setShowStatusDommande(false)}></div>
+                            <div className="bg-white w-full max-h-[90vh] p-6 overflow-y-auto">
+                                <div className="w-12 h-1.5 bg-gray-200 mx-auto mb-6" onClick={() => setShowStatusDommande(false)} />
                                 {isLoadingMessages ? <RenderStatusDommandeCharger /> : RenderStatusDommande()}
                             </div>
                         </div>
                     )}
                 </div>
             </div>
-
         </div>
     );
 };

@@ -42,7 +42,7 @@ class PaiementDAO
                 ]);
             }
         ], 'client.user', 'paiement')
-            ->where('statut', 'paid')
+            ->where('statut', '!=', 'pending')
             ->get();
     }
 }

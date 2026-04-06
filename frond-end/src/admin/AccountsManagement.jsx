@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
-    ArrowRightLeft, Search, Eye,
+    ArrowRightLeft, Search, 
     User, Briefcase, DollarSign, Calendar,
     CheckCircle, Clock, XCircle
 } from 'lucide-react';
@@ -44,7 +44,7 @@ const AccountsManagement = () => {
         .reduce((sum, t) => sum + t.finance.commission, 0);
 
     const totalPaid = transactions
-        .filter(t => t.status.payment === 'paid')
+        .filter(t => t.status.payment === 'paid' || t.status.payment === 'escrow')
         .reduce((sum, t) => sum + t.finance.total, 0);
 
     const getPayoutBadge = (payout) => {
@@ -68,12 +68,14 @@ const AccountsManagement = () => {
     const getStatusBadge = (payment) => {
         const styles = {
             paid: 'bg-green-100 text-green-700 border-green-200',
+            escrow: 'bg-blue-100 text-blue-700 border-blue-200',
             pending: 'bg-blue-100 text-blue-700 border-blue-200',
             disputed: 'bg-red-100 text-red-700 border-red-200',
             refunded: 'bg-gray-100 text-gray-700 border-gray-200',
         };
         const labels = {
             paid: 'Payé',
+            escrow: 'En séquestre',
             pending: 'En cours',
             disputed: 'Litige',
             refunded: 'Remboursé',
@@ -182,9 +184,9 @@ const AccountsManagement = () => {
                                 <tr key={trx.id} className="hover:bg-gray-50">
                                     <td className="px-4 py-3">
                                         <div>
-                                            <p className="text-[11px] font-medium text-[#1B4F72]">{trx.service.title}</p>
+                                            <p className="text-[11px] font-medium text-[#1B4F72]">{trx.service_info.title}</p>
                                             <p className="text-[9px] text-gray-400">
-                                                {trx.reference} • {trx.service.type}
+                                                {trx.reference} • {trx.service_info.type}
                                             </p>
                                         </div>
                                     </td>
@@ -263,7 +265,7 @@ const AccountsManagement = () => {
                     <div className="bg-white w-full max-w-2xl border border-gray-200">
                         <div className="p-4 border-b border-gray-200 flex items-center justify-between">
                             <div>
-                                <h3 className="text-[16px] font-bold text-[#1B4F72]">{selectedTransaction.service.title}</h3>
+                                <h3 className="text-[16px] font-bold text-[#1B4F72]">{selectedTransaction.service_info.title}</h3>
                                 <p className="text-[11px] text-gray-500">{selectedTransaction.reference}</p>
                             </div>
                             <button
@@ -339,7 +341,7 @@ const AccountsManagement = () => {
                                             <p className="text-[10px] text-gray-400">{selectedTransaction.dates.created_at} ({selectedTransaction.dates.human})</p>
                                         </div>
                                     </div>
-                                    {selectedTransaction.status.payment === 'paid' && (
+                                    {(selectedTransaction.status.payment === 'paid' || selectedTransaction.status.payment === 'escrow') && (
                                         <div className="flex items-start gap-3">
                                             <div className="w-6 h-6 bg-green-100 flex items-center justify-center flex-shrink-0 mt-0.5">
                                                 <DollarSign className="w-3.5 h-3.5 text-green-600" />
@@ -347,6 +349,9 @@ const AccountsManagement = () => {
                                             <div>
                                                 <p className="text-[11px] font-medium text-gray-700">Paiement client reçu</p>
                                                 <p className="text-[10px] text-gray-400">{selectedTransaction.stripe_id}</p>
+                                                {selectedTransaction.status.paid_at && (
+                                                    <p className="text-[10px] text-gray-400">{selectedTransaction.status.paid_at}</p>
+                                                )}
                                             </div>
                                         </div>
                                     )}
@@ -366,7 +371,12 @@ const AccountsManagement = () => {
 
                             <div className="border border-gray-200 p-3">
                                 <p className="text-[10px] text-gray-500 mb-1">Type de service</p>
-                                <p className="text-[12px] text-gray-700">{selectedTransaction.service.type}</p>
+                                <p className="text-[12px] text-gray-700">{selectedTransaction.service_info.type}</p>
+                            </div>
+
+                            <div className="border border-gray-200 p-3">
+                                <p className="text-[10px] text-gray-500 mb-1">Statut du service</p>
+                                <p className="text-[12px] text-gray-700 capitalize">{selectedTransaction.service_info.status}</p>
                             </div>
 
                             {selectedTransaction.status.payout === 'pending' && selectedTransaction.status.payment !== 'disputed' && (
