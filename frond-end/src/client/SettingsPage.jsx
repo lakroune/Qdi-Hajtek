@@ -4,7 +4,6 @@ import {
     CheckCircle, AlertTriangle, ArrowRight, Building,
     Award, Briefcase, GraduationCap, IdCard, Save,
     Eye, EyeOff,
-    SplinePointer,
     UploadCloud,
     LoaderCircle,
     XCircle,
@@ -16,6 +15,7 @@ import FileUpload from '../components/inputs/FileUpload';
 import Submit from '../components/buttons/Submit';
 import axiosClient from '../api/axios-client';
 import { toast } from 'react-hot-toast';
+
 const PageParametres = () => {
     const [ongletActif, setOngletActif] = useState('profil');
     const [chargement, setChargement] = useState(false);
@@ -23,7 +23,6 @@ const PageParametres = () => {
     const [messageErreur, setMessageErreur] = useState('');
     const [afficherMotDePasse, setAfficherMotDePasse] = useState({});
     const [villes, setVilles] = useState([]);
-
     const [isInitialLoading, setIsInitialLoading] = useState(true);
 
     const [donneesUtilisateur, setDonneesUtilisateur] = useState({
@@ -34,11 +33,15 @@ const PageParametres = () => {
         adresse: '',
         ville: '',
         avatar: '',
-        //artisan
+        cin: '',
+        role: '',
+        // artisan
         specialite: '',
         experience: '',
         description: '',
-
+        rayon: '',
+        isArtisan: false,
+        isVerified: false,
     });
 
     const [donneesSecurite, setDonneesSecurite] = useState({
@@ -94,34 +97,34 @@ const PageParametres = () => {
                 console.error('Erreur lors de la recherche des villes');
             }
         };
-        if (villes.length === 0) {
-            fetchVilles();
-        }
+        if (villes.length === 0) fetchVilles();
     }, []);
+
     useEffect(() => {
         const fetchUser = async () => {
             try {
                 const response = await axiosClient.get('/profile/me');
                 const user = response.data.data;
+                const isArtisan = user.role === 'artisan';
+
                 setDonneesUtilisateur({
                     prenom: user.firstname || '',
                     nom: user.lastname || '',
                     email: user.email || '',
-                    telephone: user.client.phone || '',
-                    adresse: user.client.address || '',
-                    cin: user.client.cin || '',
+                    telephone: user.phone || '',
+                    adresse: user.address || '',
+                    cin: user.cin || '',
                     ville: user.city || '',
-                    avatar: getAvatarUrl(user.client.avatar),
-                    //artisan
-                    specialite: user.artisan?.specialite || '',
-                    experience: user.artisan?.experience || '',
-                    description: user.artisan?.bio || '',
-                    rayon: user.artisan?.rayon_action || '',
-                    artisan: user.artisan || null,
-                    clinet: user.client || null
+                    avatar: user.avatar || null,
+                    role: user.role || 'client',
+                    // artisan fields (présents directement sur user si role === 'artisan')
+                    isArtisan,
+                    isVerified: user.is_verified || false,
+                    specialite: user.specialite || '',
+                    experience: user.experience || '',
+                    description: user.bio || '',
+                    rayon: user.rayon_action || '',
                 });
-
-
 
             } catch (error) {
                 console.error('Erreur lors de la récupération de l\'utilisateur', error);
@@ -132,19 +135,12 @@ const PageParametres = () => {
         fetchUser();
     }, []);
 
-
-    const getAvatarUrl = (path) => {
-        if (!path) return "https://via.placeholder.com/150";
-        const cleanPath = path.replace(/\\/g, '').replace('public/', '');
-        return `http://localhost:8000/storage/${cleanPath}`;
-    };
     const saveModificationProfileClient = async () => {
         setChargement(true);
         setMessageSucces('');
 
         try {
             const formData = new FormData();
-
             formData.append('prenom', donneesUtilisateur.prenom);
             formData.append('nom', donneesUtilisateur.nom);
             formData.append('email', donneesUtilisateur.email);
@@ -171,19 +167,23 @@ const PageParametres = () => {
     };
 
     const saveModificationMotDePasse = async () => {
-
-        if (donneesSecurite.motDePasseActuel.length < 8 || donneesSecurite.nouveauMotDePasse.length < 8 || donneesSecurite.confirmerMotDePasse.length < 8 || donneesSecurite.nouveauMotDePasse !== donneesSecurite.confirmerMotDePasse) {
-
+        if (
+            donneesSecurite.motDePasseActuel.length < 8 ||
+            donneesSecurite.nouveauMotDePasse.length < 8 ||
+            donneesSecurite.confirmerMotDePasse.length < 8 ||
+            donneesSecurite.nouveauMotDePasse !== donneesSecurite.confirmerMotDePasse
+        ) {
+            toast.error('Veuillez vérifier les champs du mot de passe.');
+            return;
         }
+
         setChargement(true);
-       
 
         try {
             const response = await axiosClient.put('/profile/update-password', {
                 old_password: donneesSecurite.motDePasseActuel,
                 new_password: donneesSecurite.nouveauMotDePasse,
                 new_password_confirmation: donneesSecurite.confirmerMotDePasse,
-
             });
 
             if (response.status === 200) {
@@ -194,8 +194,7 @@ const PageParametres = () => {
                         nouveauMotDePasse: '',
                         confirmerMotDePasse: '',
                     });
-                }
-                else {
+                } else {
                     toast.error(response.data.message);
                 }
             }
@@ -208,10 +207,8 @@ const PageParametres = () => {
 
     const becomeArtisanSave = async (e) => {
         e.preventDefault();
+        setMessageErreur('');
 
-       
-
-        // Validation
         if (!formulaireArtisan.specialite || !formulaireArtisan.experience || !formulaireArtisan.description) {
             setMessageErreur('Veuillez remplir tous les champs obligatoires.');
             return;
@@ -222,12 +219,10 @@ const PageParametres = () => {
             return;
         }
 
-
         setChargement(true);
 
         try {
             const formData = new FormData();
-
             formData.append('specialite', formulaireArtisan.specialite);
             formData.append('experience', formulaireArtisan.experience);
             formData.append('rayon_action', formulaireArtisan.rayonTravail || 30);
@@ -236,11 +231,10 @@ const PageParametres = () => {
             formData.append('cin_ver', formulaireArtisan.cniVerso);
             formData.append('rib_doc', formulaireArtisan.attestationsRib);
             formulaireArtisan.diplomes.forEach((fichier) => {
-                formData.append(`diplome_doc[]`, fichier);
+                formData.append('diplome_doc[]', fichier);
             });
-
             formulaireArtisan.attestations.forEach((fichier) => {
-                formData.append(`certificat_doc[]`, fichier);
+                formData.append('certificat_doc[]', fichier);
             });
 
             const response = await axiosClient.post('/artisans', formData);
@@ -273,21 +267,23 @@ const PageParametres = () => {
     };
 
     if (isInitialLoading) {
-        return <div className="flex justify-center items-center h-screen"><LoaderCircle className="animate-spin w-12 h-12 text-[#D35400]" /></div>;
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <LoaderCircle className="animate-spin w-12 h-12 text-[#D35400]" />
+            </div>
+        );
     }
 
     return (
         <div className="min-h-screen bg-white">
-
             <div className="max-w-6xl mt-12 mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-12">
                 <div className="border border-gray-200 p-4 mb-4">
                     <h1 className="text-[15px] font-bold text-[#1B4F72]">Paramètres du compte</h1>
                     <p className="text-[11px] text-gray-500 mt-1">Gérez vos informations et devenez artisan</p>
                 </div>
 
-
-
                 <div className="grid lg:grid-cols-4 gap-4">
+                    {/* Sidebar */}
                     <div className="lg:col-span-1">
                         <div className="border border-gray-200">
                             {onglets.map((onglet) => (
@@ -307,13 +303,13 @@ const PageParametres = () => {
 
                     <div className="lg:col-span-3">
 
+                        {/* ── Onglet Profil ── */}
                         {ongletActif === 'profil' && (
                             <div className="border border-gray-200 p-4">
                                 <h2 className="text-[13px] font-bold text-[#1B4F72] mb-4 pb-2 border-b border-gray-100">
                                     Informations personnelles
                                 </h2>
 
-                                {/* Avatar */}
                                 <div className="flex items-center gap-4 mb-6 pb-4 border-b border-gray-100">
                                     <AvatarUpload
                                         src={donneesUtilisateur.avatar}
@@ -327,8 +323,8 @@ const PageParametres = () => {
                                     <Input
                                         label="Prénom"
                                         name="prenom"
-                                        disabled={true}
-                                        value={donneesUtilisateur.prenom || ''}
+                                        disabled
+                                        value={donneesUtilisateur.prenom}
                                         onChange={(e) => mettreAJourChamp(setDonneesUtilisateur, donneesUtilisateur, 'prenom', e.target.value)}
                                         Icon={User}
                                         required
@@ -336,8 +332,8 @@ const PageParametres = () => {
                                     <Input
                                         label="Nom"
                                         name="nom"
-                                        disabled={true}
-                                        value={donneesUtilisateur.nom || ''}
+                                        disabled
+                                        value={donneesUtilisateur.nom}
                                         onChange={(e) => mettreAJourChamp(setDonneesUtilisateur, donneesUtilisateur, 'nom', e.target.value)}
                                         Icon={User}
                                         required
@@ -346,8 +342,8 @@ const PageParametres = () => {
                                         label="Email"
                                         name="email"
                                         type="email"
-                                        disabled={true}
-                                        value={donneesUtilisateur.email || ''}
+                                        disabled
+                                        value={donneesUtilisateur.email}
                                         onChange={(e) => mettreAJourChamp(setDonneesUtilisateur, donneesUtilisateur, 'email', e.target.value)}
                                         Icon={Mail}
                                         required
@@ -356,17 +352,16 @@ const PageParametres = () => {
                                         label="Téléphone"
                                         name="telephone"
                                         type="tel"
-                                        value={donneesUtilisateur.telephone || ''}
+                                        value={donneesUtilisateur.telephone}
                                         onChange={(e) => mettreAJourChamp(setDonneesUtilisateur, donneesUtilisateur, 'telephone', e.target.value)}
                                         Icon={Phone}
                                         required
                                     />
-
                                     <Input
                                         label="Adresse"
                                         name="adresse"
                                         type="text"
-                                        value={donneesUtilisateur.adresse || ''}
+                                        value={donneesUtilisateur.adresse}
                                         onChange={(e) => mettreAJourChamp(setDonneesUtilisateur, donneesUtilisateur, 'adresse', e.target.value)}
                                         Icon={MapPin}
                                     />
@@ -374,51 +369,44 @@ const PageParametres = () => {
                                         label="CIN"
                                         name="cin"
                                         type="text"
-                                        disabled={true}
-                                        value={donneesUtilisateur.cin || ''}
+                                        disabled
+                                        value={donneesUtilisateur.cin}
                                         onChange={(e) => mettreAJourChamp(setDonneesUtilisateur, donneesUtilisateur, 'cin', e.target.value)}
                                         Icon={IdCard}
                                     />
-                                    {/* artisan */}
-                                    {donneesUtilisateur?.artisan?.is_verified && (
-                                        <Input
-                                            label="description"
-                                            name="description"
-                                            type="text"
-                                            disabled={true}
-                                            value={donneesUtilisateur.description || ''}
-                                            onChange={(e) => mettreAJourChamp(setDonneesUtilisateur, donneesUtilisateur, 'description', e.target.value)}
-                                            Icon={Building}
-                                        />
+
+                                    {/* Champs artisan visibles uniquement si role === 'artisan' */}
+                                    {donneesUtilisateur.isArtisan && (
+                                        <>
+                                            <Input
+                                                label="Description"
+                                                name="description"
+                                                type="text"
+                                                disabled
+                                                value={donneesUtilisateur.description}
+                                                onChange={(e) => mettreAJourChamp(setDonneesUtilisateur, donneesUtilisateur, 'description', e.target.value)}
+                                                Icon={Building}
+                                            />
+                                            <Input
+                                                label="Spécialité"
+                                                name="specialite"
+                                                type="text"
+                                                disabled
+                                                value={donneesUtilisateur.specialite}
+                                                onChange={(e) => mettreAJourChamp(setDonneesUtilisateur, donneesUtilisateur, 'specialite', e.target.value)}
+                                                Icon={Building}
+                                            />
+                                            <Input
+                                                label="Rayon d'action (km)"
+                                                name="rayon"
+                                                type="text"
+                                                disabled
+                                                value={donneesUtilisateur.rayon}
+                                                onChange={(e) => mettreAJourChamp(setDonneesUtilisateur, donneesUtilisateur, 'rayon', e.target.value)}
+                                                Icon={Disc3}
+                                            />
+                                        </>
                                     )}
-                                    {/* spiecialite */}
-                                    {donneesUtilisateur?.artisan?.is_verified && (
-                                        <Input
-                                            label="spécialité"
-                                            name="specialite"
-                                            type="text"
-                                            disabled={true}
-                                            value={donneesUtilisateur.specialite || ''}
-                                            onChange={(e) => mettreAJourChamp(setDonneesUtilisateur, donneesUtilisateur, 'specialite', e.target.value)}
-                                            Icon={Building}
-                                        />
-                                    )}
-
-                                    {/* rayon */}
-                                    {donneesUtilisateur?.artisan?.is_verified && (
-                                        <Input
-                                            label="rayon"
-                                            name="rayon"
-                                            type="text"
-                                            disabled={true}
-                                            value={donneesUtilisateur.rayon || ''}
-                                            onChange={(e) => mettreAJourChamp(setDonneesUtilisateur, donneesUtilisateur, 'rayon', e.target.value)}
-                                            Icon={Building}
-                                        />
-                                    )}
-
-
-
 
                                     <div className="md:col-span-2">
                                         <select
@@ -428,7 +416,11 @@ const PageParametres = () => {
                                         >
                                             <option value="">Sélectionnez une ville</option>
                                             {villes.map(ville => (
-                                                <option key={ville.id} selected={ville.ville === donneesUtilisateur.ville} value={ville.ville}>
+                                                <option
+                                                    key={ville.id}
+                                                    value={ville.ville}
+                                                    selected={ville.ville === donneesUtilisateur.ville}
+                                                >
                                                     {ville.ville}
                                                 </option>
                                             ))}
@@ -449,6 +441,7 @@ const PageParametres = () => {
                             </div>
                         )}
 
+                        {/* ── Onglet Sécurité ── */}
                         {ongletActif === 'securite' && (
                             <div className="space-y-4">
                                 <div className="border border-gray-200 p-4">
@@ -517,10 +510,32 @@ const PageParametres = () => {
                             </div>
                         )}
 
+                        {/* ── Onglet Devenir Artisan ── */}
                         {ongletActif === 'devenir-artisan' && (
-
-                            donneesUtilisateur?.artisan === null ? (
-
+                            donneesUtilisateur.isArtisan ? (
+                                <div className="border border-gray-200 p-8 flex flex-col items-center justify-center text-center gap-4">
+                                    <div className="w-16 h-16 rounded-full bg-orange-50 flex items-center justify-center">
+                                        <CheckCircle className="w-8 h-8 text-[#D35400]" />
+                                    </div>
+                                    <div>
+                                        <h2 className="text-[14px] font-bold text-[#1B4F72] mb-1">
+                                            {donneesUtilisateur.isVerified ? 'Compte artisan vérifié' : 'Demande envoyée'}
+                                        </h2>
+                                        <p className="text-[11px] text-gray-500 max-w-xs">
+                                            {donneesUtilisateur.isVerified
+                                                ? 'Votre compte artisan est vérifié et actif.'
+                                                : <>Votre candidature est en cours de traitement. Vous recevrez une réponse sous <span className="font-semibold text-[#D35400]">48h</span>.</>
+                                            }
+                                        </p>
+                                    </div>
+                                    {!donneesUtilisateur.isVerified && (
+                                        <div className="flex items-center gap-2 px-4 py-2 bg-orange-50 border border-orange-100">
+                                            <LoaderCircle className="w-3.5 h-3.5 text-[#D35400] animate-spin" />
+                                            <span className="text-[11px] text-[#D35400] font-medium">En attente de validation</span>
+                                        </div>
+                                    )}
+                                </div>
+                            ) : (
                                 <div className="border border-gray-200 p-4">
                                     <div className="mb-6 pb-4 border-b border-gray-100">
                                         <h2 className="text-[15px] font-bold text-[#1B4F72] mb-1">Devenir Artisan</h2>
@@ -529,6 +544,20 @@ const PageParametres = () => {
                                         </p>
                                     </div>
 
+                                    {messageErreur && (
+                                        <div className="mb-4 p-3 bg-red-50 border border-red-100 flex items-start gap-2">
+                                            <XCircle className="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5" />
+                                            <p className="text-[11px] text-red-600">{messageErreur}</p>
+                                        </div>
+                                    )}
+
+                                    {messageSucces && (
+                                        <div className="mb-4 p-3 bg-green-50 border border-green-100 flex items-start gap-2">
+                                            <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" />
+                                            <p className="text-[11px] text-green-600">{messageSucces}</p>
+                                        </div>
+                                    )}
+
                                     <form onSubmit={becomeArtisanSave} className="space-y-6">
                                         <div>
                                             <h3 className="text-[12px] font-bold text-[#1B4F72] mb-3 flex items-center gap-2">
@@ -536,9 +565,6 @@ const PageParametres = () => {
                                                 Informations professionnelles
                                             </h3>
                                             <div className="grid md:grid-cols-2 gap-4">
-
-
-
                                                 <div>
                                                     <label className="block text-[11px] font-medium text-[#1B4F72] mb-1.5">
                                                         Spécialité <span className="text-[#D35400]">*</span>
@@ -572,7 +598,7 @@ const PageParametres = () => {
                                                 </div>
 
                                                 <Input
-                                                    label="rayon de travail"
+                                                    label="Rayon de travail (km)"
                                                     name="rayonTravail"
                                                     value={formulaireArtisan.rayonTravail || ''}
                                                     onChange={(e) => mettreAJourChamp(setFormulaireArtisan, formulaireArtisan, 'rayonTravail', e.target.value)}
@@ -649,8 +675,6 @@ const PageParametres = () => {
                                             </div>
                                         </div>
 
-
-
                                         <div className="pt-6 border-t border-gray-100">
                                             <div className="flex items-start gap-2 mb-4 p-3 bg-blue-50">
                                                 <AlertTriangle className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
@@ -659,7 +683,6 @@ const PageParametres = () => {
                                                     Validation sous 48h.
                                                 </p>
                                             </div>
-
                                             <Submit
                                                 text="Soumettre ma candidature"
                                                 onClick={becomeArtisanSave}
@@ -671,33 +694,11 @@ const PageParametres = () => {
                                         </div>
                                     </form>
                                 </div>
-                            ) :
-                                (
-                                    <div className="border border-gray-200 p-8 flex flex-col items-center justify-center text-center gap-4">
-                                        <div className="w-16 h-16 rounded-full bg-orange-50 flex items-center justify-center">
-                                            <CheckCircle className="w-8 h-8 text-[#D35400]" />
-                                        </div>
-                                        <div>
-                                            <h2 className="text-[14px] font-bold text-[#1B4F72] mb-1">
-                                                Demande envoyée
-                                            </h2>
-                                            <p className="text-[11px] text-gray-500 max-w-xs">
-                                                Votre candidature est en cours de traitement. Vous recevrez une réponse sous <span className="font-semibold text-[#D35400]">48h</span>.
-                                            </p>
-                                        </div>
-                                        <div className="flex items-center gap-2 px-4 py-2 bg-orange-50 border border-orange-100">
-                                            <LoaderCircle className="w-3.5 h-3.5 text-[#D35400] animate-spin" />
-                                            <span className="text-[11px] text-[#D35400] font-medium">En attente de validation</span>
-                                        </div>
-                                    </div>
-                                )
-
+                            )
                         )}
                     </div>
                 </div>
             </div>
-
-
         </div>
     );
 };

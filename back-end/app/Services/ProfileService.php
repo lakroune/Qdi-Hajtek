@@ -34,8 +34,9 @@ class ProfileService
         if ($user->hasOneRole('client')) {
             return new ClientResource($user);
         }
-        if ($user->hasRole('artisan')) { // add document resource
-            return (new ArtisanResource($user)); }
+        if ($user->hasRole('artisan')) {
+            return (new ArtisanResource($user));
+        }
     }
 
 

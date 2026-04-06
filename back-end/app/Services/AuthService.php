@@ -7,6 +7,9 @@ use App\DAO\UserDAO;
 use App\DTO\Auth\LoginDTO;
 use App\DTO\Auth\RegisterDTO;
 use App\DTO\Auth\VerifierEmailDTO;
+use App\Http\Resources\AdminResource;
+use App\Http\Resources\ArtisanResource;
+use App\Http\Resources\ClientResource;
 use App\Jobs\SendVerificationEmail;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
@@ -62,10 +65,19 @@ class AuthService
         }
 
         $token = JWTAuth::fromUser($user);
+        $user->load(['client', 'admin', 'artisan']);
+        if ($user->hasOneRole('client')) {
+            $profile = new ClientResource($user);
+        }
+        if ($user->hasRole('artisan')) {
+            $profile = (new ArtisanResource($user));
+        }
+        if ($user->hasRole('admin')) {
+            $profile = new AdminResource($user);
+        }
         return [
-
             'success' => true,
-            'user' => $user,
+            'user' => $profile,
             'token' => $token
         ];
     }

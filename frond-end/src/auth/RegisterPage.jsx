@@ -74,8 +74,6 @@ const RegisterPage = () => {
                     secure: true,
                     sameSite: 'strict'
                 })
-                Cookies.set('USER_DATA', JSON.stringify(response.data.user), { expires: 7 });
-                console.log(response.data.user);
                 navigate('/auth/confirme-email');
             }
         } catch (error) {

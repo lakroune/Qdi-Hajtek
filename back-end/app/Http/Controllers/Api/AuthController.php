@@ -9,11 +9,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\auth\LoginRequest;
 use App\Http\Requests\auth\RegisterRequest;
 use App\Http\Requests\auth\VerifierEmailRequest;
-use App\Http\Requests\GenerateCodeRequest;
-use App\Mail\VerificationCodeMail;
 use App\Services\AuthService;
 use Exception;
-use Illuminate\Support\Facades\Mail;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
 
