@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Briefcase, Search, Grid, List, CheckCircle, XCircle, Star, Banknote, Check, RefreshCw, X } from 'lucide-react';
 import ServiceCard from '../components/cards/ServiceCard';
 import axiosClient from '../api/axios-client';
@@ -37,26 +37,73 @@ const ServicesManagement = () => {
     const [modelApproved, setModelApproved] = useState(false);
     const [modelRejected, setModelRejected] = useState(false);
     const [isProcessing, setIsProcessing] = useState(false);
+    const [nextPage, setNextPage] = useState(1);
+    const [hasMore, setHasMore] = useState(true);
+    const [searchQuery, setSearchQuery] = useState('')
+    const loaderRef = useRef(null);
+    const selectedProps = selectedService ? computeServiceProps(selectedService) : null;
+    const [loading, setLoading] = useState(false);
+
+    const fetchServices = async (isNewSearch = false) => {
+        if (isProcessing) return;
+        try {
+            setIsProcessing(true);
+            const pageToFetch = isNewSearch ? 1 : nextpage;
+
+            const response = await axiosClient.get('/manager-services', {
+                params: {
+                    page: pageToFetch,
+                    search: searchQuery,
+                    status: filter !== 'all' ? filter : undefined
+                }
+            });
+
+            const newItems = response.data.data;
+            const meta = response.data.meta;
+
+            setServices(prev => isNewSearch ? newItems : [...prev, ...newItems]);
+            setNextPage(meta.current_page + 1);
+            setHasMore(meta.current_page < meta.last_page);
+        } catch (error) {
+            toast.error('Erreur de chargement');
+        } finally {
+            setIsProcessing(false);
+        }
+    };
+
+
 
 
     useEffect(() => {
-        const fetchServices = async () => {
-            try {
-                const response = await axiosClient.get('/manager-services');
-                setServices(response.data.data);
-            } catch (error) {
-                console.error('Error fetching services:', error);
-            }
-        };
-        fetchServices();
-    }, []);
+        const delayDebounceFn = setTimeout(() => {
+            fetchServices(true);
+        }, 400);
+        return () => clearTimeout(delayDebounceFn);
+    }, [searchQuery, filter]);
+
+
+
 
     const filteredServices = filter === 'all'
         ? services
         : services.filter(s => s.status?.statut === filter);
 
 
-    const selectedProps = selectedService ? computeServiceProps(selectedService) : null;
+
+
+
+    useEffect(() => {
+        if (!loaderRef.current || !hasMore || isProcessing) return;
+
+        const observer = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting) {
+                fetchServices();
+            }
+        }, { threshold: 1.0 });
+
+        observer.observe(loaderRef.current);
+        return () => observer.disconnect();
+    }, [hasMore, isProcessing, nextPage]);
 
 
 
@@ -186,6 +233,8 @@ const ServicesManagement = () => {
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                         <input
                             type="text"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
                             placeholder="Rechercher un service..."
                             className="pl-9 pr-4 py-2 text-[12px] border border-gray-200 focus:border-[#1B4F72] focus:outline-none w-64"
                         />
@@ -263,7 +312,18 @@ const ServicesManagement = () => {
                     ))}
                 </div>
             )}
-
+            <div ref={loaderRef} className="h-10 w-full flex justify-center items-center mt-4">
+                {loading && hasMore && filteredServices.length > 0 && (
+                    <div className="flex flex-col items-center gap-2">
+                        <p className="text-[12px] text-gray-500">Chargement de la suite...</p>
+                    </div>
+                )}
+                {!hasMore && filteredServices.length > 0 && (
+                    <p className="text-gray-400 text-[11px] italic">
+                        Vous avez atteint la fin de la liste.
+                    </p>
+                )}
+            </div>
             {selectedService && selectedProps && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 overflow-y-auto">
                     <div className="bg-white w-full max-w-4xl my-8 border border-gray-200">
