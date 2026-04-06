@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\DTO\MessageDTO;
 use App\Http\Requests\StoreMessageRequest;
+use App\Http\Resources\ChatResource;
 use App\Services\MessageService;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\HttpCache\Store;
@@ -27,6 +28,22 @@ class MessageController extends Controller
             'status' => 'success',
             'data' => $messages
         ]);
+        // $data = $this->messageService->getConversationMessages((int) $conversationId);
+
+        // if ($data) {
+        //     return (new ChatResource((object)$data))
+        //         ->additional([
+        //             'status' => 'success',
+        //             'message' => 'Messages retrieved successfully'
+        //         ])
+        //         ->response()
+        //         ->setStatusCode(200);
+        // }
+
+        // return response()->json([
+        //     'status' => 'error',
+        //     'message' => 'Conversation not found'
+        // ], 404);
     }
 
     /**

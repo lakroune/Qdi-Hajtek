@@ -30,11 +30,17 @@ class DemandeDirecteController extends Controller
     {
         $dto = DemandeDirecteDTO::fromRequest($request);
         $demandeDirecte = $this->demandeDirecteService->createDemandeDirecte($dto);
+        if ($demandeDirecte) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Demande directe created successfully',
+            ], 201);
+        }
+
         return response()->json([
-            'success' => true,
-            'message' => 'Demande directe created successfully',
-            'data' => $demandeDirecte
-        ]);
+            'status' => 'error',
+            'message' => 'Demande directe not created'
+        ], 400);
     }
 
     /**

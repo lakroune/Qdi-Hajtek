@@ -15,10 +15,14 @@ return new class extends Migration
             $table->id();
             $table->foreignId('client_id')->constrained('clients')->onDelete('cascade');
             $table->foreignId('service_id')->constrained('services')->onDelete('cascade');
+
             $table->date('date_debut');
-            $table->enum('statut', ['en_attente', 'accepte', 'refuse', 'termine', 'annule'])->default('en_attente');
             $table->text('description_specifique')->nullable();
             $table->float('prix_final');
+
+            $table->enum('statut', ['en_attente', 'accepte', 'refuse', 'annule', 'termine'])
+                ->default('en_attente');
+
             $table->string('code_confirmation')->nullable();
             $table->date('date_confirmation')->nullable();
             $table->string('adresse')->nullable();
