@@ -6,7 +6,14 @@ const ProtectedRoute = ({ roles }) => {
     const userData = Cookies.get('USER_DATA');
     const user = userData ? JSON.parse(userData) : null;
 
-    if (!token) {
+    if (roles && roles.includes('guest')) {
+        if (token) {
+            return <Navigate to="/" replace />;
+        }
+        return <Outlet />;
+    }
+
+    if (!token ) {
         return <Navigate to="/auth/login" replace />;
     }
 
@@ -14,10 +21,9 @@ const ProtectedRoute = ({ roles }) => {
         const hasAccess = roles.includes(user?.role);
 
         if (!hasAccess) {
-            return <Navigate to="/unauthorized" replace />;
+            return <Navigate to="/" replace />;
         }
     }
-
     return <Outlet />;
 };
 

@@ -1,16 +1,10 @@
 import { Link } from 'react-router-dom';
 import {
-     Home, ArrowLeft,
-     Wrench, Hammer
+    Home, ArrowLeft,
 } from 'lucide-react';
 
 const NotFoundPage = () => {
-    const suggestions = [
-        { label: 'Plomberie', path: '/services/plomberie', icon: Wrench },
-        { label: 'Électricité', path: '/services/electricite', icon: Hammer },
-        { label: 'Menuiserie', path: '/services/menuiserie', icon: Wrench },
-        { label: 'Peinture', path: '/services/peinture', icon: Hammer },
-    ];
+
 
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -23,12 +17,12 @@ const NotFoundPage = () => {
                     <div className="mb-8">
                         <div className="relative inline-block">
                             <div className="w-48 h-48  mx-auto mb-6 relative">
-                               
+
                                 <div className="absolute inset-0 flex items-center justify-center">
                                     <span className="text-[72px] font-bold text-[#1B4F72] leading-none">404</span>
                                 </div>
 
-                                
+
                             </div>
                         </div>
 

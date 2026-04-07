@@ -5,6 +5,8 @@ import Logo from '../logo/Logo';
 import LogoutModal from '../models/LogoutModal';
 import { useNavigate } from 'react-router-dom';
 import axiosClient from '../../api/axios-client';
+import Cookies from 'js-cookie';
+import { set } from 'date-fns';
 const Header = ({
 }) => {
 
@@ -16,21 +18,45 @@ const Header = ({
   const naviguer = useNavigate();
   const [messages, setMessages] = useState(0);
   const [notifications, setNotifications] = useState(0);
-  const [typeUtilisateur, setTypeUtilisateur] = useState('client');
-  const [nomUtilisateur, setNomUtilisateur] = useState('ismail');
-  const [estAuthentifie, setEstAuthentifie] = useState(true);
+  const [typeUtilisateur, setTypeUtilisateur] = useState('');
+  const [nomUtilisateur, setNomUtilisateur] = useState('');
+  const [estAuthentifie, setEstAuthentifie] = useState(false);
 
   useEffect(() => {
     setEstMenuOuvert(false);
     setEstProfilOuvert(false);
   }, [emplacement]);
 
+
+
+  useEffect(() => {
+    const token = Cookies.get('ACCESS_TOKEN');
+    const userData = Cookies.get('USER_DATA');
+
+    if (token && userData) {
+      try {
+        const parsedUser = JSON.parse(userData);
+
+        setEstAuthentifie(true);
+        console.log(parsedUser.role);
+        setTypeUtilisateur(parsedUser.role);
+        setNomUtilisateur(parsedUser.lastname);
+        setNomUtilisateur(parsedUser.firstname);
+      } catch (error) {
+        console.error('Erreur parsing USER_DATA', error);
+        setEstAuthentifie(false);
+      }
+    } else {
+      setEstAuthentifie(false);
+    }
+  }, []);
+
+
   const liensPublics = [
     { nom: 'Accueil', chemin: '/' },
   ];
 
   const liensArtisan = [
-    { nom: 'Tableau de bord', chemin: '/dashboard' },
     { nom: 'Mes services', chemin: '/services' },
   ];
 
@@ -40,7 +66,7 @@ const Header = ({
 
   const obtenirLiensNav = () => {
     if (!estAuthentifie) return liensPublics;
-    if (typeUtilisateur === 'artisan') return liensArtisan;
+    if (typeUtilisateur === 'artisan') return [...liensPublics, ...liensArtisan];
     return [...liensPublics, ...liensClient];
   };
 
@@ -51,24 +77,34 @@ const Header = ({
   const gererDeconnexion = async () => {
     setEstEnDeconnexion(true);
     try {
-      await axiosClient.post('/logout');
-      localStorage.removeItem('ACCESS_TOKEN');
-      localStorage.removeItem('USER_ROLE');
-      naviguer('/login');
+      const response = await axiosClient.post('/logout');
+
+      if (response.status === 200 || response.status === 204) {
+        nettoyerStockageLocal();
+        naviguer('/auth/login', { replace: true });
+        toast.success(" vous avez bien ete deconnecte");
+      }
     } catch (erreur) {
       console.error("Erreur déconnexion", erreur);
-      localStorage.removeItem('ACCESS_TOKEN');
-      naviguer('/auth/login');
+
+      nettoyerStockageLocal();
+      naviguer('/auth/login', { replace: true });
     } finally {
       setEstEnDeconnexion(false);
       setAfficherModalDeconnexion(false);
     }
   };
 
+  const nettoyerStockageLocal = () => {
+    Cookies.remove('ACCESS_TOKEN');
+    Cookies.remove('USER_DATA');
+  };
+
   const obtenirElementsMenuProfil = () => {
     if (typeUtilisateur === 'artisan') {
       return [
         { vers: 'services', icone: Briefcase, libelle: 'Services' },
+        { vers: '/dashboard', icone: Cookie, libelle: 'Dashboard' },
         { vers: '/offres', icone: Calendar, libelle: 'Offres' },
         { vers: '/portfolio', icone: User, libelle: 'Portfolio' },
         { vers: '/parametres', icone: Settings, libelle: 'parametres' },
@@ -172,16 +208,7 @@ const Header = ({
                     </button>
                   )}
 
-                  {typeUtilisateur === 'artisan' && (
-                    <button className="relative p-2 text-[#1B4F72] hover:text-[#D35400] hover:bg-[#D35400]/10 rounded-full transition-all">
-                      <Calendar className="w-4 h-4" />
-                      {dommandesEnAttente > 0 && (
-                        <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-green-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center">
-                          {dommandesEnAttente > 9 ? '9+' : dommandesEnAttente}
-                        </span>
-                      )}
-                    </button>
-                  )}
+
 
                   <div className="relative">
                     <button

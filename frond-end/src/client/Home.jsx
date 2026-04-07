@@ -107,14 +107,17 @@ const HomePage = () => {
     return (
         <div className="min-h-screen bg-gray-50">
             <section className="relative bg-[#1b4f7296] pt-20 pb-12 overflow-hidden overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-                <div
-                    className="absolute inset-0 opacity-5"
-                    style={{
-                        backgroundImage: `url(/images/d.png)`,
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center'
-                    }}
-                />
+                <div className="absolute inset-0 overflow-hidden">
+                    <video
+                        className="w-full h-full object-cover opacity-80"
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                    >
+                        <source src="/videos/video.mp4" type="video/mp4" />
+                    </video>
+                </div>
 
                 <div className="relative max-w-6xl mx-auto px-4 text-center">
                     <h1 className="text-[24px] md:text-[28px] lg:text-[32px] font-bold text-white mb-3">
@@ -272,11 +275,11 @@ const HomePage = () => {
                 </div>
 
                 {services.length === 0 && loading && (
-                    <div className="text-center text-[#1B4F72] text-[12px] animate-pulse">
-                        <div className="flex justify-center mb-4 text-gray-300">
-                            <BadgeX className="w-12 h-12 text-[#94a8b6] animate-spin" />
-                        </div>
-                        <p className="text-gray-500 text-[14px]">Chargement en cours...</p>
+                    <div className="grid  sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 animate-pulse">
+                        <div className="bg-gray-200 h-90 w-full animate-pulse"></div>
+                        <div className="bg-gray-200 h-90 w-full animate-pulse"></div>
+                        <div className="bg-gray-200 h-90 w-full animate-pulse"></div>
+                        <div className="bg-gray-200 h-90 w-full animate-pulse "></div>
                     </div>
                 )}
 

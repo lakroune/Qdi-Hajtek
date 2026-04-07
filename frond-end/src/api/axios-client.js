@@ -30,7 +30,12 @@ axiosClient.interceptors.response.use(
 
         if (error.response && error.response.status === 403) {
             console.error("Accès interdit ! Role non autorisé.");
-            // window.location.href = '/unauthorized';
+            window.location.href = '/unauthorized';
+        }
+
+        if (error.response && error.response.status === 404) {
+            console.error("Ressource introuvable.");
+            window.location.href = '/not-found';
         }
 
         return Promise.reject(error);

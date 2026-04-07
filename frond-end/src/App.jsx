@@ -66,42 +66,42 @@ function App() {
         }}
       />
       <Routes>
+        <Route path="/" element={<div><Header /><Outlet /></div>}>
+          <Route index element={<HomePage />} />
+          <Route path="services" element={<Services />} />
+          <Route path="services/:id" element={<ServiceDetail />} />
+          <Route path="artisans/:id" element={<ArtisanPortfolioPage />} />
 
-        <Route path="/auth" element={<div className="auth-layout"><Outlet /></div>}>
-          <Route index element={<LoginPage />} />
-          <Route path="login" element={<LoginPage />} />
-          <Route path="register" element={<RegisterPage />} />
-          <Route path="forgot-password" element={<ForgotPasswordPage />} />
-          <Route path="reset-password" element={<ResetPasswordPage />} />
-          <Route path="confirme-email" element={<ConfirmEmailPage />} />
-        </Route>
-        <Route element={<ProtectedRoute roles={['client', 'artisan']} />}>
-          <Route path="/" element={<div className=""> <Header /><Outlet /> </div>}>
-            <Route index element={<HomePage />} />
+          <Route element={<ProtectedRoute roles={['client', 'artisan']} />}>
             <Route path="parametres" element={<SettingsPage />} />
             <Route path="messages" element={<MessagesPage />} />
             <Route path="messages/:conversation_id" element={<ConversationPage />} />
-            <Route path="nouvelle-offre" element={<ClientAddJob />} />
-            <Route path="mes-offres" element={<ClientListOffres />} />
-            <Route path="mes-offres/:id" element={<ClientOffreDetail />} />
-            <Route path="favorites" element={<ClientFavoris />} />
             <Route path="notifications" element={<Notifications />} />
-            <Route path="artisans/:id" element={<ArtisanPortfolioPage />} />
-            <Route path="services" element={<Services />} />
-            <Route path='services/:id' element={<ServiceDetail />} />
+
+            <Route element={<ProtectedRoute roles={['client']} />}>
+              <Route path="nouvelle-offre" element={<ClientAddJob />} />
+              <Route path="mes-offres" element={<ClientListOffres />} />
+              <Route path="mes-offres/:id" element={<ClientOffreDetail />} />
+              <Route path="favorites" element={<ClientFavoris />} />
+            </Route>
+
+            <Route element={<ProtectedRoute roles={['artisan']} />}>
+              <Route path="nouvelle-service" element={<ArtisanAddService />} />
+              <Route path="offres" element={<ArtisanOffres />} />
+              <Route path="offres/:id" element={<ArtisanOffreDetail />} />
+            </Route>
           </Route>
         </Route>
-        <Route element={<ProtectedRoute roles={['artisan']} />}>
-          <Route path="/" element={<div className="auth-layout"><Header estAuthentifie={true} nomUtilisateur={"nom"} notifications={4} messages={3} typeUtilisateur={"artisan"} /><Outlet /> </div>}>
-            <Route path="nouvelle-service" element={<ArtisanAddService />} />
-            <Route path="offres" element={<ArtisanOffres />} />
-            <Route path="offres/:id" element={<ArtisanOffreDetail />} />
+
+        <Route element={<ProtectedRoute roles={['guest']} />}>
+          <Route path="/auth" element={<div className="auth-layout"><Outlet /></div>}>
+            <Route path="login" element={<LoginPage />} />
+            <Route path="register" element={<RegisterPage />} />
+            <Route path="forgot-password" element={<ForgotPasswordPage />} />
+            <Route path="reset-password" element={<ResetPasswordPage />} />
+            <Route path="confirme-email" element={<ConfirmEmailPage />} />
           </Route>
         </Route>
-
-
-
-
 
         <Route element={<ProtectedRoute roles={['admin']} />}>
           <Route path="/admin" element={<AdminLayout />}>
@@ -116,12 +116,7 @@ function App() {
           </Route>
         </Route>
 
-
-
-
         <Route path="*" element={<NotFoundPage />} />
-
-
       </Routes>
 
     </>

@@ -38,7 +38,7 @@ Route::patch('/artisans/{userId}/approve', [ArtisanController::class, 'approve']
 Route::post('/artisans/{user}/reject', [ArtisanController::class, 'reject']);
 
 
-
+Route::apiResource('services', ServiceController::class)->only('index', 'show');
 
 
 Route::middleware('auth:api')->group(function () {
@@ -68,7 +68,7 @@ Route::middleware('auth:api')->group(function () {
 
 
     //service nadi (sauf toggel save)
-    Route::apiResource('services', ServiceController::class)->only('store', 'index', 'show');
+    Route::apiResource('services', ServiceController::class)->only('store');
     Route::get('manager-services',  [ServiceManagerController::class, 'index']);
 
     Route::patch('/manager-services/{service}/approve', [ServiceManagerController::class, 'approve']);
