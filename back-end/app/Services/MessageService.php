@@ -24,14 +24,11 @@ class MessageService
 
     public function sendMessage(MessageDTO $dto): Message
     {
-        //
-        //image
 
         $message = $this->messageDAO->create($dto->toArray());
-        $message->load('sender:id,lastname,firstname');
+        $receiver = $this->conversationDAO->getAutreParticipant($message->conversation, $message->sender_id);
         broadcast(new MessageSent($message))->toOthers();
-        //test
-        broadcast(new NewMessageCount($this->conversationDAO->getAutreParticipant($message->conversation, $message->sender_id)->id, $this->conversationDAO->countMessagesNotRead($message->sender_id)));//->toOthers();
+        broadcast(new NewMessageCount($receiver->id, $this->conversationDAO->countMessagesNotRead($receiver->id)))->toOthers();
         return $message;
     }
 

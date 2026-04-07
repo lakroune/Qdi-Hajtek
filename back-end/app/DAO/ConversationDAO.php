@@ -97,12 +97,12 @@ class ConversationDAO
             if ($item->client_id === $currentUserId) {
                 return $item->service->artisan->user;
             }
-            return $item->client;
+            return $item->client->user;
         }
 
         if ($conversation->conversable_type === Proposition::class) {
             if ($item->artisan_id === $currentUserId) {
-                return $item->offreTravail->client;
+                return $item->offreTravail->client->user;
             }
             return $item->artisan->user;
         }

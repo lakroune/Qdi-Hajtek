@@ -49,6 +49,9 @@ class MessageSent implements ShouldBroadcast
                 'created_at' => $this->message->created_at->toIso8601String(),
                 'is_read' => $this->message->is_read,
                 'sender' => [
+                    'id' => $this->message->sender->id,
+                    'first_name' => $this->message->sender->firstname,
+                    'last_name' => $this->message->sender->lastname,
                     'full_name' => $this->message->sender->firstname . ' ' . $this->message->sender->lastname
                 ]
             ]
