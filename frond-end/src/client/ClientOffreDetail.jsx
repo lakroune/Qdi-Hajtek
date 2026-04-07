@@ -7,6 +7,8 @@ import {
 } from 'lucide-react';
 import { useParams } from 'react-router-dom';
 import axiosClient from '../api/axios-client';
+import { se } from 'date-fns/locale';
+import toast from 'react-hot-toast';
 
 const ClientOffreDetail = () => {
     const [offre, setOffre] = useState(null);
@@ -17,6 +19,8 @@ const ClientOffreDetail = () => {
     const { id } = useParams();
     const [isModalShowImage, setIsModalShowImage] = useState(false);
     const [isShowOptionOffre, setIsShowOptionOffre] = useState(false);
+    const [isAccepting, setIsAccepting] = useState(false);
+
 
     useEffect(() => {
         const fetchOffreTravail = async () => {
@@ -49,14 +53,22 @@ const ClientOffreDetail = () => {
     };
 
     const accepetProposition = async (propId) => {
+        if (isAccepting || !propId) return;
+
+        setIsAccepting(true);
         try {
             const response = await axiosClient.patch(`/propositions/${propId}/accept`);
+
             if (response.status === 200) {
-                setShowAcceptModal(false);
+                toast.success('Proposition acceptée avec succès');
                 setOffre(prev => ({ ...prev, statut: 'accepted' }));
+                setShowAcceptModal(false);
             }
         } catch (error) {
-            console.error(error);
+            toast.error("Erreur lors de l'acceptation. Veuillez réessayer.");
+        } finally {
+            setIsAccepting(false);
+            setSelectedProposition(null);
         }
     };
 
@@ -420,8 +432,28 @@ const ClientOffreDetail = () => {
                             </p>
                         </div>
                         <div className="flex gap-3">
-                            <button onClick={() => setShowAcceptModal(false)} className="flex-1 py-2 border text-[12px] border-gray-200 text-gray-600 font-semibold">Annuler</button>
-                            <button onClick={() => accepetProposition(selectedProposition)} className="flex-1 py-2 bg-green-500 text-[12px] text-white font-semibold">Confirmer</button>
+                            <button
+                                disabled={isAccepting}  
+                                onClick={() => setShowAcceptModal(false)}
+                                className="flex-1 py-2 border text-[12px] border-gray-200 text-gray-600 font-semibold disabled:opacity-50"
+                            >
+                                Annuler
+                            </button>
+
+                            <button
+                                disabled={isAccepting}  
+                                onClick={() => accepetProposition(selectedProposition)}
+                                className="flex-1 py-2 bg-green-500 text-[12px] text-white font-semibold flex items-center justify-center gap-2 disabled:bg-green-300 disabled:cursor-not-allowed"
+                            >
+                                {isAccepting ? (
+                                    <>
+                                        <RefreshCw className="w-3 h-3 animate-spin" />
+                                        Traitement...
+                                    </>
+                                ) : (
+                                    "Confirmer"
+                                )}
+                            </button>
                         </div>
                     </div>
                 </div>
