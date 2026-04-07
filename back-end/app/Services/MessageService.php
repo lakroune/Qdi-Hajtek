@@ -5,6 +5,7 @@ namespace App\Services;
 use App\DAO\MessageDAO;
 use App\DTO\MessageDTO;
 use App\Events\MessageSent;
+use App\Events\NewMessageCount;
 use App\Models\Message;
 use Illuminate\Support\Facades\Storage;
 
@@ -28,7 +29,7 @@ class MessageService
         $message->load('sender:id,lastname,firstname');
         // //websocket 
         broadcast(new MessageSent($message))->toOthers();
-        
+        // broadcast(new NewMessageCount($receiverId, $newCount))->toOthers();
         return $message;
     }
 

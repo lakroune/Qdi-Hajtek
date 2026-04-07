@@ -6,7 +6,7 @@ import LogoutModal from '../models/LogoutModal';
 import { useNavigate } from 'react-router-dom';
 import axiosClient from '../../api/axios-client';
 import Cookies from 'js-cookie';
-import { set } from 'date-fns';
+import toast from 'react-hot-toast';
 const Header = ({
 }) => {
 
@@ -21,6 +21,8 @@ const Header = ({
   const [typeUtilisateur, setTypeUtilisateur] = useState('');
   const [nomUtilisateur, setNomUtilisateur] = useState('');
   const [estAuthentifie, setEstAuthentifie] = useState(false);
+  const [user, setUser] = useState(null);
+
 
   useEffect(() => {
     setEstMenuOuvert(false);
@@ -41,9 +43,8 @@ const Header = ({
         console.log(parsedUser.role);
         setTypeUtilisateur(parsedUser.role);
         setNomUtilisateur(parsedUser.lastname);
-        setNomUtilisateur(parsedUser.firstname);
+        setUser(parsedUser);
       } catch (error) {
-        console.error('Erreur parsing USER_DATA', error);
         setEstAuthentifie(false);
       }
     } else {
@@ -98,6 +99,8 @@ const Header = ({
   const nettoyerStockageLocal = () => {
     Cookies.remove('ACCESS_TOKEN');
     Cookies.remove('USER_DATA');
+    setUser(null);
+    setEstAuthentifie(false);
   };
 
   const obtenirElementsMenuProfil = () => {
@@ -127,15 +130,27 @@ const Header = ({
         setNotifications(response.data.notifications);
         setMessages(response.data.messages);
       } catch (error) {
-
+        console.error(error);
       }
     };
 
-    if (estAuthentifie) {
+    if (estAuthentifie && user?.id) {
       fetchCounts();
-    }
 
-  }, [estAuthentifie]);
+      const channel = window.Echo.private(`App.Models.User.${user.id}`);
+      channel.notification((notification) => {
+        setNotifications(prev => prev + 1);
+        toast.success(notification.message);
+      });
+      channel.listen('.NewMessage', (e) => {
+        setMessages(prev => prev + 1);
+      });
+      return () => {
+        window.Echo.leave(`App.Models.User.${user.id}`);
+      };
+    }
+  }, [estAuthentifie, user?.id]);
+
   return (
     <>
       <header

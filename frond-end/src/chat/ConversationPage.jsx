@@ -55,35 +55,34 @@ const ConversationPage = () => {
                 );
 
                 const apiData = response.data.data;
+
                 const messagesArray = apiData.messages.data;
                 const userId = apiData.currentUser.id;
 
-                // type extrait depuis conversable_type (inchangé)
-                const type = apiData.conversation.conversable_type.split('\\').pop();
-                const conversable = apiData.conversation.conversable;
+                const conversation = apiData.conversation;
+                const type = conversation.type;
+                const statut = conversation.status;
+                const isCompleted = conversation.is_completed;
+                const prix_final = conversation.service?.price ?? 0;
+                const offre_service_id = conversation.service?.id;
 
-                const isClient = (conversable?.client_id === userId && type === 'DemandeDirecte')
-                    || (conversable?.artisan_id !== userId && type === 'Proposition');
+                const is_client = true;
 
-                const prix_final = conversable?.prix_final ?? 0;
-                const offre_service_id = conversable?.service_id ?? conversable?.offreTravail_id;
-                const statut = conversable?.statut ?? conversable?.statut_proposition;
-                const isCompleted = conversable?.is_completed ?? false;
-
-                // Nouveau : paiement.statut peut être "escrow" ou "paid"
-                const paiement = apiData.conversation.paiement;
-                const isPaid = paiement?.statut === 'paid' || paiement?.statut === 'escrow';
-                const timePaid = paiement?.paid_at;
+                const payment = conversation.payment;
+                const isPaid = payment?.status === 'paid'
+                    || payment?.status === 'escrow'
+                    || payment?.status === 'released';
+                const timePaid = payment?.paid_at;
 
                 setCurrentUserId(userId);
 
                 setInfoConversation({
-                    subject: apiData.conversation.subject,
+                    subject: conversation.subject,
                     type,
                     statut,
                     offre_service_id,
                     prix_final,
-                    is_client: isClient,
+                    is_client,
                     is_paid: isPaid,
                     time_paid: timePaid,
                     is_completed: isCompleted,
@@ -91,7 +90,7 @@ const ConversationPage = () => {
 
                 const formattedMessages = messagesArray.map(msg => ({
                     id: msg.id,
-                    text: msg.contenu_message,
+                    text: msg.content,
                     isMe: msg.sender_id === userId,
                     time: formatDistanceToNow(parseISO(msg.created_at), {
                         addSuffix: true,
@@ -100,7 +99,8 @@ const ConversationPage = () => {
                     status: msg.is_read ? 'read' : 'sent',
                     senderName: msg.sender_id === userId
                         ? 'You'
-                        : `${msg.sender.firstname} ${msg.sender.lastname}`
+                        : (msg.sender.full_name
+                            ?? `${msg.sender.first_name} ${msg.sender.last_name}`)
                 }));
 
                 setMessages(formattedMessages);
@@ -125,14 +125,15 @@ const ConversationPage = () => {
 
                         return [...prevMessages, {
                             id: e.message.id,
-                            text: e.message.contenu_message,
+                            text: e.message.content,   // contenu_message → content
                             isMe: e.message.sender_id === currentUserId,
                             time: formatDistanceToNow(parseISO(e.message.created_at), {
                                 addSuffix: true,
                                 locale: fr
                             }),
                             status: e.message.is_read ? 'read' : 'sent',
-                            senderName: `${e.message.sender.firstname || ''} ${e.message.sender.lastname || ''}`.trim()
+                            senderName: e.message.sender.full_name
+                                ?? `${e.message.sender.first_name ?? ''} ${e.message.sender.last_name ?? ''}`.trim()
                         }];
                     });
                 });
@@ -160,7 +161,7 @@ const ConversationPage = () => {
                 const msg = response.data.data;
                 const myNewMsg = {
                     id: msg.id,
-                    text: msg.contenu_message,
+                    text: msg.content ?? msg.contenu_message, // compatibilité les deux
                     isMe: true,
                     time: formatDistanceToNow(parseISO(msg.created_at), {
                         addSuffix: true,
