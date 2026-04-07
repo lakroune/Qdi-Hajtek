@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\DAO\OffreTravailDAO;
 use App\DTO\OffreTravailDTO;
+use App\Http\Resources\OffreResource;
+use App\Http\Resources\OffreTravailResource;
 use Exception;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -61,6 +63,7 @@ class OffreTravailService
 
     public function findByClient($id)
     {
-        return $this->offreTravailDAO->findByClient($id);
+        $offre = $this->offreTravailDAO->findByClient($id);
+        return OffreTravailResource::collection($offre);
     }
 }

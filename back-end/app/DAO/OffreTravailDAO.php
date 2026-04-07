@@ -60,7 +60,10 @@ class OffreTravailDAO
     }
     public function findByClient($id)
     {
-        return OffreTravail::where('client_id', $id)->with('categorie')->withCount('propositions')->get();
+        return OffreTravail::where('client_id', $id)
+            ->with('categorie')
+            ->withCount('propositions')
+            ->paginate(3);
     }
     public function findByCategorie($id)
     {
