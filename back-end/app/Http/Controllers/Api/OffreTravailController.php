@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\DTO\OffreTravailDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StroreOffreTravailRequest;
+use App\Http\Resources\OffreTravailResource;
 use App\Services\CategorieService;
 use App\Services\OffreTravailService;
 use Illuminate\Http\Request;
@@ -23,12 +24,8 @@ class OffreTravailController extends Controller
      */
     public function index()
     {
-        return [
-            'success' => true,
-            'message' => 'Offre de travail fetched successfully',
-            'offres' => $this->offreTravailService->getAllOffreTravail(),
-            'categories' => $this->categorieService->listActiveCategories()
-        ];
+        $offreTravails =   $this->offreTravailService->getAllOffreTravail();
+        return OffreTravailResource::collection($offreTravails);
     }
 
     /**

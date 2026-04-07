@@ -79,11 +79,19 @@ const ClientListOffres = () => {
         };
         return configs[urgency] || { label: urgency, color: 'bg-gray-500 text-white' };
     };
-
     const SkeletonGrid = () => (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 animate-pulse">
+        <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 animate-pulse">
             {Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} className="bg-gray-100 h-64 rounded" />
+                <div key={i} className="bg-white border border-gray-100 overflow-hidden">
+                    <div className="h-16 bg-gray-200" />
+                    <div className="p-4 space-y-3">
+                        <div className="h-3 bg-gray-200 rounded w-1/2" />
+                        <div className="h-4 bg-gray-200 rounded w-3/4" />
+                        <div className="h-3 bg-gray-200 rounded w-full" />
+                        <div className="h-3 bg-gray-200 rounded w-2/3" />
+                        <div className="h-8 bg-gray-200 rounded w-full mt-2" />
+                    </div>
+                </div>
             ))}
         </div>
     );
@@ -106,7 +114,7 @@ const ClientListOffres = () => {
             </div>
 
             <div className="w-full mx-auto px-4 py-6">
-                {isLoading ? (
+                {isLoading && currentPage === 1 ? (
                     <SkeletonGrid />
                 ) : offres.length === 0 ? (
                     <div className="text-center py-16">
@@ -136,7 +144,7 @@ const ClientListOffres = () => {
                                             <div className="absolute inset-0 from-black/50 to-transparent" />
                                             <div className="absolute top-3 left-3">
                                                 <span className="px-2.5 py-1 bg-white/90 backdrop-blur text-[10px] font-bold text-[#1B4F72]">
-                                                    {job.categorie?.nom}  {/* nom_categorie → nom */}
+                                                    {job.categorie?.nom}
                                                 </span>
                                             </div>
                                             <div className="absolute top-3 right-3">
@@ -197,21 +205,20 @@ const ClientListOffres = () => {
                                     </div>
                                 );
                             })}
-                            <div ref={loaderRef} className="h-10 w-full flex justify-center items-center mt-4">
-                                {isLoading && hasMore && offres.length > 0 && (
-                                    <div className="flex flex-col items-center gap-2">
-                                        <p className="text-[12px] text-gray-500">Chargement de la suite...</p>
-                                    </div>
-                                )}
-                                {!hasMore && offres.length > 0 && (
-                                    <p className="text-gray-400 text-[11px] italic">
-                                        Vous avez atteint la fin de la liste.
-                                    </p>
-                                )}
-                            </div>
+
                         </div>
 
+                        <div ref={loaderRef} className="h-10 w-full flex justify-center items-center mt-4">
+                            {isLoading && hasMore && offres.length > 0 && (
 
+                                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-orange-500"></div>
+                            )}
+                            {!hasMore && offres.length > 0 && (
+                                <p className="text-gray-400 text-[11px] italic">
+                                    Vous avez atteint la fin de la liste.
+                                </p>
+                            )}
+                        </div>
                     </>
                 )}
             </div>

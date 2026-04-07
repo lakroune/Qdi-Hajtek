@@ -56,14 +56,16 @@ class OffreTravailDAO
 
     public function getAll()
     {
-        return OffreTravail::with('categorie')->paginate(10);
+        return OffreTravail::where('statut', 'ouvert')
+            ->with('categorie')
+            ->paginate(10);
     }
     public function findByClient($id)
     {
         return OffreTravail::where('client_id', $id)
             ->with('categorie')
             ->withCount('propositions')
-            ->paginate(3);
+            ->paginate(8);
     }
     public function findByCategorie($id)
     {
