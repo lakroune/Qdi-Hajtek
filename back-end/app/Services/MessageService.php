@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\DAO\ConversationDAO;
 use App\DAO\MessageDAO;
 use App\DTO\MessageDTO;
 use App\Events\MessageSent;
@@ -15,7 +16,8 @@ class MessageService
      * Create a new class instance.
      */
     public function __construct(
-        private MessageDAO $messageDAO
+        private MessageDAO $messageDAO,
+        private ConversationDAO $conversationDAO
     ) {
         //
     }
@@ -29,7 +31,7 @@ class MessageService
         $message->load('sender:id,lastname,firstname');
         broadcast(new MessageSent($message))->toOthers();
         //test
-        broadcast(new NewMessageCount(3, 2));//->toOthers();
+        broadcast(new NewMessageCount($this->conversationDAO->getAutreParticipant($message->conversation, $message->sender_id)->id, $this->conversationDAO->countMessagesNotRead($message->sender_id)));//->toOthers();
         return $message;
     }
 

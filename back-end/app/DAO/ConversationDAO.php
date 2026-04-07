@@ -36,60 +36,79 @@ class ConversationDAO
     {
         return Conversation::where('id', $id)->delete();
     }
+
+
     public function getConversations($userId)
     {
-
-
         return Conversation::where(function ($query) use ($userId) {
-
-            // clent apartir de demande directe
-            $query->where(function ($q1) use ($userId) {
-                $q1->where('conversable_type', DemandeDirecte::class)
-                    ->whereHasMorph('conversable', DemandeDirecte::class, function ($q2) use ($userId) {
-                        $q2->where('client_id', $userId);
-                    });
-            })
-                // client apartir de offre
-                ->orWhere(function ($q1) use ($userId) {
-                    $q1->where('conversable_type', Proposition::class)
-                        ->whereHasMorph('conversable', Proposition::class, function ($q2) use ($userId) {
-                            $q2->wherehas('offreTravail', function ($q3) use ($userId) {
-                                $q3->where('client_id', $userId);
-                            });
-                        });
-                });
-        })->orWhere(function ($query) use ($userId) {
-
-            // artisan apartir de demande directe
-            $query->where(function ($q1) use ($userId) {
-                $q1->where('conversable_type', DemandeDirecte::class)
-                    ->whereHasMorph('conversable', DemandeDirecte::class, function ($q2) use ($userId) {
-                        $q2->whereHas('service', function ($q3) use ($userId) {
-                            $q3->where('artisan_id', $userId);
-                        });
-                    });
-            })
-                // artisan apartir de offre
-                ->orWhere(function ($q1) use ($userId) {
-                    $q1->where('conversable_type', Proposition::class)
-                        ->whereHasMorph('conversable', Proposition::class, function ($q2) use ($userId) {
-                            $q2->where('artisan_id', $userId);
-                        });
-                });
-        })->orderBy('updated_at', 'desc')
+            $this->applyUserFilters($query, $userId);
+        })
+            ->orderBy('updated_at', 'desc')
             ->with(['messages' => function ($q) {
                 $q->latest()->limit(1);
             }])
-
             ->withCount(['messages as unread_count' => function ($q) use ($userId) {
                 $q->where('is_read', false)
                     ->where('sender_id', '!=', $userId);
             }])
-
             ->get();
     }
 
+    public function countMessagesNotRead(int $userId)
+    {
+        return Conversation::where(function ($query) use ($userId) {
+            $this->applyUserFilters($query, $userId);
+        })
+            ->whereHas('messages', function ($q) use ($userId) {
+                $q->where('is_read', false)
+                    ->where('sender_id', '!=', $userId);
+            })
+            ->count();
+    }
 
+    private function applyUserFilters($query, $userId)
+    {
+        $query->where(function ($q) use ($userId) {
+            $q->where(function ($inner) use ($userId) {
+                $inner->whereHasMorph('conversable', [DemandeDirecte::class], function ($q2) use ($userId) {
+                    $q2->where('client_id', $userId);
+                })->orWhereHasMorph('conversable', [Proposition::class], function ($q2) use ($userId) {
+                    $q2->whereHas('offreTravail', function ($q3) use ($userId) {
+                        $q3->where('client_id', $userId);
+                    });
+                });
+            })
+                ->orWhere(function ($inner) use ($userId) {
+                    $inner->whereHasMorph('conversable', [DemandeDirecte::class], function ($q2) use ($userId) {
+                        $q2->whereHas('service', function ($q3) use ($userId) {
+                            $q3->where('artisan_id', $userId);
+                        });
+                    })->orWhereHasMorph('conversable', [Proposition::class], function ($q2) use ($userId) {
+                        $q2->where('artisan_id', $userId);
+                    });
+                });
+        });
+    }
+    public function getAutreParticipant(Conversation $conversation, int $currentUserId)
+    {
+        $item = $conversation->conversable;
+
+        if ($conversation->conversable_type === DemandeDirecte::class) {
+            if ($item->client_id === $currentUserId) {
+                return $item->service->artisan->user;
+            }
+            return $item->client;
+        }
+
+        if ($conversation->conversable_type === Proposition::class) {
+            if ($item->artisan_id === $currentUserId) {
+                return $item->offreTravail->client;
+            }
+            return $item->artisan->user;
+        }
+
+        return null;
+    }
 
     // acceptOffer
 
@@ -105,20 +124,7 @@ class ConversationDAO
     }
 
 
-    public function countMessagesNotRead(int $userId)
-    {
-        $conversations = $this->getConversations($userId);
-        $count = 0;
-        foreach ($conversations as $conversation) {
-            $messages = $conversation->messages;
-            foreach ($messages as $message) {
-                if (!$message->is_read && $message->sender_id != $userId) {
-                    $count++;
-                }
-            }
-        }
-        return $count;
-    }
+
 
     public  function completeMission(int $id)
     {
