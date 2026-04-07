@@ -22,9 +22,9 @@ class OffreTravailController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index( Request $request)
     {
-        $offreTravails =   $this->offreTravailService->getAllOffreTravail();
+        $offreTravails =   $this->offreTravailService->getAllOffreTravail( $request);
         return OffreTravailResource::collection($offreTravails);
     }
 

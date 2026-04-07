@@ -54,12 +54,28 @@ class OffreTravailDAO
             ->findOrFail($id);
     }
 
-    public function getAll()
+    public function getAll($request)
     {
-        return OffreTravail::where('statut', 'ouvert')
-            ->with('categorie')
-            ->paginate(10);
+        $query = OffreTravail::query()
+            ->with(['categorie', 'client.user', 'categorie'])
+            ->where('statut', 'ouvert');
+        if ($request->filled('categorie')) {
+            $query->where('categorie_id', $request->categorie);
+        }
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('titre', 'LIKE', "%{$search}%")
+                    ->orWhere('description', 'LIKE', "%{$search}%");
+            });
+        }
+        $offres = $query->latest()
+            ->paginate(12);
+
+        return $offres;
     }
+
+
     public function findByClient($id)
     {
         return OffreTravail::where('client_id', $id)

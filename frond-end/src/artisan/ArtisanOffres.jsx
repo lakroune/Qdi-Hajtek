@@ -85,7 +85,7 @@ const ArtisanOffres = () => {
     const badgeUrgence = (name) => {
         const tableUrgence = {
             urgent: { titre: 'Urgent', color: 'bg-red-500 text-white' },
-            moyen:  { titre: 'Standard', color: 'bg-blue-500 text-white' },
+            moyen: { titre: 'Standard', color: 'bg-blue-500 text-white' },
             faible: { titre: 'Planifié', color: 'bg-gray-500 text-white' },
         };
         return tableUrgence[name] || { titre: name, color: 'bg-gray-400 text-white' };
@@ -221,8 +221,8 @@ const ArtisanOffres = () => {
                                                 </div>
                                             </div>
 
-                                            
-                                            <a    href={`/offres/${offre.id}`}
+
+                                            <a href={`/offres/${offre.id}`}
                                                 className="flex items-center justify-center gap-2 w-full py-2.5 bg-[#1B4F72] hover:bg-[#D35400] text-white text-[12px] font-semibold transition-colors mt-2"
                                             >
                                                 <Eye className="w-4 h-4" />

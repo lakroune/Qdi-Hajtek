@@ -103,7 +103,22 @@ const HomePage = () => {
         const response = axiosClient.post(`/services/${id}/favorie`);
         console.log(response);
     };
-
+    const SkeletonGrid = () => (
+        <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 animate-pulse">
+            {Array.from({ length: 8 }).map((_, i) => (
+                <div key={i} className="bg-white border border-gray-100 overflow-hidden">
+                    <div className="h-16 bg-gray-200" />
+                    <div className="p-4 space-y-3">
+                        <div className="h-3 bg-gray-200 rounded w-1/2" />
+                        <div className="h-4 bg-gray-200 rounded w-3/4" />
+                        <div className="h-3 bg-gray-200 rounded w-full" />
+                        <div className="h-3 bg-gray-200 rounded w-2/3" />
+                        <div className="h-8 bg-gray-200 rounded w-full mt-2" />
+                    </div>
+                </div>
+            ))}
+        </div>
+    );
     return (
         <div className="min-h-screen bg-gray-50">
             <section className="relative bg-[#1b4f7296] pt-20 pb-12 overflow-hidden overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
@@ -275,12 +290,7 @@ const HomePage = () => {
                 </div>
 
                 {services.length === 0 && loading && (
-                    <div className="grid  sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 animate-pulse">
-                        <div className="bg-gray-200 h-90 w-full animate-pulse"></div>
-                        <div className="bg-gray-200 h-90 w-full animate-pulse"></div>
-                        <div className="bg-gray-200 h-90 w-full animate-pulse"></div>
-                        <div className="bg-gray-200 h-90 w-full animate-pulse "></div>
-                    </div>
+                    <SkeletonGrid />
                 )}
 
                 {services.length === 0 && !loading && (
