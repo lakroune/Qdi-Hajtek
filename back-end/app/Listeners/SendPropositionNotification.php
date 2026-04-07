@@ -5,7 +5,6 @@ namespace App\Listeners;
 use App\Events\PropositionCreated;
 use App\Notifications\NewPropositionNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class SendPropositionNotification implements ShouldQueue
 {

@@ -16,10 +16,12 @@ class Proposition extends Model
         'artisan_id',
         'offre_travail_id',
         'prix_propose',
+        'prix_final',
         'delai_execution',
         'message_explicatif',
-        'date_disponibilite',
         'conditions_speciales',
+        'statut',
+        'date_debut'
     ];
 
     public function offreTravail()

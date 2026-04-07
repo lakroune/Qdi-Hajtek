@@ -12,10 +12,11 @@ class PropositionDTO
         public int $offre_id,
         public float $prix_propose,
         public string $delai_execution,
-        public ?string $date_disponibilite,
+        public ?string $date_debut,
         public string $message_explicatif,
         public ?string $conditions_speciales,
-        public string $statut_proposition = 'en_attente'
+        public string $statut = 'en_attente',
+        public float  $prix_final = 0
     ) {
         //
     }
@@ -29,7 +30,8 @@ class PropositionDTO
             delai_execution: $request->validated('delai_execution'),
             message_explicatif: $request->validated('message_explicatif'),
             conditions_speciales: $request->validated('conditions_speciales'),
-            date_disponibilite: $request->validated('date_disponibilite'),
+            date_debut: $request->validated('date_disponibilite')
+
         );
     }
 
@@ -42,8 +44,9 @@ class PropositionDTO
             'delai_execution' => $this->delai_execution,
             'message_explicatif' => $this->message_explicatif,
             'conditions_speciales' => $this->conditions_speciales,
-            'statut_proposition' => $this->statut_proposition,
-            'date_disponibilite' => $this->date_disponibilite
+            'statut' => $this->statut,
+            'date_debut' => $this->date_debut,
+            'prix_final' => $this->prix_final
         ];
     }
 }

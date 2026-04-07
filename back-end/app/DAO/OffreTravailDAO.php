@@ -48,7 +48,7 @@ class OffreTravailDAO
             'categorie',
             'client.user',
             'propositions' => function ($prop) {
-                $prop->where('statut_proposition', 'en_attente')->with('artisan.user.client');
+                $prop->where('statut', 'ouvert')->with('artisan.user.client');
             }
         ])->where('statut', 'ouvert')
             ->findOrFail($id);

@@ -4,12 +4,14 @@ namespace App\Notifications;
 
 use App\Models\Proposition;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class NewPropositionNotification extends Notification implements ShouldQueue
+class NewPropositionNotification extends Notification implements ShouldQueue, ShouldBroadcast
 {
     use Queueable;
 
@@ -38,7 +40,7 @@ class NewPropositionNotification extends Notification implements ShouldQueue
     {
         return (new MailMessage)
             ->subject('Nouvelle proposition pour votre offre')
-            ->greeting("Bonjour {$this->proposition->artisan->user->lastname},")
+            ->greeting("Bonjour {$this->proposition->offreTravail->client->user->firstname} {$this->proposition->offreTravail->client->user->lastname},")
             ->line("Un artisan a envoyé une proposition pour votre offre : **{$this->proposition->offreTravail->titre}**.")
             ->line("Prix proposé : **{$this->proposition->prix_propose} DH**")
             ->action('Voir la proposition', url('/offres/' . $this->proposition->offre_id))
@@ -62,11 +64,26 @@ class NewPropositionNotification extends Notification implements ShouldQueue
         ];
     }
 
-    public function toBroadcast($notifiable)
+    public function toDatabase($notifiable)
     {
-        return new BroadcastMessage([
-            'id' => $this->id,
-            'data' => $this->toArray($notifiable),
-        ]);
+        return [
+            'proposition_id' => $this->proposition->id,
+            'offre_id' => $this->proposition->offre_id,
+            'titre_offre' => $this->proposition->offreTravail->titre,
+            'artisan_name' => $this->proposition->artisan->user->firstname . ' ' . $this->proposition->artisan->user->lastname,
+            'prix_propose' => $this->proposition->prix_propose,
+            'message' => "Nouvelle proposition reçue.",
+            'type_data' => 'notification',
+        ];
+    }
+    public function toBroadcast(object $notifiable)
+    {
+        return [
+            'message' => "Une nouvelle proposition vient d'être reçuee",
+        ];
+    }
+    public function broadcastAs(): string
+    {
+        return 'new-notification';
     }
 }

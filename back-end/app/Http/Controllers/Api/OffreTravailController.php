@@ -14,8 +14,7 @@ class OffreTravailController extends Controller
 {
 
     public function __construct(
-        private OffreTravailService $offreTravailService,
-        private CategorieService $categorieService
+        private OffreTravailService $offreTravailService 
     ) {
         // 
     }

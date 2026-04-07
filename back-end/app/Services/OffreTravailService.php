@@ -5,6 +5,7 @@ namespace App\Services;
 use App\DAO\OffreTravailDAO;
 use App\DTO\OffreTravailDTO;
 use App\Http\Resources\OffreResource;
+use App\Http\Resources\OffreTravailDetailResource;
 use App\Http\Resources\OffreTravailResource;
 use Exception;
 use Illuminate\Support\Facades\Log;
@@ -53,7 +54,8 @@ class OffreTravailService
 
     public function findOffreTravail($id)
     {
-        return $this->offreTravailDAO->find($id);
+        $offre = $this->offreTravailDAO->find($id);
+        return new  OffreTravailDetailResource($offre);
     }
 
     public function getAllOffreTravail( $request)
