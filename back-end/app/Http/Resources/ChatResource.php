@@ -14,23 +14,24 @@ class ChatResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $messages = $this->messages;
+
         return [
             'messages' => [
-                'data' => ChatMessageResource::collection($this->messages),
+                'data' => ChatMessageResource::collection($messages),
                 'pagination' => [
-                    'current_page' => $this->messages->currentPage(),
-                    'last_page' => $this->messages->lastPage(),
-                    'per_page' => $this->messages->perPage(),
-                    'total' => $this->messages->total(),
-                    'next_page_url' => $this->messages->nextPageUrl(),
-                    'prev_page_url' => $this->messages->previousPageUrl(),
+                    'current_page' => $messages->currentPage(),
+                    'last_page' => $messages->lastPage(),
+                    'per_page' => $messages->perPage(),
+                    'total' => $messages->total(),
+                    'has_more' => $messages->hasMorePages(),
                 ],
             ],
 
             'conversation' => new ConversationDetailResource($this->conversation),
 
             'currentUser' => [
-                'id' => auth('api')->user()->id,
+                'id' => auth('api')->id(),
             ],
         ];
     }

@@ -5,6 +5,7 @@ namespace App\DAO;
 use App\Models\Conversation;
 use App\Models\DemandeDirecte;
 use App\Models\Proposition;
+use Illuminate\Support\Facades\DB;
 
 class ConversationDAO
 {
@@ -23,7 +24,7 @@ class ConversationDAO
 
     public function find(int $id)
     {
-        return Conversation::find($id);
+        return Conversation::findOrFail($id);
     }
 
     public function update(int $id, array $data)
@@ -96,12 +97,10 @@ class ConversationDAO
     {
         $conversation = Conversation::with('conversable')->find($id);
 
-        if ($conversation->conversable_type == Proposition::class) {
-            $conversation->conversable->update(['statut_proposition' => 'accepte', 'prix_final' => $prix_final]);
-        }
-        if ($conversation->conversable_type == DemandeDirecte::class) {
-            $conversation->conversable->update(['statut' => 'accepte', 'prix_final' => $prix_final]);
-        }
+        $conversation->conversable->update([
+            'prix_final' => $prix_final,
+            'statut' => 'accepte'
+        ]);
         return $conversation;
     }
 
@@ -123,20 +122,35 @@ class ConversationDAO
 
     public  function completeMission(int $id)
     {
-        $conversation = Conversation::find($id);
-        // si demande directe or offre
+        $conversation = Conversation::findOrFail($id);
         $conversation->conversable->update(['statut' => 'termine']);
         return $conversation;
     }
 
     public function confirmCode(int $id, string $code)
     {
-        $conversation = Conversation::findOrFail($id);
-        if ($conversation->conversable->code_confirmation == $code) {
-            $conversation->conversable->is_completed = true;
-            $conversation->conversable->save();
-            return true;
+        $conversation = Conversation::with(['paiement', 'conversable'])->findOrFail($id);
+        $paiement = $conversation->paiement;
+        $item = $conversation->conversable;
+
+        if ($item->code_confirmation === $code && $item->is_completed === false && $item->statut === 'termine') {
+            return DB::transaction(function () use ($conversation, $paiement, $item) {
+                $item->update([
+                    'is_completed' => true,
+                    'date_confirmation' => now()
+                ]);
+                $commission = $paiement->montant_total * 0.025;
+                $montant_artisan = $paiement->montant_total - $commission;
+                $paiement->update([
+                    'statut' => 'released',
+                    'montant_artisan' => $montant_artisan,
+                    'commission_admin' => $commission,
+                    'released_at' => now(),
+                ]);
+                return true;
+            });
         }
+
         return false;
     }
 }

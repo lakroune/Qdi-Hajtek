@@ -65,7 +65,7 @@ const Header = ({
   ];
 
   const obtenirLiensNav = () => {
-    if (!estAuthentifie) return liensPublics;
+    if (!estAuthentifie) return [];
     if (typeUtilisateur === 'artisan') return [...liensPublics, ...liensArtisan];
     return [...liensPublics, ...liensClient];
   };

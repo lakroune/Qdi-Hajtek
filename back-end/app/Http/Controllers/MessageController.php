@@ -20,30 +20,30 @@ class MessageController extends Controller
      */
     public function index($conversationId)
     {
-        $messages = $this->messageService->getConversationMessages(
-            (int) $conversationId
-        );
-
-        return response()->json([
-            'status' => 'success',
-            'data' => $messages
-        ]);
-        // $data = $this->messageService->getConversationMessages((int) $conversationId);
-
-        // if ($data) {
-        //     return (new ChatResource((object)$data))
-        //         ->additional([
-        //             'status' => 'success',
-        //             'message' => 'Messages retrieved successfully'
-        //         ])
-        //         ->response()
-        //         ->setStatusCode(200);
-        // }
+        // $messages = $this->messageService->getConversationMessages(
+        //     (int) $conversationId
+        // );
 
         // return response()->json([
-        //     'status' => 'error',
-        //     'message' => 'Conversation not found'
-        // ], 404);
+        //     'status' => 'success',
+        //     'data' => $messages
+        // ]);
+        $data = $this->messageService->getConversationMessages((int) $conversationId);
+
+        if ($data) {
+            return (new ChatResource((object)$data))
+                ->additional([
+                    'status' => 'success',
+                    'message' => 'Messages retrieved successfully'
+                ])
+                ->response()
+                ->setStatusCode(200);
+        }
+
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Conversation not found'
+        ], 404);
     }
 
     /**
