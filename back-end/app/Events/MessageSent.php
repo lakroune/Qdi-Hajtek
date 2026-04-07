@@ -31,12 +31,27 @@ class MessageSent implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('chat.' . $this->message->conversation_id),
+            new PrivateChannel('conversation.' . $this->message->conversation_id),
         ];
     }
 
     public function broadcastAs(): string
     {
-        return 'message-sent';
+        return 'new-message';
+    }
+    public function broadcastWith(): array
+    {
+        return [
+            'message' => [
+                'id' => $this->message->id,
+                'content' => $this->message->contenu_message,
+                'sender_id' => $this->message->sender_id,
+                'created_at' => $this->message->created_at->toIso8601String(),
+                'is_read' => $this->message->is_read,
+                'sender' => [
+                    'full_name' => $this->message->sender->firstname . ' ' . $this->message->sender->lastname
+                ]
+            ]
+        ];
     }
 }

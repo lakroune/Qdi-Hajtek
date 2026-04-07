@@ -17,7 +17,7 @@ class NewMessageCount implements ShouldBroadcast
     /**
      * Create a new event instance.
      */
-    public function __construct( public int $count, public int $userId)
+    public function __construct(public int $userId, public int $count)
     {
         //
     }
@@ -30,7 +30,17 @@ class NewMessageCount implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('App.Models.User.' . $this->userId),
+            new PrivateChannel('countMessage.user.' . $this->userId),
+        ];
+    }
+    public function broadcastAs(): string
+    {
+        return 'new-message-count';
+    }
+    public function broadcastWith(): array
+    {
+        return [
+            'messages' => $this->count,
         ];
     }
 }

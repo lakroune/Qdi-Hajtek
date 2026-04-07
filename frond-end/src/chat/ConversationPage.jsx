@@ -117,15 +117,15 @@ const ConversationPage = () => {
     useEffect(() => {
         if (conversation_id && window.Echo && currentUserId) {
             const channel = window.Echo
-                .private(`chat.${conversation_id}`)
-                .listen('.message-sent', (e) => {
+                .private(`conversation.${conversation_id}`)
+                .listen('.new-message', (e) => {
                     setMessages((prevMessages) => {
                         const isDuplicate = prevMessages.some(msg => msg.id === e.message.id);
                         if (isDuplicate) return prevMessages;
 
                         return [...prevMessages, {
                             id: e.message.id,
-                            text: e.message.content,   // contenu_message → content
+                            text: e.message.content,   
                             isMe: e.message.sender_id === currentUserId,
                             time: formatDistanceToNow(parseISO(e.message.created_at), {
                                 addSuffix: true,
@@ -139,7 +139,7 @@ const ConversationPage = () => {
                 });
 
             return () => {
-                window.Echo.leave(`chat.${conversation_id}`);
+                window.Echo.leave(`conversation.${conversation_id}`);
             };
         }
     }, [conversation_id, currentUserId]);

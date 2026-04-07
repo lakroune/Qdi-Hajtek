@@ -138,15 +138,17 @@ const Header = ({
       fetchCounts();
 
       const channel = window.Echo.private(`App.Models.User.${user.id}`);
+      const channel2 = window.Echo.private(`countMessage.user.${user.id}`);
       channel.notification((notification) => {
         setNotifications(prev => prev + 1);
         toast.success(notification.message);
       });
-      channel.listen('.NewMessage', (e) => {
-        setMessages(prev => prev + 1);
+      channel2.listen('.new-message-count', (e) => {
+        setMessages(e.messages);
       });
       return () => {
         window.Echo.leave(`App.Models.User.${user.id}`);
+        window.Echo.leave(`countMessage.user.${user.id}`);
       };
     }
   }, [estAuthentifie, user?.id]);
