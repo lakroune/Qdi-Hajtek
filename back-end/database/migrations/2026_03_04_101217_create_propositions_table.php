@@ -22,7 +22,7 @@ return new class extends Migration
             $table->date('date_debut');
             $table->text('conditions_speciales')->nullable();
 
-            $table->enum('statut', ['en_attente', 'accepte', 'refuse', 'annule', 'termine'])
+            $table->enum('statut', ['en_attente', 'approve', 'accepte', 'refuse', 'annule', 'termine'])
                 ->default('en_attente');
 
             $table->string('code_confirmation')->nullable();

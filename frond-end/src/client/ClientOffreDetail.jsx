@@ -7,7 +7,6 @@ import {
 } from 'lucide-react';
 import { useParams } from 'react-router-dom';
 import axiosClient from '../api/axios-client';
-import { se } from 'date-fns/locale';
 import toast from 'react-hot-toast';
 
 const ClientOffreDetail = () => {
@@ -333,10 +332,8 @@ const ClientOffreDetail = () => {
                     <div className="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2 xl:grid-cols-4 gap-4">
                         {offre.propositions?.map((prop) => {
                             const artisan = Array.isArray(prop.artisan) ? null : prop.artisan;
-                            const artisanName = artisan
-                                ? `${artisan.firstname ?? ''} ${artisan.lastname ?? ''}`.trim()
-                                : `Artisan #${prop.artisan_id}`;
-                            const artisanAvatar = artisan?.client?.avatar ?? null;
+                            const artisanName = artisan?.name;
+                            const artisanAvatar = artisan?.avatar ?? null;
                             const artisanNote = artisan?.note ?? '—';
                             const artisanSpecial = artisan?.specialite ?? '—';
 
@@ -347,7 +344,7 @@ const ClientOffreDetail = () => {
                                             <div className="flex items-center gap-3">
                                                 <div className="w-14 h-14 bg-[#1B4F72] flex items-center justify-center text-white text-[18px] font-bold overflow-hidden">
                                                     {artisanAvatar ? (
-                                                        <img src={artisanAvatar} className="w-full h-full object-cover" alt="" />
+                                                        <img src={artisanAvatar} className="w-full h-full object-cover" alt={artisanName} />
                                                     ) : (
                                                         artisanName.charAt(0) || '?'
                                                     )}
@@ -397,8 +394,9 @@ const ClientOffreDetail = () => {
                                         </div>
                                     </div>
 
-                                    <div className="p-5 pt-0">
+                                    <div className={prop.statut !== 'en_attente' ? 'hidden' : ''}>
                                         <button
+                                            disabled={prop.statut !== 'en_attente'}
                                             onClick={() => handleAccept(prop.id)}
                                             className="w-full flex items-center justify-center gap-2 py-3 bg-green-500 hover:bg-green-600 text-white text-[11px] font-bold transition-colors"
                                         >
@@ -433,7 +431,7 @@ const ClientOffreDetail = () => {
                         </div>
                         <div className="flex gap-3">
                             <button
-                                disabled={isAccepting}  
+                                disabled={isAccepting}
                                 onClick={() => setShowAcceptModal(false)}
                                 className="flex-1 py-2 border text-[12px] border-gray-200 text-gray-600 font-semibold disabled:opacity-50"
                             >
@@ -441,7 +439,7 @@ const ClientOffreDetail = () => {
                             </button>
 
                             <button
-                                disabled={isAccepting}  
+                                disabled={isAccepting}
                                 onClick={() => accepetProposition(selectedProposition)}
                                 className="flex-1 py-2 bg-green-500 text-[12px] text-white font-semibold flex items-center justify-center gap-2 disabled:bg-green-300 disabled:cursor-not-allowed"
                             >

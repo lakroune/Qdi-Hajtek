@@ -27,6 +27,11 @@ class PropositionResource extends JsonResource
                 'name' => $this->whenLoaded('artisan', function () {
                     return $this->artisan->user->firstname . ' ' . $this->artisan->user->lastname;
                 }),
+                'avatar' => $this->whenLoaded('artisan', function () {
+                    return url($this->artisan->user->client->avatar);
+                }),
+                'note' => 0,
+                'specialite' => $this->artisan->specialite
             ],
         ];
     }

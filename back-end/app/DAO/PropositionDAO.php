@@ -54,7 +54,7 @@ class PropositionDAO
     public function acceptProposition(int $id)
     {
         $proposition = $this->findById($id);
-        $proposition->statut = 'accepte';
+        $proposition->statut = 'approve';
         $proposition->save();
         return $proposition;
     }
