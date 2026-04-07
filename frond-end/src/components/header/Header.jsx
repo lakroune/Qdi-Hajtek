@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, User, Bell, LogOut, Settings, Heart, MessageCircle, Briefcase, Calendar, Cookie } from 'lucide-react';
+import { Menu, X, User, Bell, LogOut, Settings, Heart, MessageCircle, Briefcase, Calendar, Cookie, BellDot } from 'lucide-react';
 import Logo from '../logo/Logo';
 import LogoutModal from '../models/LogoutModal';
 import { useNavigate } from 'react-router-dom';
@@ -137,17 +137,22 @@ const Header = ({
     if (estAuthentifie && user?.id) {
       fetchCounts();
 
-      const channel = window.Echo.private(`App.Models.User.${user.id}`);
+      const channel = window.Echo.private(`notification.${user.id}`);
       const channel2 = window.Echo.private(`countMessage.user.${user.id}`);
-      channel.notification((notification) => {
+      channel.listen('.new-notification', (n) => {
         setNotifications(prev => prev + 1);
-        toast.success(notification.message);
+        toast.success(n.message, {
+          icon: <BellDot size={18} color="white" />,
+          style: {
+            background: '#10B981',
+          },
+        });
       });
       channel2.listen('.new-message-count', (e) => {
         setMessages(e.messages);
       });
       return () => {
-        window.Echo.leave(`App.Models.User.${user.id}`);
+        window.Echo.leave(`notification.${user.id}`);
         window.Echo.leave(`countMessage.user.${user.id}`);
       };
     }

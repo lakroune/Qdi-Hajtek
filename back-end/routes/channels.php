@@ -6,7 +6,7 @@ use App\Models\Proposition;
 use Illuminate\Support\Facades\Broadcast;
 
 // (Notifications)
-Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
+Broadcast::channel('notification.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
 }, ['guards' => ['api']]);
 

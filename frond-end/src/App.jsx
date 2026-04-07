@@ -57,6 +57,14 @@ function App() {
               fontWeight: 'bold',
             },
           },
+          info: {
+            style: {
+              background: '#1B4F72',
+              color: 'white',
+              fontWeight: 'bold',
+            },
+          },
+
           error: {
             style: {
               background: '#FEF2F2',

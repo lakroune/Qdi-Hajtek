@@ -69,9 +69,11 @@ class NewDemandeNotification extends Notification implements ShouldQueue, Should
     public function toBroadcast(object $notifiable)
     {
         return [
-            'demande_directe_id' => $this->demandeDirecte->id,
-            'contenu' => "Une nouvelle demande vient d'être créée",
-            'type_data' => 'notification',
+            'message' => "Une nouvelle demande vient d'être créée",
         ];
+    }
+    public function broadcastAs(): string
+    {
+        return 'new-notification';
     }
 }

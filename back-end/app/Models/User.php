@@ -54,7 +54,10 @@ class User extends Authenticatable implements JWTSubject
             'password' => 'hashed',
         ];
     }
-
+    public function receivesBroadcastNotificationsOn(): string
+    {
+        return 'notification.' . $this->id;
+    }
     public function client()
     {
         return $this->hasOne(Client::class, 'id', 'id');

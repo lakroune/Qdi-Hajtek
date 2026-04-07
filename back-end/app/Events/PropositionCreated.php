@@ -11,7 +11,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class PropositionCreated
+class PropositionCreated implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -31,7 +31,19 @@ class PropositionCreated
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('channel-name'),
+            new PrivateChannel('notification.' . $this->proposition->offreTravail->client->user->id),
+        ];
+    }
+
+    public function broadcastAs()
+    {
+        return 'new-notification';
+    }
+
+    public  function broadcastWith()
+    {
+        return [
+            'message' => "Une nouvelle proposition vient d'être postée",
         ];
     }
 }

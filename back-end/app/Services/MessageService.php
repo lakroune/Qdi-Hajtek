@@ -7,6 +7,7 @@ use App\DAO\MessageDAO;
 use App\DTO\MessageDTO;
 use App\Events\MessageSent;
 use App\Events\NewMessageCount;
+use App\Jobs\ProcessMessageJob;
 use App\Models\Message;
 use Illuminate\Support\Facades\Storage;
 
@@ -26,10 +27,8 @@ class MessageService
     {
 
         $message = $this->messageDAO->create($dto->toArray());
-        $receiver = $this->conversationDAO->getAutreParticipant($message->conversation, $message->sender_id);
-        broadcast(new MessageSent($message))->toOthers();
-        broadcast(new NewMessageCount($receiver->id, $this->conversationDAO->countMessagesNotRead($receiver->id)))->toOthers();
-        return $message;
+        ProcessMessageJob::dispatch($message);
+        return   $message;
     }
 
     public function getConversationMessages(int $conversationId)
