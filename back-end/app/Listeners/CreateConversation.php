@@ -7,6 +7,7 @@ use App\DAO\MessageDAO;
 use App\Events\DemandeCreated;
 use App\Models\DemandeDirecte;
 use App\Notifications\NewDemandeNotification;
+use Exception;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\DB;
@@ -55,7 +56,7 @@ class CreateConversation implements ShouldQueue
                 $artisanUser = $demandeDirecte->service->artisan->user;
                 $artisanUser->notify(new NewDemandeNotification($demandeDirecte));
             });
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error("Erreur lors de la création de la conversation pour la demande #{$demandeDirecte->id}: " . $e->getMessage());
 
             throw $e;

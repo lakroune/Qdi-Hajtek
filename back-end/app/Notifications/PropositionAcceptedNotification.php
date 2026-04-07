@@ -4,12 +4,13 @@ namespace App\Notifications;
 
 use App\Models\Proposition;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class PropositionAcceptedNotification extends Notification
+class PropositionAcceptedNotification extends Notification implements ShouldQueue, ShouldBroadcast
 {
     use Queueable;
 
@@ -64,8 +65,12 @@ class PropositionAcceptedNotification extends Notification
     public function toBroadcast(object $notifiable)
     {
         return new BroadcastMessage([
-            'id' => $this->id,
-            'data' => $this->toArray($notifiable),
+            'message' => "Félicitations ! Votre offre a été acceptée. Vous pouvez maintenant discuter avec le client.",
         ]);
+    }
+
+    public function broadcastAs()
+    {
+        return 'new-notification';
     }
 }

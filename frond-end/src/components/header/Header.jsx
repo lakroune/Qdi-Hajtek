@@ -210,7 +210,7 @@ const Header = ({
                     <MessageCircle className="w-4 h-4" />
                     {messages > 0 && (
                       <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-[#D35400] text-white text-[9px] font-bold rounded-full flex items-center justify-center">
-                        {messages > 9 ? '9+' : messages}
+                        {messages > 99 ? '99+' : messages}
                       </span>
                     )}
                   </button>
@@ -219,7 +219,7 @@ const Header = ({
                     <Bell className="w-4 h-4" />
                     {notifications > 0 && (
                       <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-[#D35400] text-white text-[9px] font-bold rounded-full flex items-center justify-center">
-                        {notifications > 9 ? '9+' : notifications}
+                        {notifications > 99 ? '99+' : notifications}
                       </span>
                     )}
                   </button>
