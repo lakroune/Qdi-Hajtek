@@ -72,7 +72,7 @@ class OffreTravailService
     // getOffreTravailWithPropositions
     public function getOffreTravailWithPropositions($id)
     {
-        return $offre = $this->offreTravailDAO->find($id);
-        return new OffreResource($offre);
+         $offre = $this->offreTravailDAO->find($id);
+        return new OffreTravailDetailResource($offre);
     }
 }

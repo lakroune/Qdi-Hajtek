@@ -41,6 +41,8 @@ class OffreTravailDetailResource extends JsonResource
 
             'images' => ImageResource::collection($this->images),
             'has_propositions' => $this->whenNotNull($this->propositions_count),
+            'propositions' => PropositionResource::collection($this->whenLoaded('propositions')),
+
         ];
     }
 }
