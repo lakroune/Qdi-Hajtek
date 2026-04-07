@@ -2,11 +2,9 @@ import React, { useEffect, useState } from 'react';
 import {
     MapPin, Calendar, Briefcase, DollarSign,
     AlertCircle, CheckCircle2, Timer, Eye,
-    MoreVertical, Plus,
+    Plus,
     ChevronRight, Star,
-    LoaderCircle,
     Pointer,
-    RefreshCcw,
     RefreshCw
 } from 'lucide-react';
 import axiosClient from '../api/axios-client';
@@ -72,9 +70,7 @@ const ClientListOffres = () => {
         return configs[urgency] || { label: urgency, color: 'bg-gray-500 text-white' };
     };
 
-    if (isLoading) {
-        return <div className="flex justify-center items-center h-screen"><RefreshCw className="animate-spin  w-12 h-12 text-[#D35400]" /></div>;
-    }
+
     return (
         <div className="min-h-screen bg-gray-50 mt-20 pb-8">
             <div className="bg-white sticky top-12 z-10 border-b border-gray-100">
@@ -97,12 +93,27 @@ const ClientListOffres = () => {
             <div className="w-full mx-auto px-4 py-6">
                 {offres.length === 0 ? (
                     <div className="text-center py-16">
-                        <div className="w-24 h-24 bg-gray-100 flex items-center justify-center mx-auto mb-4">
-                            <Briefcase className="w-12 h-12 text-gray-300" />
-                        </div>
-                        <h3 className="text-[16px] font-bold text-[#1B4F72] mb-2">Aucune offre</h3>
-                        <p className="text-[12px] text-gray-500 mb-6">Commencez par créer votre première demande</p>
-
+                        {isLoading ? (
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 animate-pulse">
+                                <div className="bg-gray-100  h-90   transition-all duration-300 overflow-hidden group animate-pulse"></div>
+                                <div className="bg-gray-100  h-90   transition-all duration-300 overflow-hidden group animate-pulse"></div>
+                                <div className="bg-gray-100  h-90   transition-all duration-300 overflow-hidden group animate-pulse"></div>
+                                <div className="bg-gray-100  h-90   transition-all duration-300 overflow-hidden group animate-pulse"></div>
+                                <div className="bg-gray-100  h-90   transition-all duration-300 overflow-hidden group animate-pulse"></div>
+                                <div className="bg-gray-100  h-90   transition-all duration-300 overflow-hidden group animate-pulse"></div>
+                                <div className="bg-gray-100  h-90   transition-all duration-300 overflow-hidden group animate-pulse"></div>
+                                <div className="bg-gray-100  h-90   transition-all duration-300 overflow-hidden group animate-pulse"></div>
+                            </div>
+                        ) : (
+                            <div className="text-center py-16">
+                                <div className="w-24 h-24 bg-gray-100 flex items-center justify-center mx-auto mb-4">
+                                    <Briefcase className="w-12 h-12 text-gray-300" />
+                                </div>
+                                <h3 className="text-[16px] font-bold text-[#1B4F72] mb-2">Aucune offre</h3>
+                                <p className="text-[12px] text-gray-500 mb-6">Commencez par créer votre première demande</p>
+                            </div>
+                        )
+                        }
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
@@ -144,7 +155,7 @@ const ClientListOffres = () => {
                                             <h3 className="text-[14px] font-bold text-gray-800 leading-snug line-clamp-2 group-hover:text-[#1B4F72] transition-colors">
                                                 {job.titre}
                                             </h3>
-                                           
+
                                         </div>
 
 

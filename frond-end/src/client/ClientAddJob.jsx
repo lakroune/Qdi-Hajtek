@@ -15,7 +15,6 @@ import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 const ClientAddJob = () => {
     const [isLoading, setIsLoading] = useState(false);
-    const [success, setSuccess] = useState(false);
     const [categories, setCategories] = useState([]);
     const [villes, setVilles] = useState([]);
     const navigate = useNavigate();
@@ -133,7 +132,7 @@ const ClientAddJob = () => {
                         toast.error(message);
                     });
                 });
-            } 
+            }
         } finally {
             setIsLoading(false);
         }
