@@ -84,7 +84,8 @@ Route::middleware('auth:api')->group(function () {
 
     //mazal  potection artisan envoi lui meme 
     Route::apiResource('offres', OffreTravailController::class)->only('store', 'show', 'index', 'update');
-
+    // /pour client 
+    Route::get('mes-offres/{id}', [OffreTravailController::class, 'getOffreTravailWithPropositions']);
     //mazal hta hada 
     Route::post('offres/{offre}/propositions', [PropositionController::class, 'store']);
 

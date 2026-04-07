@@ -47,9 +47,10 @@ class OffreTravailDAO
             'images',
             'categorie',
             'client.user',
-            'propositions' => function ($prop) {
-                $prop->where('statut', 'ouvert')->with('artisan.user.client');
-            }
+            'propositions'
+            //  => function ($prop) {
+            //     $prop->where('statut', 'ouvert')->with('artisan.user.client');
+            // }
         ])->where('statut', 'ouvert')
             ->findOrFail($id);
     }

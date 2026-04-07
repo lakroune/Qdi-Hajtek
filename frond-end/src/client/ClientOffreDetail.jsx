@@ -26,7 +26,7 @@ const ClientOffreDetail = () => {
     useEffect(() => {
         const fetchOffreTravail = async () => {
             try {
-                const response = await axiosClient.get('/offres/' + id);
+                const response = await axiosClient.get('/mes-offres/' + id);
                 setOffre(response.data.data);
                 setLoading(false);
             } catch (error) {

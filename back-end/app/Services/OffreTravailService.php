@@ -58,14 +58,21 @@ class OffreTravailService
         return new  OffreTravailDetailResource($offre);
     }
 
-    public function getAllOffreTravail( $request)
+    public function getAllOffreTravail($request)
     {
-        return $this->offreTravailDAO->getAll( $request);
+        return $this->offreTravailDAO->getAll($request);
     }
 
     public function findByClient($id)
     {
         $offre = $this->offreTravailDAO->findByClient($id);
         return OffreTravailResource::collection($offre);
+    }
+
+    // getOffreTravailWithPropositions
+    public function getOffreTravailWithPropositions($id)
+    {
+        return $offre = $this->offreTravailDAO->find($id);
+        return new OffreResource($offre);
     }
 }

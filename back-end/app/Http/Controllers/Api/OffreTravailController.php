@@ -14,16 +14,16 @@ class OffreTravailController extends Controller
 {
 
     public function __construct(
-        private OffreTravailService $offreTravailService 
+        private OffreTravailService $offreTravailService
     ) {
         // 
     }
     /**
      * Display a listing of the resource.
      */
-    public function index( Request $request)
+    public function index(Request $request)
     {
-        $offreTravails =   $this->offreTravailService->getAllOffreTravail( $request);
+        $offreTravails =   $this->offreTravailService->getAllOffreTravail($request);
         return OffreTravailResource::collection($offreTravails);
     }
 
@@ -84,5 +84,10 @@ class OffreTravailController extends Controller
     public function mesOffres()
     {
         return $this->offreTravailService->findByClient(auth()->user()->id);
+    }
+
+    public function getOffreTravailWithPropositions($id)
+    {
+        return $this->offreTravailService->getOffreTravailWithPropositions($id);
     }
 }
