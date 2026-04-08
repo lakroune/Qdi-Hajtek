@@ -45,4 +45,13 @@ class PaiementDAO
             ->where('statut', '!=', 'pending')
             ->get();
     }
+
+    public function confirmPayment(string $stripe_payment_id)
+    {
+        $paiement = Paiement::where('stripe_payment_id', $stripe_payment_id)->firstOrFail();
+        $paiement->statut = 'escrow';
+        $paiement->paid_at = now();
+        $paiement->save();
+        return $paiement;
+    }
 }

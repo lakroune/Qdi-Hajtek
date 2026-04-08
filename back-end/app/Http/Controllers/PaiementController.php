@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\DTO\PaiementDTO;
 use App\Http\Requests\PaiementRequest;
+use App\Models\Conversation;
 use App\Services\PaiementService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class PaiementController extends Controller
 {
@@ -19,6 +21,8 @@ class PaiementController extends Controller
      */
     public function initiate(PaiementRequest $request)
     {
+        $conversation = Conversation::find($request->conversation_id);
+        Gate::authorize('pay-conversation', $conversation);
         $dto = PaiementDTO::fromRequest($request);
         return $this->paiementService->initiatePayment($dto->toArray());
     }

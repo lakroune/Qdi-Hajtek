@@ -13,7 +13,7 @@ class PaiementRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return  auth()->user()->hasEmailVerified() and auth()->user()->isActive();
     }
 
     /**

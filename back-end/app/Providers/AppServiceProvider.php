@@ -38,5 +38,12 @@ class AppServiceProvider extends ServiceProvider
                 ?? $conversation->conversable?->service?->artisan_id;
             return $user->id === $artisanId;
         });
+
+
+        Gate::define('pay-conversation', function (User $user, Conversation $conversation) {
+            $clientId = $conversation->conversable?->client_id
+                ?? $conversation->conversable?->offreTravail?->client_id;
+            return $user->id === $clientId;
+        });
     }
 }

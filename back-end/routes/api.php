@@ -50,13 +50,14 @@ Route::middleware('auth:api')->group(function () {
     //ok for production
     Route::get('conversations/{id}/messages', [MessageController::class, 'index']);
     Route::post('conversations/{id}/messages', [MessageController::class, 'store']);
+    Route::post('conversations/{id}/accept-offer', [ConversationController::class, 'acceptOffer']);
 
 
 
 
     // testing 
-    Route::post('conversations/{id}/accept-offer', [ConversationController::class, 'acceptOffer']);
-
+    Route::post('/payments/initiate', [PaiementController::class, 'initiate']);
+    Route::post('/payments/confirm', [PaiementController::class, 'confirm']);
 
 
 
@@ -151,8 +152,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
 
 
-    Route::post('/payments/initiate', [PaiementController::class, 'initiate']);
-    Route::post('/payments/confirm', [PaiementController::class, 'confirm']);
+
     Route::get('/paiements', [PaiementController::class, 'getPaiements']);
 
 

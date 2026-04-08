@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\DAO\PaiementDAO;
+use App\Events\PaiementCreated;
 use App\Http\Resources\PaiementResource;
 use App\Models\Paiement;
 use Exception;
@@ -47,11 +48,11 @@ class  PaiementService
 
     public function confirmPayment(string $stripe_payment_id)
     {
-        $paiement = Paiement::where('stripe_payment_id', $stripe_payment_id)->firstOrFail();
-        $paiement->statut = 'escrow';
-        $paiement->paid_at = now();
-        $paiement->save();
-        return $paiement;
+        $payement =  $this->paiementDAO->confirmPayment($stripe_payment_id);
+        if ($payement) {
+            event(new PaiementCreated($payement));
+        }
+        return $payement;
     }
     public  function getPaiements()
     {
