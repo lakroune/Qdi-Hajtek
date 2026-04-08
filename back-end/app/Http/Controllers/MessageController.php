@@ -21,7 +21,7 @@ class MessageController extends Controller
     public function index($conversationId)
     {
 
-          $data = $this->messageService->getConversationMessages((int) $conversationId);
+        $data = $this->messageService->getConversationMessages((int) $conversationId);
 
         if ($data) {
             return (new ChatResource((object)$data))

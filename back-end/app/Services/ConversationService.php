@@ -3,6 +3,7 @@
 namespace App\services;
 
 use App\DAO\ConversationDAO;
+use App\Events\PrixFixed;
 
 class ConversationService
 {
@@ -22,7 +23,10 @@ class ConversationService
 
     public function acceptOffer(int $id, float $prix_final)
     {
-        return $this->conversationDAO->acceptOffer($id, $prix_final);
+        $conversation = $this->conversationDAO->acceptOffer($id, $prix_final);
+        event(new PrixFixed($conversation));
+
+        return $conversation;
     }
 
     public function completeMission(int $id)

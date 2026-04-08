@@ -42,16 +42,20 @@ Route::post('/artisans/{user}/reject', [ArtisanController::class, 'reject']);
 
 
 
-
+//ok for test
 Route::apiResource('services', ServiceController::class)->only('index', 'show');
-
-
-
 
 Route::middleware('auth:api')->group(function () {
 
+    //ok for production
+    Route::get('conversations/{id}/messages', [MessageController::class, 'index']);
+    Route::post('conversations/{id}/messages', [MessageController::class, 'store']);
 
 
+
+
+    // testing 
+    Route::post('conversations/{id}/accept-offer', [ConversationController::class, 'acceptOffer']);
 
 
 
@@ -141,9 +145,6 @@ Route::middleware('auth:api')->group(function () {
     // ('profile/me/counts');
     Route::get('profile/me/counts', [ProfileController::class, 'counts']);
 
-    Route::post('conversations/{id}/accept-offer', [ConversationController::class, 'acceptOffer']);
-    Route::post('conversations/{id}/messages', [MessageController::class, 'store']);
-    Route::get('conversations/{id}/messages', [MessageController::class, 'index']);
 
     //    Route::get('/notifications');
     Route::get('/notifications', [NotificationController::class, 'index']);

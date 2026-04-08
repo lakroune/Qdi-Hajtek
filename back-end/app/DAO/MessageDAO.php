@@ -27,14 +27,6 @@ class MessageDAO
         $conversation = Conversation::with(['conversable', 'paiement', 'evaluation'])->findOrFail($conversationId);
 
         $clientId = $conversation->conversable?->client_id ?? $conversation->conversable?->offreTravail?->client_id;
-        $artisanId = $conversation->conversable?->artisan_id ?? $conversation->conversable?->service?->artisan_id;
-
-        $isParticipant = ($userId === $clientId || $userId === $artisanId);
-
-        if (!$isParticipant) {
-            return response()->json(['message' => 'Non autorisé'], 403);
-        }
-
         $messages = Message::where('conversation_id', $conversationId)
             ->with('sender:id,lastname,firstname')
             ->orderBy('created_at', 'asc')
