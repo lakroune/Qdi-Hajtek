@@ -45,5 +45,9 @@ class AppServiceProvider extends ServiceProvider
                 ?? $conversation->conversable?->offreTravail?->client_id;
             return $user->id === $clientId;
         });
+
+        Gate::define('is-identified', function (User $user) {
+            return $user->hasEmailVerified() && $user->isActive();
+        });
     }
 }

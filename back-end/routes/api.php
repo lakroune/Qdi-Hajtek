@@ -51,16 +51,19 @@ Route::middleware('auth:api')->group(function () {
     Route::get('conversations/{id}/messages', [MessageController::class, 'index']);
     Route::post('conversations/{id}/messages', [MessageController::class, 'store']);
     Route::post('conversations/{id}/accept-offer', [ConversationController::class, 'acceptOffer']);
-
+    Route::post('/payments/initiate', [PaiementController::class, 'initiate']);
+    Route::post('/payments/confirm', [PaiementController::class, 'confirm']);
+    Route::get('conversations', [ConversationController::class, 'index']);
 
 
 
     // testing 
-    Route::post('/payments/initiate', [PaiementController::class, 'initiate']);
-    Route::post('/payments/confirm', [PaiementController::class, 'confirm']);
 
 
+    Route::post('/conversations/{conversation_id}/reviews', [EvaluationController::class, 'store']);
+    Route::post('/conversations/{conversation_id}/complete-mission', [ConversationController::class, 'completeMission']);
 
+    Route::post('/conversations/{conversation_id}/confirm-code', [ConversationController::class, 'confirmCode']);
 
 
 
@@ -141,7 +144,6 @@ Route::middleware('auth:api')->group(function () {
     Route::get('artisans/{artisan}/disponibilites', [DisponibiliteController::class, 'show']);
     Route::post('artisans/{artisan}/disponibilites', [DisponibiliteController::class, 'store']);
 
-    Route::get('conversations', [ConversationController::class, 'index']);
 
     // ('profile/me/counts');
     Route::get('profile/me/counts', [ProfileController::class, 'counts']);
@@ -156,10 +158,6 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/paiements', [PaiementController::class, 'getPaiements']);
 
 
-    Route::post('/conversations/{conversation_id}/reviews', [EvaluationController::class, 'store']);
-    Route::post('/conversations/{conversation_id}/complete-mission', [ConversationController::class, 'completeMission']);
-
-    Route::post('/conversations/{conversation_id}/confirm-code', [ConversationController::class, 'confirmCode']);
 
     // Route::get('artisans/{artisanId}/services', [ServiceController::class, 'artisanServices']);
     // Route::patch('services/{service}/toggle-status', [ServiceController::class, 'toggleStatus']);

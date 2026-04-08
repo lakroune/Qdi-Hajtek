@@ -4,6 +4,7 @@ namespace App\services;
 
 use App\DAO\ConversationDAO;
 use App\Events\PrixFixed;
+use Illuminate\Support\Facades\Gate;
 
 class ConversationService
 {
@@ -18,6 +19,7 @@ class ConversationService
 
     public function getConversations()
     {
+        Gate::authorize('is-identified');
         return $this->conversationDAO->getConversations(auth('api')->user()->id);
     }
 
