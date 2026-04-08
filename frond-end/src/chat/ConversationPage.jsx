@@ -79,6 +79,7 @@ const ConversationPage = () => {
                     is_paid: isPaid,
                     time_paid: timePaid,
                     is_completed: isCompleted,
+                    evaluation: conversation.evaluation ?? null,
                 });
 
                 const formattedMessages = messagesArray.map(msg => ({
@@ -154,7 +155,7 @@ const ConversationPage = () => {
                 const msg = response.data.data ?? response.data;
                 const myNewMsg = {
                     id: msg.id,
-                    text: msg.content ?? msg.contenu_message,  
+                    text: msg.content ?? msg.contenu_message,
                     isMe: true,
                     time: formatDistanceToNow(parseISO(msg.created_at), {
                         addSuffix: true,
@@ -281,8 +282,6 @@ const ConversationPage = () => {
             const response = await axiosClient.post(`/conversations/${conversation_id}/reviews`, {
                 rating: rating,
                 comment: comment,
-                conversable_type: infoConversation.type,
-                conversable_id: infoConversation.id
             });
 
             if (response.status === 200 || response.status === 201) {
@@ -290,7 +289,7 @@ const ConversationPage = () => {
 
                 setInfoConversation(prev => ({
                     ...prev,
-                    is_completed: true
+                    evaluation: { rating, comment }
                 }));
 
 
@@ -500,12 +499,13 @@ const ConversationPage = () => {
                 )}
             </div>
 
+            {/* etp 5 */}
             <div className={`space-y-3 transition-all duration-300
-                ${(infoConversation.statut === 'termine' && infoConversation.is_completed) ? '' : 'opacity-40 pointer-events-none'}`}>
+    ${(infoConversation.statut === 'termine' && infoConversation.is_completed) ? '' : 'opacity-40 pointer-events-none'}`}>
                 <div className="flex items-center gap-2 text-[12px] font-semibold text-gray-700">
                     <span className={`w-5 h-5 flex items-center justify-center text-[10px] text-white transition-colors
-                        ${infoConversation.is_completed ? 'bg-green-500' : 'bg-[#1B4F72]'}`}>
-                        {infoConversation.is_completed ? <Check className="w-3 h-3" /> : '5'}
+            ${infoConversation.evaluation ? 'bg-green-500' : 'bg-[#1B4F72]'}`}>
+                        {infoConversation.evaluation ? <Check className="w-3 h-3" /> : '5'}
                     </span>
                     Laisser un avis
                 </div>
@@ -518,9 +518,10 @@ const ConversationPage = () => {
                                 {[1, 2, 3, 4, 5].map((s) => (
                                     <Star
                                         key={s}
-                                        onClick={() => setRating(s)}
-                                        className={`w-6 h-6 cursor-pointer transition-transform hover:scale-110
-                                            ${s <= rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
+                                        onClick={() => !infoConversation.evaluation && setRating(s)}
+                                        className={`w-6 h-6 transition-transform
+                                ${!infoConversation.evaluation ? 'cursor-pointer hover:scale-110' : 'cursor-default'}
+                                ${s <= (infoConversation.evaluation?.rating ?? rating) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
                                     />
                                 ))}
                             </div>
@@ -529,33 +530,40 @@ const ConversationPage = () => {
                         <div className="space-y-1">
                             <p className="text-[10px] text-gray-500 font-medium">Commentaire (Optionnel)</p>
                             <textarea
-                                className="w-full border border-gray-200 p-3 text-[12px] focus:border-[#1B4F72] focus:ring-0 outline-none transition-all resize-none rounded-sm bg-white"
+                                className="w-full border border-gray-200 p-3 text-[12px] focus:border-[#1B4F72] focus:ring-0 outline-none transition-all resize-none rounded-sm bg-white disabled:bg-gray-50 disabled:text-gray-400"
                                 placeholder="Comment s'est déroulée la prestation ?"
                                 rows={3}
-                                value={comment}
+                                value={infoConversation.evaluation?.comment ?? comment}
                                 onChange={(e) => setComment(e.target.value)}
+                                disabled={!!infoConversation.evaluation}
                             />
                         </div>
 
-                        <button
-                            onClick={handleSendReview}
-                            disabled={rating === 0 || !infoConversation.is_completed}
-                            className="w-full py-2.5 bg-[#1B4F72] text-white text-[12px] font-bold hover:bg-[#154360] transition-all shadow-md disabled:bg-gray-300 disabled:shadow-none"
-                        >
-                            {infoConversation.is_completed ? 'Avis déjà publié' : 'Publier mon avis'}
-                        </button>
+                        {infoConversation.evaluation ? (
+                            <div className="flex items-center gap-2 p-2 bg-green-50 border border-green-100 rounded-sm">
+                                <CheckCircle2 className="w-4 h-4 text-green-600" />
+                                <p className="text-[11px] text-green-700 font-bold">Avis publié avec succès !</p>
+                            </div>
+                        ) : (
+                            <button
+                                onClick={handleSendReview}
+                                disabled={rating === 0}
+                                className="w-full py-2.5 bg-[#1B4F72] text-white text-[12px] font-bold hover:bg-[#154360] transition-all shadow-md disabled:bg-gray-300 disabled:shadow-none disabled:cursor-not-allowed"
+                            >
+                                Publier mon avis
+                            </button>
+                        )}
                     </div>
                 ) : (
-                    <div className="p-3        ">
-                        {infoConversation.is_completed ? (
-
-                            <div className="flex items-center gap-2">
-                                <RefreshCw className="w-3 h-3 text-orange-400 animate-spin" />
+                    <div className="p-3">
+                        {!infoConversation.evaluation ? (
+                            <div className="flex items-center gap-2 p-2 bg-orange-50 animate-pulse">
+                                <RefreshCw className="w-3 h-3 text-orange-500 animate-spin" />
                                 <p className="text-[11px] text-orange-600 font-medium italic">En attente de l'avis du client...</p>
                             </div>
                         ) : (
                             <p className="text-[11px] text-green-600 font-medium flex items-center gap-2">
-                                <CheckCircle2 className="w-3 h-3" /> Merci ! Le client a laissé son évaluation.
+                                <CheckCircle2 className="w-3 h-3" /> Le client a laissé son évaluation.
                             </p>
                         )}
                     </div>
