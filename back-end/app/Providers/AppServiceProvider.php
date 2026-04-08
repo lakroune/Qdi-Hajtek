@@ -49,5 +49,8 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('is-identified', function (User $user) {
             return $user->hasEmailVerified() && $user->isActive();
         });
+        Gate::define('is-artisan-identified', function (User $user) {
+            return $user->isArtisan() && $user->hasEmailVerified() && $user->isActive();
+        });
     }
 }

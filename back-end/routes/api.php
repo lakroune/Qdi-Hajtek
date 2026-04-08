@@ -59,9 +59,9 @@ Route::middleware('auth:api')->group(function () {
 
     // testing 
 
+    Route::post('/conversations/{conversation_id}/complete-mission', [ConversationController::class, 'completeMission']);
 
     Route::post('/conversations/{conversation_id}/reviews', [EvaluationController::class, 'store']);
-    Route::post('/conversations/{conversation_id}/complete-mission', [ConversationController::class, 'completeMission']);
 
     Route::post('/conversations/{conversation_id}/confirm-code', [ConversationController::class, 'confirmCode']);
 

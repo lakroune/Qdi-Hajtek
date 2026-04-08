@@ -32,13 +32,13 @@ class ConversationController extends Controller
         Gate::authorize('accepete-offer', $conversation);
 
         $validated = $request->validate([
-            'prix_final' => 'required|numeric|min:1' 
+            'prix_final' => 'required|numeric|min:1'
         ]);
 
         try {
             $updatedConversation = $this->conversationService->acceptOffer($id, $validated['prix_final']);
 
-          
+
 
             return response()->json([
                 'status' => 'success',
@@ -60,6 +60,12 @@ class ConversationController extends Controller
 
     public function completeMission(int $id)
     {
+        if (!Gate::check('is-artisan-identified')) {
+            return response()->json([
+                'message' => 'Unauthorized'
+            ], 401);
+        }
+
         $conversation = $this->conversationService->completeMission($id);
         return response()->json([
             'message' => 'Conversation found successfully',

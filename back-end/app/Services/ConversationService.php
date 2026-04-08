@@ -3,6 +3,7 @@
 namespace App\services;
 
 use App\DAO\ConversationDAO;
+use App\Events\CompletedMission;
 use App\Events\PrixFixed;
 use Illuminate\Support\Facades\Gate;
 
@@ -33,7 +34,11 @@ class ConversationService
 
     public function completeMission(int $id)
     {
-        return $this->conversationDAO->completeMission($id);
+        $conversation = $this->conversationDAO->completeMission($id);
+        if ($conversation) {
+            event(new CompletedMission($conversation));
+        }
+        return $conversation;
     }
 
     public function confirmCode(int $id, string $code)
