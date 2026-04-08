@@ -18,4 +18,8 @@ class EvaluationDAO
     {
         return Evaluation::create($data);
     }
+    public function findByConversationId(int $conversationId)
+    {
+        return Evaluation::where('conversation_id', $conversationId)->first();
+    }
 }

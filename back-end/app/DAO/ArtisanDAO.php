@@ -4,7 +4,10 @@ namespace App\DAO;
 
 use App\DTO\ArtisanRegistrationDTO;
 use App\Models\Artisan;
+use App\Models\DemandeDirecte;
 use App\Models\Document;
+use App\Models\Evaluation;
+use App\Models\Proposition;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
@@ -78,5 +81,18 @@ class ArtisanDAO
             $user->removeRole('artisan');
             return $user->artisan->delete();
         });
+    }
+    public function artisanEvaluations(int $artisanId)
+    {
+        return Evaluation::whereHas('conversation', function ($query) use ($artisanId) {
+            $query->whereHasMorph('conversable', [DemandeDirecte::class, Proposition::class], function ($subQuery) use ($artisanId) {
+                $subQuery->where('artisan_id', $artisanId);
+            });
+        });
+    }
+
+    public function averageRating(int $artisanId)
+    {
+        return $this->artisanEvaluations($artisanId)->avg('rating') ?? 0;
     }
 }
