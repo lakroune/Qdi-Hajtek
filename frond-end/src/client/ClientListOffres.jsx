@@ -40,7 +40,7 @@ const ClientListOffres = () => {
     };
     useEffect(() => {
 
-        fetchOffres();
+        fetchOffres( currentPage);
     }, [currentPage]);
 
     useEffect(() => {

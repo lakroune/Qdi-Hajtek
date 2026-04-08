@@ -2,10 +2,8 @@
 
 namespace App\DAO;
 
-use App\DTO\MessageDTO;
 use App\Models\Conversation;
 use App\Models\Message;
-use Illuminate\Support\Facades\DB;
 
 class MessageDAO
 {
@@ -22,35 +20,33 @@ class MessageDAO
         return Message::create($data);
     }
 
-    public function getByConversation(int $conversationId, int $perPage = 20)
+    public function getByConversation(int $conversationId)
     {
         $userId = auth('api')->id();
 
-        $conversation = Conversation::with(['conversable','paiement'])->findOrFail($conversationId);
+        $conversation = Conversation::with(['conversable', 'paiement'])->findOrFail($conversationId);
 
-        $isParticipant = (
-            $conversation->conversable?->client_id === $userId ||
-            $conversation->conversable?->artisan_id === $userId||
-            $conversation->conversable?->offreTravail?->client_id === $userId||
-            $conversation->conversable?->service?->artisan_id === $userId
-        );
+        $clientId = $conversation->conversable?->client_id ?? $conversation->conversable?->offreTravail?->client_id;
+        $artisanId = $conversation->conversable?->artisan_id ?? $conversation->conversable?->service?->artisan_id;
+
+        $isParticipant = ($userId === $clientId || $userId === $artisanId);
 
         if (!$isParticipant) {
-            return response()->json([
-                'message' => 'Action non autorisée. Vous n\'êtes pas membre de cette conversation.'
-            ], 403);
+            return response()->json(['message' => 'Non autorisé'], 403);
         }
 
         $messages = Message::where('conversation_id', $conversationId)
             ->with('sender:id,lastname,firstname')
             ->orderBy('created_at', 'asc')
-            ->paginate($perPage);
+            ->paginate(20);
 
         return [
             'messages' => $messages,
-            'conversation' => $conversation,
             'currentUser' => [
-                'id' => $userId,]
+                'id' => $userId,
+                'is_client' => ($userId === $clientId),
+            ],
+            'conversation' => $conversation
         ];
     }
     public function markAsRead(int $conversationId): void

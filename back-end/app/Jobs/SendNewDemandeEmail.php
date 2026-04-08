@@ -24,6 +24,6 @@ class SendNewDemandeEmail implements ShouldQueue
      */
     public function handle(): void
     {
-        $this->demandeDirecte->service->artisan->user->notify(new NewDemandeNotification($this->demandeDirecte));
+        // $this->demandeDirecte->service->artisan->user->notify(new NewDemandeNotification($this->demandeDirecte));
     }
 }

@@ -54,31 +54,32 @@ const ConversationPage = () => {
                     `/conversations/${conversation_id}/messages`
                 );
 
-                const apiData = response.data.data;
+                const apiData = response.data;
 
+                // ✅ Nouvelle structure : messages.data
                 const messagesArray = apiData.messages.data;
                 const userId = apiData.currentUser.id;
+                const is_client = apiData.currentUser.is_client;
 
                 const conversation = apiData.conversation;
-                const type = conversation.type;
-                const statut = conversation.status;
-                const isCompleted = conversation.is_completed;
-                const prix_final = conversation.service?.price ?? 0;
-                const offre_service_id = conversation.service?.id;
+                const conversable = conversation.conversable; // DemandeDirecte
 
-                const is_client = true;
+                const subject = conversation.subject;
+                const statut = conversable?.statut ?? 'en_attente';
+                const isCompleted = conversable?.is_completed ?? false;
+                const prix_final = conversable?.prix_final ?? 0;
+                const offre_service_id = conversable?.service?.id ?? null;
 
-                const payment = conversation.payment;
-                const isPaid = payment?.status === 'paid'
-                    || payment?.status === 'escrow'
-                    || payment?.status === 'released';
-                const timePaid = payment?.paid_at;
+                const payment = conversation.paiement;
+                const isPaid = payment?.statut === 'paid'
+                    || payment?.statut === 'escrow'
+                    || payment?.statut === 'released';
+                const timePaid = payment?.paid_at ?? null;
 
                 setCurrentUserId(userId);
 
                 setInfoConversation({
-                    subject: conversation.subject,
-                    type,
+                    subject,
                     statut,
                     offre_service_id,
                     prix_final,
@@ -90,7 +91,7 @@ const ConversationPage = () => {
 
                 const formattedMessages = messagesArray.map(msg => ({
                     id: msg.id,
-                    text: msg.content,
+                    text: msg.contenu_message,
                     isMe: msg.sender_id === userId,
                     time: formatDistanceToNow(parseISO(msg.created_at), {
                         addSuffix: true,
@@ -99,8 +100,7 @@ const ConversationPage = () => {
                     status: msg.is_read ? 'read' : 'sent',
                     senderName: msg.sender_id === userId
                         ? 'You'
-                        : (msg.sender.full_name
-                            ?? `${msg.sender.first_name} ${msg.sender.last_name}`)
+                        : `${msg.sender.firstname} ${msg.sender.lastname}`
                 }));
 
                 setMessages(formattedMessages);
@@ -125,15 +125,16 @@ const ConversationPage = () => {
 
                         return [...prevMessages, {
                             id: e.message.id,
-                            text: e.message.content,   
+                            text: e.message.contenu_message ?? e.message.content,
                             isMe: e.message.sender_id === currentUserId,
                             time: formatDistanceToNow(parseISO(e.message.created_at), {
                                 addSuffix: true,
                                 locale: fr
                             }),
                             status: e.message.is_read ? 'read' : 'sent',
-                            senderName: e.message.sender.full_name
-                                ?? `${e.message.sender.first_name ?? ''} ${e.message.sender.last_name ?? ''}`.trim()
+                            senderName: e.message.sender
+                                ? `${e.message.sender.firstname ?? ''} ${e.message.sender.lastname ?? ''}`.trim()
+                                : 'Inconnu'
                         }];
                     });
                 });
@@ -157,11 +158,12 @@ const ConversationPage = () => {
                 conversation_id: conversation_id
             });
 
-            if (response.data && response.data.data) {
-                const msg = response.data.data;
+            if (response.data) {
+                // Support both flat and nested response shapes
+                const msg = response.data.data ?? response.data;
                 const myNewMsg = {
                     id: msg.id,
-                    text: msg.content ?? msg.contenu_message, // compatibilité les deux
+                    text: msg.contenu_message ?? msg.content,
                     isMe: true,
                     time: formatDistanceToNow(parseISO(msg.created_at), {
                         addSuffix: true,
@@ -301,14 +303,14 @@ const ConversationPage = () => {
         }
     };
 
+
     const RenderStatusDommande = () => (
         <div className="flex flex-col gap-6">
             <div className="flex items-center justify-between border-b pb-2">
                 <h3 className="text-[14px] font-bold text-[#1B4F72]">Suivi de Commande</h3>
                 <span className="text-[10px] bg-gray-100 px-2 py-1 text-gray-500 font-mono">#DM-{conversation_id}</span>
             </div>
-
-            {/* Étape 1 : Validation du devis */}
+            {/* etp 1 */}
             <div className="space-y-2">
                 <div className="flex items-center gap-2 text-[12px] font-semibold text-gray-700">
                     <span className={`w-5 h-5 flex items-center justify-center rounded-full text-[10px] text-white transition-colors duration-300
@@ -331,7 +333,7 @@ const ConversationPage = () => {
                 )}
 
                 {infoConversation.statut === 'en_attente' && infoConversation.is_client && (
-                    <div className="flex items-center gap-2 p-2 bg-orange-50 border border-orange-100 rounded-sm">
+                    <div className="flex items-center gap-2 p-2 bg-orange-50  animate-pulse ">
                         <RefreshCw className="w-3 h-3 text-orange-500 animate-spin" />
                         <p className="text-[11px] text-orange-600 font-medium italic">
                             En attente d'acceptation par l'artisan...
@@ -351,7 +353,7 @@ const ConversationPage = () => {
                 )}
             </div>
 
-            {/* Étape 2 : Paiement */}
+            {/* etp 2 */}
             <div className={`space-y-2 transition-all duration-300
                 ${(!infoConversation.is_paid && infoConversation.statut !== 'accepte' && infoConversation.statut !== 'terminee' && infoConversation.statut !== 'termine')
                     ? 'opacity-40 pointer-events-none' : ''}`}>
@@ -368,7 +370,7 @@ const ConversationPage = () => {
                 {infoConversation.statut === 'accepte' && infoConversation.is_client && !infoConversation.is_paid && (
                     <button
                         onClick={() => handleOpenPayment(infoConversation.prix_final)}
-                        className="w-full py-2 flex items-center justify-center gap-2 text-[12px] border-2 border-[#D35400] text-[#D35400] bg-white font-bold hover:bg-[#D35400] hover:text-white transition-all shadow-sm"
+                        className="w-full py-2 flex items-center justify-center gap-2 text-[12px] border  border-[#D35400] text-[#D35400] bg-white font-bold hover:bg-[#D35400] hover:text-white transition-all  "
                     >
                         <CreditCard className="w-4 h-4" />
                         Payer {infoConversation.prix_final} MAD
@@ -376,9 +378,9 @@ const ConversationPage = () => {
                 )}
 
                 {infoConversation.statut === 'accepte' && !infoConversation.is_client && !infoConversation.is_paid && (
-                    <div className="flex items-center gap-2 p-2 bg-blue-50 border border-blue-100 rounded-sm">
-                        <RefreshCw className="w-3 h-3 text-blue-500 animate-spin" />
-                        <p className="text-[11px] text-blue-600 font-medium italic">En attente du paiement par le client...</p>
+                    <div className="flex items-center gap-2 p-2  bg-orange-50  animate-pulse ">
+                        <RefreshCw className="w-3 h-3 text-orange-500 animate-spin" />
+                        <p className="text-[11px] text-orange-600 font-medium italic">En attente du paiement par le client...</p>
                     </div>
                 )}
 
@@ -396,12 +398,12 @@ const ConversationPage = () => {
                 )}
             </div>
 
-            {/* Étape 3 : Fin de mission */}
+            {/* etp 3 */}
             <div className={`space-y-2 transition-all duration-300 ${!infoConversation.is_paid ? 'opacity-40 pointer-events-none' : ''}`}>
                 <div className="flex items-center gap-2 text-[12px] font-semibold text-gray-700">
                     <span className={`w-5 h-5 flex items-center justify-center rounded-full text-[10px] text-white transition-colors
-                        ${(infoConversation.statut === 'terminee' || infoConversation.statut === 'termine') ? 'bg-green-500' : 'bg-[#1B4F72]'}`}>
-                        {(infoConversation.statut === 'terminee' || infoConversation.statut === 'termine') ? <Check className="w-3 h-3" /> : '3'}
+                        ${(infoConversation.statut === 'termine') ? 'bg-green-500' : 'bg-[#1B4F72]'}`}>
+                        {(infoConversation.statut === 'termine') ? <Check className="w-3 h-3" /> : '3'}
                     </span>
                     Réalisation & Fin de mission
                 </div>
@@ -411,7 +413,7 @@ const ConversationPage = () => {
                         <p className="text-[10px] text-gray-500 italic">Une fois le travail terminé, confirmez-le ici.</p>
                         <button
                             onClick={() => setShowModelFinMission(true)}
-                            className="w-full py-2 flex items-center justify-center gap-2 text-[12px] border-2 border-[#1B4F72] bg-white text-[#1B4F72] font-bold hover:bg-[#1B4F72] hover:text-white transition-all shadow-sm"
+                            className="w-full py-2 flex items-center justify-center gap-2 text-[12px]   bg-white text-[#1B4F72] font-bold hover:bg-[#1B4F72] hover:text-white transition-all "
                         >
                             <CheckCircle2 className="w-4 h-4" />
                             Confirmer la fin du travail
@@ -419,15 +421,15 @@ const ConversationPage = () => {
                     </div>
                 )}
 
-                {infoConversation.is_client && infoConversation.statut !== 'terminee' && infoConversation.statut !== 'termine' && (
-                    <div className="flex items-center gap-2 p-2 bg-blue-50 border border-blue-100 rounded-sm">
-                        <RefreshCw className="w-3 h-3 text-blue-500 animate-spin" />
-                        <p className="text-[11px] text-blue-600 font-medium italic">L'artisan travaille sur votre demande...</p>
+                {infoConversation.is_client && infoConversation.is_paid && infoConversation.statut !== 'termine' && (
+                    <div className="flex items-center gap-2 p-2 bg-orange-50   animate-pulse">
+                        <RefreshCw className="w-3 h-3 text-orange-500 animate-spin" />
+                        <p className="text-[11px] text-orange-600 font-medium italic">L'artisan travaille sur votre demande...</p>
                     </div>
                 )}
 
                 {(infoConversation.statut === 'terminee' || infoConversation.statut === 'termine') && (
-                    <div className="p-2 bg-green-50 border border-green-100 rounded-sm">
+                    <div className="p-2 bg-green-50   ">
                         <p className="text-[11px] text-green-700 font-bold flex items-center gap-1">
                             <CheckCircle2 className="w-3 h-3 text-green-600" />
                             Mission accomplie par l'artisan !
@@ -441,13 +443,13 @@ const ConversationPage = () => {
                 )}
             </div>
 
-            {/* Étape 4 : Code PIN */}
+            {/* etp 4 */}
             <div className={`space-y-2 transition-all duration-300
                 ${(infoConversation.statut !== 'terminee' && infoConversation.statut !== 'termine') ? 'opacity-40 pointer-events-none' : ''}`}>
                 <div className="flex items-center gap-2 text-[12px] font-semibold text-gray-700">
                     <span className={`w-5 h-5 flex items-center justify-center rounded-full text-[10px] text-white transition-colors
-                        ${(isConfirmed || infoConversation.statut === 'termine') ? 'bg-green-500' : 'bg-[#1B4F72]'}`}>
-                        {(isConfirmed || infoConversation.statut === 'termine') ? <Check className="w-3 h-3" /> : '4'}
+                        ${(infoConversation.is_completed && infoConversation.statut === 'termine') ? 'bg-green-500' : 'bg-[#1B4F72]'}`}>
+                        {(infoConversation.is_completed && infoConversation.statut === 'termine') ? <Check className="w-3 h-3" /> : '4'}
                     </span>
                     Sécurité (Code PIN)
                 </div>
@@ -466,12 +468,12 @@ const ConversationPage = () => {
                                         placeholder="AB12CD"
                                         value={confirmationCode}
                                         onChange={(e) => setConfirmationCode(e.target.value.toUpperCase())}
-                                        className="flex-1 border-2 border-gray-200 p-2 text-center text-[14px] font-black tracking-[0.2em] focus:border-[#D35400] focus:ring-0 outline-none transition-all uppercase"
+                                        className="flex-1 border-2 border-gray-200 p-2 text-center text-[14px] focus:border-[#D35400]  outline-none uppercase"
                                     />
                                     <button
                                         onClick={handleConfirmCode}
                                         disabled={confirmationCode.length !== 6}
-                                        className="px-5 bg-[#D35400] text-white text-[12px] font-bold hover:bg-[#A04000] disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                                        className="px-4 bg-[#D35400] text-white text-[12px] font-bold hover:bg-[#A04000] disabled:bg-gray-300 disabled:cursor-not-allowed "
                                     >
                                         ok
                                     </button>
@@ -485,22 +487,21 @@ const ConversationPage = () => {
                         )}
                     </div>
                 ) : (
-                    <div className="p-2 bg-gray-50 border border-gray-200 rounded-sm">
+                    <div className="p-2 ">
                         {infoConversation.statut === 'termine' && infoConversation.is_completed ? (
                             <p className="text-[11px] text-green-600 font-medium flex items-center gap-1">
                                 <CheckCircle2 className="w-3 h-3" /> Le client a validé le code. Paiement libéré !
                             </p>
                         ) : (
-                            <p className="text-[11px] text-[#1B4F72] font-medium flex items-center gap-2">
-                                <ShieldCheck className="w-4 h-4 text-[#D35400]" />
-                                Donnez votre code de validation au client.
+                            <p className="text-[11px] text-[#1B4F72] font-medium flex items-center gap-2 animate-pulse">
+                                <RefreshCw className="w-3 h-3 text-orange-500 animate-spin" />
+                                <span className=" text-[11px] text-orange-600 font-medium italic">En attente de validation par le client...</span>
                             </p>
                         )}
                     </div>
                 )}
             </div>
 
-            {/* Étape 5 : Avis */}
             <div className={`space-y-3 transition-all duration-300
                 ${(infoConversation.statut === 'termine' && infoConversation.is_completed) ? '' : 'opacity-40 pointer-events-none'}`}>
                 <div className="flex items-center gap-2 text-[12px] font-semibold text-gray-700">
@@ -549,14 +550,15 @@ const ConversationPage = () => {
                 ) : (
                     <div className="p-3 bg-gray-50 border border-gray-100 rounded-sm">
                         {infoConversation.is_completed ? (
+
+                            <div className="flex items-center gap-2">
+                                <RefreshCw className="w-3 h-3 text-orange-400 animate-spin" />
+                                <p className="text-[11px] text-orange-600 font-medium italic">En attente de l'avis du client...</p>
+                            </div>
+                        ) : (
                             <p className="text-[11px] text-green-600 font-medium flex items-center gap-2">
                                 <CheckCircle2 className="w-3 h-3" /> Merci ! Le client a laissé son évaluation.
                             </p>
-                        ) : (
-                            <div className="flex items-center gap-2">
-                                <RefreshCw className="w-3 h-3 text-orange-400 animate-spin" />
-                                <p className="text-[11px] text-gray-500 italic">En attente de l'avis du client...</p>
-                            </div>
                         )}
                     </div>
                 )}

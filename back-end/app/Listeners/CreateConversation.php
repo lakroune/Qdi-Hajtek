@@ -55,6 +55,7 @@ class CreateConversation implements ShouldQueue
 
                 $artisanUser = $demandeDirecte->service->artisan->user;
                 $artisanUser->notify(new NewDemandeNotification($demandeDirecte));
+                
             });
         } catch (Exception $e) {
             Log::error("Erreur lors de la création de la conversation pour la demande #{$demandeDirecte->id}: " . $e->getMessage());
