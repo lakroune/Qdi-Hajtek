@@ -280,25 +280,32 @@ const ConversationPage = () => {
             toast.error(error.response?.data?.message || "Une erreur est survenue");
         }
     };
-
     const handleSendReview = async () => {
-        if (rating === 0 || !comment) {
-            toast.error("merci de fournir un avis valide");
+        if (rating === 0) {
+            toast.error("merci de fournir une note valide");
             return;
         }
 
         try {
-            const response = await axiosClient.post(`/conversations/${conversation_id}/review`, {
-                rating,
-                comment
+            const response = await axiosClient.post(`/conversations/${conversation_id}/reviews`, {
+                rating: rating,
+                comment: comment,
+                conversable_type: infoConversation.type,
+                conversable_id: infoConversation.id
             });
-            if (response.status === 200) {
+
+            if (response.status === 200 || response.status === 201) {
                 toast.success("votre avis a ete envoye");
-                setInfoConversation(prev => ({ ...prev, is_completed: true }));
-                setRating(0);
-                setComment('');
+
+                setInfoConversation(prev => ({
+                    ...prev,
+                    is_completed: true
+                }));
+
+
             }
         } catch (error) {
+            console.error("Erreur Review:", error);
             toast.error(error.response?.data?.message || "Une erreur est survenue");
         }
     };
@@ -541,14 +548,14 @@ const ConversationPage = () => {
 
                         <button
                             onClick={handleSendReview}
-                            disabled={rating === 0 || infoConversation.is_completed}
+                            disabled={rating === 0 || !infoConversation.is_completed}
                             className="w-full py-2.5 bg-[#1B4F72] text-white text-[12px] font-bold hover:bg-[#154360] transition-all shadow-md disabled:bg-gray-300 disabled:shadow-none"
                         >
                             {infoConversation.is_completed ? 'Avis déjà publié' : 'Publier mon avis'}
                         </button>
                     </div>
                 ) : (
-                    <div className="p-3 bg-gray-50 border border-gray-100 rounded-sm">
+                    <div className="p-3        ">
                         {infoConversation.is_completed ? (
 
                             <div className="flex items-center gap-2">

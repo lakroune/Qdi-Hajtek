@@ -29,4 +29,8 @@ class Conversation extends Model
     {
         return $this->hasOne(Paiement::class);
     }
+    public function evaluation()
+    {
+        return $this->hasOne(Evaluation::class);
+    }
 }

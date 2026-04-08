@@ -118,7 +118,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/paiements', [PaiementController::class, 'getPaiements']);
 
 
-
+    Route::post('/conversations/{conversation_id}/reviews', [ConversationController::class, 'storeReview']);
     Route::post('/conversations/{conversation_id}/complete-mission', [ConversationController::class, 'completeMission']);
 
     Route::post('/conversations/{conversation_id}/confirm-code', [ConversationController::class, 'confirmCode']);
