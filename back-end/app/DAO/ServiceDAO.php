@@ -58,19 +58,27 @@ class ServiceDAO
         if (!empty($filters['category'])) {
             $query->where('categorie_id', $filters['category']);
         }
+
+
+        if (!empty($filters['price'])) {
+            $query->where('tarif', '<=', $filters['price']);
+        }
+
         if (!empty($filters['rating'])) {
             $query->whereHas('artisan', function ($q) use ($filters) {
                 $q->where('note', '>=', $filters['rating']);
             });
-        }
-        if (!empty($filters['price'])) {
-            $query->where('tarif', '<=', $filters['price']);
-        }
-        // $sortField = $filters['sort_by'] ?? 'created_at';
-        // $sortOrder = $filters['order'] ?? 'desc';
 
-        // $query->orderBy($sortField, $sortOrder);
-        return $query->latest()->paginate(8);
+            $query->join('artisans', 'services.artisan_id', '=', 'artisans.id')
+                ->orderByDesc('artisans.nb_offers')
+                ->select('services.*');
+        } else {
+            $query->join('artisans', 'services.artisan_id', '=', 'artisans.id')
+                ->orderByRaw('(artisans.note * artisans.nb_offers) DESC')
+                ->select('services.*');
+        }
+
+        return $query->paginate(8);
     }
     public function favorieService(int $serviceId)
     {
