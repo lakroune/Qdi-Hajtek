@@ -501,10 +501,10 @@ const ConversationPage = () => {
 
             {/* etp 5 */}
             <div className={`space-y-3 transition-all duration-300
-    ${(infoConversation.statut === 'termine' && infoConversation.is_completed) ? '' : 'opacity-40 pointer-events-none'}`}>
+                                     ${(infoConversation.statut === 'termine' && infoConversation.is_completed) ? '' : 'opacity-40 pointer-events-none'}`}>
                 <div className="flex items-center gap-2 text-[12px] font-semibold text-gray-700">
                     <span className={`w-5 h-5 flex items-center justify-center text-[10px] text-white transition-colors
-            ${infoConversation.evaluation ? 'bg-green-500' : 'bg-[#1B4F72]'}`}>
+               ${infoConversation.evaluation ? 'bg-green-500' : 'bg-[#1B4F72]'}`}>
                         {infoConversation.evaluation ? <Check className="w-3 h-3" /> : '5'}
                     </span>
                     Laisser un avis

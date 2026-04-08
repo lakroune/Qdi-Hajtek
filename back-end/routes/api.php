@@ -19,19 +19,21 @@ use App\Http\Controllers\ServiceController;
 use App\Models\Ville;
 use Illuminate\Support\Facades\Route;
 
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
-Route::post('/generate-code', [AuthController::class, 'generateCode']);
+
+
+
+
 Route::get('/villes', function () {
     return Ville::all();
 });
 
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/generate-code', [AuthController::class, 'generateCode']);
+
+
 
 Route::get('/categories', [CategorieController::class, 'index']);
-
-
-
-
 
 Route::get('artisans/{artisan}', [ArtisanController::class, 'show']);
 Route::get('artisans', [ArtisanController::class, 'index']);
@@ -39,12 +41,46 @@ Route::patch('/artisans/{userId}/approve', [ArtisanController::class, 'approve']
 Route::post('/artisans/{user}/reject', [ArtisanController::class, 'reject']);
 
 
+
+
 Route::apiResource('services', ServiceController::class)->only('index', 'show');
+
+
 
 
 Route::middleware('auth:api')->group(function () {
 
-    // mazal  potection artisan envoi lui meme
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     Route::put('/categories/{id}', [CategorieController::class, 'update']);
     Route::post('/categories', [CategorieController::class, 'store']);
 

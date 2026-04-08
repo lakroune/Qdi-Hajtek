@@ -85,14 +85,29 @@ class ArtisanDAO
     public function artisanEvaluations(int $artisanId)
     {
         return Evaluation::whereHas('conversation', function ($query) use ($artisanId) {
-            $query->whereHasMorph('conversable', [DemandeDirecte::class, Proposition::class], function ($subQuery) use ($artisanId) {
-                $subQuery->where('artisan_id', $artisanId);
-            });
+            $query->whereHasMorph(
+                'conversable',
+                [DemandeDirecte::class, Proposition::class],
+                function ($subQuery, $type) use ($artisanId) {
+                    if ($type === DemandeDirecte::class) {
+                        $subQuery->whereHas('service', function ($q) use ($artisanId) {
+                            $q->where('artisan_id', $artisanId);
+                        });
+                    } elseif ($type === Proposition::class) {
+                        $subQuery->where('artisan_id', $artisanId);
+                    }
+                }
+            );
         });
     }
-
     public function averageRating(int $artisanId)
     {
         return $this->artisanEvaluations($artisanId)->avg('rating') ?? 0;
+    }
+
+    public function updateRating(int $artisanId)
+    {
+        $artisan = Artisan::where('id', $artisanId)->first();
+        return $artisan->update(['note' => $this->averageRating($artisanId)]);
     }
 }

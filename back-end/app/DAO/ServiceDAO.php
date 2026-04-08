@@ -66,6 +66,10 @@ class ServiceDAO
         if (!empty($filters['price'])) {
             $query->where('tarif', '<=', $filters['price']);
         }
+        // $sortField = $filters['sort_by'] ?? 'created_at';
+        // $sortOrder = $filters['order'] ?? 'desc';
+
+        // $query->orderBy($sortField, $sortOrder);
         return $query->latest()->paginate(8);
     }
     public function favorieService(int $serviceId)
@@ -74,7 +78,7 @@ class ServiceDAO
         return $client->services()->toggle($serviceId);
     }
 
-    public function getServicesByManager( array $filters = [])
+    public function getServicesByManager(array $filters = [])
     {
         $query = Service::query()
             ->with(['artisan.user', 'categorie', 'images']);

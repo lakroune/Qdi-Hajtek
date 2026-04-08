@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\DAO\ArtisanDAO;
 use App\DAO\EvaluationDAO;
 use App\Models\Conversation;
 use Exception;
@@ -10,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 class EvaluationService
 {
 
-    public function __construct(private EvaluationDAO $evaluationDAO)
+    public function __construct(private EvaluationDAO $evaluationDAO, private ArtisanDAO $artisanDAO)
     {
         //
     }
@@ -23,17 +24,22 @@ class EvaluationService
         $userId = auth('api')->id();
 
         $clientId = $conversation->conversable?->client_id ?? $conversation->conversable?->offre_travail?->client_id;
-
-        if ($userId !== $clientId) {
+        $artisanId = $conversation->conversable?->artisan_id ?? $conversation->conversable?->service?->artisan_id;
+        if ($userId !==(int) $clientId) {
             throw new Exception("Seul le client peut évaluer cette mission.");
         }
-
+        if (!$artisanId) {
+            throw new Exception("Artisan introuvable.");
+        }
         if ($conversation->evaluation()->exists()) {
             throw new Exception("Cette mission a déjà été évaluée.");
         }
 
-        return DB::transaction(function () use ($data) {
-            return $this->evaluationDAO->create($data);
+        return DB::transaction(function () use ($data, $artisanId) {
+            $evaluation = $this->evaluationDAO->create($data);
+
+            $artisan = $this->artisanDAO->updateRating($artisanId);
+            return $evaluation;
         });
     }
 }
