@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\DTOs\EvaluationDTO;
+use App\DTO\EvaluationDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\EvaluationRequest;
 use App\Services\EvaluationService;

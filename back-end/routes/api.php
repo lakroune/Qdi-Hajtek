@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CategorieController;
 use App\Http\Controllers\Api\DemandeDirecteController;
+use App\Http\Controllers\Api\EvaluationController;
 use App\Http\Controllers\Api\OffreTravailController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\PropositionController;
@@ -118,7 +119,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/paiements', [PaiementController::class, 'getPaiements']);
 
 
-    Route::post('/conversations/{conversation_id}/reviews', [ConversationController::class, 'storeReview']);
+    Route::post('/conversations/{conversation_id}/reviews', [EvaluationController::class, 'store']);
     Route::post('/conversations/{conversation_id}/complete-mission', [ConversationController::class, 'completeMission']);
 
     Route::post('/conversations/{conversation_id}/confirm-code', [ConversationController::class, 'confirmCode']);

@@ -14,8 +14,8 @@ class ChatResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $messages = $this['messages'];
-        $conversation = $this['conversation'];
+        $messages = $this->messages;
+        $conversation = $this->conversation;
         $userId = auth('api')->id();
 
         $clientId = $conversation->conversable?->client_id ?? $conversation->conversable?->offre_travail?->client_id;
@@ -25,10 +25,11 @@ class ChatResource extends JsonResource
                 'data' => ChatMessageResource::collection($messages->items()),
                 'pagination' => [
                     'current_page' => $messages->currentPage(),
-                    'last_page' => $messages->lastPage(),
-                    'per_page' => $messages->perPage(),
-                    'total' => $messages->total(),
-                    'has_more' => $messages->hasMorePages(),
+                    'last_page'    => $messages->lastPage(),
+                    'per_page'     => $messages->perPage(),
+                    'total'        => $messages->total(),
+                    'next_page_url' => $messages->nextPageUrl(),
+                    'prev_page_url' => $messages->previousPageUrl(),
                 ],
             ],
             'conversation' => new ConversationDetailResource($conversation),

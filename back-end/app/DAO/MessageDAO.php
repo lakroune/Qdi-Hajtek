@@ -24,7 +24,7 @@ class MessageDAO
     {
         $userId = auth('api')->id();
 
-        $conversation = Conversation::with(['conversable', 'paiement'])->findOrFail($conversationId);
+        $conversation = Conversation::with(['conversable', 'paiement', 'evaluation'])->findOrFail($conversationId);
 
         $clientId = $conversation->conversable?->client_id ?? $conversation->conversable?->offreTravail?->client_id;
         $artisanId = $conversation->conversable?->artisan_id ?? $conversation->conversable?->service?->artisan_id;

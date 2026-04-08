@@ -27,6 +27,7 @@ class MessageService
     {
 
         $message = $this->messageDAO->create($dto->toArray());
+        $this->messageDAO->markAsRead($message->conversation_id);
         ProcessMessageJob::dispatch($message);
         return   $message;
     }

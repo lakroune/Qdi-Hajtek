@@ -26,10 +26,22 @@ class ConversationDetailResource extends JsonResource
             'adresse' => $adresse,
 
             'payment' => $this->paiement ? [
-                'id' => $this->paiement->id,
-                'total_amount' => $this->paiement->montant_total,
-                'status' => $this->paiement->statut,
-                'paid_at' => $this->paiement->paid_at,
+                'id'               => $this->paiement->id,
+                'stripe_payment_id' => $this->paiement->stripe_payment_id,
+                'montant_total'    => (float) $this->paiement->montant_total,
+                'commission_admin' => (float) $this->paiement->commission_admin,
+                'montant_artisan'  => (float) $this->paiement->montant_artisan,
+                'devise'           => $this->paiement->devise,
+                'statut'           => $this->paiement->statut,
+                'paid_at'          => $this->paiement->paid_at,
+                'released_at'      => $this->paiement->released_at,
+            ] : null,
+
+            'evaluation' => $this->evaluation ? [
+                'id'         => $this->evaluation->id,
+                'rating'     => $this->evaluation->rating,
+                'comment'    => $this->evaluation->comment,
+                'created_at' => $this->evaluation->created_at,
             ] : null,
 
             'details' => [

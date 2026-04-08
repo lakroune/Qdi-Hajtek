@@ -50,38 +50,30 @@ const ConversationPage = () => {
         const fetchMessages = async () => {
             setIsLoadingMessages(true);
             try {
-                const response = await axiosClient.get(
-                    `/conversations/${conversation_id}/messages`
-                );
+                const response = await axiosClient.get(`/conversations/${conversation_id}/messages`);
 
-                const apiData = response.data;
+                const apiData = response.data.data;
 
-                // ✅ Nouvelle structure : messages.data
                 const messagesArray = apiData.messages.data;
                 const userId = apiData.currentUser.id;
                 const is_client = apiData.currentUser.is_client;
-
                 const conversation = apiData.conversation;
-                const conversable = conversation.conversable; // DemandeDirecte
 
                 const subject = conversation.subject;
-                const statut = conversable?.statut ?? 'en_attente';
-                const isCompleted = conversable?.is_completed ?? false;
-                const prix_final = conversable?.prix_final ?? 0;
-                const offre_service_id = conversable?.service?.id ?? null;
+                const statut = conversation.status ?? 'en_attente';
+                const isCompleted = conversation.is_completed ?? false;
+                const prix_final = conversation.prix_final ?? 0;
 
-                const payment = conversation.paiement;
+                const payment = conversation.payment;
                 const isPaid = payment?.statut === 'paid'
                     || payment?.statut === 'escrow'
                     || payment?.statut === 'released';
                 const timePaid = payment?.paid_at ?? null;
 
                 setCurrentUserId(userId);
-
                 setInfoConversation({
                     subject,
                     statut,
-                    offre_service_id,
                     prix_final,
                     is_client,
                     is_paid: isPaid,
@@ -91,7 +83,7 @@ const ConversationPage = () => {
 
                 const formattedMessages = messagesArray.map(msg => ({
                     id: msg.id,
-                    text: msg.contenu_message,
+                    text: msg.content,
                     isMe: msg.sender_id === userId,
                     time: formatDistanceToNow(parseISO(msg.created_at), {
                         addSuffix: true,
@@ -100,12 +92,12 @@ const ConversationPage = () => {
                     status: msg.is_read ? 'read' : 'sent',
                     senderName: msg.sender_id === userId
                         ? 'You'
-                        : `${msg.sender.firstname} ${msg.sender.lastname}`
+                        : msg.sender.full_name
                 }));
 
                 setMessages(formattedMessages);
             } catch (error) {
-                console.error("Erreur lors du chargement des messages", error);
+                toast.error("Une erreur est survenue");
             } finally {
                 setIsLoadingMessages(false);
             }
@@ -125,7 +117,7 @@ const ConversationPage = () => {
 
                         return [...prevMessages, {
                             id: e.message.id,
-                            text: e.message.contenu_message ?? e.message.content,
+                            text: e.message.content ?? e.message.contenu_message,
                             isMe: e.message.sender_id === currentUserId,
                             time: formatDistanceToNow(parseISO(e.message.created_at), {
                                 addSuffix: true,
@@ -133,7 +125,7 @@ const ConversationPage = () => {
                             }),
                             status: e.message.is_read ? 'read' : 'sent',
                             senderName: e.message.sender
-                                ? `${e.message.sender.firstname ?? ''} ${e.message.sender.lastname ?? ''}`.trim()
+                                ? `${e.message.sender?.first_name ?? ''} ${e.message.sender?.last_name ?? ''}`.trim()
                                 : 'Inconnu'
                         }];
                     });
@@ -159,11 +151,10 @@ const ConversationPage = () => {
             });
 
             if (response.data) {
-                // Support both flat and nested response shapes
                 const msg = response.data.data ?? response.data;
                 const myNewMsg = {
                     id: msg.id,
-                    text: msg.contenu_message ?? msg.content,
+                    text: msg.content ?? msg.contenu_message,  
                     isMe: true,
                     time: formatDistanceToNow(parseISO(msg.created_at), {
                         addSuffix: true,
