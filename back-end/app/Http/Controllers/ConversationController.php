@@ -75,6 +75,12 @@ class ConversationController extends Controller
 
     public function confirmCode(Request $request, int $id)
     {
+
+        if (!Gate::check('is-client-identified')) {
+            return response()->json([
+                'message' => 'Unauthorized'
+            ], 401);
+        }
         $request->validate([
             'code' => 'required|string|min:6'
         ]);

@@ -4,6 +4,7 @@ namespace App\services;
 
 use App\DAO\ConversationDAO;
 use App\Events\CompletedMission;
+use App\Events\ConfirmCodeEvent;
 use App\Events\PrixFixed;
 use Illuminate\Support\Facades\Gate;
 
@@ -43,6 +44,10 @@ class ConversationService
 
     public function confirmCode(int $id, string $code)
     {
-        return $this->conversationDAO->confirmCode($id, $code);
+        $conversation = $this->conversationDAO->confirmCode($id, $code);
+        if($conversation) {
+            event(new ConfirmCodeEvent($conversation));
+        }
+        return $conversation;
     }
 }

@@ -70,11 +70,11 @@ class ServiceDAO
             });
 
             $query->join('artisans', 'services.artisan_id', '=', 'artisans.id')
-                ->orderByDesc('artisans.nb_offers')
+                ->orderByDesc('artisans.nb_offres')
                 ->select('services.*');
         } else {
             $query->join('artisans', 'services.artisan_id', '=', 'artisans.id')
-                ->orderByRaw('(artisans.note * artisans.nb_offers) DESC')
+                ->orderByRaw('(artisans.note * artisans.nb_offres) DESC')
                 ->select('services.*');
         }
 

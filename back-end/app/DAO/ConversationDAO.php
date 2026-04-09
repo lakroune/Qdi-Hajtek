@@ -126,11 +126,14 @@ class ConversationDAO
 
 
 
-    public  function completeMission(int $id)
+    public function completeMission(int $id)
     {
-        $conversation = Conversation::findOrFail($id);
-        $conversation->conversable->update(['statut' => 'termine']);
-        return $conversation;
+        $conversation = Conversation::find($id);
+        if ($conversation && $conversation->conversable) {
+            $conversation->conversable->update(['statut' => 'termine']);
+            return $conversation;
+        }
+        return null;
     }
 
     public function confirmCode(int $id, string $code)
@@ -138,9 +141,9 @@ class ConversationDAO
         $conversation = Conversation::with(['paiement', 'conversable'])->findOrFail($id);
         $paiement = $conversation->paiement;
         $item = $conversation->conversable;
-
+        $artisan = $item->artisan ?? $item->service->artisan;
         if ($item->code_confirmation === $code && $item->is_completed === false && $item->statut === 'termine') {
-            return DB::transaction(function () use ($conversation, $paiement, $item) {
+            return DB::transaction(function () use ($conversation, $paiement, $item, $artisan) {
                 $item->update([
                     'is_completed' => true,
                     'date_confirmation' => now()
@@ -153,10 +156,11 @@ class ConversationDAO
                     'commission_admin' => $commission,
                     'released_at' => now(),
                 ]);
-                return true;
+                $artisan->increment('nb_offres');
+                return $conversation;
             });
         }
 
-        return false;
+        return null;
     }
 }

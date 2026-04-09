@@ -56,10 +56,10 @@ Route::middleware('auth:api')->group(function () {
     Route::get('conversations', [ConversationController::class, 'index']);
 
 
+    Route::post('/conversations/{conversation_id}/complete-mission', [ConversationController::class, 'completeMission']);
 
     // testing 
 
-    Route::post('/conversations/{conversation_id}/complete-mission', [ConversationController::class, 'completeMission']);
 
     Route::post('/conversations/{conversation_id}/reviews', [EvaluationController::class, 'store']);
 
