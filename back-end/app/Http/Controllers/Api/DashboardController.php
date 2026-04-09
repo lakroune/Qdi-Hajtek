@@ -7,6 +7,7 @@ use App\Models\Conversation;
 use App\Models\DemandeDirecte;
 use App\Models\Message;
 use App\Models\OffreTravail;
+use App\Models\Paiement;
 use App\Models\Proposition;
 use App\Models\Service;
 use App\Models\User;
@@ -128,6 +129,68 @@ class DashboardController extends Controller
                     'monthly_revenue' => $monthlyRevenue,
                     'daily_revenue' => $dailyRevenue,
                     'average_rating' => round($avgRating, 1)
+                ]
+            ]
+        ]);
+    }
+
+    public function artisanStats()
+    {
+
+        $artisanId = auth()->user()->id;
+
+        $totalPropositions = Proposition::where('artisan_id', $artisanId)->count();
+        $acceptedPropositions = Proposition::where('artisan_id', $artisanId)
+            ->where('statut', 'accepte')->count();
+        $totalService = Service::where('artisan_id', $artisanId)->count();
+        $completedJobs = Proposition::where('artisan_id', $artisanId)->where('is_completed', true)->count();
+        $totalDemandeDirectesCompleted =    DemandeDirecte::where('is_completed', true)->whereHas('service', function ($q) use ($artisanId) {
+            $q->where('artisan_id', $artisanId);
+        })->count();
+
+        $dailyEarnings = Paiement::whereHas('conversation', function ($q) use ($artisanId) {
+            $q->whereHasMorph(
+                'conversable',
+                [DemandeDirecte::class, Proposition::class],
+                function ($subQuery, $type) use ($artisanId) {
+                    if ($type === DemandeDirecte::class) {
+                        $subQuery->whereHas('service', function ($q) use ($artisanId) {
+                            $q->where('artisan_id', $artisanId);
+                        });
+                    } elseif ($type === Proposition::class) {
+                        $subQuery->where('artisan_id', $artisanId);
+                    }
+                }
+            );
+        })
+            ->whereIn('statut', ['released', 'completed'])
+            ->where('paid_at', '>=', now()->subDays(30))
+            ->select(
+                DB::raw("TO_CHAR(paid_at, 'YYYY-MM-DD') as day"),
+                DB::raw('SUM(CAST(montant_total AS DECIMAL) - CAST(commission_admin AS DECIMAL)) as earnings')
+            )
+            ->groupBy('day')
+            ->orderBy('day', 'asc')
+            ->get();
+
+        return response()->json([
+            'status' => 'success',
+            'stats' => [
+                'overview' => [
+                    'total_services' => $totalService,
+                    'total_propositions' => $totalPropositions,
+                    'accepted_propositions' => $acceptedPropositions,
+                    'completed_jobs' => $completedJobs,
+                    'total_demande_directes_completed' => $totalDemandeDirectesCompleted,
+                    'all_completed_tasks' => $completedJobs + $totalDemandeDirectesCompleted
+                ],
+                'financials' => [
+                    'total_earned' => round($financials->total_earned ?? 0, 2),
+                    'total_payments_count' => $financials->total_payments_count ?? 0,
+                    'currency' => 'MAD'
+                ],
+                'charts' => [
+                    'daily_revenue' => $dailyEarnings
                 ]
             ]
         ]);

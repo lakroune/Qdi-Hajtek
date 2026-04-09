@@ -87,6 +87,7 @@ Route::middleware('auth:api')->group(function () {
 
 
     Route::get('/dashboard/stats', [DashboardController::class, 'stats']);
+    Route::get('/dashboard/artisan-stats', [DashboardController::class, 'artisanStats']);
 
 
 

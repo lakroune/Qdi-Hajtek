@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { use, useEffect, useRef, useState } from 'react';
 import axiosClient from '../api/axios-client.js';
 import {
     SearchIcon,
@@ -24,6 +24,11 @@ const HomePage = () => {
 
     const loaderRef = useRef(null);
 
+
+    useEffect(() => {
+        // /dashboard/artisan-stats
+        axiosClient.get('/dashboard/artisan-stats');
+    })
     const searchServices = async (isNewSearch = false) => {
         setLoading(true);
         const pageToFetch = isNewSearch ? 1 : nextpage;
