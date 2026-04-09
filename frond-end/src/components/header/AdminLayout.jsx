@@ -10,8 +10,7 @@ import { Link, useLocation, Outlet } from 'react-router-dom';
 import Logo from '../logo/Logo';
 
 const AdminLayout = () => {
-    const [sidebarOpen, setSidebarOpen] = useState(true);
-    const [userMenuOpen, setUserMenuOpen] = useState(false);
+    const [sidebarOpen, setSidebarOpen] = useState(false);
     const location = useLocation();
 
     const menuItems = [

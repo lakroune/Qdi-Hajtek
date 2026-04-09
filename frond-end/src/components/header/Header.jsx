@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, User, Bell, LogOut, Settings, Heart, MessageCircle, Briefcase, Calendar, Cookie, BellDot } from 'lucide-react';
+import { Menu, X, User, Bell, Shield, LogOut, Settings, Heart, MessageCircle, Briefcase, Calendar, Cookie, BellDot } from 'lucide-react';
 import Logo from '../logo/Logo';
 import LogoutModal from '../models/LogoutModal';
 import { useNavigate } from 'react-router-dom';
@@ -54,15 +54,18 @@ const Header = ({
 
 
   const liensPublics = [
-    { nom: 'Accueil', chemin: '/' },
+    // { nom: 'Accueil', chemin: '/' },
   ];
 
   const liensArtisan = [
-    { nom: 'Mes services', chemin: '/services' },
+    // { nom: 'Mes services', chemin: '/services' },
+  ];
+  const liensAdmin = [
+    // { nom: 'da', chemin: '/categories' },
   ];
 
   const liensClient = [
-    { nom: 'Favoris', chemin: '/favorites' },
+    // { nom: 'Favoris', chemin: '/favorites' },
   ];
 
   const obtenirLiensNav = () => {
@@ -103,22 +106,32 @@ const Header = ({
     setEstAuthentifie(false);
   };
 
+
+  const elemenetMenuCLient = [
+    { vers: '/mes-offres', icone: Calendar, libelle: ' mes offres' },
+    { vers: '/parametres', icone: Settings, libelle: 'parametres' },
+  ];
+
+  const elementsMenuArtisan = [
+    { vers: '/portfolio', icone: User, libelle: 'Portfolio' },
+    { vers: '/dashboard', icone: Cookie, libelle: 'Dashboard' },
+    { vers: '/offres', icone: Calendar, libelle: 'Offres' },
+  ];
+  const elementsMenuAdmin = [
+    { vers: '/admin', icone: Shield, libelle: 'Dashboard' },
+  ];
+
   const obtenirElementsMenuProfil = () => {
     if (typeUtilisateur === 'artisan') {
-      return [
-        { vers: 'services', icone: Briefcase, libelle: 'Services' },
-        { vers: '/dashboard', icone: Cookie, libelle: 'Dashboard' },
-        { vers: '/offres', icone: Calendar, libelle: 'Offres' },
-        { vers: '/portfolio', icone: User, libelle: 'Portfolio' },
-        { vers: '/parametres', icone: Settings, libelle: 'parametres' },
-
-      ];
+      return [...elementsMenuArtisan, ...elemenetMenuCLient];
     }
-    return [
-      { vers: '/favorites', icone: Heart, libelle: 'Favoris' },
-      { vers: '/mes-offres', icone: Calendar, libelle: 'Offres' },
-      { vers: '/parametres', icone: Settings, libelle: 'parametres' },
-    ];
+    if (typeUtilisateur === 'admin') {
+      return elemenetMenuAdmin;
+    }
+    if (typeUtilisateur === 'client') {
+      return elemenetMenuCLient;
+    }
+    return [];
   };
 
   const elementsMenuProfil = obtenirElementsMenuProfil();

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CategorieController;
+use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\DemandeDirecteController;
 use App\Http\Controllers\Api\EvaluationController;
 use App\Http\Controllers\Api\OffreTravailController;
@@ -85,6 +86,7 @@ Route::middleware('auth:api')->group(function () {
 
 
 
+    Route::get('/dashboard/stats', [DashboardController::class, 'stats']);
 
 
 
