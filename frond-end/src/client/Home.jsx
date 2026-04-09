@@ -24,11 +24,6 @@ const HomePage = () => {
 
     const loaderRef = useRef(null);
 
-
-    useEffect(() => {
-        // /dashboard/artisan-stats
-        axiosClient.get('/dashboard/artisan-stats');
-    })
     const searchServices = async (isNewSearch = false) => {
         setLoading(true);
         const pageToFetch = isNewSearch ? 1 : nextpage;

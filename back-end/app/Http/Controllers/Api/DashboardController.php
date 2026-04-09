@@ -12,6 +12,7 @@ use App\Models\Proposition;
 use App\Models\Service;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 
 class DashboardController extends Controller
 {
@@ -136,9 +137,12 @@ class DashboardController extends Controller
 
     public function artisanStats()
     {
-
+        if (!Gate::allows('is-artisan-identified')) {
+            return response()->json([
+                'message' => 'Unauthorized'
+            ], 401);
+        }
         $artisanId = auth()->user()->id;
-
         $totalPropositions = Proposition::where('artisan_id', $artisanId)->count();
         $acceptedPropositions = Proposition::where('artisan_id', $artisanId)
             ->where('statut', 'accepte')->count();
@@ -147,6 +151,29 @@ class DashboardController extends Controller
         $totalDemandeDirectesCompleted =    DemandeDirecte::where('is_completed', true)->whereHas('service', function ($q) use ($artisanId) {
             $q->where('artisan_id', $artisanId);
         })->count();
+
+        $financials = Paiement::whereHas('conversation', function ($q) use ($artisanId) {
+            $q->whereHasMorph(
+                'conversable',
+                [DemandeDirecte::class, Proposition::class],
+                function ($subQuery, $type) use ($artisanId) {
+                    if ($type === DemandeDirecte::class) {
+                        $subQuery->whereHas('service', function ($q) use ($artisanId) {
+                            $q->where('artisan_id', $artisanId);
+                        });
+                    } elseif ($type === Proposition::class) {
+                        $subQuery->where('artisan_id', $artisanId);
+                    }
+                }
+            );
+        })
+            ->whereIn('statut', ['released', 'completed'])
+            ->select(
+                DB::raw('SUM((montant_total ) - (commission_admin )) as total_earned'),
+                DB::raw('COUNT(id) as total_payments_count')
+            )
+            ->first();
+
 
         $dailyEarnings = Paiement::whereHas('conversation', function ($q) use ($artisanId) {
             $q->whereHasMorph(
