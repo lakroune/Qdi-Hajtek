@@ -77,13 +77,6 @@ const DashboardArtisanPage = () => {
 
     return (
         <div className="space-y-4 p-4 ">
-
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-20">
-                {stats.map((s, i) => (
-                    <StatCard key={i} label={s.label} value={s.value} />
-                ))}
-            </div>
-
             <div className="grid grid-cols-2 sm:grid-cols-2 gap-3">
                 <StatCard
                     label="Total gagné"
@@ -96,6 +89,13 @@ const DashboardArtisanPage = () => {
                     sub={charts.daily_revenue[0]?.day ?? '—'}
                 />
             </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-20">
+                {stats.map((s, i) => (
+                    <StatCard key={i} label={s.label} value={s.value} />
+                ))}
+            </div>
+
+
 
             {/* <div className="bg-white border border-gray-100 rounded-xl p-4">
                 <p className="text-sm font-medium text-gray-400 mb-4">Gains journaliers</p>
