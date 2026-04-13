@@ -19,7 +19,6 @@ class DemandeDirecteService
     public function createDemandeDirecte(DemandeDirecteDTO $dto)
     {
         $data = $dto->toArray();
-        $data['code_confirmation'] = strtoupper(Str::random(6));
         $demande =  $this->demandeDirecteDAO->create($data);
         event(new DemandeCreated($demande));
         return $demande;

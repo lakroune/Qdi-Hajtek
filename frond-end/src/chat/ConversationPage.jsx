@@ -319,7 +319,7 @@ const ConversationPage = () => {
                     Validation du devis
                 </div>
 
-                {infoConversation.statut === 'en_attente' && !infoConversation.is_client && (
+                {(infoConversation.statut === 'en_attente'  || infoConversation.statut === 'approve') && !infoConversation.is_client && (
                     <button
                         onClick={() => setShowModelAction(true)}
                         className="w-full py-2 flex items-center justify-center gap-2 text-[12px] border transition-all bg-white border-gray-300 hover:bg-gray-50 hover:border-[#D35400] text-[#1B4F72]"
@@ -329,7 +329,7 @@ const ConversationPage = () => {
                     </button>
                 )}
 
-                {infoConversation.statut === 'en_attente' && infoConversation.is_client && (
+                {(infoConversation.statut === 'en_attente' || infoConversation.statut === 'approve') && infoConversation.is_client && (
                     <div className="flex items-center gap-2 p-2 bg-orange-50  animate-pulse ">
                         <RefreshCw className="w-3 h-3 text-orange-500 animate-spin" />
                         <p className="text-[11px] text-orange-600 font-medium italic">

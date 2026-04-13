@@ -7,6 +7,7 @@ use App\Events\PaiementCreated;
 use App\Http\Resources\PaiementResource;
 use App\Models\Paiement;
 use Exception;
+use Illuminate\Support\Facades\DB;
 use Stripe\PaymentIntent;
 use Stripe\Stripe;
 
@@ -48,11 +49,14 @@ class  PaiementService
 
     public function confirmPayment(string $stripe_payment_id)
     {
-        $payement =  $this->paiementDAO->confirmPayment($stripe_payment_id);
-        if ($payement) {
-            event(new PaiementCreated($payement));
-        }
-        return $payement;
+
+        return  DB::transaction(function () use ($stripe_payment_id) {
+            $payement =  $this->paiementDAO->confirmPayment($stripe_payment_id);
+            if ($payement) {
+                event(new PaiementCreated($payement));
+            }
+            return $payement;
+        });
     }
     public  function getPaiements()
     {

@@ -16,9 +16,9 @@ class ChatResource extends JsonResource
     {
         $messages = $this->messages;
         $conversation = $this->conversation;
-        $userId = auth('api')->id();
+        $userId = auth('api')->user()->id;
 
-        $clientId = $conversation->conversable?->client_id ?? $conversation->conversable?->offre_travail?->client_id;
+        $clientId = $conversation->conversable?->client_id ?? $conversation->conversable?->offreTravail?->client_id;
 
         return [
             'messages' => [

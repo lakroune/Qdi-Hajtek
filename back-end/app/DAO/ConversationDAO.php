@@ -144,18 +144,19 @@ class ConversationDAO
         $artisan = $item->artisan ?? $item->service->artisan;
         if ($item->code_confirmation === $code && $item->is_completed === false && $item->statut === 'termine') {
             return DB::transaction(function () use ($conversation, $paiement, $item, $artisan) {
-                $item->update([
-                    'is_completed' => true,
-                    'date_confirmation' => now()
-                ]);
+
+                $item->is_completed = true;
+                $item->date_confirmation = now();
+                $item->save();
+
                 $commission = $paiement->montant_total * 0.025;
                 $montant_artisan = $paiement->montant_total - $commission;
-                $paiement->update([
-                    'statut' => 'released',
-                    'montant_artisan' => $montant_artisan,
-                    'commission_admin' => $commission,
-                    'released_at' => now(),
-                ]);
+
+                $paiement->statut = 'released';
+                $paiement->montant_artisan = $montant_artisan;
+                $paiement->commission_admin = $commission;
+                $paiement->released_at = now();
+                $paiement->save();
                 $artisan->increment('nb_offres');
                 return $conversation;
             });

@@ -23,7 +23,7 @@ class EvaluationService
         $conversation = Conversation::with(['conversable'])->findOrFail($conversationId);
         $userId = auth('api')->id();
 
-        $clientId = $conversation->conversable?->client_id ?? $conversation->conversable?->offre_travail?->client_id;
+        $clientId = $conversation->conversable?->client_id ?? $conversation->conversable?->offreTravail?->client_id;
         $artisanId = $conversation->conversable?->artisan_id ?? $conversation->conversable?->service?->artisan_id;
         if ($userId !==(int) $clientId) {
             throw new Exception("Seul le client peut évaluer cette mission.");
