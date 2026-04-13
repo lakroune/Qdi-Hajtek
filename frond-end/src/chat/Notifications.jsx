@@ -81,7 +81,7 @@ const Notifications = () => {
 
             switch (dataType) {
                 case 'new_demande':
-                    navigate(`/messages/${notif.data.demande_directe_id}`);
+                    navigate(`/messages/${notif.data.conversation_id}`);
                     break;
                 case 'new_proposition':
                 case 'proposition_accepted':
@@ -90,10 +90,10 @@ const Notifications = () => {
                 case 'mission_completed':
                 case 'payment_success':
                 case 'price_fixed':
-                    navigate(`/chat/${notif.data.conversation_id}`);
+                    navigate(`/messages/${notif.data.conversation_id}`);
                     break;
                 default:
-                    navigate('/conversations');
+                    navigate('/messages');
             }
         } catch (error) {
             console.error("Erreur d'action:", error);
