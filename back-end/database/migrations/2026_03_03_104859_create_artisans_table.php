@@ -20,6 +20,8 @@ return new class extends Migration
             $table->decimal('note', 3, 1)->default(0.0);
             $table->integer('nb_offres')->default(0);
             $table->integer('rayon_action')->default(10);
+            $table->float('latitude')->nullable();
+            $table->float('longitude')->nullable();
             $table->primary('id');
         });
     }

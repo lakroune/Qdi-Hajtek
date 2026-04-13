@@ -22,6 +22,8 @@ class Artisan extends Model
         'experience',
         'note',
         'rayon_action',
+        'latitude',
+        'longitude'
     ];
 
     protected $casts = [];

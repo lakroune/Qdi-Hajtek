@@ -20,7 +20,9 @@ class ArtisanDAO
             $artisan = Artisan::create([
                 'id' => $dto->userId,
                 'specialite' => $dto->specialite,
-                'bio' => $dto->bio,
+                'bio' => $dto->bio, 
+                'latitude' => $dto->latitude,
+                'longitude' => $dto->longitude,
                 'rayon_action' => $dto->rayonAction,
             ]);
 

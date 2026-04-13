@@ -31,6 +31,8 @@ class StoreArtisanRequest extends FormRequest
             "cin_rec"        => "required|image|mimes:jpg,jpeg,png|max:2048",
             "cin_ver"        => "required|image|mimes:jpg,jpeg,png|max:2048",
             "rib_doc"        => "required|image|mimes:jpg,jpeg,png|max:2048",
+            'latitude'       => 'required|numeric',
+            'longitude'      => 'required|numeric',
             "diplome_doc"    => "nullable|array",
             "diplome_doc.*"  => "image|mimes:jpg,jpeg,png,pdf|max:2048",
             "certificat_doc"   => "nullable|array",
@@ -57,6 +59,9 @@ class StoreArtisanRequest extends FormRequest
             "certificat_doc.image" => "certificat_doc must be an image",
             "diplome_doc.*.image" => "diplome_doc.* must be an image",
             "certificat_doc.*.image" => "certificat_doc.* must be an image",
+            "latitude.required" => "latitude is required",
+            "longitude.required" => "longitude is required",
+            
         ];
     }
 

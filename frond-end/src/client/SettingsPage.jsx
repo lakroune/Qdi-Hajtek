@@ -318,7 +318,7 @@ const PageParametres = () => {
             const response = await axiosClient.post('/artisans', formData);
 
             if (response.status === 200 || response.status === 201) {
-                setMessageSucces('Votre candidature a été soumise avec succès ! Vous recevrez une réponse sous 48h.');
+                toast.success('Votre candidature a été soumise avec succès ! Vous recevrez une réponse sous 48h.');
                 setFormulaireArtisan({
                     specialite: '',
                     experience: '',
@@ -370,8 +370,8 @@ const PageParametres = () => {
                                     key={onglet.id}
                                     onClick={() => setOngletActif(onglet.id)}
                                     className={`w-full flex items-center gap-2 px-4 py-3 text-left text-[12px] font-medium transition-colors border-b border-gray-100 last:border-0 ${ongletActif === onglet.id
-                                            ? 'bg-[#D35400]/10 text-[#D35400] border-l-4 border-l-[#D35400]'
-                                            : 'text-[#1B4F72] hover:bg-gray-50'
+                                        ? 'bg-[#D35400]/10 text-[#D35400] border-l-4 border-l-[#D35400]'
+                                        : 'text-[#1B4F72] hover:bg-gray-50'
                                         }`}
                                 >
                                     {onglet.libelle}
