@@ -61,8 +61,8 @@ class NewDemandeNotification extends Notification implements ShouldQueue, Should
     {
         return [
             'demande_directe_id' => $this->demandeDirecte->id,
-            'contenu' => "Une nouvelle demande vient d'être créée",
-            'type_data' => 'notification',
+            'contenu' => "Vous avez reçu une nouvelle demande directe pour votre service.",
+            'type_data' => 'new_demande',
         ];
     }
 

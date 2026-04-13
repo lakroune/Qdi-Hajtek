@@ -28,9 +28,22 @@ class MissionCompletedNotification extends Notification implements ShouldQueue, 
      */
     public function via(object $notifiable): array
     {
-        return ['broadcast'];
+        return ['database', 'broadcast'];
     }
 
+    public function toDatabase(object $notifiable): array
+    {
+        return [
+            'conversation_id' => $this->conversation->id,
+            'message' => "La mission a été marquée comme terminée. Vous pouvez maintenant laisser une évaluation.",
+            'type_data' => 'mission_completed',
+        ];
+    }
+
+    public function toBroadcast($notifiable)
+    {
+        return ['message' => "Mission terminée !"];
+    }
     /**
      * Get the mail representation of the notification.
      */
@@ -55,12 +68,7 @@ class MissionCompletedNotification extends Notification implements ShouldQueue, 
         ];
     }
 
-    public function toBroadcast($notifiable)
-    {
-        return [
-            'message' => "La mission a été terminée"
-        ];
-    }
+ 
 
     public function broadcastAs()
     {

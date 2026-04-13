@@ -27,9 +27,17 @@ class PaymentSuccessNotification extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        return ['broadcast'];
+        return ['database', 'broadcast'];
     }
 
+    public function toDatabase(object $notifiable): array
+    {
+        return [
+            'conversation_id' => $this->conversation->id,
+            'message' => "Paiement confirmé ! Les fonds sont maintenant sécurisés.",
+            'type_data' => 'payment_success',
+        ];
+    }
     /**
      * Get the mail representation of the notification.
      */
@@ -56,7 +64,7 @@ class PaymentSuccessNotification extends Notification implements ShouldQueue
     public function toBroadcast($notifiable)
     {
         return [
-            'message' => "Le paiement de la conversation " . $this->conversation->id . " a change."
+            'message' => "Le paiement de la conversation " . $this->conversation->subject . " a change."
         ];
     }
 

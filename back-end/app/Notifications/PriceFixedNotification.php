@@ -52,12 +52,7 @@ class PriceFixedNotification extends Notification
             'conversation_id' => $this->conversation->id
         ];
     }
-    public function toDatabase($notifiable)
-    {
-        return [
-            'conversation_id' => $this->conversation->id
-        ];
-    }
+    
 
     public function toBroadcast($notifiable)
     {
@@ -65,7 +60,14 @@ class PriceFixedNotification extends Notification
             'message' => "Le prix de la conversation " . $this->conversation->id . " a change."
         ];
     }
-
+    public function toDatabase($notifiable)
+    {
+        return [
+            'conversation_id' => $this->conversation->id,
+            'message' => "Le prix final a été fixé à " . $this->conversation->montant_total . " DH.",
+            'type_data' => 'price_fixed',
+        ];
+    }
     public function broadcastAs()
     {
         return 'new-notification';

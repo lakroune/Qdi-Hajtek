@@ -61,7 +61,15 @@ class PropositionAcceptedNotification extends Notification implements ShouldQueu
             'type' => 'acceptance'
         ];
     }
-
+    public function toDatabase(object $notifiable): array
+    {
+        return [
+            'proposition_id' => $this->proposition->id,
+            'titre_offre' => $this->proposition->offreTravail->titre,
+            'message' => "Votre proposition a été acceptée ! Vous pouvez commencer à travailler.",
+            'type_data' => 'proposition_accepted',
+        ];
+    }
     public function toBroadcast(object $notifiable)
     {
         return new BroadcastMessage([

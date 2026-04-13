@@ -63,18 +63,16 @@ class NewPropositionNotification extends Notification implements ShouldQueue, Sh
         ];
     }
 
-    public function toDatabase($notifiable)
-    {
-        return [
-            'proposition_id' => $this->proposition->id,
-            'offre_id' => $this->proposition->offre_id,
-            'titre_offre' => $this->proposition->offreTravail->titre,
-            'artisan_name' => $this->proposition->artisan->user->firstname . ' ' . $this->proposition->artisan->user->lastname,
-            'prix_propose' => $this->proposition->prix_propose,
-            'message' => "Nouvelle proposition reçue.",
-            'type_data' => 'notification',
-        ];
-    }
+   public function toDatabase($notifiable) {
+    return [
+        'proposition_id' => $this->proposition->id,
+        'offre_id' => $this->proposition->offre_id,
+        'titre_offre' => $this->proposition->offreTravail->titre,
+        'artisan_name' => $this->proposition->artisan->user->firstname . ' ' . $this->proposition->artisan->user->lastname,
+        'message' => "Nouvelle proposition reçue de " . $this->proposition->artisan->user->firstname,
+        'type_data' => 'new_proposition',
+    ];
+}
     public function toBroadcast(object $notifiable)
     {
         return [
