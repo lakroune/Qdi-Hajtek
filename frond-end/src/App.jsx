@@ -92,6 +92,7 @@ function App() {
               <Route path="mes-offres" element={<ClientListOffres />} />
               <Route path="mes-offres/:id" element={<ClientOffreDetail />} />
               <Route path="favorites" element={<ClientFavoris />} />
+              
             </Route>
 
             <Route element={<ProtectedRoute roles={['artisan']} />}>

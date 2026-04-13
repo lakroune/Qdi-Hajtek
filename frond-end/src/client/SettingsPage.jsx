@@ -9,12 +9,83 @@ import {
     XCircle,
     Disc3
 } from 'lucide-react';
+import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+import { LocateFixed } from 'lucide-react';
+import markerIcon from 'leaflet/dist/images/marker-icon.png';
+import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+
 import AvatarUpload from '../components/inputs/AvatarUpload';
 import Input from '../components/inputs/Input';
 import FileUpload from '../components/inputs/FileUpload';
 import Submit from '../components/buttons/Submit';
 import axiosClient from '../api/axios-client';
 import { toast } from 'react-hot-toast';
+
+let DefaultIcon = L.icon({
+    iconUrl: markerIcon,
+    shadowUrl: markerShadow,
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+});
+L.Marker.prototype.options.icon = DefaultIcon;
+
+const LocationPicker = ({ onLocationSelect, initialLat, initialLng }) => {
+    const defaultPos = [initialLat || 33.5731, initialLng || -7.5898];
+    const [position, setPosition] = useState(defaultPos);
+
+    const MapEvents = () => {
+        useMapEvents({
+            click(e) {
+                const { lat, lng } = e.latlng;
+                setPosition([lat, lng]);
+                onLocationSelect(lat, lng);
+            },
+        });
+        return null;
+    };
+
+    const RecenterButton = () => {
+        const map = useMap();
+        const handleLocate = () => {
+            map.locate().on('locationfound', (e) => {
+                setPosition([e.latlng.lat, e.latlng.lng]);
+                map.flyTo(e.latlng, 14);
+                onLocationSelect(e.latlng.lat, e.latlng.lng);
+            });
+        };
+        return (
+            <button
+                type="button"
+                onClick={handleLocate}
+                className="absolute bottom-4 right-4 z-[1000] bg-white p-2 rounded-full shadow-md border border-gray-200 hover:bg-gray-50 transition-colors"
+                title="Ma position actuelle"
+            >
+                <LocateFixed className="w-4 h-4 text-[#1B4F72]" />
+            </button>
+        );
+    };
+
+    return (
+        <div className="relative w-full h-[280px] border border-gray-200 overflow-hidden">
+            <MapContainer
+                center={defaultPos}
+                zoom={12}
+                scrollWheelZoom={true}
+                className="w-full h-full"
+            >
+                <TileLayer
+                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                />
+                <Marker position={position} />
+                <MapEvents />
+                <RecenterButton />
+            </MapContainer>
+        </div>
+    );
+};
 
 const PageParametres = () => {
     const [ongletActif, setOngletActif] = useState('profil');
@@ -55,6 +126,8 @@ const PageParametres = () => {
         experience: '',
         description: '',
         rayonTravail: '',
+        latitude: null,
+        longitude: null,
         attestationsRib: null,
         cniRecto: null,
         cniVerso: null,
@@ -77,7 +150,7 @@ const PageParametres = () => {
         { valeur: 'climatisation', libelle: 'Climatisation' },
         { valeur: 'jardinage', libelle: 'Jardinage' },
         { valeur: 'maconnerie', libelle: 'Maçonnerie' },
-        { valeur: 'serrurerie', libelle: 'Serrurerie' }
+        { valeur: 'serrurerie', libelle: 'Serrurerie' },
     ];
 
     const experiences = [
@@ -85,7 +158,7 @@ const PageParametres = () => {
         { valeur: '0-2', libelle: 'Moins de 2 ans' },
         { valeur: '2-5', libelle: '2 à 5 ans' },
         { valeur: '5-10', libelle: '5 à 10 ans' },
-        { valeur: '10+', libelle: 'Plus de 10 ans' }
+        { valeur: '10+', libelle: 'Plus de 10 ans' },
     ];
 
     useEffect(() => {
@@ -117,7 +190,6 @@ const PageParametres = () => {
                     ville: user.city || '',
                     avatar: user.avatar || null,
                     role: user.role || 'client',
-                    // artisan fields (présents directement sur user si role === 'artisan')
                     isArtisan,
                     isVerified: user.is_verified || false,
                     specialite: user.specialite || '',
@@ -125,7 +197,6 @@ const PageParametres = () => {
                     description: user.bio || '',
                     rayon: user.rayon_action || '',
                 });
-
             } catch (error) {
                 console.error('Erreur lors de la récupération de l\'utilisateur', error);
             } finally {
@@ -219,6 +290,11 @@ const PageParametres = () => {
             return;
         }
 
+        if (!formulaireArtisan.latitude || !formulaireArtisan.longitude) {
+            setMessageErreur('Veuillez sélectionner votre localisation sur la carte.');
+            return;
+        }
+
         setChargement(true);
 
         try {
@@ -227,6 +303,8 @@ const PageParametres = () => {
             formData.append('experience', formulaireArtisan.experience);
             formData.append('rayon_action', formulaireArtisan.rayonTravail || 30);
             formData.append('bio', formulaireArtisan.description);
+            formData.append('latitude', formulaireArtisan.latitude);
+            formData.append('longitude', formulaireArtisan.longitude);
             formData.append('cin_rec', formulaireArtisan.cniRecto);
             formData.append('cin_ver', formulaireArtisan.cniVerso);
             formData.append('rib_doc', formulaireArtisan.attestationsRib);
@@ -246,6 +324,8 @@ const PageParametres = () => {
                     experience: '',
                     description: '',
                     rayonTravail: 30,
+                    latitude: null,
+                    longitude: null,
                     attestationsRib: null,
                     cniRecto: null,
                     cniVerso: null,
@@ -283,7 +363,6 @@ const PageParametres = () => {
                 </div>
 
                 <div className="grid lg:grid-cols-4 gap-4">
-                    {/* Sidebar */}
                     <div className="lg:col-span-1">
                         <div className="border border-gray-200">
                             {onglets.map((onglet) => (
@@ -291,8 +370,8 @@ const PageParametres = () => {
                                     key={onglet.id}
                                     onClick={() => setOngletActif(onglet.id)}
                                     className={`w-full flex items-center gap-2 px-4 py-3 text-left text-[12px] font-medium transition-colors border-b border-gray-100 last:border-0 ${ongletActif === onglet.id
-                                        ? 'bg-[#D35400]/10 text-[#D35400] border-l-4 border-l-[#D35400]'
-                                        : 'text-[#1B4F72] hover:bg-gray-50'
+                                            ? 'bg-[#D35400]/10 text-[#D35400] border-l-4 border-l-[#D35400]'
+                                            : 'text-[#1B4F72] hover:bg-gray-50'
                                         }`}
                                 >
                                     {onglet.libelle}
@@ -303,7 +382,6 @@ const PageParametres = () => {
 
                     <div className="lg:col-span-3">
 
-                        {/* ── Onglet Profil ── */}
                         {ongletActif === 'profil' && (
                             <div className="border border-gray-200 p-4">
                                 <h2 className="text-[13px] font-bold text-[#1B4F72] mb-4 pb-2 border-b border-gray-100">
@@ -375,7 +453,6 @@ const PageParametres = () => {
                                         Icon={IdCard}
                                     />
 
-                                    {/* Champs artisan visibles uniquement si role === 'artisan' */}
                                     {donneesUtilisateur.isArtisan && (
                                         <>
                                             <Input
@@ -415,7 +492,7 @@ const PageParametres = () => {
                                             className="w-full px-3 py-2 text-[12px] border border-gray-200 focus:border-[#D35400] focus:outline-none bg-white"
                                         >
                                             <option value="">Sélectionnez une ville</option>
-                                            {villes.map(ville => (
+                                            {villes.map((ville) => (
                                                 <option
                                                     key={ville.id}
                                                     value={ville.ville}
@@ -441,7 +518,6 @@ const PageParametres = () => {
                             </div>
                         )}
 
-                        {/* ── Onglet Sécurité ── */}
                         {ongletActif === 'securite' && (
                             <div className="space-y-4">
                                 <div className="border border-gray-200 p-4">
@@ -510,7 +586,6 @@ const PageParametres = () => {
                             </div>
                         )}
 
-                        {/* ── Onglet Devenir Artisan ── */}
                         {ongletActif === 'devenir-artisan' && (
                             donneesUtilisateur.isArtisan ? (
                                 <div className="border border-gray-200 p-8 flex flex-col items-center justify-center text-center gap-4">
@@ -559,6 +634,7 @@ const PageParametres = () => {
                                     )}
 
                                     <form onSubmit={becomeArtisanSave} className="space-y-6">
+
                                         <div>
                                             <h3 className="text-[12px] font-bold text-[#1B4F72] mb-3 flex items-center gap-2">
                                                 <Briefcase className="w-4 h-4 text-[#D35400]" />
@@ -575,7 +651,7 @@ const PageParametres = () => {
                                                         onChange={(e) => mettreAJourChamp(setFormulaireArtisan, formulaireArtisan, 'specialite', e.target.value)}
                                                         className="w-full px-3 py-2 text-[12px] border border-gray-200 focus:border-[#D35400] focus:outline-none bg-white"
                                                     >
-                                                        {specialites.map(s => (
+                                                        {specialites.map((s) => (
                                                             <option key={s.valeur} value={s.valeur}>{s.libelle}</option>
                                                         ))}
                                                     </select>
@@ -591,7 +667,7 @@ const PageParametres = () => {
                                                         onChange={(e) => mettreAJourChamp(setFormulaireArtisan, formulaireArtisan, 'experience', e.target.value)}
                                                         className="w-full px-3 py-2 text-[12px] border border-gray-200 focus:border-[#D35400] focus:outline-none bg-white"
                                                     >
-                                                        {experiences.map(exp => (
+                                                        {experiences.map((exp) => (
                                                             <option key={exp.valeur} value={exp.valeur}>{exp.libelle}</option>
                                                         ))}
                                                     </select>
@@ -600,22 +676,61 @@ const PageParametres = () => {
                                                 <Input
                                                     label="Rayon de travail (km)"
                                                     name="rayonTravail"
+                                                    type="number"
                                                     value={formulaireArtisan.rayonTravail || ''}
                                                     onChange={(e) => mettreAJourChamp(setFormulaireArtisan, formulaireArtisan, 'rayonTravail', e.target.value)}
                                                     Icon={Disc3}
+                                                    placeholder="30"
                                                 />
 
                                                 <div className="md:col-span-2">
                                                     <label className="block text-[11px] font-medium text-[#1B4F72] mb-1.5">
-                                                        Description <span className="text-[#D35400]">*</span>
+                                                        Bio / Description <span className="text-[#D35400]">*</span>
                                                     </label>
                                                     <textarea
                                                         required
                                                         rows={3}
                                                         value={formulaireArtisan.description}
                                                         onChange={(e) => mettreAJourChamp(setFormulaireArtisan, formulaireArtisan, 'description', e.target.value)}
-                                                        placeholder="Décrivez votre expertise..."
+                                                        placeholder="Décrivez votre expertise, vos services et votre expérience..."
                                                         className="w-full px-3 py-2 text-[12px] border border-gray-200 focus:border-[#D35400] focus:outline-none resize-none"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="pt-4 border-t border-gray-100">
+                                            <h3 className="text-[12px] font-bold text-[#1B4F72] mb-1 flex items-center gap-2">
+                                                <MapPin className="w-4 h-4 text-[#D35400]" />
+                                                Localisation <span className="text-[#D35400]">*</span>
+                                            </h3>
+                                            <p className="text-[10px] text-gray-400 mb-3">
+                                                Cliquez sur la carte pour sélectionner votre position, ou utilisez le bouton pour votre position actuelle.
+                                            </p>
+
+                                            <LocationPicker
+                                                onLocationSelect={(lat, lng) =>
+                                                    setFormulaireArtisan((prev) => ({ ...prev, latitude: lat, longitude: lng }))
+                                                }
+                                            />
+
+                                            <div className="grid md:grid-cols-2 gap-4 mt-3">
+                                                <div>
+                                                    <label className="block text-[11px] font-medium text-[#1B4F72] mb-1.5">Latitude</label>
+                                                    <input
+                                                        readOnly
+                                                        value={formulaireArtisan.latitude ? formulaireArtisan.latitude.toFixed(6) : ''}
+                                                        placeholder="Cliquez sur la carte..."
+                                                        className="w-full px-3 py-2 text-[12px] border border-gray-200 bg-gray-50 text-gray-500 outline-none cursor-not-allowed"
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-[11px] font-medium text-[#1B4F72] mb-1.5">Longitude</label>
+                                                    <input
+                                                        readOnly
+                                                        value={formulaireArtisan.longitude ? formulaireArtisan.longitude.toFixed(6) : ''}
+                                                        placeholder="Cliquez sur la carte..."
+                                                        className="w-full px-3 py-2 text-[12px] border border-gray-200 bg-gray-50 text-gray-500 outline-none cursor-not-allowed"
                                                     />
                                                 </div>
                                             </div>
