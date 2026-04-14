@@ -1,15 +1,20 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import {
     Star, MapPin, Clock,
     Briefcase, Heart, Share2,
     ChevronLeft, ChevronRight,
-    X, MessageSquare, Calendar,
     LoaderCircle,
     Eye,
     LocateFixed,
-    ArrowLeft
+    ArrowLeft,
+    MoreVertical,
+    Trash2,
+    ToggleLeft,
+    ToggleRight,
+    AlertTriangle,
+    Plus
 } from 'lucide-react';
-import { Link, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import axiosClient from '../api/axios-client';
 
 const Portfolio = () => {
@@ -17,22 +22,22 @@ const Portfolio = () => {
     const [isLiked, setIsLiked] = useState(false);
     const [selectedImage, setSelectedImage] = useState(null);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
-    const [isPopUpOpen, setIsPopUpOpen] = useState(false);
-    const [requestData, setRequestData] = useState({
-        description: '',
-        date: '',
-        address: ''
-    });
     const [artisan, setArtisan] = useState(null);
     const [data, setData] = useState([]);
 
+    const [openMenuId, setOpenMenuId] = useState(null);
+    const [deleteTarget, setDeleteTarget] = useState(null);
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [isToggeling, setIsToggeling] = useState(null);
+
+    const menuRef = useRef(null);
     const BASE_URL = 'http://127.0.0.1:8000/storage/';
 
     useEffect(() => {
         const fetchArtisan = async () => {
             try {
                 const response = await axiosClient.get('/portfolio');
-                setArtisan(response.data.data[0]);
+                setArtisan(response.data.data);
             } catch (error) {
                 console.error('Error fetching artisan:', error);
             }
@@ -40,99 +45,158 @@ const Portfolio = () => {
         fetchArtisan();
     }, []);
 
-    const handleConfirmDemande = (e) => {
-        e.preventDefault();
-        console.log("Données envoyées:", requestData);
-        setIsPopUpOpen(false);
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (menuRef.current && !menuRef.current.contains(e.target)) {
+                setOpenMenuId(null);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    const handleToggleService = async (service) => {
+        setIsToggeling(service.id);
+        setOpenMenuId(null);
+        try {
+            await axiosClient.patch(`/services/${service.id}/toggle`);
+            setArtisan(prev => ({
+                ...prev,
+                services: prev.services.map(s =>
+                    s.id === service.id ? { ...s, is_active: !s.is_active } : s
+                )
+            }));
+        } catch (error) {
+            console.error('Erreur toggle:', error);
+        } finally {
+            setIsToggeling(null);
+        }
+    };
+
+    const handleDeleteService = async () => {
+        if (!deleteTarget) return;
+        setIsDeleting(true);
+        try {
+            await axiosClient.delete(`/services/${deleteTarget.id}`);
+            setArtisan(prev => ({
+                ...prev,
+                services: prev.services.filter(s => s.id !== deleteTarget.id)
+            }));
+            setDeleteTarget(null);
+        } catch (error) {
+            console.error('Erreur suppression:', error);
+        } finally {
+            setIsDeleting(false);
+        }
     };
 
     if (!artisan) {
-        return <div className="flex justify-center items-center h-screen"><LoaderCircle className="animate-spin w-12 h-12 text-[#D35400]" /></div>;
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <LoaderCircle className="animate-spin w-12 h-12 text-[#D35400]" />
+            </div>
+        );
     }
 
-    const services = artisan?.artisan?.services || [];
-    const reviews = artisan?.reviews || [];
+    const services = artisan.services || [];
+    const reviews = artisan.reviews || [];
+    const profile = artisan.profile_details || {};
+    const location = profile.location || {};
+    const currentServiceImages = data?.images || [];
 
     const tabs = [
         { id: 'portfolio', label: 'Portfolio & Services' },
         { id: 'reviews', label: 'Avis', count: reviews.length }
     ];
 
-    const currentServiceImages = data?.images || [];
-
-    const nextImage = () => {
-        setCurrentImageIndex((prev) => (prev + 1) % currentServiceImages.length);
-    };
-
-    const prevImage = () => {
-        setCurrentImageIndex((prev) => (prev - 1 + currentServiceImages.length) % currentServiceImages.length);
-    };
-
-
+    const nextImage = () => setCurrentImageIndex((prev) => (prev + 1) % currentServiceImages.length);
+    const prevImage = () => setCurrentImageIndex((prev) => (prev - 1 + currentServiceImages.length) % currentServiceImages.length);
 
     return (
         <div className="min-h-screen bg-white">
+
+            {deleteTarget && (
+                <div className="fixed inset-0 z-[999] flex items-center justify-center p-4">
+                    <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]" onClick={() => setDeleteTarget(null)} />
+                    <div className="relative w-full max-w-xs bg-white shadow-2xl border border-gray-100 animate-in zoom-in-95 duration-200">
+                        <div className="p-6">
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="w-10 h-10 bg-red-50 flex items-center justify-center flex-shrink-0">
+                                    <AlertTriangle className="w-5 h-5 text-red-500" />
+                                </div>
+                                <div>
+                                    <h3 className="text-[14px] font-bold text-[#1B4F72]">Supprimer le service</h3>
+                                    <p className="text-[11px] text-gray-400 mt-0.5">Cette action est irréversible</p>
+                                </div>
+                            </div>
+                            <p className="text-[12px] text-gray-600 mb-5">
+                                Voulez-vous vraiment supprimer{' '}
+                                <span className="font-semibold text-[#1B4F72]">"{deleteTarget.titre}"</span> ?
+                            </p>
+                            <div className="grid grid-cols-2 gap-3">
+                                <button
+                                    onClick={() => setDeleteTarget(null)}
+                                    className="py-2 text-[12px] text-gray-400 hover:text-gray-600 font-medium border border-gray-200 hover:border-gray-300 transition-colors"
+                                >
+                                    Annuler
+                                </button>
+                                <button
+                                    onClick={handleDeleteService}
+                                    disabled={isDeleting}
+                                    className="py-2 bg-red-500 text-white text-[12px] font-bold hover:bg-red-600 transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
+                                >
+                                    {isDeleting
+                                        ? <><LoaderCircle className="w-3 h-3 animate-spin" /> Suppression...</>
+                                        : <><Trash2 className="w-3 h-3" /> Supprimer</>
+                                    }
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-24 pt-6 pb-12">
 
                 <div className="border border-gray-200 p-4 mb-4">
                     <div className="flex gap-4">
                         <div className="relative flex-shrink-0">
                             <img
-                                src={BASE_URL + artisan?.client?.avatar}
-                                alt={artisan.lastname}
+                                src={BASE_URL + artisan.avatar}
+                                alt={artisan.full_name}
                                 className="w-30 h-30 object-cover border border-gray-200"
                             />
                         </div>
-
                         <div className="flex-1 min-w-0">
                             <div className="flex items-start justify-between gap-2">
                                 <div>
-                                    <h1 className="text-[15px] font-bold text-[#1B4F72] truncate">
-                                        {artisan.lastname} {artisan.firstname}
-                                    </h1>
-                                    <p className="text-[11px] text-[#D35400] font-medium">
-                                        {artisan?.artisan?.specialite}
-                                    </p>
-
+                                    <h1 className="text-[15px] font-bold text-[#1B4F72] truncate">{artisan.full_name}</h1>
+                                    <p className="text-[11px] text-[#D35400] font-medium">{profile.specialite}</p>
                                     <div className="flex items-center gap-2 mt-1 text-[11px] text-gray-600">
                                         <span className="flex items-center gap-0.5">
                                             <Star className="w-3 h-3 text-[#D35400] fill-current" />
-                                            <span className="font-semibold text-[#1B4F72]">
-                                                {artisan?.artisan?.note}
-                                            </span>
+                                            <span className="font-semibold text-[#1B4F72]">{profile.rating_average}</span>
                                         </span>
                                         <span className="text-gray-300">|</span>
                                         <span className="flex items-center gap-0.5">
-                                            <Briefcase className="w-3 h-3" />
-                                            {services.length} services
+                                            <Briefcase className="w-3 h-3" />{services.length} services
                                         </span>
                                         <span className="text-gray-300">|</span>
                                         <span className="flex items-center gap-0.5">
-                                            <MapPin className="w-3 h-3" />
-                                            {artisan.city}
+                                            <MapPin className="w-3 h-3" />{artisan.city}
                                         </span>
                                         <span className="text-gray-300">|</span>
                                         <span className="flex items-center gap-0.5">
-                                            <LocateFixed className="w-3 h-3" />
-                                            {artisan?.artisan?.rayon_action} km
+                                            <LocateFixed className="w-3 h-3" />{location.rayon_action} km
                                         </span>
-
                                     </div>
-                                    <div>
-                                        <p className="text-[11px] text-gray-600 mt-2">
-                                            {artisan?.artisan?.bio}
-                                        </p>
-                                    </div>
+                                    <p className="text-[11px] text-gray-600 mt-2">{profile.bio}</p>
                                 </div>
-
                                 <div className="flex gap-1">
-                                    <button
-                                        onClick={() => setIsLiked(!isLiked)}
-                                        className={`p-2  transition-colors ${isLiked ? '  text-[#D35400]' : 'border-gray-200 text-gray-400 hover:text-gray-600'}`}
-                                    >
+                                    <button onClick={() => setIsLiked(!isLiked)} className={`p-2 transition-colors ${isLiked ? 'text-[#D35400]' : 'text-gray-400 hover:text-gray-600'}`}>
                                         <Heart className={`w-4 h-4 ${isLiked ? 'fill-current' : ''}`} />
                                     </button>
-                                    <button className="p-2  text-gray-400 hover:text-gray-600 transition-colors">
+                                    <button className="p-2 text-gray-400 hover:text-gray-600 transition-colors">
                                         <Share2 className="w-4 h-4" />
                                     </button>
                                 </div>
@@ -142,34 +206,81 @@ const Portfolio = () => {
                 </div>
 
                 <div className="border-b border-gray-200 mb-4">
-                    <div className="flex">
-                        {tabs.map((tab) => (
-                            <button
-                                key={tab.id}
-                                onClick={() => setActiveTab(tab.id)}
-                                className={`px-4 py-3 text-[12px] font-medium transition-colors border-b-2 ${activeTab === tab.id
-                                    ? 'text-[#1B4F72] border-[#D35400]'
-                                    : 'text-gray-500 border-transparent hover:text-gray-700'
-                                    }`}
+                    <div className="flex items-center justify-between">
+                        <div className="flex">
+                            {tabs.map((tab) => (
+                                <button
+                                    key={tab.id}
+                                    onClick={() => setActiveTab(tab.id)}
+                                    className={`px-4 py-3 text-[12px] font-medium transition-colors border-b-2 ${activeTab === tab.id ? 'text-[#1B4F72] border-[#D35400]' : 'text-gray-500 border-transparent hover:text-gray-700'}`}
+                                >
+                                    {tab.label}
+                                    {tab.count > 0 && <span className="ml-1.5 text-[10px] text-gray-400">({tab.count})</span>}
+                                </button>
+                            ))}
+                        </div>
+
+                        {activeTab === 'portfolio' && (
+                            <Link
+                                to="/nouvelle-service"
+                                className="px-4 py-2 bg-[#D35400] text-white text-[12px] font-medium hover:bg-[#C14C00] transition-colors flex items-center gap-2"
                             >
-                                {tab.label}
-                                {tab.count > 0 && (
-                                    <span className="ml-1.5 text-[10px] text-gray-400">
-                                        ({tab.count})
-                                    </span>
-                                )}
-                            </button>
-                        ))}
+                                <Plus className="w-4 h-4" />
+                                Nouveau service
+                            </Link>
+                        )}
                     </div>
                 </div>
 
                 {activeTab === 'portfolio' && (
                     <div className="grid xl:grid-cols-4 md:grid-cols-2 lg:grid-cols-3 grid-cols-1 gap-4">
                         {services.map((service) => (
-                            <div key={service.id} className="border border-gray-200">
+                            <div key={service.id} className={`border border-gray-200 relative ${service.is_active === false ? 'opacity-60' : ''}`}>
+
+                                {service.is_active === false && (
+                                    <span className="absolute top-2 left-2 z-10 px-2 py-0.5 bg-gray-700/80 text-white text-[9px] font-bold uppercase tracking-wider">
+                                        Inactif
+                                    </span>
+                                )}
+
+                                <div className="absolute top-2 right-2 z-10" ref={openMenuId === service.id ? menuRef : null}>
+                                    <button
+                                        onClick={() => setOpenMenuId(openMenuId === service.id ? null : service.id)}
+                                        className="w-7 h-7 flex items-center justify-center bg-black/50 hover:bg-black/70 text-white transition-colors"
+                                    >
+                                        <MoreVertical className="w-4 h-4" />
+                                    </button>
+
+                                    {openMenuId === service.id && (
+                                        <div className="absolute right-0 top-8 w-44 bg-white border border-gray-200 shadow-lg z-20">
+                                            <button
+                                                onClick={() => handleToggleService(service)}
+                                                disabled={isToggeling === service.id}
+                                                className="w-full flex items-center gap-2 px-3 py-2.5 text-[12px] text-gray-700 hover:bg-gray-50 transition-colors border-b border-gray-100"
+                                            >
+                                                {isToggeling === service.id
+                                                    ? <LoaderCircle className="w-4 h-4 animate-spin text-[#D35400]" />
+                                                    : service.is_active
+                                                        ? <ToggleLeft className="w-4 h-4 text-orange-400" />
+                                                        : <ToggleRight className="w-4 h-4 text-green-500" />
+                                                }
+                                                {service.is_active ? 'Dépublier' : 'Publier'}
+                                            </button>
+
+                                            <button
+                                                onClick={() => { setDeleteTarget(service); setOpenMenuId(null); }}
+                                                className="w-full flex items-center gap-2 px-3 py-2.5 text-[12px] text-red-500 hover:bg-red-50 transition-colors"
+                                            >
+                                                <Trash2 className="w-4 h-4" />
+                                                Supprimer
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+
                                 <div className="aspect-[4/2] relative overflow-hidden bg-gray-100">
                                     <img
-                                        src={BASE_URL + service.images[0]?.url}
+                                        src={BASE_URL + service.images[0]}
                                         alt={service.titre}
                                         className="aspect-square w-full object-cover hover:opacity-80 transition-opacity cursor-pointer"
                                     />
@@ -185,12 +296,12 @@ const Portfolio = () => {
                                         {service.images.slice(0, 5).map((img, idx) => (
                                             <div key={idx} className="w-16 h-16 flex-shrink-0 border border-gray-200 overflow-hidden">
                                                 <img
-                                                    src={BASE_URL + img?.url}
+                                                    src={BASE_URL + img}
                                                     alt="service image"
                                                     className="w-16 h-full object-cover hover:opacity-80 transition-opacity cursor-pointer"
                                                     onClick={() => {
                                                         setCurrentImageIndex(idx);
-                                                        setSelectedImage({ src: BASE_URL + img?.url, titre: service.titre });
+                                                        setSelectedImage({ src: img, titre: service.titre });
                                                         setData(service);
                                                     }}
                                                 />
@@ -201,25 +312,25 @@ const Portfolio = () => {
 
                                 <div className="p-3 border-t border-gray-100">
                                     <h3 className="text-[13px] font-bold text-[#1B4F72] mb-1">{service.titre}</h3>
-                                    <p className="text-[11px] text-gray-600 line-clamp-2 mb-2">{service.description}</p>
-
                                     <div className="flex items-center gap-3 text-[10px] text-gray-500 mb-3">
                                         <span className="flex items-center gap-0.5">
                                             <Clock className="w-3 h-3" />
-                                            {service.estimation_duree} jours
+                                            {service.stats?.total_demandes ?? 0} demandes
+                                        </span>
+                                        <span className="flex items-center gap-0.5 text-orange-400">
+                                            {service.stats?.en_attente ?? 0} en attente
                                         </span>
                                     </div>
-
                                     <div className="flex items-center justify-between pt-2 border-t border-gray-100">
                                         <p className="text-[16px] font-bold text-[#D35400]">
-                                            {service.tarif} MAD
+                                            {service.tarif}
                                             <span className="text-[10px] text-gray-400 ml-1">/ {service.type_tarif}</span>
                                         </p>
                                         <Link
                                             to={`/services/${service.id}`}
                                             className="px-4 py-2 bg-[#1B4F72] text-white text-[11px] font-medium hover:bg-[#154360] transition-colors"
                                         >
-                                            <Eye className="w-4 h-4 " />
+                                            <Eye className="w-4 h-4" />
                                         </Link>
                                     </div>
                                 </div>
@@ -233,23 +344,24 @@ const Portfolio = () => {
                         {reviews.length === 0 ? (
                             <p className="text-[12px] text-gray-400 text-center py-8">Aucun avis pour le moment.</p>
                         ) : (
-                            reviews.map((review) => (
-                                <div key={review.id} className="border border-gray-200 p-3">
+                            reviews.map((review, index) => (
+                                <div key={index} className="border border-gray-200 p-3">
                                     <div className="flex items-start gap-2">
-                                        <div className="w-8 h-8 bg-[#1B4F72] flex items-center justify-center text-[10px] font-bold text-white">
-                                            {review.author?.charAt(0)}
-                                        </div>
+                                        {review.client_avatar ? (
+                                            <img src={BASE_URL + review.client_avatar} alt={review.client_name} className="w-8 h-8 object-cover" />
+                                        ) : (
+                                            <div className="w-8 h-8 bg-[#1B4F72] flex items-center justify-center text-[10px] font-bold text-white flex-shrink-0">
+                                                {review.client_name?.charAt(0)}
+                                            </div>
+                                        )}
                                         <div className="flex-1">
                                             <div className="flex items-center justify-between">
-                                                <h4 className="text-[11px] font-bold text-[#1B4F72]">{review.author}</h4>
+                                                <h4 className="text-[11px] font-bold text-[#1B4F72]">{review.client_name}</h4>
                                                 <span className="text-[9px] text-gray-400">{review.date}</span>
                                             </div>
                                             <div className="flex items-center gap-0.5 my-1">
                                                 {[...Array(5)].map((_, i) => (
-                                                    <Star
-                                                        key={i}
-                                                        className={`w-3 h-3 ${i < review.rating ? 'text-[#D35400] fill-current' : 'text-gray-200'}`}
-                                                    />
+                                                    <Star key={i} className={`w-3 h-3 ${i < review.rating ? 'text-[#D35400] fill-current' : 'text-gray-200'}`} />
                                                 ))}
                                             </div>
                                             <p className="text-[11px] text-gray-600">{review.comment}</p>
@@ -264,21 +376,18 @@ const Portfolio = () => {
 
             {selectedImage && (
                 <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4">
-                    <button
-                        onClick={() => setSelectedImage(null)}
-                        className="absolute top-4 left-4 text-white  bg-gray-800 hover:text-white text-2xl"
-                    >
+                    <button onClick={() => setSelectedImage(null)} className="absolute top-4 left-4 text-white bg-gray-800 p-1">
                         <ArrowLeft className="w-6 h-6" />
                     </button>
-                    <button onClick={prevImage} className="absolute left-4 p-2 text-white  bg-gray-800 hover:text-white">
+                    <button onClick={prevImage} className="absolute left-4 p-2 text-white bg-gray-800">
                         <ChevronLeft className="w-6 h-6" />
                     </button>
                     <img
-                        src={BASE_URL + (currentServiceImages[currentImageIndex]?.url || selectedImage.src)}
+                        src={BASE_URL + (currentServiceImages[currentImageIndex] || selectedImage.src)}
                         alt={selectedImage.titre}
-                        className="max-w-full max-h-[80vh] min-h-[80vh]  object-cover "
+                        className="max-w-full max-h-[80vh] min-h-[80vh] object-cover"
                     />
-                    <button onClick={nextImage} className="absolute right-4 p-2 bg-gray-800 text-white hover:text-white">
+                    <button onClick={nextImage} className="absolute right-4 p-2 bg-gray-800 text-white">
                         <ChevronRight className="w-6 h-6" />
                     </button>
                     <div className="absolute bottom-4 left-0 right-0 text-center">
@@ -286,10 +395,8 @@ const Portfolio = () => {
                     </div>
                 </div>
             )}
-
-
         </div>
     );
 };
 
-export default Portfolio;  
+export default Portfolio;

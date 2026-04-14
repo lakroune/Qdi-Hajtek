@@ -60,7 +60,18 @@ class ArtisanDAO
     public function getArtisan(int $artisanId)
     {
 
-        $query = User::with('artisan.services.images', 'artisan.services.demandesDirectes.conversation.evaluation', 'artisan.propositions.conversation.evaluation',   'artisan.documents', 'client')->where('id', $artisanId)->get();
+        $query = User::with([
+
+            'artisan.services.images',
+
+            'artisan.documents',
+            'client',
+            'artisan.services.demandesDirectes.client.user',
+            'artisan.services.demandesDirectes.conversation.evaluation',
+
+            'artisan.propositions.offreTravail.client.user',
+            'artisan.propositions.conversation.evaluation'
+        ])->where('id', $artisanId)->get();
 
         return $query->first();
     }

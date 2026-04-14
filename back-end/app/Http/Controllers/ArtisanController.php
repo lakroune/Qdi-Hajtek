@@ -7,6 +7,7 @@ use App\DTO\ArtisanRegistrationDTO;
 use App\Models\Artisan;
 use App\Http\Requests\StoreArtisanRequest;
 use App\Http\Requests\UpdateArtisanRequest;
+use App\Http\Resources\PortfolioResource;
 use App\Services\ArtisanService;
 
 class ArtisanController extends Controller
@@ -82,7 +83,7 @@ class ArtisanController extends Controller
         $artisans = $this->artisanService->getArtisan( auth()->user()->id);
         return response()->json([
             'message' => 'Artisans found successfully',
-            'data' => $artisans
+            'data' =>new PortfolioResource($artisans)
         ]);
     }
 
