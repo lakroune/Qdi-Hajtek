@@ -34,6 +34,7 @@ import ServiceDetail from './client/ServiceDetail';
 import ProtectedRoute from './errors/ProtectedRoute';
 import { Toaster } from 'react-hot-toast';
 import DashboardArtisanPage from './artisan/DashboardArtisanPage';
+import Portfolio from './artisan/Portfolio';
 
 function App() {
 
@@ -101,6 +102,7 @@ function App() {
               <Route path="offres/:id" element={<ArtisanOffreDetail />} />
               {/* dashboard */}
               <Route path="dashboard" element={<DashboardArtisanPage />} />
+              <Route path="portfolio" element={<Portfolio />} />
             </Route>
           </Route>
         </Route>

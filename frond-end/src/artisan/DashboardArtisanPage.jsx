@@ -9,7 +9,7 @@ import axiosClient from '../api/axios-client';
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip);
 
 const SkeletonDashboard = () => (
-    <div className="space-y-4 p-4 animate-pulse">
+    <div className="space-y-4 p-4 animate-pulse m-4 mt-16 ">
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             {Array.from({ length: 6 }).map((_, i) => (
                 <div key={i} className="h-20 bg-gray-200 rounded-xl" />
@@ -76,7 +76,7 @@ const DashboardArtisanPage = () => {
     };
 
     return (
-        <div className="space-y-4 p-4 ">
+        <div className="space-y-4 p-4 mt-10">
             <div className="grid grid-cols-2 sm:grid-cols-2 gap-3">
                 <StatCard
                     label="Total gagné"
