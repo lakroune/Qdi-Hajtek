@@ -67,8 +67,8 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/conversations/{conversation_id}/confirm-code', [ConversationController::class, 'confirmCode']);
 
 
-
-
+    // portfolio
+    Route::get('/portfolio', [ArtisanController::class, 'getPortfolio']);
 
 
 

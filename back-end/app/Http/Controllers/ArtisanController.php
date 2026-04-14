@@ -74,22 +74,17 @@ class ArtisanController extends Controller
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateArtisanRequest $request, Artisan $artisan)
-    {
-        //
-    }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Artisan $artisan)
-    {
-        //
-    }
+    // getPortfolio
 
+    public function getPortfolio()
+    {
+        $artisans = $this->artisanService->getArtisan( auth()->user()->id);
+        return response()->json([
+            'message' => 'Artisans found successfully',
+            'data' => $artisans
+        ]);
+    }
 
     public function approve(int $artisanId)
     {

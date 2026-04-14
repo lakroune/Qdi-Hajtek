@@ -20,7 +20,7 @@ class ArtisanDAO
             $artisan = Artisan::create([
                 'id' => $dto->userId,
                 'specialite' => $dto->specialite,
-                'bio' => $dto->bio, 
+                'bio' => $dto->bio,
                 'latitude' => $dto->latitude,
                 'longitude' => $dto->longitude,
                 'rayon_action' => $dto->rayonAction,
@@ -59,7 +59,10 @@ class ArtisanDAO
 
     public function getArtisan(int $artisanId)
     {
-        return User::with('artisan.services.images', 'client')->where('id', $artisanId)->get();
+
+        $query = User::with('artisan.services.images', 'artisan.services.demandesDirectes.conversation.evaluation', 'artisan.propositions.conversation.evaluation',   'artisan.documents', 'client')->where('id', $artisanId)->get();
+
+        return $query->first();
     }
 
     public function getArtisans()

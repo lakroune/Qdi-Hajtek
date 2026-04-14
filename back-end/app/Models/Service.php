@@ -32,9 +32,9 @@ class Service extends Model
         return $this->belongsTo(Artisan::class);
     }
 
-    public function dommandeDerictes()
+    public function demandesDirectes()
     {
-        return $this->hasMany(DommandeDericte::class);
+        return $this->hasMany(DemandeDirecte::class);
     }
 
     public function categorie()
