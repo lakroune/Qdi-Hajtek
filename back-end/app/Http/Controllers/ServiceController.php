@@ -53,7 +53,14 @@ class ServiceController extends Controller
     }
 
     /**
-     * get services by manager
+     * toggle   service (activer et desactiver)
      */
-   
+    public function toggle(Service $service)
+    {
+        $service = $this->serviceService->toggleService($service->id);
+        return response()->json([
+            'message' => 'Service toggled successfully',
+            'data' => $service
+        ]);
+    }
 }

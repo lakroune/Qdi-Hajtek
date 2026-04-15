@@ -71,7 +71,9 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/portfolio', [ArtisanController::class, 'getPortfolio']);
 
 
+    // /services/${service.id}/toggle
 
+    Route::patch('/services/{service}/toggle', [ServiceController::class, 'toggle']);
 
 
 

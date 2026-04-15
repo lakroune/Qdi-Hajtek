@@ -32,13 +32,16 @@ class ServiceDAO
     }
     public function getServiceDetails(int $serviceId)
     {
-        return Service::with(['images', 'artisan.user.client', 'categorie'])->where('is_active', true)->findOrFail($serviceId);
+        return Service::with(['images', 'artisan.user.client', 'categorie'])
+            ->where('is_active', true)
+            ->where('statut', 'approuve')->findOrFail($serviceId);
     }
     public  function getServices(array $filters = [])
     {
         $query = Service::query()
             ->where('is_active', true)
             ->where('statut', 'approuve')
+            ->where('is_active', true)
             ->with(['artisan.user', 'categorie', 'images']);
 
         if (!empty($filters['search'])) {
@@ -122,5 +125,10 @@ class ServiceDAO
     public function rejectService(int $serviceId)
     {
         return Service::where('id', $serviceId)->update(['statut' => 'refuse']);
+    }
+
+    public function toggleService(int $serviceId)
+    {
+        return Service::where('id', $serviceId)->update(['is_active' => !Service::find($serviceId)->is_active]);
     }
 }

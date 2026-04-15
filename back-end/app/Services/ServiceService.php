@@ -80,4 +80,9 @@ class ServiceService
     {
         return $this->serviceDAO->rejectService($serviceId);
     }
+
+    public function toggleService($serviceId)
+    {
+        return $this->serviceDAO->toggleService($serviceId);
+    }
 }

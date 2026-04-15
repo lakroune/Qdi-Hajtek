@@ -46,6 +46,8 @@ class PortfolioResource extends JsonResource
                     'titre' => $service->titre,
                     'tarif' => "{$service->tarif} DH",
                     'type_tarif' => $service->type_tarif,
+                    'description' => $service->description,
+                    'is_active' => $service->is_active,
                     'images' => $service->images->pluck('url'),
                     'stats' => [
                         'total_demandes' => $service->demandesDirectes->count(),
