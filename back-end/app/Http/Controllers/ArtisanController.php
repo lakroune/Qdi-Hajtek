@@ -71,7 +71,7 @@ class ArtisanController extends Controller
         return response()->json([
             'success' =>  $artisan ? true : false,
             'message' => $artisan ? 'Artisan found successfully' : 'Artisan not found',
-            'data' => $artisan
+            'data' => new PortfolioResource($artisan)
         ]);
     }
 
@@ -80,10 +80,10 @@ class ArtisanController extends Controller
 
     public function getPortfolio()
     {
-        $artisans = $this->artisanService->getArtisan( auth()->user()->id);
+        $artisan = $this->artisanService->getArtisan( auth()->user()->id);
         return response()->json([
             'message' => 'Artisans found successfully',
-            'data' =>new PortfolioResource($artisans)
+            'data' =>new PortfolioResource($artisan)
         ]);
     }
 

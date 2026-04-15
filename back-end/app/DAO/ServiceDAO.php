@@ -25,7 +25,7 @@ class ServiceDAO
                 $service->images()->create([
                     'url' => $path
                 ]);
-            }
+            }   
 
             return $service->load('images');
         });

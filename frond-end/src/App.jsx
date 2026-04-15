@@ -100,7 +100,6 @@ function App() {
               <Route path="nouvelle-service" element={<ArtisanAddService />} />
               <Route path="offres" element={<ArtisanOffres />} />
               <Route path="offres/:id" element={<ArtisanOffreDetail />} />
-              {/* dashboard */}
               <Route path="dashboard" element={<DashboardArtisanPage />} />
               <Route path="portfolio" element={<Portfolio />} />
             </Route>

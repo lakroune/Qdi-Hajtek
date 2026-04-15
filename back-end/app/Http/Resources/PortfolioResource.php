@@ -40,21 +40,30 @@ class PortfolioResource extends JsonResource
                     'rayon_action' => $artisanData->rayon_action,
                 ],
             ],
-            'services' => $artisanData->services->map(function ($service) {
-                return [
-                    'id' => $service->id,
-                    'titre' => $service->titre,
-                    'tarif' => "{$service->tarif} DH",
-                    'type_tarif' => $service->type_tarif,
-                    'description' => $service->description,
-                    'is_active' => $service->is_active,
-                    'images' => $service->images->pluck('url'),
-                    'stats' => [
-                        'total_demandes' => $service->demandesDirectes->count(),
-                        'en_attente' => $service->demandesDirectes->where('statut', 'en_attente')->count(),
-                    ]
-                ];
-            }),
+            'services' => $artisanData->services
+                ->filter(function ($service) {
+                    if (auth()->check() && auth()->id() === $service->artisan_id) {
+                        return true;
+                    }
+
+                    return $service->is_active === true && $service->statut === 'approuve';
+                })
+                ->map(function ($service) {
+                    return [
+                        'id' => $service->id,
+                        'titre' => $service->titre,
+                        'tarif' => "{$service->tarif} DH",
+                        'type_tarif' => $service->type_tarif,
+                        'description' => $service->description,
+                        'is_active' => $service->is_active,
+                        'statut' => $service->statut,
+                        'images' => $service->images->pluck('url'),
+                        'stats' => [
+                            'total_demandes' => $service->demandesDirectes->count(),
+                            'en_attente' => $service->demandesDirectes->where('statut', 'en_attente')->count(),
+                        ]
+                    ];
+                })->values(),
             'reviews' => $this->getArtisanEvaluations($artisanData),
 
             'documents_status' => $artisanData->documents->map(function ($doc) {

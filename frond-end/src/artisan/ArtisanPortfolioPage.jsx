@@ -1,13 +1,8 @@
 import { useEffect, useState } from 'react';
 import {
-    Star, MapPin, Clock,
-    Briefcase, Heart, Share2,
-    ChevronLeft, ChevronRight,
-    X, MessageSquare, Calendar,
-    LoaderCircle,
-    Eye,
-    LocateFixed,
-    ArrowLeft
+    Star, MapPin, Clock, Briefcase, Heart, Share2,
+    ChevronLeft, ChevronRight, MessageSquare, LoaderCircle,
+    LocateFixed, ArrowLeft, Eye, ShieldCheck
 } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
 import axiosClient from '../api/axios-client';
@@ -15,16 +10,9 @@ import axiosClient from '../api/axios-client';
 const ArtisanPortfolioPage = () => {
     const [activeTab, setActiveTab] = useState('portfolio');
     const [isLiked, setIsLiked] = useState(false);
-    const [selectedImage, setSelectedImage] = useState(null);
+    const [selectedService, setSelectedService] = useState(null);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
-    const [isPopUpOpen, setIsPopUpOpen] = useState(false);
-    const [requestData, setRequestData] = useState({
-        description: '',
-        date: '',
-        address: ''
-    });
     const [artisan, setArtisan] = useState(null);
-    const [data, setData] = useState([]);
     const { id } = useParams();
 
     const BASE_URL = 'http://127.0.0.1:8000/storage/';
@@ -33,7 +21,8 @@ const ArtisanPortfolioPage = () => {
         const fetchArtisan = async () => {
             try {
                 const response = await axiosClient.get(`/artisans/${id}`);
-                setArtisan(response.data.data[0]);
+                // Mapping direct 3la hsab l-JSON lli 3titini
+                setArtisan(response.data.data);
             } catch (error) {
                 console.error('Error fetching artisan:', error);
             }
@@ -41,186 +30,148 @@ const ArtisanPortfolioPage = () => {
         fetchArtisan();
     }, [id]);
 
-    const handleConfirmDemande = (e) => {
-        e.preventDefault();
-        console.log("Données envoyées:", requestData);
-        setIsPopUpOpen(false);
-    };
-
     if (!artisan) {
-        return <div className="flex justify-center items-center h-screen"><LoaderCircle className="animate-spin w-12 h-12 text-[#D35400]" /></div>;
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <LoaderCircle className="animate-spin w-12 h-12 text-[#D35400]" />
+            </div>
+        );
     }
 
-    const services = artisan?.artisan?.services || [];
-    const reviews = artisan?.reviews || [];
+    const services = artisan.services || [];
+    const reviews = artisan.reviews || [];
 
-    const tabs = [
-        { id: 'portfolio', label: 'Portfolio & Services' },
-        { id: 'reviews', label: 'Avis', count: reviews.length }
-    ];
-
-    const currentServiceImages = data?.images || [];
-
-    const nextImage = () => {
-        setCurrentImageIndex((prev) => (prev + 1) % currentServiceImages.length);
+    const nextImage = (e) => {
+        e.stopPropagation();
+        const images = selectedService?.images || [];
+        setCurrentImageIndex((prev) => (prev + 1) % images.length);
     };
 
-    const prevImage = () => {
-        setCurrentImageIndex((prev) => (prev - 1 + currentServiceImages.length) % currentServiceImages.length);
+    const prevImage = (e) => {
+        e.stopPropagation();
+        const images = selectedService?.images || [];
+        setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
     };
-
-
 
     return (
-        <div className="min-h-screen bg-white">
+        <div className="min-h-screen bg-gray-50/50">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-24 pt-6 pb-12">
 
-                <div className="border border-gray-200 p-4 mb-4">
-                    <div className="flex gap-4">
-                        <div className="relative flex-shrink-0">
+                {/* Profile Header */}
+                <div className="bg-white border border-gray-200 p-6 mb-6   ">
+                    <div className="flex flex-col md:flex-row gap-6">
+                        <div className="flex-shrink-0 flex justify-center">
                             <img
-                                src={BASE_URL + artisan?.client?.avatar}
-                                alt={artisan.lastname}
-                                className="w-30 h-30 object-cover border border-gray-200"
+                                src={BASE_URL + artisan.avatar}
+                                alt={artisan.full_name}
+                                className="w-32 h-32 md:w-40 md:h-40 object-cover border-2 border-gray-100 rounded-sm"
                             />
                         </div>
 
-                        <div className="flex-1 min-w-0">
-                            <div className="flex items-start justify-between gap-2">
+                        <div className="flex-1">
+                            <div className="flex items-start justify-between gap-4">
                                 <div>
-                                    <h1 className="text-[15px] font-bold text-[#1B4F72] truncate">
-                                        {artisan.lastname} {artisan.firstname}
-                                    </h1>
-                                    <p className="text-[11px] text-[#D35400] font-medium">
-                                        {artisan?.artisan?.specialite}
+                                    <div className="flex items-center gap-2">
+                                        <h1 className="text-xl font-bold text-[#1B4F72]">{artisan.full_name}</h1>
+                                        {artisan.profile_details.is_verified && (
+                                            <ShieldCheck className="w-5 h-5 text-blue-500" title="Vérifié" />
+                                        )}
+                                    </div>
+                                    <p className="text-sm text-[#D35400] font-semibold uppercase tracking-wider mt-1">
+                                        {artisan.profile_details.specialite}
                                     </p>
 
-                                    <div className="flex items-center gap-2 mt-1 text-[11px] text-gray-600">
-                                        <span className="flex items-center gap-0.5">
-                                            <Star className="w-3 h-3 text-[#D35400] fill-current" />
-                                            <span className="font-semibold text-[#1B4F72]">
-                                                {artisan?.artisan?.note}
-                                            </span>
+                                    <div className="flex flex-wrap items-center gap-y-2 gap-x-4 mt-3 text-sm text-gray-600">
+                                        <span className="flex items-center gap-1">
+                                            <Star className="w-4 h-4 text-[#D35400] fill-current" />
+                                            <span className="font-bold text-[#1B4F72]">{artisan.profile_details.rating_average}</span>
                                         </span>
                                         <span className="text-gray-300">|</span>
-                                        <span className="flex items-center gap-0.5">
-                                            <Briefcase className="w-3 h-3" />
-                                            {services.length} services
+                                        <span className="flex items-center gap-1">
+                                            <Briefcase className="w-4 h-4" />
+                                            {services.length} Services
                                         </span>
                                         <span className="text-gray-300">|</span>
-                                        <span className="flex items-center gap-0.5">
-                                            <MapPin className="w-3 h-3" />
+                                        <span className="flex items-center gap-1">
+                                            <MapPin className="w-4 h-4" />
                                             {artisan.city}
                                         </span>
                                         <span className="text-gray-300">|</span>
-                                        <span className="flex items-center gap-0.5">
-                                            <LocateFixed className="w-3 h-3" />
-                                            {artisan?.artisan?.rayon_action} km
+                                        <span className="flex items-center gap-1 text-green-600 font-medium">
+                                            {artisan.profile_details.missions_completed_count} Missions réussies
                                         </span>
-
                                     </div>
-                                    <div>
-                                        <p className="text-[11px] text-gray-600 mt-2">
-                                            {artisan?.artisan?.bio}
+
+                                    <div className="mt-4 max-w-2xl">
+                                        <p className="text-sm text-gray-600 leading-relaxed italic whitespace-pre-line">
+                                            "{artisan.profile_details.bio}"
                                         </p>
                                     </div>
                                 </div>
 
-                                <div className="flex gap-1">
-                                    <button
-                                        onClick={() => setIsLiked(!isLiked)}
-                                        className={`p-2  transition-colors ${isLiked ? '  text-[#D35400]' : 'border-gray-200 text-gray-400 hover:text-gray-600'}`}
-                                    >
-                                        <Heart className={`w-4 h-4 ${isLiked ? 'fill-current' : ''}`} />
+                                <div className="flex gap-2">
+                                    <button onClick={() => setIsLiked(!isLiked)} className={`p-2 border    transition-all ${isLiked ? 'bg-orange-50 border-[#D35400] text-[#D35400]' : 'border-gray-200 text-gray-400 hover:bg-gray-50'}`}>
+                                        <Heart className={`w-5 h-5 ${isLiked ? 'fill-current' : ''}`} />
                                     </button>
-                                    <button className="p-2  text-gray-400 hover:text-gray-600 transition-colors">
-                                        <Share2 className="w-4 h-4" />
-                                    </button>
+                                    <button className="p-2 border border-gray-200    text-gray-400 hover:bg-gray-50"><Share2 className="w-5 h-5" /></button>
                                 </div>
                             </div>
+
+
                         </div>
                     </div>
                 </div>
 
-                <div className="border-b border-gray-200 mb-4">
-                    <div className="flex">
-                        {tabs.map((tab) => (
+                {/* Tabs */}
+                <div className="border-b border-gray-200 mb-6 bg-white sticky top-20 z-10">
+                    <div className="flex gap-8 px-4">
+                        {['portfolio', 'reviews'].map((tab) => (
                             <button
-                                key={tab.id}
-                                onClick={() => setActiveTab(tab.id)}
-                                className={`px-4 py-3 text-[12px] font-medium transition-colors border-b-2 ${activeTab === tab.id
-                                    ? 'text-[#1B4F72] border-[#D35400]'
-                                    : 'text-gray-500 border-transparent hover:text-gray-700'
-                                    }`}
+                                key={tab}
+                                onClick={() => setActiveTab(tab)}
+                                className={`pb-4 text-sm font-bold transition-all border-b-2 uppercase tracking-widest ${activeTab === tab ? 'text-[#1B4F72] border-[#D35400]' : 'text-gray-400 border-transparent'}`}
                             >
-                                {tab.label}
-                                {tab.count > 0 && (
-                                    <span className="ml-1.5 text-[10px] text-gray-400">
-                                        ({tab.count})
-                                    </span>
-                                )}
+                                {tab === 'portfolio' ? 'Portfolio' : `Avis (${reviews.length})`}
                             </button>
                         ))}
                     </div>
                 </div>
 
+                {/* Services Grid */}
                 {activeTab === 'portfolio' && (
-                    <div className="grid xl:grid-cols-4 md:grid-cols-2 lg:grid-cols-3 grid-cols-1 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {services.map((service) => (
-                            <div key={service.id} className="border border-gray-200">
-                                <div className="aspect-[4/2] relative overflow-hidden bg-gray-100">
+                            <div key={service.id} className="group bg-white border border-gray-200 overflow-hidden hover:   transition-all">
+                                <div className="aspect-video relative overflow-hidden bg-gray-100">
                                     <img
-                                        src={BASE_URL + service.images[0]?.url}
+                                        src={BASE_URL + service.images[0]}
                                         alt={service.titre}
-                                        className="aspect-square w-full object-cover hover:opacity-80 transition-opacity cursor-pointer"
+                                        className={`w-full h-full object-cover cursor-zoom-in ${!service.is_active && 'grayscale opacity-50'}`}
+                                        onClick={() => {
+                                            setSelectedService(service);
+                                            setCurrentImageIndex(0);
+                                        }}
                                     />
+                                    {!service.is_active && (
+                                        <div className="absolute top-2 left-2 bg-gray-800 text-white text-[10px] px-2 py-1 font-bold">INACTIF</div>
+                                    )}
                                     {service.images.length > 1 && (
-                                        <span className="absolute bottom-2 right-2 px-2 py-1 bg-black/70 text-white text-[10px]">
-                                            +{service.images.length - 1} photos
-                                        </span>
+                                        <div className="absolute bottom-2 right-2 px-2 py-1 bg-black/60 text-white text-[10px] font-bold">
+                                            +{service.images.length - 1} PHOTOS
+                                        </div>
                                     )}
                                 </div>
 
-                                {service.images.length > 0 && (
-                                    <div className="flex gap-1 p-2 border-t border-gray-100">
-                                        {service.images.slice(0, 5).map((img, idx) => (
-                                            <div key={idx} className="w-16 h-16 flex-shrink-0 border border-gray-200 overflow-hidden">
-                                                <img
-                                                    src={BASE_URL + img?.url}
-                                                    alt="service image"
-                                                    className="w-16 h-full object-cover hover:opacity-80 transition-opacity cursor-pointer"
-                                                    onClick={() => {
-                                                        setCurrentImageIndex(idx);
-                                                        setSelectedImage({ src: BASE_URL + img?.url, titre: service.titre });
-                                                        setData(service);
-                                                    }}
-                                                />
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
+                                <div className="p-4">
+                                    <h3 className="text-md font-bold text-[#1B4F72] mb-2 line-clamp-1">{service.titre}</h3>
+                                    <p className="text-xs text-gray-500 line-clamp-2 mb-4 h-8">{service.description}</p>
 
-                                <div className="p-3 border-t border-gray-100">
-                                    <h3 className="text-[13px] font-bold text-[#1B4F72] mb-1">{service.titre}</h3>
-                                    <p className="text-[11px] text-gray-600 line-clamp-2 mb-2">{service.description}</p>
-
-                                    <div className="flex items-center gap-3 text-[10px] text-gray-500 mb-3">
-                                        <span className="flex items-center gap-0.5">
-                                            <Clock className="w-3 h-3" />
-                                            {service.estimation_duree} jours
-                                        </span>
-                                    </div>
-
-                                    <div className="flex items-center justify-between pt-2 border-t border-gray-100">
-                                        <p className="text-[16px] font-bold text-[#D35400]">
-                                            {service.tarif} MAD
-                                            <span className="text-[10px] text-gray-400 ml-1">/ {service.type_tarif}</span>
+                                    <div className="flex items-center justify-between pt-4 border-t border-gray-50">
+                                        <p className="text-lg font-black text-[#D35400]">
+                                            {service.tarif} <span className="text-[10px] text-gray-400 font-normal">/ {service.type_tarif.replace('_', ' ')}</span>
                                         </p>
-                                        <Link
-                                            to={`/services/${service.id}`}
-                                            className="px-4 py-2 bg-[#1B4F72] text-white text-[11px] font-medium hover:bg-[#154360] transition-colors"
-                                        >
-                                            <Eye className="w-4 h-4 " />
+                                        <Link to={`/services/${service.id}`} className="p-2 bg-gray-50 text-[#1B4F72] hover:bg-[#1B4F72] hover:text-white transition-all">
+                                            <Eye className="w-4 h-4" />
                                         </Link>
                                     </div>
                                 </div>
@@ -229,31 +180,29 @@ const ArtisanPortfolioPage = () => {
                     </div>
                 )}
 
+                {/* Reviews Section */}
                 {activeTab === 'reviews' && (
-                    <div className="space-y-3">
+                    <div className="max-w-3xl mx-auto space-y-4">
                         {reviews.length === 0 ? (
-                            <p className="text-[12px] text-gray-400 text-center py-8">Aucun avis pour le moment.</p>
+                            <div className="text-center py-12 text-gray-400 italic">Aucun avis pour le moment.</div>
                         ) : (
-                            reviews.map((review) => (
-                                <div key={review.id} className="border border-gray-200 p-3">
-                                    <div className="flex items-start gap-2">
-                                        <div className="w-8 h-8 bg-[#1B4F72] flex items-center justify-center text-[10px] font-bold text-white">
-                                            {review.author?.charAt(0)}
+                            reviews.map((review, idx) => (
+                                <div key={idx} className="bg-white border border-gray-100 p-5">
+                                    <div className="flex items-start gap-4">
+                                        <div className="w-10 h-10 bg-gray-200    flex items-center justify-center font-bold text-[#1B4F72]">
+                                            {review.client_name.charAt(0)}
                                         </div>
                                         <div className="flex-1">
-                                            <div className="flex items-center justify-between">
-                                                <h4 className="text-[11px] font-bold text-[#1B4F72]">{review.author}</h4>
-                                                <span className="text-[9px] text-gray-400">{review.date}</span>
+                                            <div className="flex justify-between items-center mb-1">
+                                                <h4 className="text-sm font-bold text-[#1B4F72]">{review.client_name}</h4>
+                                                <span className="text-[10px] text-gray-400">{review.date}</span>
                                             </div>
-                                            <div className="flex items-center gap-0.5 my-1">
+                                            <div className="flex gap-0.5 mb-2">
                                                 {[...Array(5)].map((_, i) => (
-                                                    <Star
-                                                        key={i}
-                                                        className={`w-3 h-3 ${i < review.rating ? 'text-[#D35400] fill-current' : 'text-gray-200'}`}
-                                                    />
+                                                    <Star key={i} className={`w-3 h-3 ${i < review.rating ? 'text-[#D35400] fill-current' : 'text-gray-200'}`} />
                                                 ))}
                                             </div>
-                                            <p className="text-[11px] text-gray-600">{review.comment}</p>
+                                            <p className="text-sm text-gray-600 italic">"{review.comment}"</p>
                                         </div>
                                     </div>
                                 </div>
@@ -263,34 +212,29 @@ const ArtisanPortfolioPage = () => {
                 )}
             </div>
 
-            {selectedImage && (
-                <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4">
-                    <button
-                        onClick={() => setSelectedImage(null)}
-                        className="absolute top-4 left-4 text-white  bg-gray-800 hover:text-white text-2xl"
-                    >
-                        <ArrowLeft className="w-6 h-6" />
+            {/* Lightbox / Gallery */}
+            {selectedService && (
+                <div className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4">
+                    <button onClick={() => setSelectedService(null)} className="absolute top-6 left-6 text-white flex items-center gap-2 font-bold">
+                        <ArrowLeft className="w-6 h-6" /> <span>FERMER</span>
                     </button>
-                    <button onClick={prevImage} className="absolute left-4 p-2 text-white  bg-gray-800 hover:text-white">
-                        <ChevronLeft className="w-6 h-6" />
-                    </button>
-                    <img
-                        src={BASE_URL + (currentServiceImages[currentImageIndex]?.url || selectedImage.src)}
-                        alt={selectedImage.titre}
-                        className="max-w-full max-h-[80vh] min-h-[80vh]  object-cover "
-                    />
-                    <button onClick={nextImage} className="absolute right-4 p-2 bg-gray-800 text-white hover:text-white">
-                        <ChevronRight className="w-6 h-6" />
-                    </button>
-                    <div className="absolute bottom-4 left-0 right-0 text-center">
-                        <p className="text-white text-[12px]">{selectedImage.titre}</p>
+
+                    <button onClick={prevImage} className="absolute left-4 p-4 text-white/50 hover:text-white"><ChevronLeft className="w-10 h-10" /></button>
+
+                    <div className="text-center">
+                        <img
+                            src={BASE_URL + selectedService.images[currentImageIndex]}
+                            alt="gallery"
+                            className="max-h-[70vh] w-auto object-contain mx-auto border border-white/10"
+                        />
+                        <h2 className="text-white mt-4 font-bold uppercase tracking-widest">{selectedService.titre}</h2>
                     </div>
+
+                    <button onClick={nextImage} className="absolute right-4 p-4 text-white/50 hover:text-white"><ChevronRight className="w-10 h-10" /></button>
                 </div>
             )}
-
-
         </div>
     );
 };
 
-export default ArtisanPortfolioPage;  
+export default ArtisanPortfolioPage;
