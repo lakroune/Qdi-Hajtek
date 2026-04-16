@@ -25,6 +25,7 @@ class ServiceResource extends JsonResource
             'estimation_duree' => $this->estimation_duree,
             'material' => $this->material,
             'created_at' => $this->created_at,
+            'is_favori' => (bool) $this->is_favorited,
             'artisan' => new ArtisanResource($this->artisan->user),
             'categorie' =>   new CategorieResource($this->whenLoaded('categorie')),
             'images' =>  ImageResource::collection($this->whenLoaded('images')),

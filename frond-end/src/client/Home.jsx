@@ -7,6 +7,7 @@ import {
     DollarSign,
     StarIcon, Star, Heart,
     BadgeX,
+    SaveIcon,
 } from 'lucide-react';
 
 const HomePage = () => {
@@ -16,7 +17,6 @@ const HomePage = () => {
 
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('');
-    const [favs, setFavs] = useState([1, 3]);
     const [selectedRating, setSelectedRating] = useState(0);
     const [selectedPrice, setSelectedPrice] = useState(0);
     const [nextpage, setNextPage] = useState(1);
@@ -93,16 +93,28 @@ const HomePage = () => {
         return () => {
             if (loaderRef.current) observer.unobserve(loaderRef.current);
         };
-    }, [hasMore, loading]);
+    }, [hasMore, loading, nextpage]); 
 
     const handleSearch = (e) => {
         e.preventDefault();
     };
 
-    const favorieService = (id) => {
-        const response = axiosClient.post(`/services/${id}/favorie`);
-        console.log(response);
+    const favorieService = async (id) => {
+        try {
+            await axiosClient.post(`/services/${id}/favorie`);
+            
+            setServices(prevServices => 
+                prevServices.map(service => 
+                    service.id === id 
+                    ? { ...service, is_favori: !service.is_favori } 
+                    : service
+                )
+            );
+        } catch (error) {
+            toast.error("Erreur lors de l'ajout aux favoris");
+        }
     };
+
     const SkeletonGrid = () => (
         <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 animate-pulse">
             {Array.from({ length: 8 }).map((_, i) => (
@@ -119,6 +131,7 @@ const HomePage = () => {
             ))}
         </div>
     );
+
     return (
         <div className="min-h-screen bg-gray-50">
             <section className="relative bg-[#1b4f7296] pt-20 pb-12 overflow-hidden overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
@@ -223,10 +236,15 @@ const HomePage = () => {
                                     />
                                     <button
                                         onClick={() => favorieService(service.id)}
-                                        className={`absolute top-2 right-2 w-8 h-8 flex items-center justify-center transition-colors ${favs.includes(service.id) ? 'bg-[#D35400] text-white' : 'bg-white/90 text-gray-400 hover:text-[#D35400]'}`}
+                                        className={`absolute top-2 right-2 w-8 h-8 flex items-center justify-center transition-all duration-300 rounded-full ${
+                                            service.is_favori 
+                                            ? 'bg-[#D35400] text-white shadow-lg' 
+                                            : 'bg-white/90 text-gray-400 hover:text-[#D35400]'
+                                        }`}
                                     >
-                                        <Heart className={`w-4 h-4 ${favs.includes(service.id) ? 'fill-current' : ''}`} />
+                                        <SaveIcon className={`w-4 h-4 ${service.is_favori ? 'fill-current' : ''}`} />
                                     </button>
+
                                     <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-3">
                                         <span className="text-white text-[11px] font-medium flex items-center gap-1">
                                             {service.categorie?.nom_categorie}

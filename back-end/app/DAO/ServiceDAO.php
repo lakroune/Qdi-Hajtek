@@ -25,7 +25,7 @@ class ServiceDAO
                 $service->images()->create([
                     'url' => $path
                 ]);
-            }   
+            }
 
             return $service->load('images');
         });
@@ -36,49 +36,50 @@ class ServiceDAO
             ->where('is_active', true)
             ->where('statut', 'approuve')->findOrFail($serviceId);
     }
-    public  function getServices(array $filters = [])
+    public function getServices(array $filters = [])
     {
         $query = Service::query()
-            ->where('is_active', true)
-            ->where('statut', 'approuve')
-            ->where('is_active', true)
+            ->select('services.*')
+            ->where('services.is_active', true)
+            ->where('services.statut', 'approuve')
             ->with(['artisan.user', 'categorie', 'images']);
+
+        if (auth('api')->check()) {
+            $userId = auth('api')->id();
+
+            $query->withExists(['clients as is_favorited' => function ($q) use ($userId) {
+                $q->where('favoris.client_id', $userId);
+            }]);
+        }
 
         if (!empty($filters['search'])) {
             $search = $filters['search'];
             $query->where(function ($q) use ($search) {
-                $q->where('titre', 'like', '%' . $search . '%')
-                    ->orWhere('description', 'like', '%' . $search . '%');
-                $q->orWhereHas('artisan', function ($q2) use ($search) {
-                    $q2->whereHas('user', function ($q3) use ($search) {
-                        $q3->where('firstname', 'like', '%' . $search . '%')
-                            ->orWhere('lastname', 'like', '%' . $search . '%')
-                            ->orWhere('city', 'like', '%' . $search . '%');
+                $q->where('services.titre', 'ilike', '%' . $search . '%') // استخدم ilike لـ Postgres
+                    ->orWhere('services.description', 'ilike', '%' . $search . '%')
+                    ->orWhereHas('artisan.user', function ($q2) use ($search) {
+                        $q2->where('firstname', 'ilike', '%' . $search . '%')
+                            ->orWhere('lastname', 'ilike', '%' . $search . '%')
+                            ->orWhere('city', 'ilike', '%' . $search . '%');
                     });
-                });
             });
         }
-        if (!empty($filters['category'])) {
-            $query->where('categorie_id', $filters['category']);
-        }
 
+        if (!empty($filters['category'])) {
+            $query->where('services.categorie_id', $filters['category']);
+        }
 
         if (!empty($filters['price'])) {
-            $query->where('tarif', '<=', $filters['price']);
+            $query->where('services.tarif', '<=', $filters['price']);
         }
 
-        if (!empty($filters['rating'])) {
-            $query->whereHas('artisan', function ($q) use ($filters) {
-                $q->where('note', '>=', $filters['rating']);
-            });
+        $query->join('artisans', 'services.artisan_id', '=', 'artisans.id');
 
-            $query->join('artisans', 'services.artisan_id', '=', 'artisans.id')
-                ->orderByDesc('artisans.nb_offres')
-                ->select('services.*');
+        if (!empty($filters['rating'])) {
+            $query->where('artisans.note', '>=', $filters['rating'])
+                ->orderByDesc('artisans.nb_offres');
         } else {
-            $query->join('artisans', 'services.artisan_id', '=', 'artisans.id')
-                ->orderByRaw('(artisans.note * artisans.nb_offres) DESC')
-                ->select('services.*');
+            $query->orderByRaw('(artisans.note * artisans.nb_offres) DESC');
         }
 
         return $query->paginate(8);
