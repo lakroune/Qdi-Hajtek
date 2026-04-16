@@ -87,14 +87,12 @@ function App() {
             <Route path="messages" element={<MessagesPage />} />
             <Route path="messages/:conversation_id" element={<ConversationPage />} />
             <Route path="notifications" element={<Notifications />} />
+            <Route path="nouvelle-offre" element={<ClientAddJob />} />
+            <Route path="mes-offres" element={<ClientListOffres />} />
+            <Route path="mes-offres/:id" element={<ClientOffreDetail />} />
+            <Route path="favoris" element={<ClientFavoris />} />
 
-            <Route element={<ProtectedRoute roles={['client']} />}>
-              <Route path="nouvelle-offre" element={<ClientAddJob />} />
-              <Route path="mes-offres" element={<ClientListOffres />} />
-              <Route path="mes-offres/:id" element={<ClientOffreDetail />} />
-              <Route path="favorites" element={<ClientFavoris />} />
-              
-            </Route>
+
 
             <Route element={<ProtectedRoute roles={['artisan']} />}>
               <Route path="nouvelle-service" element={<ArtisanAddService />} />

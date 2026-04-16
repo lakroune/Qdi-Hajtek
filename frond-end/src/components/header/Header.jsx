@@ -109,6 +109,7 @@ const Header = ({
 
   const elemenetMenuCLient = [
     { vers: '/mes-offres', icone: Calendar, libelle: ' mes offres' },
+    { vers: '/favoris', icone: Heart, libelle: 'favoris' },
     { vers: '/parametres', icone: Settings, libelle: 'parametres' },
   ];
 

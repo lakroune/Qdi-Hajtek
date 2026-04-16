@@ -27,7 +27,7 @@ const ClientFavoris = () => {
 
 
 
-
+    
 
 
     const removeFavorite = (id, type) => {
