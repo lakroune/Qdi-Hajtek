@@ -34,4 +34,9 @@ class ArtisanService
     {
         return $this->artisanDAO->rejectArtisan($artisanId);
     }
+
+    public function likeToggle(int $artisanId)
+    {
+        return $this->artisanDAO->likeToggle($artisanId);
+    }
 }

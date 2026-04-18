@@ -106,4 +106,15 @@ class ArtisanController extends Controller
             'data' => $artisan
         ]);
     }
+
+    // likeToggle
+    public function likeToggle(int $artisanId)
+    {
+        $artisan = $this->artisanService->likeToggle($artisanId);
+        return response()->json([
+            'success' =>  $artisan ? true : false,
+            'message' => $artisan ? 'Artisan liked successfully' : 'Artisan not found',
+            'data' => $artisan
+        ]);
+    }
 }

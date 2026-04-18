@@ -28,12 +28,15 @@ class PortfolioResource extends JsonResource
             'email' => $this->email,
             'city' => $this->city,
             'avatar' => $this->client->avatar ?? null,
+
             'profile_details' => [
                 'specialite' => $artisanData->specialite,
                 'bio' => $artisanData->bio,
                 'is_verified' => (bool)$artisanData->is_verified,
                 'rating_average' => (float)$artisanData->note,
                 'missions_completed_count' => $completedDirectMissions + $completedPropositions,
+                'likes' => $artisanData->likes->count(),
+                'has_liked'=>  $artisanData->likes->contains( 'client_id', auth('api')->user()->id),
                 'location' => [
                     'lat' => $artisanData->latitude,
                     'long' => $artisanData->longitude,

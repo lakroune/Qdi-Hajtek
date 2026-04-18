@@ -61,10 +61,10 @@ class ArtisanDAO
     {
 
         $query = User::with([
-
             'artisan.services.images',
-
             'artisan.documents',
+            'artisan.disponibilites',
+            'artisan.likes',
             'client',
             'artisan.services.demandesDirectes.client.user',
             'artisan.services.demandesDirectes.conversation.evaluation',
@@ -125,5 +125,14 @@ class ArtisanDAO
     {
         $artisan = Artisan::where('id', $artisanId)->first();
         return $artisan->update(['note' => $this->averageRating($artisanId)]);
+    }
+    public function likeToggle(int $artisanId)
+    {
+        $user = auth('api')->user();
+        $client = $user->client;
+        if (!$client) {
+            return null;
+        }
+        return $client->likes()->toggle($artisanId);
     }
 }

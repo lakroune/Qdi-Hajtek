@@ -9,19 +9,24 @@ import axiosClient from '../api/axios-client';
 
 const ArtisanPortfolioPage = () => {
     const [activeTab, setActiveTab] = useState('portfolio');
-    const [isLiked, setIsLiked] = useState(false);
     const [selectedService, setSelectedService] = useState(null);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [artisan, setArtisan] = useState(null);
     const { id } = useParams();
 
-    const BASE_URL = 'http://127.0.0.1:8000/storage/';
+    const BASE_URL = import.meta.env.VITE_API_URL_STORAGE
+
+    const [isLiked, setIsLiked] = useState(false);
+    const [likesCount, setLikesCount] = useState(0);
 
     useEffect(() => {
         const fetchArtisan = async () => {
             try {
                 const response = await axiosClient.get(`/artisans/${id}`);
-                setArtisan(response.data.data);
+                const data = response.data.data;
+                setArtisan(data);
+                setIsLiked(data.profile_details.has_liked);
+                setLikesCount(data.profile_details.likes);
             } catch (error) {
                 console.error('Error fetching artisan:', error);
             }
@@ -44,6 +49,19 @@ const ArtisanPortfolioPage = () => {
     const nextImage = () => setCurrentImageIndex((prev) => (prev + 1) % selectedService.images.length);
     const prevImage = () => setCurrentImageIndex((prev) => (prev - 1 + selectedService.images.length) % selectedService.images.length);
 
+    const toggleLike = async () => {
+        try {
+            const newStatus = !isLiked;
+            setIsLiked(newStatus);
+            setLikesCount(prev => newStatus ? prev + 1 : prev - 1);
+
+            await axiosClient.post(`/artisans/${artisan.id}/like`);
+        } catch (error) {
+            setIsLiked(!isLiked);
+            setLikesCount(prev => isLiked ? prev + 1 : prev - 1);
+            console.error('Error toggling like:', error);
+        }
+    };
     return (
         <div className="min-h-screen bg-white">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-24 pt-6 pb-12">
@@ -91,12 +109,14 @@ const ArtisanPortfolioPage = () => {
                                         "{profile.bio}"
                                     </p>
                                 </div>
-                                <div className="flex gap-1">
-                                    <button onClick={() => setIsLiked(!isLiked)} className={`p-2 transition-colors border border-gray-100 ${isLiked ? 'text-[#D35400] bg-orange-50' : 'text-gray-400 hover:text-gray-600'}`}>
+                                <div className="flex justify-center gap-2 items-center text-gray-600">
+                                    <span className="text-[13px] text-gray-600 font-bold"> {likesCount} </span>
+
+                                    <button
+                                        onClick={toggleLike}
+                                        className={`p-2 transition-all border ${isLiked ? 'text-[#D35400] bg-orange-50 border-orange-200' : 'text-gray-400 border-gray-100 hover:text-gray-600'}`}
+                                    >
                                         <Heart className={`w-5 h-5 ${isLiked ? 'fill-current' : ''}`} />
-                                    </button>
-                                    <button className="p-2 text-gray-400 border border-gray-100 hover:text-gray-600 transition-colors">
-                                        <Share2 className="w-5 h-5" />
                                     </button>
                                 </div>
                             </div>

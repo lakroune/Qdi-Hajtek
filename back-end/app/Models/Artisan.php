@@ -38,7 +38,7 @@ class Artisan extends Model
         return $this->hasMany(Service::class);
     }
 
-    public function clients()
+    public function likes()
     {
         return $this->belongsToMany(Client::class, 'aimers', 'artisan_id', 'client_id');
     }

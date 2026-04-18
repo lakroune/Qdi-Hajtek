@@ -87,7 +87,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/favorites', [FavoriController::class, 'index']);
 
 
-
+    Route::post('artisans/{artisan}/like', [ArtisanController::class, 'likeToggle']);
 
 
 

@@ -32,7 +32,7 @@ class Client extends Model
         return $this->belongsTo(User::class, 'id', 'id');
     }
 
-    public function artisans()
+    public function likes()
     {
         return $this->belongsToMany(Artisan::class, 'aimers', 'client_id', 'artisan_id');
     }
