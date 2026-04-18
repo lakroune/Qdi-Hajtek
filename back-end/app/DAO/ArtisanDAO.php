@@ -135,4 +135,20 @@ class ArtisanDAO
         }
         return $client->likes()->toggle($artisanId);
     }
+    public function reportArtisan(string $raison, int $artisanId)
+    {
+        $user = auth('api')->user();
+        $client = $user->client;
+
+        if (!$client) {
+            return null;
+        }
+
+        return $client->reports()->create([
+            'artisan_id' => $artisanId,
+            'raison'     => $raison,
+        ], [
+            'client_id' => $client->id
+        ]);
+    }
 }

@@ -39,4 +39,8 @@ class ArtisanService
     {
         return $this->artisanDAO->likeToggle($artisanId);
     }
+    public function reportArtisan(string $raison, int $artisanId)
+    {
+        return $this->artisanDAO->reportArtisan($raison, $artisanId);
+    }
 }

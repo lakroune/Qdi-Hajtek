@@ -78,9 +78,7 @@ const Portfolio = () => {
 
     if (!artisan) {
         return (
-           
-                <ArtisanPortfolioSkeleton />
-           
+            <ArtisanPortfolioSkeleton />
         );
     }
 
@@ -144,7 +142,7 @@ const Portfolio = () => {
 
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-24 pt-6 pb-12">
                 <div className="border border-gray-200 p-4 mb-4">
-                    <div className="flex gap-4">
+                    <div className="flex flex-col md:flex-row gap-4">
                         <div className="relative flex-shrink-0">
                             <img
                                 src={BASE_URL + artisan.avatar}

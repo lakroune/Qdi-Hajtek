@@ -2,12 +2,15 @@ import { useEffect, useState } from 'react';
 import {
     Star, MapPin, Briefcase, Heart, Share2,
     ChevronLeft, ChevronRight, LoaderCircle,
-    Eye, ShieldCheck, LocateFixed, ArrowLeft
+    Eye, ShieldCheck, LocateFixed, ArrowLeft,
+    ShieldAlert,
+    Plus,
+    X
 } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
 import axiosClient from '../api/axios-client';
 import ArtisanPortfolioSkeleton from '../components/skeleton/ArtisanPortfolioSkeleton';
-
+import { toast } from 'react-hot-toast';
 const ArtisanPortfolioPage = () => {
     const [activeTab, setActiveTab] = useState('portfolio');
     const [selectedService, setSelectedService] = useState(null);
@@ -16,10 +19,10 @@ const ArtisanPortfolioPage = () => {
     const { id } = useParams();
 
     const BASE_URL = import.meta.env.VITE_API_URL_STORAGE
-
+    const [reportsMessage, setReportsMessage] = useState('');
     const [isLiked, setIsLiked] = useState(false);
     const [likesCount, setLikesCount] = useState(0);
-
+    const [showModelReports, setShowModelReports] = useState(false);
     useEffect(() => {
         const fetchArtisan = async () => {
             try {
@@ -34,6 +37,7 @@ const ArtisanPortfolioPage = () => {
         };
         fetchArtisan();
     }, [id]);
+
 
 
     if (!artisan) {
@@ -60,8 +64,81 @@ const ArtisanPortfolioPage = () => {
             console.error('Error toggling like:', error);
         }
     };
+
+
+    const tabs = [
+        { id: 'portfolio', label: 'Portfolio & Services' },
+        { id: 'reviews', label: 'Avis', count: reviews.length }
+    ];
+
+
+    const submitReport = async () => {
+        try {
+            const response = await axiosClient.post(`/artisans/${artisan.id}/report`, { raison: reportsMessage });
+            if (response.status === 200) {
+                setShowModelReports(false)
+                toast.success("Votre signalement a ete envoye")
+            }
+        } catch (error) {
+            toast.error('Error submitting report');
+        }
+    }
+    const ModelReports = () => {
+        return (
+            <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[1000] p-4">
+                <div className="bg-white w-full max-w-md border border-gray-200 shadow-2xl">
+                    <div className="flex items-center gap-3 p-4 border-b border-gray-100">
+                        <button
+                            onClick={() => setShowModelReports(false)}
+                            className="p-1 hover:bg-gray-100 transition-colors text-gray-600"
+                        >
+                            <ArrowLeft className="w-5 h-5" />
+                        </button>
+                        <h3 className="text-[14px] font-bold text-[#1B4F72] uppercase tracking-wider">
+                            Signaler un problème
+                        </h3>
+                    </div>
+
+                    <div className="p-4 flex flex-col gap-4">
+                        <p className="text-[11px] text-gray-500 italic">
+                            Veuillez fournir des d&eacute;tails pr&eacute;cis sur le probl&egrave;me que vous rencontrez
+                        </p>
+
+                        <textarea
+                            value={reportsMessage}
+                            onChange={(e) => setReportsMessage(e.target.value)}
+                            rows="4"
+                            placeholder="Détails du signalement..."
+                            className="w-full border border-gray-200 p-3 text-[13px] focus:border-[#D35400] focus:ring-1 focus:ring-[#D35400] outline-none transition-all resize-none"
+                        />
+
+                        <div className="flex gap-2">
+                            <button
+                                onClick={() => setShowModelReports(false)}
+                                className="flex-1 px-3 py-2 bg-gray-100 text-gray-600 text-[12px] font-bold hover:bg-gray-200 transition-colors"
+                            >
+                                ANNULER
+                            </button>
+                            <button
+                                onClick={() => {
+                                    submitReport();
+                                }}
+                                className="flex-1 px-3 py-2 bg-[#1B4F72] text-white text-[12px] font-bold hover:bg-[#D35400] transition-colors"
+                            >
+                                ENVOYER
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
     return (
         <div className="min-h-screen bg-white">
+
+            {showModelReports && ModelReports()}
+
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-24 pt-6 pb-12">
 
                 <div className="border border-gray-200 p-4 mb-4">
@@ -116,26 +193,35 @@ const ArtisanPortfolioPage = () => {
                                     >
                                         <Heart className={`w-5 h-5 ${isLiked ? 'fill-current' : ''}`} />
                                     </button>
+                                    <button
+                                        onClick={() => setShowModelReports(true)}
+                                        className={`p-2 transition-all text-gray-400 border-gray-100 hover:text-gray-600`}
+                                    >
+                                        <ShieldAlert className={`w-5 h-5 ${isLiked ? 'fill-current' : ''}`} />
+                                    </button>
+
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div className="border-b border-gray-200 mb-6">
-                    <div className="flex">
-                        {[
-                            { id: 'portfolio', label: 'Portfolio & Services' },
-                            { id: 'reviews', label: 'Avis Clients', count: reviews.length }
-                        ].map((tab) => (
-                            <button
-                                key={tab.id}
-                                onClick={() => setActiveTab(tab.id)}
-                                className={`px-6 py-3 text-[12px] font-bold uppercase tracking-widest transition-colors border-b-2 ${activeTab === tab.id ? 'text-[#1B4F72] border-[#D35400]' : 'text-gray-400 border-transparent hover:text-gray-600'}`}
-                            >
-                                {tab.label} {tab.count > 0 && `(${tab.count})`}
-                            </button>
-                        ))}
+                <div className="border-b border-gray-200 mb-4">
+                    <div className="flex items-center justify-between">
+                        <div className="flex">
+                            {tabs.map((tab) => (
+                                <button
+                                    key={tab.id}
+                                    onClick={() => setActiveTab(tab.id)}
+                                    className={`px-4 py-3 text-[12px] font-medium transition-colors border-b-2 ${activeTab === tab.id ? 'text-[#1B4F72] border-[#D35400]' : 'text-gray-500 border-transparent hover:text-gray-700'}`}
+                                >
+                                    {tab.label}
+                                    {tab.count > 0 && <span className="ml-1.5 text-[10px] text-gray-400">({tab.count})</span>}
+                                </button>
+                            ))}
+                        </div>
+
+
                     </div>
                 </div>
 
@@ -183,29 +269,31 @@ const ArtisanPortfolioPage = () => {
                 )}
 
                 {activeTab === 'reviews' && (
-                    <div className="max-w-3xl mx-auto space-y-3">
+                    <div className="space-y-3">
                         {reviews.length === 0 ? (
-                            <div className="text-center py-12 text-gray-400 text-[12px] italic border border-dashed border-gray-200">
-                                Aucun avis client pour le moment.
-                            </div>
+                            <p className="text-[12px] text-gray-400 text-center py-8">Aucun avis pour le moment.</p>
                         ) : (
-                            reviews.map((review, idx) => (
-                                <div key={idx} className="border border-gray-200 p-4 bg-white">
-                                    <div className="flex items-start gap-3">
-                                        <div className="w-10 h-10 bg-[#1B4F72] flex items-center justify-center text-white font-bold text-[12px]">
-                                            {review.client_name.charAt(0)}
-                                        </div>
-                                        <div className="flex-1">
-                                            <div className="flex justify-between items-center">
-                                                <h4 className="text-[12px] font-bold text-[#1B4F72]">{review.client_name}</h4>
-                                                <span className="text-[10px] text-gray-400">{review.date}</span>
+                            reviews.map((review, index) => (
+                                <div key={index} className="border border-gray-200 p-3">
+                                    <div className="flex items-start gap-2">
+                                        {review.client_avatar ? (
+                                            <img src={BASE_URL + review.client_avatar} alt={review.client_name} className="w-8 h-8 object-cover" />
+                                        ) : (
+                                            <div className="w-8 h-8 bg-[#1B4F72] flex items-center justify-center text-[10px] font-bold text-white flex-shrink-0">
+                                                {review.client_name?.charAt(0)}
                                             </div>
-                                            <div className="flex gap-0.5 my-1.5">
+                                        )}
+                                        <div className="flex-1">
+                                            <div className="flex items-center justify-between">
+                                                <h4 className="text-[11px] font-bold text-[#1B4F72]">{review.client_name}</h4>
+                                                <span className="text-[9px] text-gray-400">{review.date}</span>
+                                            </div>
+                                            <div className="flex items-center gap-0.5 my-1">
                                                 {[...Array(5)].map((_, i) => (
                                                     <Star key={i} className={`w-3 h-3 ${i < review.rating ? 'text-[#D35400] fill-current' : 'text-gray-200'}`} />
                                                 ))}
                                             </div>
-                                            <p className="text-[12px] text-gray-600 leading-relaxed italic">"{review.comment}"</p>
+                                            <p className="text-[11px] text-gray-600">{review.comment}</p>
                                         </div>
                                     </div>
                                 </div>

@@ -54,4 +54,11 @@ class Client extends Model
     {
         return $this->hasMany(Paiement::class, 'client_id');
     }
+
+    public function reports()
+    {
+        return $this->belongsToMany(Artisan::class, 'reports', 'client_id', 'artisan_id')
+            ->withPivot('raison')
+            ->withTimestamps();
+    }
 }

@@ -44,7 +44,6 @@ Route::patch('/artisans/{userId}/approve', [ArtisanController::class, 'approve']
 Route::post('/artisans/{user}/reject', [ArtisanController::class, 'reject']);
 
 
-
 //ok for test
 Route::apiResource('services', ServiceController::class)->only('index', 'show');
 
@@ -78,6 +77,8 @@ Route::middleware('auth:api')->group(function () {
     Route::patch('/services/{service}/toggle', [ServiceController::class, 'toggle']);
 
 
+    // /artisans/${artisan.id}/report
+    Route::post('/artisans/{artisan}/report', [ArtisanController::class, 'report']);
 
 
 

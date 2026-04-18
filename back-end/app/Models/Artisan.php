@@ -59,4 +59,11 @@ class Artisan extends Model
     {
         return $this->is_verified;
     }
+
+    public function reports()
+    {
+        return $this->belongsToMany(Client::class, 'reports', 'client_id', 'artisan_id')
+            ->withPivot('raison')
+            ->withTimestamps();
+    }
 }

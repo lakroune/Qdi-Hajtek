@@ -9,6 +9,7 @@ use App\Http\Requests\StoreArtisanRequest;
 use App\Http\Requests\UpdateArtisanRequest;
 use App\Http\Resources\PortfolioResource;
 use App\Services\ArtisanService;
+use Illuminate\Http\Request;
 
 class ArtisanController extends Controller
 {
@@ -80,10 +81,10 @@ class ArtisanController extends Controller
 
     public function getPortfolio()
     {
-        $artisan = $this->artisanService->getArtisan( auth()->user()->id);
+        $artisan = $this->artisanService->getArtisan(auth()->user()->id);
         return response()->json([
             'message' => 'Artisans found successfully',
-            'data' =>new PortfolioResource($artisan)
+            'data' => new PortfolioResource($artisan)
         ]);
     }
 
@@ -116,5 +117,19 @@ class ArtisanController extends Controller
             'message' => $artisan ? 'Artisan liked successfully' : 'Artisan not found',
             'data' => $artisan
         ]);
+    }
+
+    public function report(Request $request, int $artisanId)
+    {
+        $request->validate([
+            'raison' => 'required|string|min:1'
+        ]);
+
+        $artisan = $this->artisanService->reportArtisan($request->raison, $artisanId);
+        return response()->json([
+            'success' =>  $artisan ? true : false,
+            'message' => $artisan ? 'Artisan reported successfully' : 'Artisan not found',
+            'data' => $artisan
+        ] , 201);
     }
 }
