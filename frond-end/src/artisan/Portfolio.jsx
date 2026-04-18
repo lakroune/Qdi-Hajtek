@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import axiosClient from '../api/axios-client';
+import ArtisanPortfolioSkeleton from '../components/skeleton/ArtisanPortfolioSkeleton';
 
 const Portfolio = () => {
     const [activeTab, setActiveTab] = useState('portfolio');
@@ -77,9 +78,9 @@ const Portfolio = () => {
 
     if (!artisan) {
         return (
-            <div className="flex justify-center items-center h-screen">
-                <LoaderCircle className="animate-spin w-12 h-12 text-[#D35400]" />
-            </div>
+           
+                <ArtisanPortfolioSkeleton />
+           
         );
     }
 
