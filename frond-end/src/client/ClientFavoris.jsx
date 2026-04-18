@@ -32,11 +32,28 @@ const ClientFavoris = () => {
         }
     };
 
-    const skeletonCards = Array(5).fill(null);
-    if (loading) {
-        return <div className="min-h-screen flex items-center justify-center">Chargement...</div>;
+    const SkeletonCards = () => {
+        return (
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 mt-10">
+                {[1, 2, 3, 4, 5].map((card) => (
+                    <div
+                        key={card}
+                        className="bg-white border border-gray-100 overflow-hidden rounded-lg shadow animate-pulse"
+                    >
+                        <div className="h-16 bg-gray-200" />
+                        <div className="p-4 space-y-3">
+                            <div className="h-3 bg-gray-200 rounded w-1/2" />
+                            <div className="h-4 bg-gray-200 rounded w-3/4" />
+                            <div className="h-3 bg-gray-200 rounded w-full" />
+                            <div className="h-3 bg-gray-200 rounded w-2/3" />
+                            <div className="h-8 bg-gray-200 rounded w-full mt-2" />
+                        </div>
+                    </div>
+                ))}
+            </div>
+        );
     }
-    const URL_BASE = "http://127.0.0.1:8000/storage/";
+    const URL_BASE = import.meta.env.VITE_API_URL_STORAGE;
     return (
         <div className="min-h-screen bg-gray-50 mt-20 pb-8">
             {/* Header */}
@@ -57,6 +74,7 @@ const ClientFavoris = () => {
             {/* Grid Services */}
             <div className="w-[90%] mx-auto px-4 py-6">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+
                     {favoriteServices.map((service) => (
                         <div key={service.id} className="bg-white border border-gray-200 overflow-hidden hover:border-[#1B4F72] transition-all group">
 
@@ -104,8 +122,8 @@ const ClientFavoris = () => {
                         </div>
                     ))}
                 </div>
-
-                {favoriteServices.length === 0 && (
+                {loading === true && <SkeletonCards />}
+                {favoriteServices.length === 0 && loading === false && (
                     <div className="text-center py-16 bg-white  ">
                         <div className="w-20 h-20 bg-gray-100 flex items-center justify-center mx-auto mb-4 rounded-full">
                             <Heart className="w-10 h-10 text-gray-300" />
