@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
 import axiosClient from '../api/axios-client';
+import ArtisanPortfolioSkeleton from '../components/skeleton/ArtisanPortfolioSkeleton';
 
 const ArtisanPortfolioPage = () => {
     const [activeTab, setActiveTab] = useState('portfolio');
@@ -34,12 +35,9 @@ const ArtisanPortfolioPage = () => {
         fetchArtisan();
     }, [id]);
 
+
     if (!artisan) {
-        return (
-            <div className="flex justify-center items-center h-screen">
-                <LoaderCircle className="animate-spin w-12 h-12 text-[#D35400]" />
-            </div>
-        );
+        return <ArtisanPortfolioSkeleton />;
     }
 
     const services = artisan.services || [];
