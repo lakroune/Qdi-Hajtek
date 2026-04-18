@@ -14,7 +14,12 @@ class FavoriService
     {
         //
     }
+    // getFavoris
 
+    public function getFavoris()
+    {
+        return $this->serviceDAO->getFavoris();
+    }
     public function favorieService(int $serviceId)
     {
         return $this->serviceDAO->favorieService($serviceId);

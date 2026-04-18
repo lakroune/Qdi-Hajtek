@@ -80,7 +80,9 @@ Route::middleware('auth:api')->group(function () {
 
 
 
+    // get('/favorites')
 
+    Route::get('/favorites', [FavoriController::class, 'index']);
 
 
 

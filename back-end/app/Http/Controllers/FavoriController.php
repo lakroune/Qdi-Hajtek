@@ -19,7 +19,12 @@ class FavoriController extends Controller
      */
     public function index()
     {
-        //
+        $services = $this->favoriService->getFavoris();
+        return response()->json([
+            'status' => true,
+            'message' => 'Services found successfully',
+            'data' => $services
+        ]);
     }
 
     /**

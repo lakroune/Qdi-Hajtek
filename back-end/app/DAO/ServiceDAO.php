@@ -132,4 +132,11 @@ class ServiceDAO
     {
         return Service::where('id', $serviceId)->update(['is_active' => !Service::find($serviceId)->is_active]);
     }
+
+    // getFavoris
+    public function getFavoris()
+    {
+        $client = Client::find(auth('api')->user()->id);
+        return $client->services()->with([  'categorie', 'images'])->get();
+    }
 }
