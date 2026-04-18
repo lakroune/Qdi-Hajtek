@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\OffreTravailController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\PropositionController;
 use App\Http\Controllers\Api\ServiceManagerController;
+use App\Http\Controllers\Api\SocialAuthController;
 use App\Http\Controllers\ArtisanController;
 use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\DisponibiliteController;
@@ -32,7 +33,8 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/generate-code', [AuthController::class, 'generateCode']);
 
-
+Route::get('auth/{provider}', [SocialAuthController::class, 'redirectToProvider']);
+Route::get('auth/{provider}/callback', [SocialAuthController::class, 'handleProviderCallback']);
 
 Route::get('/categories', [CategorieController::class, 'index']);
 
