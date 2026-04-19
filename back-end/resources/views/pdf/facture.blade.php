@@ -125,7 +125,7 @@
         .col-ref {
             text-align: center;
             font-family: monospace;
-            font-size: 11px;
+            font-size: 10px;
         }
 
         .col-amt {
@@ -154,10 +154,25 @@
             color: #1D9E75;
         }
 
-        .code-confirmation {
-            margin-top: 4px;
-            font-size: 12px;
-            color: #1D9E75;
+        .code-confirmation-box {
+            margin-top: 15px;
+            padding: 12px;
+            background-color: #F8FAFC;
+            border: 1px solid #1B4F72;
+            border-radius: 6px;
+            text-align: right;
+        }
+
+        .code-label {
+            font-weight: bold;
+            color: #1B4F72;
+        }
+
+        .code-value {
+            font-size: 16px;
+            font-weight: bold;
+            color: #1e293b;
+            letter-spacing: 1px;
         }
 
         .footer {
@@ -238,18 +253,21 @@
             <div class="statut">
                 Statut du paiement : <strong>{{ strtoupper($data['paiement']['statut']) }}</strong>
             </div>
-            <div class="code-confirmation">
-                Code de confirmation de fin de service : {{ $data['details_service']['code_confirmation'] }}. À
-                transmettre à l'artisan pour confirmer la réalisation des travaux et procéder au paiement.
-            </div>
 
+            <div class="code-confirmation-box">
+                <span class="code-label">Code de confirmation de fin de service :</span>
+                <span class="code-value">{{ $data['details_service']['code_confirmation'] }}</span>
+                <p style="margin-top: 5px; font-size: 11px; color: #64748B;">
+                    Veuillez communiquer ce code à l'artisan une fois le service terminé pour débloquer le paiement.
+                </p>
+            </div>
         </div>
 
         <div class="footer">
             Qdi Hajtek — Plateforme de mise en relation artisans / clients au Maroc.<br>
             Ceci est une facture générée automatiquement. Merci de votre confiance.
         </div>
-
+    </div>
 </body>
 
 </html>
