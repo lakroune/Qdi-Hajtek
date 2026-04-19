@@ -78,7 +78,7 @@ Route::middleware('auth:api')->group(function () {
 
 
     // /artisans/${artisan.id}/report
-    Route::post('/artisans/{artisan}/report', [ArtisanController::class, 'report']);
+    Route::post('/artisans/{artisanId}/report', [ArtisanController::class, 'report']);
 
 
 

@@ -75,7 +75,7 @@ const ArtisanPortfolioPage = () => {
     const submitReport = async () => {
         try {
             const response = await axiosClient.post(`/artisans/${artisan.id}/report`, { raison: reportsMessage });
-            if (response.status === 200) {
+            if (response.status === 201) {
                 setShowModelReports(false)
                 toast.success("Votre signalement a ete envoye")
             }

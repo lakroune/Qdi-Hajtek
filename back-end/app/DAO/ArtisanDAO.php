@@ -144,11 +144,12 @@ class ArtisanDAO
             return null;
         }
 
-        return $client->reports()->create([
-            'artisan_id' => $artisanId,
-            'raison'     => $raison,
-        ], [
-            'client_id' => $client->id
+        $client->reports()->attach($artisanId, [
+            'raison' => $raison,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
+
+        return $client->reports()->where('artisan_id', $artisanId)->first();
     }
 }
