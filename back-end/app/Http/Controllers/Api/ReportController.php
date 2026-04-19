@@ -4,9 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ReportRequest;
-use App\Models\Artisan;
 use App\Services\ArtisanService;
-use Illuminate\Http\Request;
 
 class ReportController extends Controller
 {
@@ -20,16 +18,13 @@ class ReportController extends Controller
         $reports = $this->artisanService->getReportArtisans();
         return response()->json([
             'message' => 'Artisans found successfully',
-            'data' => $reports
+            'data' =>  $reports
         ]);
     }
     public function report(ReportRequest $request,  $artisanId)
     {
-        $request->validate([
-            'raison' => 'required|string|min:1'
-        ]);
 
-        $artisan = $this->artisanService->reportArtisan($request->raison, (int) $artisanId);
+        $artisan = $this->artisanService->reportArtisan($request->all(), (int) $artisanId);
         return response()->json([
             'success' =>  $artisan ? true : false,
             'message' => $artisan ? 'Artisan reported successfully' : 'Artisan not found',

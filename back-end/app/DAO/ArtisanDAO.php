@@ -3,6 +3,7 @@
 namespace App\DAO;
 
 use App\DTO\ArtisanRegistrationDTO;
+use App\Http\Resources\ArtisanReportResource;
 use App\Models\Artisan;
 use App\Models\DemandeDirecte;
 use App\Models\Document;
@@ -135,7 +136,7 @@ class ArtisanDAO
         }
         return $client->likes()->toggle($artisanId);
     }
-    public function reportArtisan(string $raison, int $artisanId)
+    public function reportArtisan(array $data, int $artisanId)
     {
         $user = auth('api')->user();
         $client = $user->client;
@@ -145,10 +146,12 @@ class ArtisanDAO
         }
 
         $client->reports()->attach($artisanId, [
-            'raison' => $raison,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+            'subject'     => $data['subject'],
+            'description' => $data['description'],
+            'type'        => $data['type'] ?? 'artisan',
+            'priority'    => $data['priority'] ?? 'medium',
+            'raison'      => $data['subject'],
+        ]);;
 
         return $client->reports()->where('artisan_id', $artisanId)->first();
     }
@@ -156,6 +159,12 @@ class ArtisanDAO
 
     public function getReportArtisans()
     {
-        return Artisan::with('reports')->whereHas('reports')->get();
+        $artisans = Artisan::with(['reports' => function ($query) {
+            $query->withPivot('subject', 'description', 'type', 'priority', 'status', 'raison', 'created_at');
+        }])
+            ->whereHas('reports')
+            ->get();
+
+        return ArtisanReportResource::collection($artisans);
     }
 }

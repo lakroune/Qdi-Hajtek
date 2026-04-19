@@ -58,7 +58,7 @@ class Client extends Model
     public function reports()
     {
         return $this->belongsToMany(Artisan::class, 'reports', 'client_id', 'artisan_id')
-            ->withPivot('raison')
+            ->withPivot('raison', 'subject', 'description', 'type', 'status', 'priority')
             ->withTimestamps();
     }
 }
