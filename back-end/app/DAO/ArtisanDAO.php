@@ -152,4 +152,10 @@ class ArtisanDAO
 
         return $client->reports()->where('artisan_id', $artisanId)->first();
     }
+
+
+    public function getReportArtisans()
+    {
+        return Artisan::with('reports')->whereHas('reports')->get();
+    }
 }

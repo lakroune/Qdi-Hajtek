@@ -93,7 +93,7 @@ const HomePage = () => {
         return () => {
             if (loaderRef.current) observer.unobserve(loaderRef.current);
         };
-    }, [hasMore, loading, nextpage]); 
+    }, [hasMore, loading, nextpage]);
 
     const handleSearch = (e) => {
         e.preventDefault();
@@ -102,12 +102,12 @@ const HomePage = () => {
     const favorieService = async (id) => {
         try {
             await axiosClient.post(`/services/${id}/favorie`);
-            
-            setServices(prevServices => 
-                prevServices.map(service => 
-                    service.id === id 
-                    ? { ...service, is_favori: !service.is_favori } 
-                    : service
+
+            setServices(prevServices =>
+                prevServices.map(service =>
+                    service.id === id
+                        ? { ...service, is_favori: !service.is_favori }
+                        : service
                 )
             );
         } catch (error) {
@@ -179,7 +179,7 @@ const HomePage = () => {
                                 >
                                     <option value="" className="text-black">Toutes les catégories</option>
                                     {categories.map((cat) => (
-                                        <option key={cat.id} value={cat.id} className="text-black uppercase">
+                                        <option key={cat.id}   value={cat.id} className="text-black uppercase">
                                             {cat.nom_categorie || cat.name}
                                         </option>
                                     ))}
@@ -193,9 +193,9 @@ const HomePage = () => {
                                     value={selectedRating}
                                     onChange={(e) => setSelectedRating(e.target.value)}
                                 >
-                                    <option value="0">Toutes les notes</option>
+                                    <option className='text-black' value="0">Toutes les notes</option>
                                     {[1, 2, 3, 4, 5].map((star) => (
-                                        <option key={star} value={star}>{star} stars et plus</option>
+                                        <option key={star} className='text-black    '  value={star}>{star} stars et plus</option>
                                     ))}
                                 </select>
                             </div>
@@ -207,9 +207,9 @@ const HomePage = () => {
                                     value={selectedPrice}
                                     onChange={(e) => setSelectedPrice(e.target.value)}
                                 >
-                                    <option value="0">Tous les prix</option>
-                                    {[200, 500, 1000, 2000].map((price) => (
-                                        <option key={price} value={price}>{price} DH et moins</option>
+                                    <option value="0" className='text-black  bg-white/10 '>Tous les prix</option>
+                                    {[50, 100,200, 500, 1000,1500, 2000].map((price) => (
+                                        <option key={price} className='text-black  bg-white/10 ' value={price}>{price} DH et moins</option>
                                     ))}
                                 </select>
                             </div>
@@ -236,11 +236,10 @@ const HomePage = () => {
                                     />
                                     <button
                                         onClick={() => favorieService(service.id)}
-                                        className={`absolute top-2 right-2 w-8 h-8 flex items-center justify-center transition-all duration-300 rounded-full ${
-                                            service.is_favori 
-                                            ? 'bg-[#D35400] text-white shadow-lg' 
+                                        className={`absolute top-2 right-2 w-8 h-8 flex items-center justify-center transition-all duration-300 rounded-full ${service.is_favori
+                                            ? 'bg-[#D35400] text-white shadow-lg'
                                             : 'bg-white/90 text-gray-400 hover:text-[#D35400]'
-                                        }`}
+                                            }`}
                                     >
                                         <SaveIcon className={`w-4 h-4 ${service.is_favori ? 'fill-current' : ''}`} />
                                     </button>
@@ -266,7 +265,7 @@ const HomePage = () => {
                                                     className="w-full h-full object-cover"
                                                 />
                                             ) : (
-                                                <span>
+                                                <span  >
                                                     {service.artisan?.firstname?.charAt(0)}
                                                     {service.artisan?.lastname?.charAt(0)}
                                                 </span>
@@ -274,7 +273,9 @@ const HomePage = () => {
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <p className="text-[12px] text-gray-700 truncate">
-                                                {service.artisan?.firstname} {service.artisan?.lastname}
+                                                <a href={`/artisans/${service.artisan?.id}`} className="hover:text-[orange] transition-colors">
+                                                    {service.artisan?.firstname} {service.artisan?.lastname}
+                                                </a>
                                             </p>
                                             <div className="flex items-center gap-1">
                                                 <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />

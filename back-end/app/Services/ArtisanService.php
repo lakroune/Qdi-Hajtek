@@ -43,4 +43,9 @@ class ArtisanService
     {
         return $this->artisanDAO->reportArtisan($raison, $artisanId);
     }
+
+    public function getReportArtisans()
+    {
+        return $this->artisanDAO->getReportArtisans();
+    }
 }

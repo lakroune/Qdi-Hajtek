@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\EvaluationController;
 use App\Http\Controllers\Api\OffreTravailController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\PropositionController;
+use App\Http\Controllers\Api\ReportController;
 use App\Http\Controllers\Api\ServiceManagerController;
 use App\Http\Controllers\Api\SocialAuthController;
 use App\Http\Controllers\ArtisanController;
@@ -78,8 +79,8 @@ Route::middleware('auth:api')->group(function () {
 
 
     // /artisans/${artisan.id}/report
-    Route::post('/artisans/{artisanId}/report', [ArtisanController::class, 'report']);
-
+    Route::post('/artisans/{artisanId}/report', [ReportController::class, 'report']);
+    Route::get('reports', [ReportController::class, 'index']);
 
     // facturations
     Route::get('/factures/download/{id}', [PaiementController::class, 'downloadFacture']);

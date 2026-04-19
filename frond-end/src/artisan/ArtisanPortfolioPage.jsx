@@ -19,10 +19,12 @@ const ArtisanPortfolioPage = () => {
     const { id } = useParams();
 
     const BASE_URL = import.meta.env.VITE_API_URL_STORAGE
-    const [reportsMessage, setReportsMessage] = useState('');
     const [isLiked, setIsLiked] = useState(false);
     const [likesCount, setLikesCount] = useState(0);
+    const [reportsMessage, setReportsMessage] = useState('');
     const [showModelReports, setShowModelReports] = useState(false);
+    const [reportSubject, setReportSubject] = useState('Autre');
+    const [isSubmitting, setIsSubmitting] = useState(false);
     useEffect(() => {
         const fetchArtisan = async () => {
             try {
@@ -73,20 +75,35 @@ const ArtisanPortfolioPage = () => {
 
 
     const submitReport = async () => {
+        if (!reportsMessage.trim()) {
+            return toast.error("Veuillez saisir une description");
+        }
+
+        setIsSubmitting(true);
         try {
-            const response = await axiosClient.post(`/artisans/${artisan.id}/report`, { raison: reportsMessage });
-            if (response.status === 201) {
-                setShowModelReports(false)
-                toast.success("Votre signalement a ete envoye")
+            const response = await axiosClient.post(`/artisans/${artisan.id}/report`, {
+                subject: reportSubject,
+                description: reportsMessage,
+                type: 'artisan',
+                priority: 'medium'
+            });
+
+            if (response.status === 201 || response.status === 200) {
+                setShowModelReports(false);
+                setReportsMessage('');
+                toast.success("Votre signalement a été envoyé avec succès");
             }
         } catch (error) {
-            toast.error('Error submitting report');
+            console.error('Error submitting report:', error);
+            toast.error('Erreur lors de l\'envoi du signalement');
+        } finally {
+            setIsSubmitting(false);
         }
-    }
+    };
     const ModelReports = () => {
         return (
             <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[1000] p-4">
-                <div className="bg-white w-full max-w-md border border-gray-200 shadow-2xl">
+                <div className="bg-white w-full max-w-md border border-gray-200 shadow-2xl animate-in fade-in zoom-in duration-200">
                     <div className="flex items-center gap-3 p-4 border-b border-gray-100">
                         <button
                             onClick={() => setShowModelReports(false)}
@@ -100,32 +117,50 @@ const ArtisanPortfolioPage = () => {
                     </div>
 
                     <div className="p-4 flex flex-col gap-4">
-                        <p className="text-[11px] text-gray-500 italic">
-                            Veuillez fournir des d&eacute;tails pr&eacute;cis sur le probl&egrave;me que vous rencontrez
-                        </p>
+                        <div>
+                            <label className="text-[11px] font-bold text-gray-700 mb-1 block uppercase">Sujet du signalement</label>
+                            <select
+                                value={reportSubject}
+                                onChange={(e) => setReportSubject(e.target.value)}
+                                className="w-full border border-gray-200 p-2 text-[12px] focus:border-[#1B4F72] outline-none bg-white"
+                            >
+                                <option value="Comportement inapproprié">Comportement inapproprié</option>
+                                <option value="Retard ou absence">Retard ou absence</option>
+                                <option value="Qualité de service insuffisante">Qualité de service insuffisante</option>
+                                <option value="Désaccord sur le prix">Désaccord sur le prix</option>
+                                <option value="Autre">Autre</option>
+                            </select>
+                        </div>
 
-                        <textarea
-                            value={reportsMessage}
-                            onChange={(e) => setReportsMessage(e.target.value)}
-                            rows="4"
-                            placeholder="Détails du signalement..."
-                            className="w-full border border-gray-200 p-3 text-[13px] focus:border-[#D35400] focus:ring-1 focus:ring-[#D35400] outline-none transition-all resize-none"
-                        />
+                        <div>
+                            <label className="text-[11px] font-bold text-gray-700 mb-1 block uppercase">Description détaillée</label>
+                            <textarea
+                                value={reportsMessage}
+                                onChange={(e) => setReportsMessage(e.target.value)}
+                                rows="4"
+                                placeholder="Décrivez le problème en quelques mots..."
+                                className="w-full border border-gray-200 p-3 text-[13px] focus:border-[#D35400] outline-none transition-all resize-none"
+                            />
+                        </div>
 
-                        <div className="flex gap-2">
+                        <div className="flex gap-2 mt-2">
                             <button
                                 onClick={() => setShowModelReports(false)}
-                                className="flex-1 px-3 py-2 bg-gray-100 text-gray-600 text-[12px] font-bold hover:bg-gray-200 transition-colors"
+                                disabled={isSubmitting}
+                                className="flex-1 px-3 py-2 bg-gray-100 text-gray-600 text-[12px] font-bold hover:bg-gray-200 transition-colors disabled:opacity-50"
                             >
                                 ANNULER
                             </button>
                             <button
-                                onClick={() => {
-                                    submitReport();
-                                }}
-                                className="flex-1 px-3 py-2 bg-[#1B4F72] text-white text-[12px] font-bold hover:bg-[#D35400] transition-colors"
+                                onClick={submitReport}
+                                disabled={isSubmitting}
+                                className="flex-1 px-3 py-2 bg-[#1B4F72] text-white text-[12px] font-bold hover:bg-[#D35400] transition-colors flex items-center justify-center gap-2 disabled:opacity-70"
                             >
-                                ENVOYER
+                                {isSubmitting ? (
+                                    <>
+                                        <LoaderCircle className="w-4 h-4 animate-spin" /> ENVOI...
+                                    </>
+                                ) : 'ENVOYER'}
                             </button>
                         </div>
                     </div>
@@ -133,7 +168,6 @@ const ArtisanPortfolioPage = () => {
             </div>
         );
     };
-
     return (
         <div className="min-h-screen bg-white">
 

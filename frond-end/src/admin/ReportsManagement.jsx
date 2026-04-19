@@ -1,26 +1,27 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Flag, Search, Filter, CheckCircle, XCircle,
     Eye, MoreHorizontal, AlertTriangle, Clock, User
 } from 'lucide-react';
+import axiosClient from '../api/axios-client';
 
 const ReportsManagement = () => {
     const [filter, setFilter] = useState('all');
     const [selectedReport, setSelectedReport] = useState(null);
 
-    const reports = [
-        {
-            id: 1234,
-            type: 'artisan',
-            subject: 'Karim Plombier',
-            reporter: 'Ahmed Client',
-            reason: 'Non professionnel',
-            description: 'L\'artisan est arrivé en retard de 3h et n\'a pas terminé le travail',
-            date: '2024-01-15 14:30',
-            status: 'pending',
-            priority: 'high'
-        }
-    ];
+    const [reports, setReports] = useState([]);
+
+    useEffect(() => {
+        const fetchReports = async () => {
+            try {
+                const response = await axiosClient.get('/reports');
+                setReports(response.data.reports);
+            } catch (error) {
+                console.error('Error fetching reports:', error);
+            }
+        };
+        fetchReports();
+    }, []);
 
     const getStatusBadge = (status) => {
         const styles = {

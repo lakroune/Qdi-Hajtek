@@ -182,7 +182,7 @@ const Header = ({
           <div className="flex items-center justify-between">
 
             <Link to="/" className="flex-shrink-0">
-              <Logo size="sm" />
+              <Logo size="sm" className="animate-pulse" />
             </Link>
 
             <nav className="hidden lg:flex items-center gap-6">

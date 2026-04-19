@@ -16,6 +16,11 @@ return new class extends Migration
             $table->foreignId('client_id')->constrained('clients')->onDelete('cascade');
             $table->foreignId('artisan_id')->constrained('artisans')->onDelete('cascade');
             $table->string('raison')->nullable();
+            $table->string('subject');
+            $table->text('description')->nullable();
+            $table->enum('type', ['artisan', 'client'])->default('artisan');
+            $table->enum('status', ['pending', 'investigating', 'resolved', 'dismissed'])->default('pending');
+            $table->enum('priority', ['low', 'medium', 'high'])->default('medium');
             $table->timestamps();
         });
     }
