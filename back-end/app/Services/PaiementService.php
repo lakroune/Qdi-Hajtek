@@ -63,4 +63,9 @@ class  PaiementService
         $paiements = $this->paiementDAO->getPaiements();
         return PaiementResource::collection($paiements);
     }
+
+    public function getPaiementByConversationId(int $id)
+    {
+        return $this->paiementDAO->getPaiementByConversationId($id);
+    }
 }

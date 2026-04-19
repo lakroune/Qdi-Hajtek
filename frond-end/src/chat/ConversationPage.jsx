@@ -4,7 +4,9 @@ import {
     ArrowLeft, Send, Banknote, Paperclip,
     Check, CheckCheck, MoreVertical,
     Star, CreditCard, CheckCircle2, ShieldCheck,
-    RefreshCw
+    RefreshCw,
+    GitPullRequestDraft,
+    FileDown
 } from 'lucide-react';
 import axiosClient from '../api/axios-client';
 import toast from 'react-hot-toast';
@@ -137,6 +139,30 @@ const ConversationPage = () => {
             };
         }
     }, [conversation_id, currentUserId]);
+
+    const downloadFacture = async () => {
+        try {
+            const response = await axiosClient.get('/factures/download/' + conversation_id, {
+                responseType: 'blob',
+            });
+
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+
+            const link = document.createElement('a');
+            link.href = url;
+
+            link.setAttribute('download', 'facture_qdi_hajtek.pdf');
+
+            document.body.appendChild(link);
+            link.click();
+            link.parentNode.removeChild(link);
+
+            window.URL.revokeObjectURL(url);
+
+        } catch (error) {
+            toast.error("Erreur lors du téléchargement du PDF:", error);
+        }
+    };
 
     const sendeMessage = async (e) => {
         e.preventDefault();
@@ -319,7 +345,7 @@ const ConversationPage = () => {
                     Validation du devis
                 </div>
 
-                {(infoConversation.statut === 'en_attente'  || infoConversation.statut === 'approve') && !infoConversation.is_client && (
+                {(infoConversation.statut === 'en_attente' || infoConversation.statut === 'approve') && !infoConversation.is_client && (
                     <button
                         onClick={() => setShowModelAction(true)}
                         className="w-full py-2 flex items-center justify-center gap-2 text-[12px] border transition-all bg-white border-gray-300 hover:bg-gray-50 hover:border-[#D35400] text-[#1B4F72]"
@@ -386,10 +412,24 @@ const ConversationPage = () => {
                         <p className="text-[11px] text-green-600 font-semibold flex items-center gap-1">
                             <CheckCircle2 className="w-3 h-3" /> Paiement sécurisé effectué
                         </p>
-                        {infoConversation.time_paid && (
+                        {!infoConversation.is_client && (
                             <p className="text-[9px] text-gray-400 font-mono">
-                                Payé le : {new Date(infoConversation.time_paid).toLocaleDateString('fr-FR')}
+                                Paiement effectué par le client le : {new Date(infoConversation.time_paid).toLocaleDateString('fr-FR')}
                             </p>
+                        )}
+                        {infoConversation.is_client && (
+                            <div className="flex items-center gap-2">
+                                <p className="text-[9px] text-gray-400 font-mono">
+                                    Payé le : {new Date(infoConversation.time_paid).toLocaleDateString('fr-FR')}
+                                </p>
+                                <button
+                                    onClick={() => downloadFacture(infoConversation.id)}
+                                    className='flex items-center gap-2 text-[10px] border transition-all bg-white border-gray-300 hover:bg-gray-50 hover:border-[#D35400] text-[#D35400]'
+                                >
+                                    <FileDown className="w-4 h-4 text-gray-400 hover:text-[#D35400] " />
+                                </button>
+                            </div>
+
                         )}
                     </div>
                 )}

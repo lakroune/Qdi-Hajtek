@@ -54,4 +54,15 @@ class PaiementDAO
         $paiement->save();
         return $paiement;
     }
+
+    public function getPaiementByConversationId(int $id)
+    {
+        return Conversation::with(['paiement.client.user', 'conversable' => function ($query) {
+            $query->morphWith([
+                Proposition::class => ['artisan.user'],
+                DemandeDirecte::class => ['service.artisan.user']
+            ]);
+        }])
+            ->findOrFail($id);
+    }
 }

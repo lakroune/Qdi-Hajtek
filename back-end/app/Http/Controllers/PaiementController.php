@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\DTO\PaiementDTO;
 use App\Http\Requests\PaiementRequest;
+use App\Http\Resources\DataFactureResource;
 use App\Models\Conversation;
 use App\Services\PaiementService;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -49,21 +50,9 @@ class PaiementController extends Controller
 
     public function downloadFacture($id)
     {
-        $data = [
-            'num_facture' => 'FAC-' . date('Y') . '-001',
-            'date' => date('d/m/Y'),
-            'artisan_name' => 'Ismail Lakroune', 
-            'artisan_email' => 'ismail@example.com',
-            'client_name' => 'Ahmed Amine',
-            'client_email' => 'ahmed@email.com',
-            'items' => [
-                ['description' => 'Réparation Plomberie', 'price' => 200],
-                ['description' => 'Installation Robinet', 'price' => 150],
-            ],
-            'total' => 350
-        ];
+        $data = $this->paiementService->getPaiementByConversationId($id);
 
-        $pdf = Pdf::loadView('pdf.facture', $data);
+        $pdf = Pdf::loadView('pdf.facture', ['data' =>( new DataFactureResource($data))->resolve()]);
 
         return $pdf->download('facture_qdi_hajtek.pdf');
     }
