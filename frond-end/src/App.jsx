@@ -82,7 +82,7 @@ function App() {
           <Route path="services/:id" element={<ServiceDetail />} />
           <Route path="artisans/:id" element={<ArtisanPortfolioPage />} />
 
-          <Route element={<ProtectedRoute roles={['client', 'artisan']} />}>
+          <Route element={<ProtectedRoute roles={['client', 'artisan', 'admin']} />}>
             <Route path="parametres" element={<SettingsPage />} />
             <Route path="messages" element={<MessagesPage />} />
             <Route path="messages/:conversation_id" element={<ConversationPage />} />
@@ -94,7 +94,7 @@ function App() {
 
 
 
-            <Route element={<ProtectedRoute roles={['artisan']} />}>
+            <Route element={<ProtectedRoute roles={['artisan', 'admin']} />}>
               <Route path="nouvelle-service" element={<ArtisanAddService />} />
               <Route path="offres" element={<ArtisanOffres />} />
               <Route path="offres/:id" element={<ArtisanOffreDetail />} />

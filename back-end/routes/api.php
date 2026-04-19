@@ -81,7 +81,8 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/artisans/{artisanId}/report', [ArtisanController::class, 'report']);
 
 
-
+    // facturations
+    Route::get('/factures/download/{id}', [PaiementController::class, 'downloadFacture']);
 
     // get('/favorites')
 

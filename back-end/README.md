@@ -10,3 +10,4 @@
 -- php artisan reverb:start
 -- php artisan install:broadcasting
 -- php artisan install:broadcasting
+-- composer require barryvdh/laravel-dompdf

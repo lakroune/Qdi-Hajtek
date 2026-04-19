@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     LayoutDashboard, Flag, Star, Briefcase,
     FileText, DollarSign, Settings,
@@ -19,7 +19,7 @@ const AdminLayout = () => {
     const [afficherModalDeconnexion, setAfficherModalDeconnexion] = useState(false);
     const [estEnDeconnexion, setEstEnDeconnexion] = useState(false);
     const naviguer = useNavigate();
-    const [ estAuthentifie,setEstAuthentifie] = useState(false);
+    const [estAuthentifie, setEstAuthentifie] = useState(false);
     const menuItems = [
         { id: 'dashboard', label: 'Tableau de bord', icon: LayoutDashboard, path: '/admin' },
         { id: 'accounts', label: 'Comptes', icon: DollarSign, path: '/admin/accounts' },
@@ -29,6 +29,16 @@ const AdminLayout = () => {
         { id: 'services', label: 'Services', icon: Briefcase, path: '/admin/services' },
         { id: 'users', label: 'Utilisateurs', icon: User, path: '/admin/users' },
     ];
+
+    useEffect(() => {
+        const accessToken = Cookies.get('ACCESS_TOKEN');
+        const userData = Cookies.get('USER_DATA');
+        if (accessToken && userData) {
+            setEstAuthentifie(true);
+        }
+    }, []);
+
+
 
     const gererDeconnexion = async () => {
         setEstEnDeconnexion(true);
