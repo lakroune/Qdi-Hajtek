@@ -6,13 +6,20 @@ import {
     Tag,
     TagsIcon
 } from 'lucide-react';
-import { Link, useLocation, Outlet } from 'react-router-dom';
+import { Link, useLocation, Outlet, useNavigate } from 'react-router-dom';
 import Logo from '../logo/Logo';
+import LogoutModal from '../models/LogoutModal';
+import axiosClient from '../../api/axios-client';
+import Cookies from 'js-cookie';
+import toast from 'react-hot-toast';
 
 const AdminLayout = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const location = useLocation();
-
+    const [afficherModalDeconnexion, setAfficherModalDeconnexion] = useState(false);
+    const [estEnDeconnexion, setEstEnDeconnexion] = useState(false);
+    const naviguer = useNavigate();
+    const [ estAuthentifie,setEstAuthentifie] = useState(false);
     const menuItems = [
         { id: 'dashboard', label: 'Tableau de bord', icon: LayoutDashboard, path: '/admin' },
         { id: 'accounts', label: 'Comptes', icon: DollarSign, path: '/admin/accounts' },
@@ -23,6 +30,31 @@ const AdminLayout = () => {
         { id: 'users', label: 'Utilisateurs', icon: User, path: '/admin/users' },
     ];
 
+    const gererDeconnexion = async () => {
+        setEstEnDeconnexion(true);
+        try {
+            const response = await axiosClient.post('/logout');
+
+            if (response.status === 200 || response.status === 204) {
+                nettoyerStockageLocal();
+                naviguer('/auth/login', { replace: true });
+                toast.success(" vous avez bien ete deconnecte");
+            }
+        } catch (erreur) {
+            console.error("Erreur déconnexion", erreur);
+
+            nettoyerStockageLocal();
+            naviguer('/auth/login', { replace: true });
+        } finally {
+            setEstEnDeconnexion(false);
+            setAfficherModalDeconnexion(false);
+        }
+    };
+    const nettoyerStockageLocal = () => {
+        Cookies.remove('ACCESS_TOKEN');
+        Cookies.remove('USER_DATA');
+        setEstAuthentifie(false);
+    };
     const isActive = (path) => location.pathname === path;
 
     return (
@@ -56,7 +88,9 @@ const AdminLayout = () => {
                 </nav>
 
                 <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-800">
-                    <button className="flex items-center gap-3 px-3 py-2.5 text-[12px] text-gray-400 hover:text-white transition-colors w-full">
+                    <button
+                        onClick={() => setAfficherModalDeconnexion(true)}
+                        className="flex items-center gap-3 px-3 py-2.5 text-[12px] text-gray-400 hover:text-white transition-colors w-full">
                         <LogOut className="w-5 h-5" />
                         <span className={`${!sidebarOpen && 'lg:hidden'}`}>Déconnexion</span>
                     </button>
@@ -82,6 +116,14 @@ const AdminLayout = () => {
                 </header>
                 <main className="flex-1 max-h-screen overflow-auto overflow-y-scroll [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] p-0  ">
                     <Outlet />
+                    <LogoutModal
+                        estOuvert={afficherModalDeconnexion}
+                        surFermeture={() => setAfficherModalDeconnexion(false)}
+                        surConfirmation={gererDeconnexion}
+                        estEnChargement={estEnDeconnexion}
+                        nomUtilisateur={"admin"}
+                        variante="simple"
+                    />
                 </main>
             </div>
         </div>

@@ -52,6 +52,22 @@ const MessagesPage = () => {
         fetchConversations();
     }, []);
 
+
+    const skeletonconversations = () => {
+        return (
+            <>
+                {[...Array(5)].map((_, index) => (
+                    <div key={index} className="flex items-center gap-3 p-3 border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                        <div className="w-10 h-10 flex items-center justify-center shrink-0  bg-gray-300 animate-pulse" />
+                        <div className="flex-1">
+                            <div className="h-4 bg-gray-300 mb-2 animate-pulse" />
+                            <div className="h-3 bg-gray-300 animate-pulse" />
+                        </div>
+                    </div>
+                ))}
+            </>
+        );
+    }
     return (
         <div className="min-h-screen bg-gray-50">
             <div className="max-w-6xl mx-auto mt-16 h-[calc(100vh-64px)]">
@@ -74,7 +90,7 @@ const MessagesPage = () => {
 
                         <div className="flex-1 overflow-y-auto">
                             {loading ? (
-                                <p className="text-center text-[11px] mt-4">Chargement...</p>
+                                skeletonconversations()
                             ) : filteredConversations.map((conv) => (
                                 <Link
                                     key={conv.id}
@@ -123,8 +139,8 @@ const MessagesPage = () => {
 
                     <div className="hidden md:flex flex-1 items-center justify-center bg-gray-50">
                         <div className="text-center">
-                            <div className="w-16 h-16 bg-[#1B4F72]/10 flex items-center justify-center mx-auto mb-4">
-                                <Send className="w-8 h-8 text-[#1B4F72]" />
+                            <div className="w-16 h-16 bg-[#1B4F72]/10 flex  items-center animate-bounce justify-center mx-auto mb-4">
+                                <Send className="w-8 h-8 text-[#1B4F72] animate-pulse" />
                             </div>
                             <h2 className="text-[13px] font-bold text-[#1B4F72] mb-1">Vos messages</h2>
                             <p className="text-[11px] text-gray-500">Sélectionnez une conversation pour voir les détails</p>

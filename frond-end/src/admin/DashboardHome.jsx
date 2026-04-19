@@ -132,31 +132,44 @@ const DashboardHome = () => {
                 <MetricCard label="Note moyenne" value={`${activity.average_rating} / 5`} sub="Satisfaction" />
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
-                <div className="lg:col-span-3 bg-white border border-gray-200   p-4">
-                    <p className="text-sm font-medium text-gray-500 mb-3">Revenus mensuels</p>
-                    <Legend items={[{ color: '#185FA5', label: 'Volume total' }, { color: '#1D9E75', label: 'Bénéfice net' }]} />
-                    <div className="h-52">
-                        <Bar data={monthlyRevenue} options={barOptions} />
-                    </div>
-                </div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+    {/* 1. Revenus mensuels */}
+    <div className="bg-white border border-gray-200 p-4 rounded-sm">
+        <p className="text-sm font-medium text-gray-500 mb-3">Revenus mensuels</p>
+        <Legend items={[{ color: '#185FA5', label: 'Volume total' }, { color: '#1D9E75', label: 'Bénéfice net' }]} />
+        <div className="h-52">
+            <Bar data={monthlyRevenue} options={barOptions} />
+        </div>
+    </div>
 
-                <div className="lg:col-span-2 bg-white border border-gray-200   p-4">
-                    <p className="text-sm font-medium text-gray-500 mb-3">Répartition des activités</p>
-                    <Legend items={[{ color: '#534AB7', label: 'Demande directe' }, { color: '#D85A30', label: 'Proposition' }]} />
-                    <div className="h-52">
-                        <Doughnut data={activityByType} options={{ responsive: true, maintainAspectRatio: false, cutout: '65%', plugins: { legend: { display: false } } }} />
-                    </div>
-                </div>
-            </div>
+    {/* 2. Revenus journaliers */}
+    <div className="bg-white border border-gray-200 p-4 rounded-sm">
+        <p className="text-sm font-medium text-gray-500 mb-3">Revenus journaliers</p>
+        <Legend items={[{ color: '#185FA5', label: 'Volume total' }, { color: '#1D9E75', label: 'Bénéfice net' }]} />
+        <div className="h-52">
+            <Bar data={dailyRevenue} options={barOptions} />
+        </div>
+    </div>
 
-            <div className="bg-white border border-gray-200   p-4">
-                <p className="text-sm font-medium text-gray-500 mb-3">Revenus journaliers</p>
-                <Legend items={[{ color: '#185FA5', label: 'Volume total' }, { color: '#1D9E75', label: 'Bénéfice net' }]} />
-                <div className="h-44">
-                    <Bar data={dailyRevenue} options={barOptions} />
-                </div>
-            </div>
+    {/* 3. Répartition des activités */}
+    <div className="bg-white border border-gray-200 p-4 rounded-sm">
+        <p className="text-sm font-medium text-gray-500 mb-3">Répartition des activités</p>
+        <Legend items={[{ color: '#534AB7', label: 'Demande directe' }, { color: '#D85A30', label: 'Proposition' }]} />
+        <div className="h-52 flex items-center justify-center">
+            <Doughnut 
+                data={activityByType} 
+                options={{ 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    cutout: '65%', 
+                    plugins: { legend: { display: false } } 
+                }} 
+            />
+        </div>
+    </div>
+</div>
+
+
         </div>
     );
 };
