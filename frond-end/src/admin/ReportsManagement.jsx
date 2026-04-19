@@ -1,16 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import {
     Flag, Search, CheckCircle, XCircle,
-    Eye, AlertTriangle, Clock, ChevronDown, ChevronUp
+    Eye, AlertTriangle, Clock, ChevronDown, ChevronUp,
+    Check, X, RefreshCw
 } from 'lucide-react';
 import axiosClient from '../api/axios-client';
+import toast from 'react-hot-toast';
 
 const ReportsManagement = () => {
     const [filter, setFilter] = useState('all');
     const [search, setSearch] = useState('');
-    const [selectedReport, setSelectedReport] = useState(null);
     const [artisans, setArtisans] = useState([]);
     const [expandedArtisan, setExpandedArtisan] = useState(null);
+
+    const [selectedReport, setSelectedReport] = useState(null);
+
+    const [modelResolved, setModelResolved] = useState(false);
+    const [modelDismissed, setModelDismissed] = useState(false);
+    const [pendingReport, setPendingReport] = useState(null);
+    const [isProcessing, setIsProcessing] = useState(false);
 
     useEffect(() => {
         const fetchReports = async () => {
@@ -40,13 +48,13 @@ const ReportsManagement = () => {
             pending: 'bg-yellow-100 text-yellow-700',
             investigating: 'bg-blue-100 text-blue-700',
             resolved: 'bg-green-100 text-green-700',
-            dismissed: 'bg-gray-100 text-gray-700'
+            dismissed: 'bg-gray-100 text-gray-700',
         };
         const labels = {
             pending: 'En attente',
             investigating: 'En cours',
             resolved: 'Résolu',
-            dismissed: 'Rejeté'
+            dismissed: 'Rejeté',
         };
         return (
             <span className={`px-2 py-0.5 text-[10px] font-medium rounded ${styles[status] || 'bg-gray-100 text-gray-600'}`}>
@@ -59,6 +67,36 @@ const ReportsManagement = () => {
         if (priority === 'high') return <AlertTriangle className="w-4 h-4 text-red-500" />;
         if (priority === 'medium') return <Clock className="w-4 h-4 text-yellow-500" />;
         return <Flag className="w-4 h-4 text-blue-400" />;
+    };
+
+    const handleResolve = async () => {
+        try {
+            setIsProcessing(true);
+            await axiosClient.patch(`/reports/${pendingReport.id}/resolve`);
+            toast.success('Signalement marqué comme résolu');
+            setModelResolved(false);
+            setSelectedReport(null);
+        } catch {
+            toast.error('Erreur lors de la résolution');
+        } finally {
+            setIsProcessing(false);
+            setPendingReport(null);
+        }
+    };
+
+    const handleDismiss = async () => {
+        try {
+            setIsProcessing(true);
+            await axiosClient.patch(`/reports/${pendingReport.id}/dismiss`);
+            toast.success('Signalement rejeté');
+            setModelDismissed(false);
+            setSelectedReport(null);
+        } catch {
+            toast.error('Erreur lors du rejet');
+        } finally {
+            setIsProcessing(false);
+            setPendingReport(null);
+        }
     };
 
     const filteredArtisans = artisans
@@ -78,6 +116,78 @@ const ReportsManagement = () => {
 
     return (
         <div className="space-y-4">
+
+            {modelResolved && (
+                <div className="fixed inset-0 z-[999] flex items-center justify-center p-4" role="dialog" aria-modal="true">
+                    <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] transition-opacity animate-in fade-in duration-200" />
+                    <div className="relative w-full max-w-xs bg-white shadow-2xl border border-gray-100 transform transition-all animate-in zoom-in-95 duration-200">
+                        <div className="p-6">
+                            <div className="flex items-center gap-4 mb-6">
+                                <div className="w-10 h-10 bg-[#1B4F72]/10 flex items-center justify-center">
+                                    <Check className="w-5 h-5 text-green-600" />
+                                </div>
+                                <div>
+                                    <h3 className="text-[14px] font-bold text-[#1B4F72]">Confirmation</h3>
+                                    <p className="text-[12px] text-gray-600">Voulez-vous marquer ce signalement comme résolu ?</p>
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-2 gap-3">
+                                <button
+                                    onClick={() => { setModelResolved(false); setPendingReport(null); }}
+                                    className="py-2 text-[12px] text-gray-400 hover:text-gray-600 font-medium"
+                                >
+                                    Non
+                                </button>
+                                <button
+                                    disabled={isProcessing}
+                                    onClick={handleResolve}
+                                    className="py-2 bg-[#1B4F72] text-white text-[12px] font-bold hover:bg-[#D35400] transition-colors text-center"
+                                >
+                                    {isProcessing
+                                        ? <div className="flex items-center justify-center gap-2"><RefreshCw className="w-4 h-4 animate-spin" /> en cours</div>
+                                        : 'Résoudre'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {modelDismissed && (
+                <div className="fixed inset-0 z-[999] flex items-center justify-center p-4" role="dialog" aria-modal="true">
+                    <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] transition-opacity animate-in fade-in duration-200" />
+                    <div className="relative w-full max-w-xs bg-white shadow-2xl border border-gray-100 transform transition-all animate-in zoom-in-95 duration-200">
+                        <div className="p-6">
+                            <div className="flex items-center gap-4 mb-6">
+                                <div className="w-10 h-10 bg-[#D35400]/10 flex items-center justify-center">
+                                    <X className="w-5 h-5 text-red-600" />
+                                </div>
+                                <div>
+                                    <h3 className="text-[14px] font-bold text-[#1B4F72]">Confirmation</h3>
+                                    <p className="text-[12px] text-gray-600">Voulez-vous vraiment rejeter ce signalement ?</p>
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-2 gap-3">
+                                <button
+                                    onClick={() => { setModelDismissed(false); setPendingReport(null); }}
+                                    className="py-2 text-[12px] text-gray-400 hover:text-gray-600 font-medium"
+                                >
+                                    Non
+                                </button>
+                                <button
+                                    disabled={isProcessing}
+                                    onClick={handleDismiss}
+                                    className="py-2 bg-[#1B4F72] text-white text-[12px] font-bold hover:bg-[#D35400] transition-colors text-center"
+                                >
+                                    {isProcessing
+                                        ? <div className="flex items-center justify-center gap-2"><RefreshCw className="w-4 h-4 animate-spin" /> en cours</div>
+                                        : 'Rejeter'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             <div className="flex items-center justify-between">
                 <h1 className="text-[18px] font-bold text-[#1B4F72]">Signalements</h1>
@@ -172,7 +282,7 @@ const ReportsManagement = () => {
                                     {expandedArtisan === artisan.id && artisan.reports.map((report, idx) => (
                                         <tr key={idx} className="bg-blue-50/40 border-l-4 border-[#1B4F72]">
                                             <td className="px-4 py-3"></td>
-                                            <td className="px-4 py-3" colSpan={1}>
+                                            <td className="px-4 py-3">
                                                 <div className="flex items-center gap-2">
                                                     {report.reporter.avatar
                                                         ? <img src={report.reporter.avatar} className="w-6 h-6 rounded-full object-cover" alt="" />
@@ -209,12 +319,20 @@ const ReportsManagement = () => {
                                                         <Eye className="w-4 h-4" />
                                                     </button>
                                                     <button
+                                                        onClick={() => {
+                                                            setPendingReport({ ...report.details, artisan, reporter: report.reporter });
+                                                            setModelResolved(true);
+                                                        }}
                                                         className="p-1.5 text-gray-400 hover:text-green-600 hover:bg-green-50 transition-colors rounded"
                                                         title="Résoudre"
                                                     >
                                                         <CheckCircle className="w-4 h-4" />
                                                     </button>
                                                     <button
+                                                        onClick={() => {
+                                                            setPendingReport({ ...report.details, artisan, reporter: report.reporter });
+                                                            setModelDismissed(true);
+                                                        }}
                                                         className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors rounded"
                                                         title="Rejeter"
                                                     >
@@ -238,10 +356,7 @@ const ReportsManagement = () => {
                             <h3 className="text-[14px] font-bold text-white">
                                 Signalement — {selectedReport.artisan.name}
                             </h3>
-                            <button
-                                onClick={() => setSelectedReport(null)}
-                                className="text-white/70 hover:text-white"
-                            >
+                            <button onClick={() => setSelectedReport(null)} className="text-white/70 hover:text-white">
                                 <XCircle className="w-5 h-5" />
                             </button>
                         </div>
@@ -295,13 +410,19 @@ const ReportsManagement = () => {
                             </div>
 
                             <div className="flex gap-2 pt-4 border-t border-gray-200">
-                                <button className="flex-1 py-2 bg-green-500 hover:bg-green-600 text-white text-[11px] font-medium transition-colors rounded">
+                                <button
+                                    onClick={() => { setPendingReport(selectedReport); setModelResolved(true); }}
+                                    className="flex-1 py-2 bg-green-500 hover:bg-green-600 text-white text-[11px] font-medium transition-colors rounded"
+                                >
                                     Marquer résolu
                                 </button>
                                 <button className="flex-1 py-2 bg-[#1B4F72] hover:bg-[#D35400] text-white text-[11px] font-medium transition-colors rounded">
                                     Contacter parties
                                 </button>
-                                <button className="flex-1 py-2 border border-gray-200 hover:border-red-500 hover:text-red-500 text-[11px] transition-colors rounded">
+                                <button
+                                    onClick={() => { setPendingReport(selectedReport); setModelDismissed(true); }}
+                                    className="flex-1 py-2 border border-gray-200 hover:border-red-500 hover:text-red-500 text-[11px] transition-colors rounded"
+                                >
                                     Rejeter
                                 </button>
                             </div>
