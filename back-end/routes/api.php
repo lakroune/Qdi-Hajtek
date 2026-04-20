@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\PropositionController;
 use App\Http\Controllers\Api\ReportController;
 use App\Http\Controllers\Api\ServiceManagerController;
 use App\Http\Controllers\Api\SocialAuthController;
+use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\ArtisanController;
 use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\DisponibiliteController;
@@ -109,9 +110,10 @@ Route::middleware('auth:api')->group(function () {
 
 
 
-
-
-
+    Route::get('/users', [UserController::class, 'index']);
+    Route::patch('/users/{user}/ban', [UserController::class, 'ban']);
+    Route::patch('/users/{user}/activate', [UserController::class, 'activate']);
+    Route::patch('/users/{user}/role', [UserController::class, 'updateRole']);
 
 
     Route::post('verifier-email', [AuthController::class, 'verifierEmail']);

@@ -4,7 +4,9 @@ import {
     FileText, DollarSign, Settings,
     Menu, X, LogOut, User,
     Tag,
-    TagsIcon
+    TagsIcon,
+    Magnet,
+    Users
 } from 'lucide-react';
 import { Link, useLocation, Outlet, useNavigate } from 'react-router-dom';
 import Logo from '../logo/Logo';
@@ -27,7 +29,7 @@ const AdminLayout = () => {
         { id: 'artisan-requests', label: 'Devenir Artisan', icon: User, path: '/admin/artisan-requests' },
         { id: 'reports', label: 'Signalements', icon: Flag, path: '/admin/reports' },
         { id: 'services', label: 'Services', icon: Briefcase, path: '/admin/services' },
-        { id: 'users', label: 'Utilisateurs', icon: User, path: '/admin/users' },
+        { id: 'users', label: 'Utilisateurs', icon: Users, path: '/admin/users' },
     ];
 
     useEffect(() => {

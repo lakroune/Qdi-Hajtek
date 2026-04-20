@@ -35,6 +35,7 @@ import ProtectedRoute from './errors/ProtectedRoute';
 import { Toaster } from 'react-hot-toast';
 import DashboardArtisanPage from './artisan/DashboardArtisanPage';
 import Portfolio from './artisan/Portfolio';
+import UsersManager from './admin/UsersManager';
 
 function App() {
 
@@ -124,6 +125,7 @@ function App() {
             <Route path='accounts' element={<AccountsManagement />} />
             <Route path='jobs' element={<JobsManagement />} />
             <Route path='categories' element={<ManageCategories />} />
+            <Route path='users' element={<UsersManager />} />
           </Route>
         </Route>
 
