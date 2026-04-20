@@ -54,7 +54,7 @@ const ArtisanRequests = () => {
     const getImageUrl = (imagePath) => {
         if (!imagePath) return null;
         const cleanPath = imagePath.replace(/^\//, '');
-        return `http://127.0.0.1:8000/storage/${cleanPath}`;
+        return import.meta.env.VITE_API_URL_STORAGE + cleanPath;
     };
 
     const getStatusBadge = (isVerified) => {
@@ -75,7 +75,42 @@ const ArtisanRequests = () => {
             </span>
         );
     };
-
+    const ReportsSkeleton = () => {
+        return (
+            <div className="animate-pulse">
+                <div className="bg-white border border-gray-200 overflow-hidden">
+                    <div className="divide-y divide-gray-100">
+                        {[1, 2, 3, 4, 5, 6, 7].map((i) => (
+                            <div key={i} className="px-4 py-4 flex items-center justify-between">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-8 h-8 bg-gray-200  "></div>
+                                    <div className='flex flex-col gap-2'>
+                                        <div className="h-3 w-20 bg-gray-200 rounded"></div>
+                                        <div className="h-2 w-14 bg-gray-200 rounded"></div>
+                                    </div>
+                                </div>
+                                <div className="flex gap-2">
+                                    <div className="h-5 w-20 bg-gray-200 rounded-full"></div>
+                                </div>
+                                <div className="flex gap-2">
+                                    <div className="h-5 w-20 bg-gray-200 rounded-full"></div>
+                                </div><div className="flex gap-2">
+                                    <div className="h-5 w-20 bg-gray-200 rounded-full"></div>
+                                </div><div className="flex gap-2">
+                                    <div className="h-5 w-20 bg-gray-200 rounded-full"></div>
+                                </div>
+                                <div className="flex gap-2">
+                                    <div className="h-5 w-20 bg-gray-200 rounded-full"></div>
+                                </div><div className="flex gap-2">
+                                    <div className="h-5 w-20 bg-gray-200 rounded-full"></div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        );
+    };
 
     const openRejectModal = (userId) => {
         setRejectingId(userId);
@@ -298,11 +333,8 @@ const ArtisanRequests = () => {
                         <tbody className="divide-y divide-gray-100">
                             {isloading ? (
                                 <tr>
-                                    <td colSpan="7" className="px-4 py-10 text-center">
-                                        <div className="flex flex-col items-center justify-center gap-2">
-                                            <CircleAlert className="w-6 h-6 text-[#1B4F72] animate-spin" />
-                                            <p className="text-[12px] text-gray-500">Chargement des données...</p>
-                                        </div>
+                                    <td colSpan="7" className="">
+                                        <ReportsSkeleton />
                                     </td>
                                 </tr>
                             ) : filteredArtisans.map((user) => (
