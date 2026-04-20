@@ -17,7 +17,7 @@ const getImageUrl = (path) => {
 
 
 const hasRole = (user, role) => user.roles?.some(r => r.name === role);
-const isBanned = (user) => user.client?.statut === 'banni';
+const isBanned = (user) => user.client?.statut === 'inactif';
 
 const Avatar = ({ user, size = 'sm' }) => {
     const img = getImageUrl(user?.client?.avatar);
@@ -110,7 +110,7 @@ const UsersManager = () => {
         setActionLoading(true);
         try {
             await axiosClient.patch(`/users/${banModal.user.id}/ban`);
-            patchUser(banModal.user.id, u => ({ ...u, client: { ...u.client, statut: 'banni' } }));
+            patchUser(banModal.user.id, u => ({ ...u, client: { ...u.client, statut: 'inactif' } }));
             toast.success("Utilisateur banni avec succès");
             setBanModal({ open: false, user: null });
         } catch { toast.error("Erreur lors du bannissement"); }
@@ -266,8 +266,8 @@ const UsersManager = () => {
                         </select>
                         <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="px-3 py-2 text-[12px] border border-gray-200 rounded focus:border-[#1B4F72] focus:outline-none bg-white">
                             <option value="all">Tous les statuts</option>
-                            <option value="active">Actifs</option>
-                            <option value="banned">Bannis</option>
+                            <option value="actif">Actifs</option>
+                            <option value="inactif">Bannis</option>
                         </select>
                         <button onClick={fetchUsers} className="p-2 border border-gray-200 rounded hover:bg-gray-50 text-gray-500 hover:text-[#1B4F72] transition-colors">
                             <RefreshCw className="w-4 h-4" />
