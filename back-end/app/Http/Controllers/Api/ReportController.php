@@ -36,6 +36,7 @@ class ReportController extends Controller
     }
 
 
+    // mark report as resolved
     public function resolve(Request $request, $artisanId, $clientId)
     {
         try {
@@ -50,6 +51,24 @@ class ReportController extends Controller
             ], 200);
         } catch (Exception $e) {
             return response()->json(['error' => 'Error resolving report'], 500);
+        }
+    }
+
+    // mark report as dismissed
+    public function dismiss(Request $request, $artisanId, $clientId)
+    {
+        try {
+            $artisan = Artisan::findOrFail($artisanId);
+
+            $artisan->reports()->updateExistingPivot($clientId, [
+                'status' => ''
+            ]);
+
+            return response()->json([
+                'message' => 'Signalement rejeté avec succès'
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Error dismissing report'], 500);
         }
     }
 }

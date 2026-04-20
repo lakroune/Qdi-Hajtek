@@ -96,22 +96,37 @@ const ReportsManagement = () => {
             setPendingReport(null);
         }
     };
-
     const handleDismiss = async () => {
+        if (!pendingReport) return;
+
         try {
             setIsProcessing(true);
-            await axiosClient.patch(`/reports/${pendingReport.id}/dismiss`);
-            toast.success('Signalement rejeté');
+
+            await axiosClient.put(`/reports/${pendingReport.artisan.id}/dismiss/${pendingReport.reporter.id}`);
+            toast.success('Signalement rejeté avec succès');
+            setArtisans(prevArtisans =>
+                prevArtisans.map(art => {
+                    if (art.id === pendingReport.artisan.id) {
+                        return {
+                            ...art,
+                            reports: art.reports.filter(r => r.reporter.id !== pendingReport.reporter.id)
+                        };
+                    }
+                    return art;
+                }).filter(art => art.reports.length > 0)
+            );
+
             setModelDismissed(false);
             setSelectedReport(null);
-        } catch {
-            toast.error('Erreur lors du rejet');
+            setPendingReport(null);
+
+        } catch (error) {
+            console.error("Erreur lors du rejet:", error);
+            toast.error(error.response?.data?.message || 'Erreur lors du rejet du signalement');
         } finally {
             setIsProcessing(false);
-            setPendingReport(null);
         }
     };
-
 
     const filteredArtisans = artisans
         .map((artisan) => {

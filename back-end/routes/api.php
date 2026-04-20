@@ -83,7 +83,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('reports', [ReportController::class, 'index']);
     // /reports/report.id/resolve
     Route::put('/reports/{artisan}/resolve/{client}', [ReportController::class, 'resolve']);
-
+    Route::put('/reports/{artisan}/dismiss/{client}', [ReportController::class, 'dismiss']);
 
     // facturations
     Route::get('/factures/download/{id}', [PaiementController::class, 'downloadFacture']);
