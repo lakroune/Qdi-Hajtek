@@ -52,6 +52,40 @@ const StatusBadge = ({ user }) =>
         ? <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[9px] font-semibold bg-red-50 text-red-600 border border-red-200 rounded-full uppercase tracking-wide"><Ban className="w-2.5 h-2.5" />Banni</span>
         : <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[9px] font-semibold bg-green-50 text-green-700 border border-green-200 rounded-full uppercase tracking-wide"><CheckCircle className="w-2.5 h-2.5" />Actif</span>;
 
+const ReportsSkeleton = () => {
+    return (
+        <div className="animate-pulse">
+            <div className="bg-white border border-gray-200 overflow-hidden">
+                <div className="divide-y divide-gray-100">
+                    {[1, 2, 3, 4, 5, 6, 7].map((i) => (
+                        <div key={i} className="px-4 py-4 flex items-center justify-between">
+                            <div className="flex items-center gap-4">
+                                <div className="w-8 h-8 bg-gray-200 rounded-full"></div>
+                                <div className='flex flex-col gap-2'>
+                                    <div className="h-3 w-32 bg-gray-200 rounded"></div>
+                                    <div className="h-1 w-18 bg-gray-200 rounded"></div>
+                                </div>
+                            </div>
+                            <div className="flex gap-2">
+                                <div className="h-5 w-20 bg-gray-200 rounded-full"></div>
+                            </div>
+                            <div className="flex gap-2">
+                                <div className="h-5 w-20 bg-gray-200 rounded-full"></div>
+                            </div><div className="flex gap-2">
+                                <div className="h-5 w-20 bg-gray-200 rounded-full"></div>
+                            </div><div className="flex gap-2">
+                                <div className="h-5 w-20 bg-gray-200 rounded-full"></div>
+                            </div>
+                            <div className="flex gap-2">
+                                <div className="h-5 w-20 bg-gray-200 rounded-full"></div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
+};
 const ConfirmModal = ({ config, loading, onClose, onConfirm }) => {
     if (!config?.open) return null;
     return (
@@ -304,11 +338,8 @@ const UsersManager = () => {
                         </thead>
                         <tbody className="divide-y divide-gray-100">
                             {isLoading ? (
-                                <tr><td colSpan="6" className="px-4 py-12 text-center">
-                                    <div className="flex flex-col items-center gap-2">
-                                        <RefreshCw className="w-6 h-6 text-[#1B4F72] animate-spin" />
-                                        <p className="text-[12px] text-gray-500">Chargement...</p>
-                                    </div>
+                                <tr><td colSpan="6" className="">
+                                    <ReportsSkeleton />
                                 </td></tr>
                             ) : filteredUsers.length === 0 ? (
                                 <tr><td colSpan="6" className="px-4 py-12 text-center">

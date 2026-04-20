@@ -19,14 +19,18 @@ const ReportsManagement = () => {
     const [modelDismissed, setModelDismissed] = useState(false);
     const [pendingReport, setPendingReport] = useState(null);
     const [isProcessing, setIsProcessing] = useState(false);
-
+    const [loading, setLoading] = useState(false);
     useEffect(() => {
         const fetchReports = async () => {
             try {
+                setLoading(true);
                 const response = await axiosClient.get('/reports');
                 setArtisans(response.data.data);
             } catch (error) {
                 console.error('Error fetching reports:', error);
+            }
+            finally {
+                setLoading(false);
             }
         };
         fetchReports();
@@ -69,6 +73,34 @@ const ReportsManagement = () => {
         return <Flag className="w-4 h-4 text-blue-400" />;
     };
 
+    const ReportsSkeleton = () => {
+        return (
+            <div className="animate-pulse">
+                <div className="bg-white border border-gray-200 overflow-hidden">
+                    <div className="bg-gray-50 border-b border-gray-200 h-10 w-full"></div>
+                    <div className="divide-y divide-gray-100">
+                        {[1, 2, 3, 4, 5, 6, 7].map((i) => (
+                            <div key={i} className="px-4 py-4 flex items-center justify-between">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-4 h-4 bg-gray-200 rounded"></div>
+                                    <div className="h-3 w-32 bg-gray-200 rounded"></div>
+                                </div>
+                                <div className="flex gap-2">
+                                    <div className="h-5 w-20 bg-gray-200 rounded-full"></div>
+                                </div>
+                                <div className="flex gap-2">
+                                    <div className="h-5 w-20 bg-gray-200 rounded-full"></div>
+                                </div>
+                                <div className="flex gap-2">
+                                    <div className="h-5 w-20 bg-gray-200 rounded-full"></div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        );
+    };
     const handleResolve = async () => {
         try {
             setIsProcessing(true);
@@ -272,10 +304,17 @@ const ReportsManagement = () => {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100">
-                            {filteredArtisans.length === 0 && (
+                            {filteredArtisans.length === 0 && !loading && (
                                 <tr>
                                     <td colSpan={5} className="px-4 py-8 text-center text-[12px] text-gray-400">
                                         Aucun signalement trouvé
+                                    </td>
+                                </tr>
+                            )}
+                            {loading && (
+                                <tr>
+                                    <td colSpan={5} className=" text-gray-400">
+                                        <ReportsSkeleton />
                                     </td>
                                 </tr>
                             )}
