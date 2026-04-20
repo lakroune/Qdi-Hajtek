@@ -81,6 +81,9 @@ Route::middleware('auth:api')->group(function () {
     // /artisans/${artisan.id}/report
     Route::post('/artisans/{artisanId}/report', [ReportController::class, 'report']);
     Route::get('reports', [ReportController::class, 'index']);
+    // /reports/report.id/resolve
+    Route::put('/reports/{artisan}/resolve/{client}', [ReportController::class, 'resolve']);
+
 
     // facturations
     Route::get('/factures/download/{id}', [PaiementController::class, 'downloadFacture']);

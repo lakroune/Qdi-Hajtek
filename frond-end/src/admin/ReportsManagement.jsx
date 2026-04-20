@@ -57,7 +57,7 @@ const ReportsManagement = () => {
             dismissed: 'Rejeté',
         };
         return (
-            <span className={`px-2 py-0.5 text-[10px] font-medium rounded ${styles[status] || 'bg-gray-100 text-gray-600'}`}>
+            <span className={`px-2 py-0.5 text-[10px] font-medium  ${styles[status] || 'bg-gray-100 text-gray-600'}`}>
                 {labels[status] || status}
             </span>
         );
@@ -72,11 +72,24 @@ const ReportsManagement = () => {
     const handleResolve = async () => {
         try {
             setIsProcessing(true);
-            await axiosClient.patch(`/reports/${pendingReport.id}/resolve`);
+            await axiosClient.put(`/reports/${pendingReport.artisan.id}/resolve/${pendingReport.reporter.id}`);
+
             toast.success('Signalement marqué comme résolu');
+            setArtisans(prev => prev.map(art => {
+                if (art.id === pendingReport.artisan.id) {
+                    return {
+                        ...art,
+                        reports: art.reports.map(r =>
+                            r.reporter.id === pendingReport.reporter.id ? { ...r, details: { ...r.details, status: 'resolved' } } : r
+                        )
+                    };
+                }
+                return art;
+            }));
+
             setModelResolved(false);
             setSelectedReport(null);
-        } catch {
+        } catch (error) {
             toast.error('Erreur lors de la résolution');
         } finally {
             setIsProcessing(false);
@@ -98,6 +111,7 @@ const ReportsManagement = () => {
             setPendingReport(null);
         }
     };
+
 
     const filteredArtisans = artisans
         .map((artisan) => {
@@ -199,13 +213,13 @@ const ReportsManagement = () => {
                             placeholder="Rechercher..."
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
-                            className="pl-9 pr-4 py-2 text-[12px] border border-gray-200 focus:border-[#1B4F72] focus:outline-none w-48 rounded"
+                            className="pl-9 pr-4 py-2 text-[12px] border border-gray-200 focus:border-[#1B4F72] focus:outline-none w-48   "
                         />
                     </div>
                     <select
                         value={filter}
                         onChange={(e) => setFilter(e.target.value)}
-                        className="px-3 py-2 text-[12px] border border-gray-200 focus:border-[#1B4F72] focus:outline-none bg-white rounded"
+                        className="px-3 py-2 text-[12px] border border-gray-200 focus:border-[#1B4F72] focus:outline-none bg-white   "
                     >
                         <option value="all">Tous</option>
                         <option value="pending">En attente</option>
@@ -218,8 +232,8 @@ const ReportsManagement = () => {
 
             <div className="grid grid-cols-4 gap-4">
                 {stats.map((stat) => (
-                    <div key={stat.label} className="bg-white border border-gray-200 rounded-lg p-3 flex items-center gap-3">
-                        <div className={`w-10 h-10 ${stat.color} flex rounded-full items-center justify-center shrink-0`}>
+                    <div key={stat.label} className="bg-white border border-gray-200   p-3 flex items-center gap-3">
+                        <div className={`w-10 h-10 ${stat.color} flex   items-center justify-center shrink-0`}>
                             <Flag className="w-5 h-5 text-white" />
                         </div>
                         <div>
@@ -230,7 +244,7 @@ const ReportsManagement = () => {
                 ))}
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+            <div className="bg-white border border-gray-200   overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full">
                         <thead className="bg-gray-50 border-b border-gray-200">
@@ -268,7 +282,7 @@ const ReportsManagement = () => {
                                         </td>
                                         <td className="px-4 py-3 text-[11px] text-gray-500 capitalize">{artisan.specialite}</td>
                                         <td className="px-4 py-3">
-                                            <span className="px-2 py-0.5 text-[10px] font-medium bg-red-100 text-red-700 rounded">
+                                            <span className="px-2 py-0.5 text-[10px] font-medium bg-red-100 text-red-700   ">
                                                 {artisan.reports.length} signalement{artisan.reports.length > 1 ? 's' : ''}
                                             </span>
                                         </td>
@@ -280,13 +294,13 @@ const ReportsManagement = () => {
                                     </tr>
 
                                     {expandedArtisan === artisan.id && artisan.reports.map((report, idx) => (
-                                        <tr key={idx} className="bg-blue-50/40 border-l-4 border-[#1B4F72]">
+                                        <tr key={idx} className="bg-blue-50/40 ">
                                             <td className="px-4 py-3"></td>
                                             <td className="px-4 py-3">
                                                 <div className="flex items-center gap-2">
                                                     {report.reporter.avatar
-                                                        ? <img src={report.reporter.avatar} className="w-6 h-6 rounded-full object-cover" alt="" />
-                                                        : <div className="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-[9px] text-gray-500">
+                                                        ? <img src={report.reporter.avatar} className="w-6 h-6   object-cover" alt="" />
+                                                        : <div className="w-6 h-6   bg-gray-200 flex items-center justify-center text-[9px] text-gray-500">
                                                             {report.reporter.full_name?.charAt(0)}
                                                         </div>
                                                     }
@@ -313,7 +327,7 @@ const ReportsManagement = () => {
                                                 <div className="flex items-center gap-1">
                                                     <button
                                                         onClick={() => setSelectedReport({ ...report.details, artisan, reporter: report.reporter })}
-                                                        className="p-1.5 text-gray-400 hover:text-[#1B4F72] hover:bg-[#1B4F72]/10 transition-colors rounded"
+                                                        className="p-1.5 text-gray-400 hover:text-[#1B4F72] hover:bg-[#1B4F72]/10 transition-colors   "
                                                         title="Voir"
                                                     >
                                                         <Eye className="w-4 h-4" />
@@ -323,7 +337,7 @@ const ReportsManagement = () => {
                                                             setPendingReport({ ...report.details, artisan, reporter: report.reporter });
                                                             setModelResolved(true);
                                                         }}
-                                                        className="p-1.5 text-gray-400 hover:text-green-600 hover:bg-green-50 transition-colors rounded"
+                                                        className="p-1.5 text-gray-400 hover:text-green-600 hover:bg-green-50 transition-colors   "
                                                         title="Résoudre"
                                                     >
                                                         <CheckCircle className="w-4 h-4" />
@@ -333,7 +347,7 @@ const ReportsManagement = () => {
                                                             setPendingReport({ ...report.details, artisan, reporter: report.reporter });
                                                             setModelDismissed(true);
                                                         }}
-                                                        className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors rounded"
+                                                        className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors   "
                                                         title="Rejeter"
                                                     >
                                                         <XCircle className="w-4 h-4" />
@@ -351,21 +365,21 @@ const ReportsManagement = () => {
 
             {selectedReport && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-                    <div className="bg-white w-full max-w-lg border border-gray-200 rounded-lg overflow-hidden shadow-xl">
-                        <div className="p-4 border-b border-gray-200 flex items-center justify-between bg-[#1B4F72]">
-                            <h3 className="text-[14px] font-bold text-white">
+                    <div className="bg-white w-full max-w-lg border border-gray-200   overflow-hidden shadow-xl">
+                        <div className="p-4 border-b border-gray-200 flex items-center justify-between ">
+                            <h3 className="text-[14px] font-bold text-[#1B4F72]">
                                 Signalement — {selectedReport.artisan.name}
                             </h3>
-                            <button onClick={() => setSelectedReport(null)} className="text-white/70 hover:text-white">
+                            <button onClick={() => setSelectedReport(null)} className="text-[#1B4F72] hover:text-white">
                                 <XCircle className="w-5 h-5" />
                             </button>
                         </div>
                         <div className="p-4 space-y-4">
 
-                            <div className="flex items-center gap-3 p-3 bg-gray-50 rounded border border-gray-100">
+                            <div className="flex items-center gap-3 p-3 bg-gray-50   border border-gray-100">
                                 {selectedReport.reporter.avatar
-                                    ? <img src={selectedReport.reporter.avatar} className="w-10 h-10 rounded-full object-cover" alt="" />
-                                    : <div className="w-10 h-10 rounded-full bg-[#1B4F72]/10 flex items-center justify-center text-[14px] font-bold text-[#1B4F72]">
+                                    ? <img src={selectedReport.reporter.avatar} className="w-10 h-10  object-cover" alt="" />
+                                    : <div className="w-10 h-10   bg-[#1B4F72]/10 flex items-center justify-center text-[14px] font-bold text-[#1B4F72]">
                                         {selectedReport.reporter.full_name?.charAt(0)}
                                     </div>
                                 }
@@ -404,24 +418,27 @@ const ReportsManagement = () => {
 
                             <div>
                                 <span className="text-[11px] text-gray-400">Description</span>
-                                <p className="mt-1 p-3 bg-gray-50 text-[12px] text-gray-700 border border-gray-200 rounded">
+                                <p className="mt-1 p-3 bg-gray-50 text-[12px] text-gray-700 border border-gray-200   ">
                                     {selectedReport.description || <span className="italic text-gray-400">Aucune description fournie.</span>}
                                 </p>
                             </div>
 
                             <div className="flex gap-2 pt-4 border-t border-gray-200">
                                 <button
-                                    onClick={() => { setPendingReport(selectedReport); setModelResolved(true); }}
-                                    className="flex-1 py-2 bg-green-500 hover:bg-green-600 text-white text-[11px] font-medium transition-colors rounded"
+                                    onClick={() => {
+                                        setPendingReport(selectedReport);
+                                        setModelResolved(true);
+                                    }}
+                                    className="flex-1 py-2 bg-green-500 hover:bg-green-600 text-white text-[11px] font-medium transition-colors"
                                 >
                                     Marquer résolu
                                 </button>
-                                <button className="flex-1 py-2 bg-[#1B4F72] hover:bg-[#D35400] text-white text-[11px] font-medium transition-colors rounded">
+                                <button className="flex-1 py-2 bg-[#1B4F72] hover:bg-[#D35400] text-white text-[11px] font-medium transition-colors   ">
                                     Contacter parties
                                 </button>
                                 <button
                                     onClick={() => { setPendingReport(selectedReport); setModelDismissed(true); }}
-                                    className="flex-1 py-2 border border-gray-200 hover:border-red-500 hover:text-red-500 text-[11px] transition-colors rounded"
+                                    className="flex-1 py-2 border border-gray-200 hover:border-red-500 hover:text-red-500 text-[11px] transition-colors   "
                                 >
                                     Rejeter
                                 </button>

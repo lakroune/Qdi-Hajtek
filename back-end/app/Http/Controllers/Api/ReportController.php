@@ -4,7 +4,10 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ReportRequest;
+use App\Models\Artisan;
 use App\Services\ArtisanService;
+use Exception;
+use Illuminate\Http\Request;
 
 class ReportController extends Controller
 {
@@ -30,5 +33,23 @@ class ReportController extends Controller
             'message' => $artisan ? 'Artisan reported successfully' : 'Artisan not found',
             'data' => $artisan
         ], 201);
+    }
+
+
+    public function resolve(Request $request, $artisanId, $clientId)
+    {
+        try {
+            $artisan = Artisan::findOrFail($artisanId);
+
+            $artisan->reports()->updateExistingPivot($clientId, [
+                'status' => 'resolved'
+            ]);
+
+            return response()->json([
+                'message' => 'Report marked as resolved successfully'
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Error resolving report'], 500);
+        }
     }
 }
