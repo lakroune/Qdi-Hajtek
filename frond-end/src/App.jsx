@@ -82,7 +82,6 @@ function App() {
           <Route index element={<HomePage />} />
           <Route path="services" element={<Services />} />
           <Route path="services/:id" element={<ServiceDetail />} />
-          <Route path="services/:id/modifier" element={<EditServicePage />} />
           <Route path="artisans/:id" element={<ArtisanPortfolioPage />} />
 
           <Route element={<ProtectedRoute roles={['client', 'artisan',]} />}>
@@ -98,6 +97,7 @@ function App() {
 
 
             <Route element={<ProtectedRoute roles={['artisan']} />}>
+              <Route path="services/:id/modifier" element={<EditServicePage />} />
               <Route path="nouvelle-service" element={<ArtisanAddService />} />
               <Route path="offres" element={<ArtisanOffres />} />
               <Route path="offres/:id" element={<ArtisanOffreDetail />} />

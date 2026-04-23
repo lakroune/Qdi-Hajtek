@@ -3,8 +3,10 @@
 namespace App\Services;
 
 use App\DAO\ServiceDAO;
+use App\DTO\ServiceDTO;
 use App\Http\Resources\ServiceResource;
 use App\Http\Resources\ServicesManagementResource;
+use Exception;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
@@ -53,6 +55,32 @@ class ServiceService
         }
     }
 
+    public function updateService(int $serviceId, ServiceDTO $dto, array $newImages = [])
+    {
+        try {
+            $imagePaths = [];
+
+            if (!empty($newImages)) {
+                foreach ($newImages as $image) {
+                    $path = $image->store('services', 'public');
+                    $imagePaths[] = $path;
+                }
+            }
+
+            $service = $this->serviceDAO->update($serviceId, $dto->toArray(), $imagePaths);
+
+            return $service;
+        } catch (Exception $e) {
+            if (!empty($imagePaths)) {
+                foreach ($imagePaths as $path) {
+                    Storage::disk('public')->delete($path);
+                }
+            }
+
+            Log::error("Error updating service: " . $e->getMessage());
+            throw $e;
+        }
+    }
     public function deleteService($serviceId)
     {
         return $this->serviceDAO->delete($serviceId);

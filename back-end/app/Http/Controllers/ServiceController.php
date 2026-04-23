@@ -74,11 +74,11 @@ class ServiceController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateServiceRequest $request, Service $service)
+    public function update(UpdateServiceRequest $request, int $id)
     {
         $dto = ServiceDTO::fromRequest($request);
         $images = $request->file('images') ?? [];
-        $service = $this->serviceService->updateService($service->id, $dto, $images);
+        $service = $this->serviceService->updateService($id, $dto, $images);
         return response()->json([
             'message' => 'Service updated successfully',
             'data' => $service

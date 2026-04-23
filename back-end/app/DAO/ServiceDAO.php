@@ -5,6 +5,7 @@ namespace App\DAO;
 use App\Models\Client;
 use App\Models\Service;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class ServiceDAO
 {
@@ -25,6 +26,30 @@ class ServiceDAO
                 $service->images()->create([
                     'url' => $path
                 ]);
+            }
+
+            return $service->load('images');
+        });
+    }
+
+    public function update(int $id, array $data, array $imageUrls = [])
+    {
+        return DB::transaction(function () use ($id, $data, $imageUrls) {
+            $service = Service::findOrFail($id);
+
+            $service->update($data);
+
+            if (!empty($imageUrls)) {
+                foreach ($service->images as $oldImage) {
+                    Storage::disk('public')->delete($oldImage->url);
+                    $oldImage->delete();
+                }
+
+                foreach ($imageUrls as $url) {
+                    $service->images()->create([
+                        'url' => $url
+                    ]);
+                }
             }
 
             return $service->load('images');
