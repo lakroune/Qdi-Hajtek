@@ -107,6 +107,7 @@ Route::middleware('auth:api')->group(function () {
 
     Route::put('/categories/{id}', [CategorieController::class, 'update']);
     Route::post('/categories', [CategorieController::class, 'store']);
+    Route::delete('/categories/{id}', [CategorieController::class, 'destroy']);
 
 
 

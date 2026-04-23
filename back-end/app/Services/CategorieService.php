@@ -31,4 +31,8 @@ class CategorieService
     {
         return $this->categorieDAO->update($id, $data);
     }
+    public function deleteCategorie(int $id)
+    {
+        return $this->categorieDAO->delete($id);
+    }
 }

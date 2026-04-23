@@ -28,8 +28,8 @@ class CategorieDAO
     public function findWithServices(int $id)
     {
         return Categorie::
-        // with(['services.images', 'services.artisan.user'])->
-        findOrFail($id);
+            // with(['services.images', 'services.artisan.user'])->
+            findOrFail($id);
     }
     public function create(array $data)
     {
@@ -40,6 +40,13 @@ class CategorieDAO
     {
         $categorie = $this->findById($id);
         $categorie->update($data);
+        return $categorie;
+    }
+    // delete
+    public function delete(int $id)
+    {
+        $categorie = $this->findById($id);
+        $categorie->delete();
         return $categorie;
     }
 }
