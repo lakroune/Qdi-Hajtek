@@ -63,4 +63,25 @@ class ServiceController extends Controller
             'data' => $service
         ]);
     }
+    public function edit(int $id)
+    {
+        $service = $this->serviceService->getServiceDetails($id);
+        return response()->json([
+            'message' => 'Service found successfully',
+            'data' => $service
+        ]);
+    }
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(UpdateServiceRequest $request, Service $service)
+    {
+        $dto = ServiceDTO::fromRequest($request);
+        $images = $request->file('images') ?? [];
+        $service = $this->serviceService->updateService($service->id, $dto, $images);
+        return response()->json([
+            'message' => 'Service updated successfully',
+            'data' => $service
+        ]);
+    }
 }

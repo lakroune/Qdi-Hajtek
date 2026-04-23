@@ -13,7 +13,9 @@ import {
     Plus,
     Loader2,
     Check,
-    ArrowLeft
+    ArrowLeft,
+    Pencil,
+    Trash2
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import axiosClient from '../api/axios-client';
@@ -30,9 +32,11 @@ const Portfolio = () => {
     const [openMenuId, setOpenMenuId] = useState(null);
     const [changeEtatService, setChangeEtatService] = useState(null);
     const [isToggeling, setIsToggeling] = useState(null);
+    const [deleteService, setDeleteService] = useState(null);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     const menuRef = useRef(null);
-    const BASE_URL = 'http://127.0.0.1:8000/storage/';
+    const BASE_URL = import.meta.env.VITE_API_URL_STORAGE
 
     useEffect(() => {
         const fetchArtisan = async () => {
@@ -73,6 +77,23 @@ const Portfolio = () => {
             console.error('Erreur toggle:', error);
         } finally {
             setIsToggeling(null);
+        }
+    };
+
+    const handleDeleteService = async () => {
+        if (!deleteService) return;
+        setIsDeleting(true);
+        try {
+            await axiosClient.delete(`/services/${deleteService.id}`);
+            setArtisan(prev => ({
+                ...prev,
+                services: prev.services.filter(s => s.id !== deleteService.id)
+            }));
+            setDeleteService(null);
+        } catch (error) {
+            console.error('Erreur suppression:', error);
+        } finally {
+            setIsDeleting(false);
         }
     };
 
@@ -140,6 +161,48 @@ const Portfolio = () => {
                 </div>
             )}
 
+            {deleteService && (
+                <div className="fixed inset-0 z-[999] flex items-center justify-center p-4">
+                    <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]" onClick={() => setDeleteService(null)} />
+                    <div className="relative w-full max-w-xs bg-white shadow-2xl border border-gray-100 animate-in zoom-in-95 duration-200">
+                        <div className="p-6">
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="w-10 h-10 bg-red-50 flex items-center justify-center flex-shrink-0">
+                                    <AlertTriangle className="w-5 h-5 text-red-500" />
+                                </div>
+                                <div>
+                                    <h3 className="text-[14px] font-bold text-red-600">Supprimer le service</h3>
+                                    <p className="text-[11px] text-gray-400 mt-0.5">Cette action est irréversible</p>
+                                </div>
+                            </div>
+                            <p className="text-[12px] text-gray-600 mb-5">
+                                Êtes-vous sûr de vouloir supprimer le service{' '}
+                                <span className="font-semibold text-[#1B4F72]">"{deleteService.titre}"</span> ? Cette action ne peut pas être annulée.
+                            </p>
+                            <div className="grid grid-cols-2 gap-3">
+                                <button
+                                    onClick={() => setDeleteService(null)}
+                                    className="py-2 text-[12px] text-gray-400 hover:text-gray-600 font-medium border border-gray-200 hover:border-gray-300 transition-colors"
+                                >
+                                    Annuler
+                                </button>
+                                <button
+                                    disabled={isDeleting}
+                                    onClick={handleDeleteService}
+                                    className="py-2 bg-red-500 hover:bg-red-600 text-white text-[12px] font-medium border border-red-500 transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
+                                >
+                                    {isDeleting ? (
+                                        <><Loader2 className="w-3 h-3 animate-spin" /> Suppression...</>
+                                    ) : (
+                                        <><Trash2 className="w-3 h-3" /> Supprimer</>
+                                    )}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-24 pt-6 pb-12">
                 <div className="border border-gray-200 p-4 mb-4">
                     <div className="flex flex-col md:flex-row gap-4">
@@ -176,11 +239,11 @@ const Portfolio = () => {
                                     <p className="text-[11px] text-gray-600 mt-2">{profile.bio}</p>
                                 </div>
                                 <div className="flex gap-1">
-                                    <button onClick={() => setIsLiked(!isLiked)} className={`p-2 transition-colors ${isLiked ? 'text-[#D35400]' : 'text-gray-400 hover:text-gray-600'}`}>
-                                        <Heart className={`w-4 h-4 ${isLiked ? 'fill-current' : ''}`} />
-                                    </button>
-                                    <button className="p-2 text-gray-400 hover:text-gray-600 transition-colors">
-                                        <Share2 className="w-4 h-4" />
+                                    <button
+                                        onClick={() => setIsLiked(!isLiked)}
+                                        className="p-1.5 hover:bg-gray-100 transition-colors"
+                                    >
+                                        <Heart className={`w-4 h-4 ${isLiked ? 'fill-current text-red-500' : 'text-gray-400'}`} />
                                     </button>
                                 </div>
                             </div>
@@ -241,6 +304,21 @@ const Portfolio = () => {
                                             >
                                                 {service.is_active ? <ToggleLeft className="w-4 h-4 text-orange-400" /> : <ToggleRight className="w-4 h-4 text-green-500" />}
                                                 {service.is_active ? 'Dépublier' : 'Publier'}
+                                            </button>
+                                            <Link
+                                                to={`/services/${service.id}/modifier`}
+                                                className="w-full flex items-center gap-2 px-3 py-2.5 text-[12px] text-gray-700 hover:bg-gray-50 transition-colors"
+                                                onClick={() => setOpenMenuId(null)}
+                                            >
+                                                <Pencil className="w-4 h-4 text-blue-500" />
+                                                Modifier
+                                            </Link>
+                                            <button
+                                                onClick={() => { setDeleteService(service); setOpenMenuId(null); }}
+                                                className="w-full flex items-center gap-2 px-3 py-2.5 text-[12px] text-red-500 hover:bg-red-50 transition-colors border-t border-gray-100"
+                                            >
+                                                <Trash2 className="w-4 h-4" />
+                                                Supprimer
                                             </button>
                                         </div>
                                     )}

@@ -96,7 +96,9 @@ Route::middleware('auth:api')->group(function () {
 
     Route::post('artisans/{artisan}/like', [ArtisanController::class, 'likeToggle']);
 
-
+    // /services/${id}/edit
+    Route::get('/services/{id}/edit', [ServiceController::class, 'edit']);
+    Route::put('/services/{id}', [ServiceController::class, 'update']);
 
 
     Route::get('/dashboard/stats', [DashboardController::class, 'stats']);

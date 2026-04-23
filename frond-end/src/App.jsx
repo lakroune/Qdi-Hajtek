@@ -36,6 +36,7 @@ import { Toaster } from 'react-hot-toast';
 import DashboardArtisanPage from './artisan/DashboardArtisanPage';
 import Portfolio from './artisan/Portfolio';
 import UsersManager from './admin/UsersManager';
+import EditServicePage from './artisan/EditServicePage';
 
 function App() {
 
@@ -81,6 +82,7 @@ function App() {
           <Route index element={<HomePage />} />
           <Route path="services" element={<Services />} />
           <Route path="services/:id" element={<ServiceDetail />} />
+          <Route path="services/:id/modifier" element={<EditServicePage />} />
           <Route path="artisans/:id" element={<ArtisanPortfolioPage />} />
 
           <Route element={<ProtectedRoute roles={['client', 'artisan',]} />}>
