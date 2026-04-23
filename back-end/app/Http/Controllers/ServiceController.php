@@ -84,4 +84,13 @@ class ServiceController extends Controller
             'data' => $service
         ]);
     }
+
+    public function destroy(Service $service)
+    {
+        $service = $this->serviceService->deleteService($service->id);
+        return response()->json([
+            'message' => 'Service deleted successfully',
+            'data' => $service
+        ]);
+    }
 }

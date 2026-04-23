@@ -53,6 +53,10 @@ class ServiceService
         }
     }
 
+    public function deleteService($serviceId)
+    {
+        return $this->serviceDAO->delete($serviceId);
+    }
     public function getServiceDetails(int $serviceId)
     {
         return $this->serviceDAO->getServiceDetails($serviceId);

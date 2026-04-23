@@ -22,6 +22,7 @@ return new class extends Migration
             $table->enum('statut', ['approuve', 'en_attente', 'refuse'])->default('en_attente');
             $table->boolean('is_active')->default(true);
             $table->integer('estimation_duree');
+            $table->softDeletes();
             $table->string('material')->nullable();
             $table->timestamps();
         });

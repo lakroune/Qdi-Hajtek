@@ -36,6 +36,13 @@ class ServiceDAO
             ->where('is_active', true)
             ->where('statut', 'approuve')->findOrFail($serviceId);
     }
+
+    public function delete(int $serviceId)
+    {
+        $service = Service::findOrFail($serviceId);
+        $service->delete();
+        return $service;
+    }
     public function getServices(array $filters = [])
     {
         $query = Service::query()
@@ -137,6 +144,6 @@ class ServiceDAO
     public function getFavoris()
     {
         $client = Client::find(auth('api')->user()->id);
-        return $client->services()->with([  'categorie', 'images'])->get();
+        return $client->services()->with(['categorie', 'images'])->get();
     }
 }

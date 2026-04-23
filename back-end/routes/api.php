@@ -99,7 +99,7 @@ Route::middleware('auth:api')->group(function () {
     // /services/${id}/edit
     Route::get('/services/{id}/edit', [ServiceController::class, 'edit']);
     Route::put('/services/{id}', [ServiceController::class, 'update']);
-
+    Route::delete('/services/{id}', [ServiceController::class, 'destroy']);
 
     Route::get('/dashboard/stats', [DashboardController::class, 'stats']);
     Route::get('/dashboard/artisan-stats', [DashboardController::class, 'artisanStats']);
