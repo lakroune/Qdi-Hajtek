@@ -33,16 +33,25 @@ const DashboardHome = () => {
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {Array.from({ length: 4 }).map((_, i) => (
-                    <div key={i} className="h-16 bg-gray-200 rounded-xl" />
+                    <div key={i} className="h-28 bg-white rounded-sm p-6 flex flex-col gap-2" >
+                        <div className=' bg-gray-200 h-4 w-[40%]'></div>
+                        <div className=' bg-gray-200 h-8 w-[60%]'></div>
+                        <div className=' bg-gray-200 h-4'></div>
+                    </div>
                 ))}
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
-                <div className="lg:col-span-3 h-64 bg-gray-200 rounded-xl" />
-                <div className="lg:col-span-2 h-64 bg-gray-200 rounded-xl" />
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                <div className="lg:col-span-1 h-70   bg-white rounded-xl" >
+
+                    <div className=' w-[20%] h-[100%] bg-gray-200 p-6'></div>
+
+                </div>
+                <div className="lg:col-span-1 h-70 bg-gray-200 rounded-xl" />
+                <div className="lg:col-span-1 h-70 bg-gray-200 rounded-xl" />
             </div>
 
-            <div className="h-48 bg-gray-200 rounded-xl" />
+
         </div>
     );
     if (loading) return <div><SkeletonDashboard /></div>;
@@ -132,42 +141,41 @@ const DashboardHome = () => {
                 <MetricCard label="Note moyenne" value={`${activity.average_rating} / 5`} sub="Satisfaction" />
             </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-    {/* 1. Revenus mensuels */}
-    <div className="bg-white border border-gray-200 p-4 rounded-sm">
-        <p className="text-sm font-medium text-gray-500 mb-3">Revenus mensuels</p>
-        <Legend items={[{ color: '#185FA5', label: 'Volume total' }, { color: '#1D9E75', label: 'Bénéfice net' }]} />
-        <div className="h-52">
-            <Bar data={monthlyRevenue} options={barOptions} />
-        </div>
-    </div>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                {/* 1. Revenus mensuels */}
+                <div className="bg-white border border-gray-200 p-4 rounded-sm">
+                    <p className="text-sm font-medium text-gray-500 mb-3">Revenus mensuels</p>
+                    <Legend items={[{ color: '#185FA5', label: 'Volume total' }, { color: '#1D9E75', label: 'Bénéfice net' }]} />
+                    <div className="h-52">
+                        <Bar data={monthlyRevenue} options={barOptions} />
+                    </div>
+                </div>
 
-    {/* 2. Revenus journaliers */}
-    <div className="bg-white border border-gray-200 p-4 rounded-sm">
-        <p className="text-sm font-medium text-gray-500 mb-3">Revenus journaliers</p>
-        <Legend items={[{ color: '#185FA5', label: 'Volume total' }, { color: '#1D9E75', label: 'Bénéfice net' }]} />
-        <div className="h-52">
-            <Bar data={dailyRevenue} options={barOptions} />
-        </div>
-    </div>
+                {/* 2. Revenus journaliers */}
+                <div className="bg-white border border-gray-200 p-4 rounded-sm">
+                    <p className="text-sm font-medium text-gray-500 mb-3">Revenus journaliers</p>
+                    <Legend items={[{ color: '#185FA5', label: 'Volume total' }, { color: '#1D9E75', label: 'Bénéfice net' }]} />
+                    <div className="h-52">
+                        <Bar data={dailyRevenue} options={barOptions} />
+                    </div>
+                </div>
 
-    {/* 3. Répartition des activités */}
-    <div className="bg-white border border-gray-200 p-4 rounded-sm">
-        <p className="text-sm font-medium text-gray-500 mb-3">Répartition des activités</p>
-        <Legend items={[{ color: '#534AB7', label: 'Demande directe' }, { color: '#D85A30', label: 'Proposition' }]} />
-        <div className="h-52 flex items-center justify-center">
-            <Doughnut 
-                data={activityByType} 
-                options={{ 
-                    responsive: true, 
-                    maintainAspectRatio: false, 
-                    cutout: '65%', 
-                    plugins: { legend: { display: false } } 
-                }} 
-            />
-        </div>
-    </div>
-</div>
+                <div className="bg-white border border-gray-200 p-4 rounded-sm">
+                    <p className="text-sm font-medium text-gray-500 mb-3">Répartition des activités</p>
+                    <Legend items={[{ color: '#534AB7', label: 'Demande directe' }, { color: '#D85A30', label: 'Proposition' }]} />
+                    <div className="h-52 flex items-center justify-center">
+                        <Doughnut
+                            data={activityByType}
+                            options={{
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                cutout: '65%',
+                                plugins: { legend: { display: false } }
+                            }}
+                        />
+                    </div>
+                </div>
+            </div>
 
 
         </div>

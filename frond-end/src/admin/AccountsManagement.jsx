@@ -77,7 +77,7 @@ const ConfirmModal = ({ open, type, trx, loading, onClose, onConfirm }) => {
 const TableSkeleton = () => (
     <div className="animate-pulse divide-y divide-gray-100">
         {[1, 2, 3, 4, 5].map(i => (
-            <div key={i} className="px-4 py-4 flex items-center gap-4">
+            <div key={i} className="px-4 flex gap-4">
                 <div className="flex flex-col gap-2 flex-1">
                     <div className="h-3 w-40 bg-gray-200 rounded" />
                     <div className="h-2 w-24 bg-gray-200 rounded" />

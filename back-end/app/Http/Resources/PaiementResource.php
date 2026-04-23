@@ -38,7 +38,7 @@ class PaiementResource extends JsonResource
 
             'status' => [
                 'payment' => $this->statut,
-                'payout' => ($conversable && $conversable->statut === 'termine') ? 'released' : 'held',
+                'payout' => ($conversable && $conversable->is_completed === true) ? 'released' : 'held',
                 'paid_at' => $this->paid_at ? $this->paid_at->format('d/m/Y H:i') : null,
             ],
 
