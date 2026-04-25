@@ -114,6 +114,7 @@ Route::middleware('auth:api')->group(function () {
 
 
     Route::get('/users', [UserController::class, 'index']);
+    Route::get('/users/me', [UserController::class, 'me']);
     Route::patch('/users/{user}/ban', [UserController::class, 'ban']);
     Route::patch('/users/{user}/activate', [UserController::class, 'activate']);
     Route::patch('/users/{user}/role', [UserController::class, 'updateRole']);

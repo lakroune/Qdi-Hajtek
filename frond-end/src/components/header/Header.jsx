@@ -53,6 +53,41 @@ const Header = ({
   }, []);
 
 
+
+
+  // 
+
+  useEffect(() => {
+    if (!estAuthentifie) return;
+
+    const checkUserStatus = async () => {
+      try {
+        const response = await axiosClient.get('/users/me');
+        const freshUser = response.data;
+        const cookieData = Cookies.get('USER_DATA');
+        const localUser = cookieData ? JSON.parse(cookieData) : {};
+
+        if (freshUser && freshUser.role !== localUser.role && freshUser.role === 'artisan') {
+          Cookies.set('USER_DATA', JSON.stringify(freshUser), {
+            expires: 7,
+            secure: true,
+            sameSite: 'strict'
+          });
+
+          toast.success("Félicitations ! Vous êtes maintenant un artisan.");
+
+          setTimeout(() => {
+            window.location.reload();
+          }, 1500);
+        }
+      } catch (err) {
+        console.error("Profile check failed", err);
+      }
+    };
+
+    checkUserStatus();
+  }, [estAuthentifie]);
+
   const liensPublics = [
     // { nom: 'Accueil', chemin: '/' },
   ];

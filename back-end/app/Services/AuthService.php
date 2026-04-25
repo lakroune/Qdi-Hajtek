@@ -74,7 +74,7 @@ class AuthService
         }
         if ($user->hasRole('admin')) {
             $profile = new AdminResource($user);
-        }
+        }   
         return [
             'success' => true,
             'user' => $profile,

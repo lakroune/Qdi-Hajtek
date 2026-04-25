@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\AdminResource;
+use App\Http\Resources\ArtisanResource;
+use App\Http\Resources\ClientResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Exception;
@@ -64,5 +67,23 @@ class UserController extends Controller
         } catch (Exception $e) {
             return response()->json(['error' => 'Erreur lors du changement'], 500);
         }
+    }
+
+    public function me()
+    {
+        $user = auth('api')->user();
+        $user->load(['client', 'admin', 'artisan']);
+        if ($user->hasOneRole('client')) {
+            $profile = new ClientResource($user);
+        }
+        if ($user->hasRole('artisan')) {
+            $profile = (new ArtisanResource($user));
+        }
+
+        return $profile->additional([
+            'success' =>  $profile ? true : false,
+            'message' => $profile ? 'Profile retrieved successfully' : 'Profile not found or unauthorized',
+            'user' => $profile
+        ])->response()->setStatusCode(200);
     }
 }
