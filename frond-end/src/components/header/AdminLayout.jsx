@@ -28,7 +28,7 @@ const AdminLayout = () => {
         { id: 'categories', label: 'Categories', icon: TagsIcon, path: '/admin/categories' },
         { id: 'artisan-requests', label: 'Devenir Artisan', icon: User, path: '/admin/artisan-requests' },
         { id: 'reports', label: 'Signalements', icon: Flag, path: '/admin/reports' },
-        { id: 'services', label: 'Services', icon: Briefcase, path: '/admin/services' },
+        // { id: 'services', label: 'Services', icon: Briefcase, path: '/admin/services' },
         { id: 'users', label: 'Utilisateurs', icon: Users, path: '/admin/users' },
     ];
 

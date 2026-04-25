@@ -24,7 +24,7 @@ const ServiceDetail = () => {
     const [demandeSending, setDemandeSending] = useState(false);
     const { id } = useParams();
     const [errorenvoi, setErrorenvoi] = useState('');
-    const STORAGE_URL = "http://127.0.0.1:8000/storage/";
+    const STORAGE_URL = import.meta.env.VITE_API_URL_STORAGE;
 
     useEffect(() => {
         const fetchService = async () => {

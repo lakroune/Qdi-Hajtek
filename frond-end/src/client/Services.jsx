@@ -7,6 +7,8 @@ const Services = () => {
     const [isloading, setIsLoading] = useState(true);
     const [services, setServices] = useState([]);
 
+    const STORAGE_URL = import.meta.env.VITE_API_URL_STORAGE;
+
     useEffect(() => {
         const fetchServices = async () => {
             try {
@@ -48,7 +50,7 @@ const Services = () => {
                             <div className="relative h-40 bg-gray-100">
                                 <img
                                     src={service.images.length > 0
-                                        ? `http://localhost:8000/storage/${service.images[0].url}`
+                                        ? STORAGE_URL+service.images[0].url
                                         : 'https://via.placeholder.com/400x300?text=No+Image'}
                                     alt={service.titre}
                                     className="w-full h-full object-cover"
@@ -73,7 +75,7 @@ const Services = () => {
 
                                 <div className="flex items-center gap-2 mb-3">
                                     <div className="w-7 h-7 bg-[#1B4F72] flex items-center justify-center text-white text-[10px] font-bold uppercase">
-                                        <img src={service.artisan.user.client?.avatar ? 'http://localhost:8000/storage/' + service.artisan.user.client.avatar : 'https://via.placeholder.com/400x300?text=No+Image'} alt={service.artisan.user.avatar} className="w-full h-full object-cover" />
+                                        <img src={service.artisan.user.client?.avatar ? STORAGE_URL + service.artisan.user.client.avatar : 'https://via.placeholder.com/400x300?text=No+Image'} alt={service.artisan.user.avatar} className="w-full h-full object-cover" />
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <p className="text-[12px] text-gray-700 truncate">

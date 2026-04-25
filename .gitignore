@@ -55,3 +55,6 @@ frond-end/dist
 # =========================
 *.swp
 *.swo
+
+project.zip
+.dock 

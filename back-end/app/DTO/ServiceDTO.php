@@ -15,7 +15,8 @@ class ServiceDTO
         public readonly string $typeTarif,
         public readonly int $estimationDuree,
         public readonly string $material,
-        public readonly int $artisanId
+        public readonly int $artisanId,
+        public readonly string $statut,
     ) {
         //
     }
@@ -30,7 +31,9 @@ class ServiceDTO
             typeTarif: $request->validated('type_tarif'),
             estimationDuree: $request->validated('estimation_duree'),
             material: $request->validated('material'),
-            artisanId: $request->user()->id
+            artisanId: $request->user()->id,
+            statut: 'approuve'
+
         );
     }
 
@@ -44,7 +47,8 @@ class ServiceDTO
             'type_tarif' => $this->typeTarif,
             'estimation_duree' => $this->estimationDuree,
             'material' => $this->material,
-            'artisan_id' => $this->artisanId
+            'artisan_id' => $this->artisanId,
+            'statut' => $this->statut
         ];
     }
 }

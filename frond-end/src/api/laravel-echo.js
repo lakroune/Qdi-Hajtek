@@ -4,6 +4,7 @@ import Cookies from 'js-cookie';
 
 window.Pusher = Pusher;
 
+
 window.Echo = new Echo({
     broadcaster: 'reverb',
     key: 'ojk7sigmnfldscxsplhw',
@@ -12,7 +13,7 @@ window.Echo = new Echo({
     wssPort: 8080,
     forceTLS: false, // 
     enabledTransports: ['ws', 'wss'],
-    authEndpoint: 'http://localhost:8000/api/broadcasting/auth',
+    authEndpoint: import.meta.env.VITE_API_BASE_URL + '/broadcasting/auth',
     auth: {
         headers: {
             Authorization: `Bearer ${Cookies.get('ACCESS_TOKEN')}`,

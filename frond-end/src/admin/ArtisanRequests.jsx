@@ -20,6 +20,7 @@ const ArtisanRequests = () => {
     const [isApproveModalOpen, setIsApproveModalOpen] = useState(false);
     const [approvingId, setApprovingId] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
+    const url_storage = import.meta.env.VITE_API_URL_STORAGE;
     useEffect(() => {
         const fetchArtisans = async () => {
             try {
@@ -461,7 +462,7 @@ const ArtisanRequests = () => {
                                                 </div>
                                             </div>
                                             <a
-                                                href={`http://localhost:8000/storage/${doc.file_path}`}
+                                                href={ url_storage + doc.file_path}
                                                 target="_blank"
                                                 rel="noreferrer"
                                                 className="flex items-center gap-1 text-[10px] text-[#D35400] hover:underline"
