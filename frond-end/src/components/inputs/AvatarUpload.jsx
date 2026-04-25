@@ -7,11 +7,11 @@ const AvatarUpload = ({
     size = 'lg',
     onChange,
     onRemove,
-    maxSize = 2,
-    acceptedTypes = 'image/jpeg,image/png,image/webp',
+    maxSize = 1,
+    acceptedTypes = 'image/jpeg,image/png,image/jpg',
     showLabel = true,
     label = 'Photo de profil',
-    sublabel = 'JPG, PNG. Max 2MB.',
+    sublabel = 'JPG, PNG. Max 1MB.',
     className = ''
 }) => {
     const [isLoading, setIsLoading] = useState(false);

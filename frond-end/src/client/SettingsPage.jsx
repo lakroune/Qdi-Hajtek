@@ -231,7 +231,7 @@ const PageParametres = () => {
                 toast.error('Une erreur est survenue lors de la mise à jour du profil');
             }
         } catch (error) {
-            console.error('Erreur lors de la mise à jour du profil');
+            toast.error('Une erreur est survenue lors de la mise à jour du profil');
         } finally {
             setChargement(false);
         }
@@ -275,26 +275,29 @@ const PageParametres = () => {
             setChargement(false);
         }
     };
-
+    const [errors, setErrors] = useState({});
     const becomeArtisanSave = async (e) => {
         e.preventDefault();
         setMessageErreur('');
 
-        if (!formulaireArtisan.specialite || !formulaireArtisan.experience || !formulaireArtisan.description) {
-            setMessageErreur('Veuillez remplir tous les champs obligatoires.');
+
+
+        const validationErrors = {};
+        setErrors(null);
+        if (!formulaireArtisan.specialite) validationErrors.specialite = 'Veuillez choisir une spécialité';
+        if (!formulaireArtisan.experience) validationErrors.experience = 'Veuillez choisir une expérience';
+        if (!formulaireArtisan.description) validationErrors.description = 'Veuillez saisir une description';
+        if (!formulaireArtisan.rayonTravail) validationErrors.rayonTravail = 'Veuillez choisir un rayon de travail';
+        if (!formulaireArtisan.cniRecto) validationErrors.cniRecto = 'Veuillez choisir un CNI recto';
+        if (!formulaireArtisan.cniVerso) validationErrors.cniVerso = 'Veuillez choisir un CNI verso';
+        if (!formulaireArtisan.attestationsRib) validationErrors.attestationsRib = 'Veuillez choisir un RIB';
+        if (formulaireArtisan.diplomes.length === 0) validationErrors.diplomes = 'Veuillez choisir au moins un diplôme';
+
+        setErrors(validationErrors);
+
+        if (Object.keys(validationErrors).length > 0) {
             return;
         }
-
-        if (!formulaireArtisan.cniRecto || !formulaireArtisan.cniVerso) {
-            setMessageErreur('Veuillez uploader les deux faces de votre CNI.');
-            return;
-        }
-
-        if (!formulaireArtisan.latitude || !formulaireArtisan.longitude) {
-            setMessageErreur('Veuillez sélectionner votre localisation sur la carte.');
-            return;
-        }
-
         setChargement(true);
 
         try {
@@ -394,6 +397,7 @@ const PageParametres = () => {
                                         onChange={(fichier) => mettreAJourChamp(setDonneesUtilisateur, donneesUtilisateur, 'avatar', fichier)}
                                         onRemove={() => mettreAJourChamp(setDonneesUtilisateur, donneesUtilisateur, 'avatar', null)}
                                         size="lg"
+                                        maxFileSize={1}
                                     />
                                 </div>
 
@@ -681,6 +685,7 @@ const PageParametres = () => {
                                                     onChange={(e) => mettreAJourChamp(setFormulaireArtisan, formulaireArtisan, 'rayonTravail', e.target.value)}
                                                     Icon={Disc3}
                                                     placeholder="30"
+                                                    error={errors.rayonTravail}
                                                 />
 
                                                 <div className="md:col-span-2">
@@ -748,6 +753,8 @@ const PageParametres = () => {
                                                     accept="image/*,.pdf"
                                                     required
                                                     maxSize={1}
+                                                    maxFiles={1}
+                                                    error={errors.cniRecto}
                                                     value={formulaireArtisan.cniRecto}
                                                     onChange={(fichier) => mettreAJourChamp(setFormulaireArtisan, formulaireArtisan, 'cniRecto', fichier)}
                                                 />
@@ -757,6 +764,8 @@ const PageParametres = () => {
                                                     accept="image/*,.pdf"
                                                     required
                                                     maxSize={1}
+                                                    maxFiles={1}
+                                                    error={errors.cniVerso}
                                                     value={formulaireArtisan.cniVerso}
                                                     onChange={(fichier) => mettreAJourChamp(setFormulaireArtisan, formulaireArtisan, 'cniVerso', fichier)}
                                                 />
@@ -766,6 +775,8 @@ const PageParametres = () => {
                                                     accept="image/*,.pdf"
                                                     required
                                                     maxSize={1}
+                                                    maxFiles={1}
+                                                    error={errors.attestationsRib}
                                                     value={formulaireArtisan.attestationsRib}
                                                     onChange={(fichier) => mettreAJourChamp(setFormulaireArtisan, formulaireArtisan, 'attestationsRib', fichier)}
                                                 />
@@ -774,7 +785,8 @@ const PageParametres = () => {
                                                     label="Diplômes"
                                                     accept="image/*,.pdf"
                                                     multiple
-                                                    maxFiles={5}
+                                                    maxFiles={3}
+                                                    maxSize={1}
                                                     value={formulaireArtisan.diplomes}
                                                     onChange={(fichiers) => mettreAJourChamp(setFormulaireArtisan, formulaireArtisan, 'diplomes', fichiers)}
                                                 />
@@ -783,6 +795,7 @@ const PageParametres = () => {
                                                     label="Attestations"
                                                     accept="image/*,.pdf"
                                                     multiple
+                                                    maxSize={1}
                                                     maxFiles={3}
                                                     value={formulaireArtisan.attestations}
                                                     onChange={(fichiers) => mettreAJourChamp(setFormulaireArtisan, formulaireArtisan, 'attestations', fichiers)}
