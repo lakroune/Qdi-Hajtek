@@ -30,7 +30,7 @@ class ServiceService
      * @return void
      */
 
-    public function createService($tdo, array $images = [])
+    public function createService($dto, array $images = [])
     {
         try {
             $imageUrls = [];
@@ -41,8 +41,8 @@ class ServiceService
                     $imageUrls[] = $path;
                 }
             }
-
-            return $this->serviceDAO->create($tdo->toArray(), $imageUrls);
+            $dto->statut = "approuve";
+            return $this->serviceDAO->create($dto->toArray(), $imageUrls);
         } catch (\Exception $e) {
             Log::error("Error creating service: " . $e->getMessage());
 

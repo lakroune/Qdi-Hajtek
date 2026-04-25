@@ -16,7 +16,7 @@ class ServiceDTO
         public readonly int $estimationDuree,
         public readonly string $material,
         public readonly int $artisanId,
-        public readonly string $statut,
+        public  string $statut = "en_attente",
     ) {
         //
     }
@@ -32,8 +32,6 @@ class ServiceDTO
             estimationDuree: $request->validated('estimation_duree'),
             material: $request->validated('material'),
             artisanId: $request->user()->id,
-            statut: 'approuve'
-
         );
     }
 

@@ -286,7 +286,7 @@ const ArtisanAddService = () => {
                             accept="image/*"
                             multiple
                             maxFiles={8}
-                            maxSize={5}
+                            maxSize={1}
                             required
                             sublabel="JPG, PNG • Max 5 MB • Min 1 photo, max 8 images"
                             value={formData.images}

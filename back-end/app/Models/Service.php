@@ -10,7 +10,7 @@ class Service extends Model
 {
     /** @use HasFactory<\Database\Factories\ServiceFactory> */
     use HasFactory;
-    // use SoftDeletes;
+    use SoftDeletes;
     protected $table = 'services';
     protected $fillable = [
         'artisan_id',
@@ -22,7 +22,8 @@ class Service extends Model
         'estimation_duree',
         'material',
         'is_completed',
-        'is_active'
+        'is_active',
+        'statut'
     ];
 
     public function clients()
