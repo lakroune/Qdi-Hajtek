@@ -80,10 +80,10 @@ class UserController extends Controller
             $profile = (new ArtisanResource($user));
         }
 
-        return $profile->additional([
+        return response()->json([
             'success' =>  $profile ? true : false,
             'message' => $profile ? 'Profile retrieved successfully' : 'Profile not found or unauthorized',
             'user' => $profile
-        ])->response()->setStatusCode(200);
+        ], 200);
     }
 }

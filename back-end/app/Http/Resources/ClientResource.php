@@ -30,6 +30,8 @@ class ClientResource extends JsonResource
             'rib' => $this->client->rib ?? null,
 
             'role' => 'client',
+            'is_verified' => $this->artisan?->is_verified,
+            'isArtisan' => $this->artisan ? true : false
         ];
     }
 }

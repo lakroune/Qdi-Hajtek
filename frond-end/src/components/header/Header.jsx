@@ -63,7 +63,7 @@ const Header = ({
     const checkUserStatus = async () => {
       try {
         const response = await axiosClient.get('/users/me');
-        const freshUser = response.data;
+        const freshUser = response.data.user;
         const cookieData = Cookies.get('USER_DATA');
         const localUser = cookieData ? JSON.parse(cookieData) : {};
 
