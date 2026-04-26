@@ -1,20 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import {
   Lock, ArrowRight, Eye, EyeOff, Check, Shield,
   Clock, AlertCircle, CheckCircle, XCircle
 } from 'lucide-react';
 import Input from '../components/inputs/Input';
 import Logo from '../components/logo/Logo';
+import axiosClient from '../api/axios-client';
 
 const ResetPasswordPage = () => {
   const { token } = useParams();
+  const [searchParams] = useSearchParams();
+  const email = searchParams.get('email');
   const navigate = useNavigate();
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-  const [isValidToken, setIsValidToken] = useState(true);
   const [error, setError] = useState('');
 
   const [formData, setFormData] = useState({
@@ -22,22 +25,9 @@ const ResetPasswordPage = () => {
     confirmPassword: ''
   });
 
-  // Vérification du token (simulation)
-  useEffect(() => {
-    // Simulation vérification token
-    const verifyToken = async () => {
-      await new Promise(r => setTimeout(r, 500));
-      // Si token invalide : setIsValidToken(false);
-    };
-    verifyToken();
-  }, [token]);
-
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData(prev => ({ ...prev, [name]: value }));
     if (error) setError('');
   };
 
@@ -62,25 +52,39 @@ const ResetPasswordPage = () => {
     if (!validateForm()) return;
 
     setIsLoading(true);
+    setError('');
 
-    // Simulation API
-    await new Promise(r => setTimeout(r, 1500));
+    try {
+      await axiosClient.post('/reset-password', {
+        token,
+        email,
+        password: formData.password,
+        password_confirmation: formData.confirmPassword,
+      });
 
-    console.log('Password reset:', token);
-    setIsLoading(false);
-    setIsSuccess(true);
-    
-    // Redirection après 3 secondes
-    setTimeout(() => {
-      navigate('/auth/login');
-    }, 3000);
+      setIsSuccess(true);
+      setTimeout(() => navigate('/auth/login'), 3000);
+
+    } catch (err) {
+      const msg = err.response?.data?.message;
+      const validationErrors = err.response?.data?.errors;
+
+      if (validationErrors) {
+        const firstError = Object.values(validationErrors)[0][0];
+        setError(firstError);
+      } else {
+        setError(msg || 'Une erreur est survenue. Veuillez réessayer.');
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  if (!isValidToken) {
+  if (!token || !email) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 p-6">
         <div className="max-w-md w-full bg-white p-8 text-center">
-          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="w-16 h-16 bg-red-100 flex items-center justify-center mx-auto mb-4">
             <XCircle className="w-8 h-8 text-red-600" />
           </div>
           <h2 className="text-[20px] font-bold text-[#1B4F72] mb-2">Lien invalide ou expiré</h2>
@@ -101,7 +105,6 @@ const ResetPasswordPage = () => {
   return (
     <div className="min-h-screen flex">
 
-      {/* Left Side - Image & Info */}
       <div className="hidden lg:flex lg:w-1/2 relative bg-[#1B4F72]">
         <div className="fixed z-10 flex flex-col justify-between p-12 w-1/2 text-white h-full bg-gray-900/60 bg-blend-overlay"
           style={{
@@ -127,56 +130,34 @@ const ResetPasswordPage = () => {
           </div>
 
           <div className="space-y-3">
-            <div className="flex items-center gap-3 text-[12px] text-white/90">
-              <div className="w-8 h-8 bg-white/10 flex items-center justify-center">
-                <Shield className="w-4 h-4 text-[#D35400]" />
+            {[
+              { icon: Shield, text: 'Minimum 8 caractères' },
+              { icon: Shield, text: 'Lettres et chiffres recommandés' },
+              { icon: Clock, text: 'Connexion automatique après reset' },
+            ].map(({ icon: Icon, text }, i) => (
+              <div key={i} className="flex items-center gap-3 text-[12px] text-white/90">
+                <div className="w-8 h-8 bg-white/10 flex items-center justify-center">
+                  <Icon className="w-4 h-4 text-[#D35400]" />
+                </div>
+                <span>{text}</span>
               </div>
-              <span>Minimum 8 caractères</span>
-            </div>
-            <div className="flex items-center gap-3 text-[12px] text-white/90">
-              <div className="w-8 h-8 bg-white/10 flex items-center justify-center">
-                <Shield className="w-4 h-4 text-[#D35400]" />
-              </div>
-              <span>Lettres et chiffres recommandés</span>
-            </div>
-            <div className="flex items-center gap-3 text-[12px] text-white/90">
-              <div className="w-8 h-8 bg-white/10 flex items-center justify-center">
-                <Clock className="w-4 h-4 text-[#D35400]" />
-              </div>
-              <span>Connexion automatique après</span>
-            </div>
+            ))}
           </div>
         </div>
       </div>
 
-      {/* Right Side - Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center bg-white p-6 lg:p-12">
         <div className="w-full max-w-md">
 
-          {/* Mobile Logo */}
-          <div className="lg:hidden mb-8 text-center">
-            <Link to="/" className="inline-flex items-center gap-3">
-              <div className="w-10 h-10 bg-[#D35400] flex items-center justify-center">
-                <span className="text-white font-bold text-[18px]">9</span>
-              </div>
-              <div className="text-left">
-                <span className="font-bold text-[#1B4F72] text-[16px]">di Hajtek</span>
-                <p className="text-[10px] text-gray-500">Services artisanaux</p>
-              </div>
-            </Link>
-          </div>
-
           {!isSuccess ? (
             <>
-              {/* Header */}
               <div className="mb-8">
-                <h2 className="text-[20px] font-bold text-[#1B4F72] mb-2">Nouveau mot de passe</h2>
+                <h2 className="text-[20px] font-bold text-[#1B4F72] mb-1">Nouveau mot de passe</h2>
                 <p className="text-[12px] text-gray-500">
-                  Entrez votre nouveau mot de passe ci-dessous.
+                  Compte : <span className="font-medium text-[#1B4F72]">{email}</span>
                 </p>
               </div>
 
-              {/* Error */}
               {error && (
                 <div className="mb-4 p-3 bg-red-50 border border-red-200 flex items-center gap-2 text-[11px] text-red-600">
                   <AlertCircle className="w-4 h-4 flex-shrink-0" />
@@ -184,8 +165,8 @@ const ResetPasswordPage = () => {
                 </div>
               )}
 
-              {/* Form */}
               <form onSubmit={handleSubmit} className="space-y-5">
+
                 <div className="relative">
                   <Input
                     label="Nouveau mot de passe"
@@ -226,20 +207,7 @@ const ResetPasswordPage = () => {
                   </button>
                 </div>
 
-                <div className="bg-gray-50 p-3 text-[10px] text-gray-600 space-y-1">
-                  <p className="font-medium text-gray-700">Votre mot de passe doit contenir :</p>
-                  <ul className="space-y-1 ml-4">
-                    <li className={formData.password.length >= 8 ? 'text-green-600' : ''}>
-                      • Au moins 8 caractères
-                    </li>
-                    <li className={/[A-Z]/.test(formData.password) ? 'text-green-600' : ''}>
-                      • Une lettre majuscule
-                    </li>
-                    <li className={/[0-9]/.test(formData.password) ? 'text-green-600' : ''}>
-                      • Un chiffre
-                    </li>
-                  </ul>
-                </div>
+
 
                 <button
                   type="submit"
@@ -261,16 +229,18 @@ const ResetPasswordPage = () => {
               </form>
             </>
           ) : (
-            /* Success State */
             <div className="text-center py-8">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <CheckCircle className="w-8 h-8 text-green-600" />
+              <div className="w-16 h-16 bg-green-50 border-2 border-green-200 flex items-center justify-center mx-auto mb-6">
+                <CheckCircle className="w-8 h-8 text-green-500" />
               </div>
               <h3 className="text-[18px] font-bold text-[#1B4F72] mb-2">
                 Mot de passe mis à jour !
               </h3>
-              <p className="text-[12px] text-gray-600 mb-6 leading-relaxed">
-                Votre mot de passe a été réinitialisé avec succès. Vous allez être redirigé vers la page de connexion.
+              <p className="text-[12px] text-gray-600 mb-2 leading-relaxed">
+                Votre mot de passe a été réinitialisé avec succès.
+              </p>
+              <p className="text-[11px] text-gray-400 mb-8">
+                Redirection automatique dans 3 secondes...
               </p>
               <Link
                 to="/auth/login"
@@ -288,4 +258,4 @@ const ResetPasswordPage = () => {
   );
 };
 
-export default ResetPasswordPage;
+export default ResetPasswordPage; 

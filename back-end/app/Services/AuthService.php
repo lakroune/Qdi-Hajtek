@@ -130,7 +130,7 @@ class AuthService
             ]
         );
 
-        $resetLink = "http://localhost:5173/reset-password/" . $token . "?email=" . urlencode($email);
+        $resetLink = "http://localhost:5173/auth/reset-password/" . $token . "?email=" . urlencode($email);
         SendRestPasswordEmail::dispatch($email, $resetLink);
 
         return true;

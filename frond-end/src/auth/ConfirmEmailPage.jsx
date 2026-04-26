@@ -117,7 +117,7 @@ const EmailConfirmationPage = () => {
               ))}
             </div>
 
-           
+
 
 
             <button
