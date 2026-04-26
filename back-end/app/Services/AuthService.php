@@ -12,9 +12,12 @@ use App\Http\Resources\ArtisanResource;
 use App\Http\Resources\ClientResource;
 use App\Jobs\SendRestPasswordEmail;
 use App\Jobs\SendVerificationEmail;
+use App\Models\User;
+use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
+use Illuminate\Support\Facades\Hash;
 
 class AuthService
 {
@@ -134,5 +137,31 @@ class AuthService
         SendRestPasswordEmail::dispatch($email, $resetLink);
 
         return true;
+    }
+
+    public function resetPassword(string $email, string $token, string $password): void
+    {
+        $record = DB::table('password_reset_tokens')
+            ->where('email', $email)
+            ->first();
+
+        if (!$record) {
+            throw new Exception('Token invalide ou expiré');
+        }
+
+        if ($token !== $record->token) {
+            throw new Exception('Token invalide ou expiré');
+        }
+
+        if (now()->diffInMinutes($record->created_at) > 60) {
+            throw new Exception('Token expiré');
+        }
+
+        $user = User::where('email', $email)->firstOrFail();
+        $user->password = Hash::make($password);
+        $user->save();
+
+
+        DB::table('password_reset_tokens')->where('email', $email)->delete();
     }
 }

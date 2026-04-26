@@ -87,20 +87,41 @@ class AuthController extends Controller
         }
     }
     // forgetPassword
-    public function forgetPassword( AuthService $authService)
+    public function forgetPassword(AuthService $authService)
     {
         $data = request()->validate([
             'email' => 'required|email|exists:users,email',
-        ])    ;
+        ]);
 
         $authService->forgetPassword($data['email']);
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Code generated successfully'
         ], 200);
     }
+    public function resetPassword(AuthService $authService)
+    {
+        $data = request()->validate([
+            'email'    => 'required|email|exists:users,email',
+            'token'    => 'required',
+            'password' => 'required|min:8|confirmed',
+        ]);
 
+        try {
+            $authService->resetPassword($data['email'], $data['token'], $data['password']);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Password reset successfully'
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 422);
+        }
+    }
     public function logout()
     {
         try {
