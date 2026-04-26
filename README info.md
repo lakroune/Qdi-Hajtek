@@ -1,4 +1,4 @@
-# Samiha — Plateforme Artisans & Services
+# Qdi HAJTEK — Plateforme Artisans & Services
 
 Plateforme de mise en relation entre **artisans qualifiés** et **clients** au Maroc.  
 Trouvez le meilleur artisan près de chez vous — menuiserie, plomberie, électricité, et bien plus.
@@ -8,8 +8,8 @@ Trouvez le meilleur artisan près de chez vous — menuiserie, plomberie, élect
 ## Architecture du projet
 
 ```
-samiha/
-├── backend/          # API Laravel 11 — REST + WebSockets + PDF
+Qdi-Hajtek/
+├── backend/          # API Laravel 12 — REST + WebSockets + PDF
 └── frontend/         # Interface React 18 + Vite
 ```
 
@@ -120,4 +120,4 @@ VITE_REVERB_SCHEME=http
 
 ## Licence
 
-Usage privé — tous droits réservés © Samiha 2025.
+Usage privé — tous droits réservés 
