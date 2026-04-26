@@ -84,8 +84,10 @@ const Notifications = () => {
                     navigate(`/messages/${notif.data.conversation_id}`);
                     break;
                 case 'new_proposition':
+                     navigate(`/mes-offres/${notif.data.offre_id}`);
+                    break;
                 case 'proposition_accepted':
-                    navigate(`/offres/${notif.data.offre_id}`);
+                    navigate(`/messages`);
                     break;
                 case 'mission_completed':
                 case 'payment_success':

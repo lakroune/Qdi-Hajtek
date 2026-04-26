@@ -333,11 +333,11 @@ const ClientAddJob = () => {
                         <FileUpload
                             id="job-photos"
                             label="Photos du problème ou du lieu"
-                            accept="image/*"
+                            accept="image/png, image/jpeg, image/jpg"
                             multiple
                             disabledFiles={false}
                             maxFiles={5}
-                            maxSize={5}
+                            maxSize={1}
                             sublabel="JPG, PNG • Max 5MB par photo • Max 5 photos"
                             value={formData.photos}
                             onChange={(files) => updateField('photos', files)}
