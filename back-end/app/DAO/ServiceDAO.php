@@ -78,7 +78,6 @@ class ServiceDAO
 
         if (auth('api')->check()) {
             $userId = auth('api')->id();
-
             $query->withExists(['clients as is_favorited' => function ($q) use ($userId) {
                 $q->where('favoris.client_id', $userId);
             }]);
@@ -87,7 +86,7 @@ class ServiceDAO
         if (!empty($filters['search'])) {
             $search = $filters['search'];
             $query->where(function ($q) use ($search) {
-                $q->where('services.titre', 'ilike', '%' . $search . '%') // استخدم ilike لـ Postgres
+                $q->where('services.titre', 'ilike', '%' . $search . '%')
                     ->orWhere('services.description', 'ilike', '%' . $search . '%')
                     ->orWhereHas('artisan.user', function ($q2) use ($search) {
                         $q2->where('firstname', 'ilike', '%' . $search . '%')
@@ -105,11 +104,26 @@ class ServiceDAO
             $query->where('services.tarif', '<=', $filters['price']);
         }
 
+        if (!empty($filters['rating'])) {
+            $query->where('artisans.note', '>=', $filters['rating']);
+        }
+
         $query->join('artisans', 'services.artisan_id', '=', 'artisans.id');
 
-        if (!empty($filters['rating'])) {
-            $query->where('artisans.note', '>=', $filters['rating'])
-                ->orderByDesc('artisans.nb_offres');
+        if (!empty($filters['latitude']) && !empty($filters['longitude'])) {
+            $lat = $filters['latitude'];
+            $lng = $filters['longitude'];
+
+            $query->selectRaw("
+            ( 6371 * acos(
+                cos(radians(?)) * cos(radians(artisans.latitude)) *
+                cos(radians(artisans.longitude) - radians(?)) +
+                sin(radians(?)) * sin(radians(artisans.latitude))
+            )) AS distance
+        ", [$lat, $lng, $lat])
+                ->whereNotNull('artisans.latitude')
+                ->whereNotNull('artisans.longitude')
+                ->orderBy('distance', 'asc');
         } else {
             $query->orderByRaw('(artisans.note * artisans.nb_offres) DESC');
         }
