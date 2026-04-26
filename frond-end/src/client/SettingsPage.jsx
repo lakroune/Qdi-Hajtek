@@ -291,7 +291,6 @@ const PageParametres = () => {
         if (!formulaireArtisan.cniRecto) validationErrors.cniRecto = 'Veuillez choisir un CNI recto';
         if (!formulaireArtisan.cniVerso) validationErrors.cniVerso = 'Veuillez choisir un CNI verso';
         if (!formulaireArtisan.attestationsRib) validationErrors.attestationsRib = 'Veuillez choisir un RIB';
-        if (formulaireArtisan.diplomes.length === 0) validationErrors.diplomes = 'Veuillez choisir au moins un diplôme';
 
         setErrors(validationErrors);
 
@@ -335,6 +334,7 @@ const PageParametres = () => {
                     diplomes: [],
                     attestations: [],
                 });
+                setDonneesUtilisateur({ ...donneesUtilisateur, isArtisan: true });
             }
         } catch (error) {
             const msg = error.response?.data?.message || 'Une erreur est survenue. Veuillez réessayer.';

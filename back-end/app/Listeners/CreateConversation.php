@@ -47,15 +47,15 @@ class CreateConversation implements ShouldQueue
                     'conversable_type'   => DemandeDirecte::class,
                 ]);
 
+                $messageText = $demandeDirecte->description_specifique . ', Date souhaitéee: ' . $demandeDirecte->date_debut . ', adresse: ' . $demandeDirecte->adresse;
                 $this->messageDAO->create([
                     'conversation_id' => $conversation->id,
-                    'contenu_message' => $demandeDirecte->description_specifique,
+                    'contenu_message' => $messageText,
                     'sender_id'       => $demandeDirecte->client->user->id,
                 ]);
 
                 $artisanUser = $demandeDirecte->service->artisan->user;
                 $artisanUser->notify(new NewDemandeNotification($demandeDirecte));
-                
             });
         } catch (Exception $e) {
             Log::error("Erreur lors de la création de la conversation pour la demande #{$demandeDirecte->id}: " . $e->getMessage());

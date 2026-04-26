@@ -85,9 +85,9 @@ class ServiceController extends Controller
         ]);
     }
 
-    public function destroy(Service $service)
+    public function destroy(int $serviceId)
     {
-        $service = $this->serviceService->deleteService($service->id);
+        $service = $this->serviceService->deleteService($serviceId);
         return response()->json([
             'message' => 'Service deleted successfully',
             'data' => $service

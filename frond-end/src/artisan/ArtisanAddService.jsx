@@ -283,7 +283,7 @@ const ArtisanAddService = () => {
                         <FileUpload
                             id="service-images"
                             label="Images du service *"
-                            accept="image/*"
+                            accept="image/jpeg,image/png,image/jpg"
                             multiple
                             maxFiles={8}
                             maxSize={1}

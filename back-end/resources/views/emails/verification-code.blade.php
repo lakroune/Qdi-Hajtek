@@ -25,7 +25,6 @@
 
         .code-box {
             background-color: #f4f4f4;
-            border: 2px dashed #D35400;
             font-size: 32px;
             font-weight: bold;
             letter-spacing: 10px;
