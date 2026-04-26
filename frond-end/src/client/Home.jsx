@@ -22,7 +22,7 @@ const HomePage = () => {
     const [selectedPrice, setSelectedPrice] = useState(0);
     const [nextpage, setNextPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
-
+    const [userCoords, setUserCoords] = useState(null);
     const loaderRef = useRef(null);
 
     const searchServices = async (isNewSearch = false) => {
@@ -36,7 +36,9 @@ const HomePage = () => {
                     category: selectedCategory || undefined,
                     rating: selectedRating > 0 ? selectedRating : undefined,
                     price: selectedPrice > 0 ? selectedPrice : undefined,
-                    page: pageToFetch
+                    page: pageToFetch,
+                    latitude: userCoords?.latitude || undefined,
+                    longitude: userCoords?.longitude || undefined,
                 }
             });
 
@@ -64,9 +66,9 @@ const HomePage = () => {
     useEffect(() => {
         const delayDebounceFn = setTimeout(() => {
             searchServices(true);
-        }, 400);
+        }, 600);
         return () => clearTimeout(delayDebounceFn);
-    }, [searchQuery, selectedCategory, selectedRating, selectedPrice]);
+    }, [searchQuery, selectedCategory, selectedRating, selectedPrice, userCoords]);
 
     useEffect(() => {
         const fetchCategories = async () => {
@@ -146,8 +148,7 @@ const HomePage = () => {
         const fetchLocation = async () => {
             try {
                 const coords = await getGeolocation();
-                console.log(coords.latitude);   
-                console.log(coords.longitude);  
+                setUserCoords(coords);
             } catch (error) {
                 console.error(error);
             }
