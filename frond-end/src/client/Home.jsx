@@ -9,6 +9,7 @@ import {
     BadgeX,
     SaveIcon,
 } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const HomePage = () => {
     const [categories, setCategories] = useState([]);
@@ -115,6 +116,44 @@ const HomePage = () => {
         }
     };
 
+    const getGeolocation = () => {
+        return new Promise((resolve, reject) => {
+            if (!navigator.geolocation) {
+                reject(new Error('Géolocalisation non supportée'));
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    resolve({
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude,
+                    });
+                },
+                (error) => {
+                    reject(error);
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0,
+                }
+            );
+        });
+    };
+
+    useEffect(() => {
+        const fetchLocation = async () => {
+            try {
+                const coords = await getGeolocation();
+                console.log(coords.latitude);   
+                console.log(coords.longitude);  
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        fetchLocation();
+    }, []);
     const SkeletonGrid = () => (
         <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 animate-pulse">
             {Array.from({ length: 8 }).map((_, i) => (
@@ -179,7 +218,7 @@ const HomePage = () => {
                                 >
                                     <option value="" className="text-black">Toutes les catégories</option>
                                     {categories.map((cat) => (
-                                        <option key={cat.id}   value={cat.id} className="text-black uppercase">
+                                        <option key={cat.id} value={cat.id} className="text-black uppercase">
                                             {cat.nom_categorie || cat.name}
                                         </option>
                                     ))}
@@ -195,7 +234,7 @@ const HomePage = () => {
                                 >
                                     <option className='text-black' value="0">Toutes les notes</option>
                                     {[1, 2, 3, 4, 5].map((star) => (
-                                        <option key={star} className='text-black    '  value={star}>{star} stars et plus</option>
+                                        <option key={star} className='text-black    ' value={star}>{star} stars et plus</option>
                                     ))}
                                 </select>
                             </div>
@@ -208,7 +247,7 @@ const HomePage = () => {
                                     onChange={(e) => setSelectedPrice(e.target.value)}
                                 >
                                     <option value="0" className='text-black  bg-white/10 '>Tous les prix</option>
-                                    {[50, 100,200, 500, 1000,1500, 2000].map((price) => (
+                                    {[50, 100, 200, 500, 1000, 1500, 2000].map((price) => (
                                         <option key={price} className='text-black  bg-white/10 ' value={price}>{price} DH et moins</option>
                                     ))}
                                 </select>
