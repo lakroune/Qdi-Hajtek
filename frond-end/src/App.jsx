@@ -80,7 +80,7 @@ function App() {
       <Routes>
         <Route path="/" element={<div><Header /><Outlet /></div>}>
           <Route index element={<HomePage />} />
-          <Route path="services" element={<Services />} />
+          <Route path="services" element={<HomePage />} />
           <Route path="services/:id" element={<ServiceDetail />} />
           <Route path="artisans/:id" element={<ArtisanPortfolioPage />} />
 
