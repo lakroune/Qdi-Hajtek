@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Mail, ArrowRight, ArrowLeft, Check, Shield,
-  Clock, AlertCircle, CheckCircle
+  Clock, AlertCircle
 } from 'lucide-react';
 import Input from '../components/inputs/Input';
 import Logo from '../components/logo/Logo';
+import axiosClient from '../api/axios-client';
 
 const ForgotPasswordPage = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -18,10 +19,7 @@ const ForgotPasswordPage = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData(prev => ({ ...prev, [name]: value }));
     if (error) setError('');
   };
 
@@ -34,19 +32,24 @@ const ForgotPasswordPage = () => {
     }
 
     setIsLoading(true);
+    setError('');
 
-    // Simulation API
-    await new Promise(r => setTimeout(r, 1500));
-
-    console.log('Reset password request:', formData.email);
-    setIsLoading(false);
-    setIsSubmitted(true);
+    try {
+      await axiosClient.post('/forget-password', {
+        email: formData.email
+      });
+      setIsSubmitted(true);
+    } catch (err) {
+      const msg = err.response?.data?.message;
+      setError(msg || 'Une erreur est survenue. Veuillez réessayer.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <div className="min-h-screen flex">
 
-      {/* Left Side - Image & Info */}
       <div className="hidden lg:flex lg:w-1/2 relative bg-[#1B4F72]">
         <div className="fixed z-10 flex flex-col justify-between p-12 w-1/2 text-white h-full bg-gray-900/60 bg-blend-overlay"
           style={{
@@ -72,24 +75,18 @@ const ForgotPasswordPage = () => {
           </div>
 
           <div className="space-y-3">
-            <div className="flex items-center gap-3 text-[12px] text-white/90">
-              <div className="w-8 h-8 bg-white/10 flex items-center justify-center">
-                <Shield className="w-4 h-4 text-[#D35400]" />
+            {[
+              { icon: Shield, text: 'Lien sécurisé et crypté' },
+              { icon: Clock, text: 'Validité du lien : 24 heures' },
+              { icon: Check, text: 'Support disponible 24h/24' },
+            ].map(({ icon: Icon, text }, i) => (
+              <div key={i} className="flex items-center gap-3 text-[12px] text-white/90">
+                <div className="w-8 h-8 bg-white/10 flex items-center justify-center">
+                  <Icon className="w-4 h-4 text-[#D35400]" />
+                </div>
+                <span>{text}</span>
               </div>
-              <span>Lien sécurisé et crypté</span>
-            </div>
-            <div className="flex items-center gap-3 text-[12px] text-white/90">
-              <div className="w-8 h-8 bg-white/10 flex items-center justify-center">
-                <Clock className="w-4 h-4 text-[#D35400]" />
-              </div>
-              <span>Validité du lien : 24 heures</span>
-            </div>
-            <div className="flex items-center gap-3 text-[12px] text-white/90">
-              <div className="w-8 h-8 bg-white/10 flex items-center justify-center">
-                <Check className="w-4 h-4 text-[#D35400]" />
-              </div>
-              <span>Support disponible 24h/24</span>
-            </div>
+            ))}
           </div>
         </div>
       </div>
@@ -97,10 +94,8 @@ const ForgotPasswordPage = () => {
       <div className="w-full lg:w-1/2 flex items-center justify-center bg-white p-6 lg:p-12">
         <div className="w-full max-w-md">
 
-           
-
-          <Link 
-            to="/auth/login" 
+          <Link
+            to="/auth/login"
             className="inline-flex items-center gap-2 text-[11px] text-gray-500 hover:text-[#D35400] transition-colors mb-6"
           >
             <ArrowLeft className="w-4 h-4" />
@@ -109,7 +104,6 @@ const ForgotPasswordPage = () => {
 
           {!isSubmitted ? (
             <>
-              {/* Header */}
               <div className="mb-8">
                 <h2 className="text-[20px] font-bold text-[#1B4F72] mb-2">Mot de passe oublié ?</h2>
                 <p className="text-[12px] text-gray-500">
@@ -117,7 +111,6 @@ const ForgotPasswordPage = () => {
                 </p>
               </div>
 
-              {/* Error */}
               {error && (
                 <div className="mb-4 p-3 bg-red-50 border border-red-200 flex items-center gap-2 text-[11px] text-red-600">
                   <AlertCircle className="w-4 h-4 flex-shrink-0" />
@@ -125,7 +118,6 @@ const ForgotPasswordPage = () => {
                 </div>
               )}
 
-              {/* Form */}
               <form onSubmit={handleSubmit} className="space-y-5">
                 <Input
                   label="Adresse Email"
@@ -146,7 +138,7 @@ const ForgotPasswordPage = () => {
                   {isLoading ? (
                     <>
                       <div className="w-4 h-4 border-2 border-white border-t-transparent animate-spin" />
-                      Envoi...
+                      Envoi en cours...
                     </>
                   ) : (
                     <>
@@ -158,20 +150,26 @@ const ForgotPasswordPage = () => {
               </form>
             </>
           ) : (
-            /* Success State */
             <div className="text-center py-8">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <CheckCircle className="w-8 h-8 text-green-600" />
+              <div className="w-16 h-16 bg-green-50 border-2 border-green-200 flex items-center justify-center mx-auto mb-6">
+                <Mail className="w-7 h-7 text-green-500" />
               </div>
-              <h3 className="text-[18px] font-bold text-[#1B4F72] mb-2">
-                Email envoyé !
-              </h3>
-              <p className="text-[12px] text-gray-600 mb-6 leading-relaxed">
+
+              <h3 className="text-[18px] font-bold text-[#1B4F72] mb-2">Email envoyé !</h3>
+              <p className="text-[12px] text-gray-600 mb-3 leading-relaxed">
                 Si un compte existe avec <strong>{formData.email}</strong>, vous recevrez un email avec les instructions pour réinitialiser votre mot de passe.
               </p>
-              <p className="text-[11px] text-gray-500 mb-6">
+              <p className="text-[11px] text-gray-400 mb-8">
                 Vérifiez votre dossier spam si vous ne trouvez pas l'email.
               </p>
+
+              <button
+                onClick={() => { setIsSubmitted(false); setFormData({ email: '' }); }}
+                className="text-[11px] text-gray-400 hover:text-gray-600 underline underline-offset-2 mb-4 block mx-auto transition-colors"
+              >
+                Essayer avec une autre adresse
+              </button>
+
               <Link
                 to="/auth/login"
                 className="inline-flex items-center gap-2 text-[12px] font-semibold text-[#D35400] hover:text-[#A04000] transition-colors"

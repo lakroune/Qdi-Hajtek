@@ -34,7 +34,7 @@ Route::get('/villes', function () {
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/generate-code', [AuthController::class, 'generateCode']);
-
+Route::post('/forget-password', [AuthController::class, 'forgetPassword']);
 Route::get('auth/{provider}', [SocialAuthController::class, 'redirectToProvider']);
 Route::get('auth/{provider}/callback', [SocialAuthController::class, 'handleProviderCallback']);
 

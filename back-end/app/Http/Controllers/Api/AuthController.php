@@ -86,6 +86,20 @@ class AuthController extends Controller
             ], 500);
         }
     }
+    // forgetPassword
+    public function forgetPassword( AuthService $authService)
+    {
+        $data = request()->validate([
+            'email' => 'required|email|exists:users,email',
+        ])    ;
+
+        $authService->forgetPassword($data['email']);
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Code generated successfully'
+        ], 200);
+    }
 
     public function logout()
     {

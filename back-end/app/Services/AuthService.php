@@ -10,7 +10,10 @@ use App\DTO\Auth\VerifierEmailDTO;
 use App\Http\Resources\AdminResource;
 use App\Http\Resources\ArtisanResource;
 use App\Http\Resources\ClientResource;
+use App\Jobs\SendRestPasswordEmail;
 use App\Jobs\SendVerificationEmail;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
 class AuthService
@@ -111,6 +114,25 @@ class AuthService
         auth('api')->user()->code_verification = $new_code;
         auth('api')->user()->save();
         SendVerificationEmail::dispatch(auth('api')->user());
+        return true;
+    }
+
+    // forgetPassword
+    public function forgetPassword($email)
+    {
+        $token = Str::random(64);
+
+        DB::table('password_reset_tokens')->updateOrInsert(
+            ['email' => $email],
+            [
+                'token' => $token,
+                'created_at' => now()
+            ]
+        );
+
+        $resetLink = "http://localhost:5173/reset-password/" . $token . "?email=" . urlencode($email);
+        SendRestPasswordEmail::dispatch($email, $resetLink);
+
         return true;
     }
 }
