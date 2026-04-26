@@ -34,7 +34,7 @@ const EmailConfirmationPage = () => {
   const gererRenvoi = async () => {
     setEstEnTrainDeRenvoyer(true);
     try {
-      await axiosClient.post('/renvoyer-email');
+      await axiosClient.post('/generate-code');
       setCompteARebours(60);
     } catch (error) {
       toast.error("Impossible de renvoyer le code");

@@ -9,8 +9,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\auth\LoginRequest;
 use App\Http\Requests\auth\RegisterRequest;
 use App\Http\Requests\auth\VerifierEmailRequest;
+use App\Mail\VerificationCodeMail;
+use App\Models\User;
 use App\Services\AuthService;
 use Exception;
+use Illuminate\Support\Facades\Mail;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
 
@@ -23,8 +26,8 @@ class AuthController extends Controller
         $result = $authService->login($dto);
 
         return response()->json([
-            'success' => $result['success']??false,
-            'message' => $result['message']??null,
+            'success' => $result['success'] ?? false,
+            'message' => $result['message'] ?? null,
             'user' => $result['user'] ?? null,
             'token' => $result['token'] ?? null
         ]);
@@ -56,42 +59,33 @@ class AuthController extends Controller
         ]);
     }
 
-    // public function generateCode(GenerateCodeRequest $request)
-    // {
-    //     $data = $request->validated();
-
-    //     $user = User::where('email', $data['email'])->first();
-    //     if (!$user) {
-    //         return response()->json(
-    //             ['message' => 'invalid email'],
-    //             404
-    //         );
-    //     }
-
-    //     if ($user->email_verified_at) {
-    //         return response()->json(
-    //             ['message' => 'email already verified'],
-    //             400
-    //         );
-    //     }
-
-    //     $new_code = random_int(100000, 999999);
-    //     $user->code_verification = $new_code;
-    //     $user->save();
-
-
-    //     try {
-    //         Mail::to($user->email)->send(new VerificationCodeMail($user->code_verification, $user));
-    //         return response()->json([
-    //             'message' => 'email sent successfully',
-    //             'user' => $user
-    //         ], 200);
-    //     } catch (\Exception $e) {
-    //         return response()->json([
-    //             'message' => 'something went wrong'
-    //         ], 500);
-    //     }
-    // }
+    public function generateCode(AuthService $authService)
+    {
+        if (!auth('api')->user()) {
+            return response()->json(
+                ['message' => 'unauthenticated'],
+                401
+            );
+        }
+        if (auth('api')->user()->email_verified_at) {
+            return response()->json(
+                ['message' => 'Email already verified'],
+                400
+            );
+        }
+        $etat = $authService->generateCode();
+        if ($etat) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Code generated successfully'
+            ], 200);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to generate code'
+            ], 500);
+        }
+    }
 
     public function logout()
     {

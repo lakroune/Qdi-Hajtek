@@ -74,7 +74,7 @@ class AuthService
         }
         if ($user->hasRole('admin')) {
             $profile = new AdminResource($user);
-        }   
+        }
         return [
             'success' => true,
             'user' => $profile,
@@ -96,5 +96,21 @@ class AuthService
             'success' => false,
             'message' => 'Invalid verification code'
         ];
+    }
+
+
+    public function generateCode()
+    {
+
+
+        if (auth('api')->user()->email_verified_at) {
+            return false;
+        }
+
+        $new_code = random_int(100000, 999999);
+        auth('api')->user()->code_verification = $new_code;
+        auth('api')->user()->save();
+        SendVerificationEmail::dispatch(auth('api')->user());
+        return true;
     }
 }
