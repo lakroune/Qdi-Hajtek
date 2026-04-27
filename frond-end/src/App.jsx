@@ -17,7 +17,7 @@ import JobsManagement from './admin/JobsManagement';
 import ClientAddJob from './client/ClientAddJob';
 import ArtisanAddService from './artisan/ArtisanAddService';
 import NotFoundPage from './errors/NotFoundPage';
-import Header from './components/Header/Header';
+import Header from './components/header/Header';
 import ConfirmEmailPage from './auth/ConfirmEmailPage';
 import ResetPasswordPage from './auth/ResetPasswordPage';
 

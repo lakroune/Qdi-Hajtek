@@ -4,14 +4,13 @@ import Cookies from 'js-cookie';
 
 window.Pusher = Pusher;
 
-
 window.Echo = new Echo({
     broadcaster: 'reverb',
-    key: 'ojk7sigmnfldscxsplhw',
-    wsHost: '127.0.0.1',
-    wsPort: 8080,
-    wssPort: 8080,
-    forceTLS: false, // 
+    key: import.meta.env.VITE_REVERB_APP_KEY,
+    wsHost: import.meta.env.VITE_REVERB_HOST,
+    wsPort: import.meta.env.VITE_REVERB_PORT,
+    wssPort: import.meta.env.VITE_REVERB_PORT,
+    forceTLS: import.meta.env.VITE_REVERB_SCHEME === 'https',
     enabledTransports: ['ws', 'wss'],
     authEndpoint: import.meta.env.VITE_API_BASE_URL + '/broadcasting/auth',
     auth: {
