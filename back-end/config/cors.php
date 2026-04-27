@@ -19,7 +19,11 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['https://qdi-hajtek.vercel.app', 'http://localhost:5173'],
+    'allowed_origins' => [
+        'https://qdi-hajtek.vercel.app',
+        'http://localhost:5173',
+        'https://qdi-hajtak.lakroune.space/'
+    ],
 
     'allowed_origins_patterns' => [],
 
