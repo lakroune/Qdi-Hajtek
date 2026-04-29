@@ -22,7 +22,8 @@ return [
     'allowed_origins' => [
         'https://qdi-hajtek.vercel.app',
         'http://localhost:5173',
-        'https://qdi-hajtak.lakroune.space/'
+        'https://qdi-hajtak.lakroune.space/',
+        'https://qdi-hajtek-49769j9qq-lakrounes-projects.vercel.app/'
     ],
 
     'allowed_origins_patterns' => [],
