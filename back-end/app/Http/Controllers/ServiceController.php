@@ -77,6 +77,7 @@ class ServiceController extends Controller
     public function update(UpdateServiceRequest $request, int $id)
     {
         $dto = ServiceDTO::fromRequest($request);
+        $dto->statut ="approuve";
         $images = $request->file('images') ?? [];
         $service = $this->serviceService->updateService($id, $dto, $images);
         return response()->json([

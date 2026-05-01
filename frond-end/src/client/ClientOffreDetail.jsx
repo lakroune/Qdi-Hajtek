@@ -19,7 +19,7 @@ const ClientOffreDetail = () => {
     const [isModalShowImage, setIsModalShowImage] = useState(false);
     const [isShowOptionOffre, setIsShowOptionOffre] = useState(false);
     const [isAccepting, setIsAccepting] = useState(false);
-
+    const url_image = import.meta.env.VITE_API_URL_STORAGE;
 
     useEffect(() => {
         const fetchOffreTravail = async () => {

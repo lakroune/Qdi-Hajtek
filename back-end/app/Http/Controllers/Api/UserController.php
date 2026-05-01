@@ -27,7 +27,9 @@ class UserController extends Controller
     public function ban(User $user)
     {
         try {
-            $user->client->update(['statut' => 'inactif']);
+            $user->client->statut = 'inactif';
+            $user->client->save();
+            //$user->client()->update(['statut' => 'inactif']);
             return response()->json(['message' => 'Utilisateur banni avec succès']);
         } catch (Exception $e) {
             return response()->json(['error' => 'Erreur lors du bannissement'], 500);
@@ -40,7 +42,9 @@ class UserController extends Controller
     public function activate(User $user)
     {
         try {
-            $user->client->update(['statut' => 'actif']);
+            $user->client->statut = 'actif';
+            $user->client->save();
+            // $user->client->update(['statut' => 'actif']);
             return response()->json(['message' => 'Utilisateur activé avec succès']);
         } catch (Exception $e) {
             return response()->json(['error' => 'Erreur lors de l\'activation'], 500);

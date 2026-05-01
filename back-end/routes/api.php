@@ -23,166 +23,181 @@ use App\Http\Controllers\ServiceController;
 use App\Models\Ville;
 use Illuminate\Support\Facades\Route;
 
+/*
+|--------------------------------------------------------------------------
+| Routes publiques 
+|--------------------------------------------------------------------------
+*/
 
+Route::get('/villes', fn() => Ville::all());
 
-
-
-Route::get('/villes', function () {
-    return Ville::all();
-});
-
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
-Route::post('/generate-code', [AuthController::class, 'generateCode']);
+// Authentification
+Route::post('/register',        [AuthController::class, 'register']);
+Route::post('/login',           [AuthController::class, 'login']);
+Route::post('/generate-code',   [AuthController::class, 'generateCode']);
 Route::post('/forget-password', [AuthController::class, 'forgetPassword']);
-Route::post('/reset-password', [AuthController::class, 'resetPassword']);
+Route::post('/reset-password',  [AuthController::class, 'resetPassword']);
 
+// OAuth social
+// Route::get('auth/{provider}',          [SocialAuthController::class, 'redirectToProvider']);
+// Route::get('auth/{provider}/callback', [SocialAuthController::class, 'handleProviderCallback']);
 
-Route::get('auth/{provider}', [SocialAuthController::class, 'redirectToProvider']);
-Route::get('auth/{provider}/callback', [SocialAuthController::class, 'handleProviderCallback']);
-
-Route::get('/categories', [CategorieController::class, 'index']);
-
+// Ressources consultables publiquement
+Route::get('/categories',     [CategorieController::class, 'index']);
+Route::get('artisans',        [ArtisanController::class, 'index']);
 Route::get('artisans/{artisan}', [ArtisanController::class, 'show']);
-Route::get('artisans', [ArtisanController::class, 'index']);
-Route::patch('/artisans/{userId}/approve', [ArtisanController::class, 'approve']);
-Route::post('/artisans/{user}/reject', [ArtisanController::class, 'reject']);
-
-
-//ok for test
 Route::apiResource('services', ServiceController::class)->only('index', 'show');
+
+/*
+|--------------------------------------------------------------------------
+| Routes protégées (authentification requise)
+|--------------------------------------------------------------------------
+*/
 
 Route::middleware('auth:api')->group(function () {
 
-    //ok for production
-    Route::get('conversations/{id}/messages', [MessageController::class, 'index']);
-    Route::post('conversations/{id}/messages', [MessageController::class, 'store']);
-    Route::post('conversations/{id}/accept-offer', [ConversationController::class, 'acceptOffer']);
-    Route::post('/payments/initiate', [PaiementController::class, 'initiate']);
-    Route::post('/payments/confirm', [PaiementController::class, 'confirm']);
-    Route::get('conversations', [ConversationController::class, 'index']);
+    /*
+    |----------------------------------------------------------------------
+    | Client uniquement
+    |----------------------------------------------------------------------
+    */
+    Route::middleware('role:client')->group(function () {
+        // Paiements & factures
+        Route::post('/payments/initiate',      [PaiementController::class, 'initiate']);
+        Route::post('/payments/confirm',       [PaiementController::class, 'confirm']);
+        Route::get('/factures/download/{id}',  [PaiementController::class, 'downloadFacture']);
 
+        // Conversations (actions client)
+        Route::post('/conversations/{conversation_id}/reviews',      [EvaluationController::class, 'store']);
+        Route::post('/conversations/{conversation_id}/confirm-code', [ConversationController::class, 'confirmCode']);
 
-    Route::post('/conversations/{conversation_id}/complete-mission', [ConversationController::class, 'completeMission']);
+        // Artisans (actions client)
+        Route::post('artisans/{artisan}/like',      [ArtisanController::class, 'likeToggle']);
+        Route::post('/artisans/{artisanId}/report', [ReportController::class, 'report']);
 
-    // testing 
+        // Devenir artisan
+        Route::post('artisans', [ArtisanController::class, 'store']);
 
+        // Offres de travail
+        Route::get('offres/me', [OffreTravailController::class, 'mesOffres']);
+        Route::get('mes-offres/{id}', [OffreTravailController::class, 'getOffreTravailWithPropositions']);
+        Route::post('offres', [OffreTravailController::class, 'store']);
+        Route::patch('offres/{id}', [OffreTravailController::class, 'update']);
+        // Demandes directes
+        Route::post('demandes-directes', [DemandeDirecteController::class, 'store']);
 
-    Route::post('/conversations/{conversation_id}/reviews', [EvaluationController::class, 'store']);
+        // Propositions
+        Route::patch('propositions/{id}/accept',      [PropositionController::class, 'accept']);
+    });
 
-    Route::post('/conversations/{conversation_id}/confirm-code', [ConversationController::class, 'confirmCode']);
+    /*
+    |----------------------------------------------------------------------
+    | Artisan uniquement
+    |----------------------------------------------------------------------
+    */
+    Route::middleware('role:artisan')->group(function () {
+        // Conversations (actions artisan)
+        Route::post('conversations/{id}/accept-offer',               [ConversationController::class, 'acceptOffer']);
+        Route::post('/conversations/{conversation_id}/complete-mission', [ConversationController::class, 'completeMission']);
 
+        // Services (gestion)
+        Route::post('services',            [ServiceController::class, 'store']);
+        Route::get('/services/{id}/edit',  [ServiceController::class, 'edit']);
+        Route::put('/services/{id}',       [ServiceController::class, 'update']);
+        Route::delete('/services/{id}',    [ServiceController::class, 'destroy']);
+        Route::patch('/services/{service}/toggle', [ServiceController::class, 'toggle']);
 
-    // portfolio
-    Route::get('/portfolio', [ArtisanController::class, 'getPortfolio']);
+        // Disponibilités
+        // Route::get('artisans/{artisan}/disponibilites',  [DisponibiliteController::class, 'show']);
+        // Route::post('artisans/{artisan}/disponibilites', [DisponibiliteController::class, 'store']);
 
+        // Portfolio
+        Route::get('/portfolio', [ArtisanController::class, 'getPortfolio']);
 
-    // /services/${service.id}/toggle
+        // Offres de travail
+        Route::get('offres', [OffreTravailController::class, 'index']);
+        Route::get('offres/{id}', [OffreTravailController::class, 'show']);
+        // Propositions
+        Route::post('offres/{offre}/propositions',    [PropositionController::class, 'store']);
 
-    Route::patch('/services/{service}/toggle', [ServiceController::class, 'toggle']);
+        // Dashboard artisan (stats propres)
+        Route::get('/dashboard/artisan-stats', [DashboardController::class, 'artisanStats']);
+    });
 
+    /*
+    |----------------------------------------------------------------------
+    | Client & Artisan
+    |----------------------------------------------------------------------
+    */
+    Route::middleware('role:client,artisan')->group(function () {
+        //  profil
+        Route::get('profile/me',             [ProfileController::class, 'show']);
+        Route::get('profile/me/counts',      [ProfileController::class, 'counts']);
+        Route::patch('profile',              [ProfileController::class, 'update']);
+        Route::put('profile/update-password', [ProfileController::class, 'updatePassword']);
 
-    // /artisans/${artisan.id}/report
-    Route::post('/artisans/{artisanId}/report', [ReportController::class, 'report']);
-    Route::get('reports', [ReportController::class, 'index']);
-    // /reports/report.id/resolve
-    Route::put('/reports/{artisan}/resolve/{client}', [ReportController::class, 'resolve']);
-    Route::put('/reports/{artisan}/dismiss/{client}', [ReportController::class, 'dismiss']);
+        // Conversations & messages
+        Route::get('conversations',                       [ConversationController::class, 'index']);
+        Route::get('conversations/{id}/messages',         [MessageController::class, 'index']);
+        Route::post('conversations/{id}/messages',        [MessageController::class, 'store']);
 
-    // facturations
-    Route::get('/factures/download/{id}', [PaiementController::class, 'downloadFacture']);
+        // Favoris
+        Route::get('/favorites',              [FavoriController::class, 'index']);
+        Route::post('services/{id}/favorie',  [FavoriController::class, 'favorieService']);
 
-    // get('/favorites')
+        // Notifications
+        Route::get('/notifications',              [NotificationController::class, 'index']);
+        Route::post('/notifications/{id}/read',   [NotificationController::class, 'markAsRead']);
+    });
 
-    Route::get('/favorites', [FavoriController::class, 'index']);
+    /*
+    |----------------------------------------------------------------------
+    |  utilisateur connecté (tous rôles confondus)
+    |----------------------------------------------------------------------
+    */
 
-
-    Route::post('artisans/{artisan}/like', [ArtisanController::class, 'likeToggle']);
-
-    // /services/${id}/edit
-    Route::get('/services/{id}/edit', [ServiceController::class, 'edit']);
-    Route::put('/services/{id}', [ServiceController::class, 'update']);
-    Route::delete('/services/{id}', [ServiceController::class, 'destroy']);
-
-    Route::get('/dashboard/stats', [DashboardController::class, 'stats']);
-    Route::get('/dashboard/artisan-stats', [DashboardController::class, 'artisanStats']);
-
-
-
-
-    Route::put('/categories/{id}', [CategorieController::class, 'update']);
-    Route::post('/categories', [CategorieController::class, 'store']);
-    Route::delete('/categories/{id}', [CategorieController::class, 'destroy']);
-
-
-
-    Route::get('/users', [UserController::class, 'index']);
+    // Auth 
+    Route::post('logout',                [AuthController::class, 'logout']);
+    Route::post('verifier-email',        [AuthController::class, 'verifierEmail']);
+    // Utilisateur courant
     Route::get('/users/me', [UserController::class, 'me']);
-    Route::patch('/users/{user}/ban', [UserController::class, 'ban']);
-    Route::patch('/users/{user}/activate', [UserController::class, 'activate']);
-    Route::patch('/users/{user}/role', [UserController::class, 'updateRole']);
 
+    /*
+    |----------------------------------------------------------------------
+    | Admin uniquement
+    |---------------------------------------------------------------------- 
+     */
 
-    Route::post('verifier-email', [AuthController::class, 'verifierEmail']);
-    Route::post('logout', [AuthController::class, 'logout']);
-    Route::get('profile/me', [ProfileController::class, 'show']);
-    Route::put('profile/update-password', [ProfileController::class, 'updatePassword']);
-    Route::patch('profile', [ProfileController::class, 'update']);
+    Route::middleware('role:admin')->group(function () {
+        // Dashboard
+        Route::get('/dashboard/stats', [DashboardController::class, 'stats']);
 
-    //nady artisan store
-    Route::post('artisans', [ArtisanController::class, 'store']);
+        // Gestion des utilisateurs
+        Route::get('/users',                    [UserController::class, 'index']);
+        Route::patch('/users/{user}/ban',       [UserController::class, 'ban']);
+        Route::patch('/users/{user}/activate',  [UserController::class, 'activate']);
+        Route::patch('/users/{user}/role',      [UserController::class, 'updateRole']);
 
-    //23mazal  hasso gates
-    // Route::apiResource('categorie', CategorieController::class)->only('store');
+        // Gestion des artisans
+        Route::patch('/artisans/{userId}/approve', [ArtisanController::class, 'approve']);
+        Route::post('/artisans/{user}/reject',     [ArtisanController::class, 'reject']);
 
+        // Catégories
+        Route::post('/categories',        [CategorieController::class, 'store']);
+        Route::put('/categories/{id}',    [CategorieController::class, 'update']);
+        Route::delete('/categories/{id}', [CategorieController::class, 'destroy']);
 
-    //service nadi (sauf toggel save)
-    Route::apiResource('services', ServiceController::class)->only('store');
-    Route::get('manager-services',  [ServiceManagerController::class, 'index']);
+        // Services (modération)
+        Route::patch('/manager-services/{service}/approve', [ServiceManagerController::class, 'approve']);
+        Route::patch('/manager-services/{service}/reject',  [ServiceManagerController::class, 'reject']);
+        Route::get('manager-services', [ServiceManagerController::class, 'index']);
 
-    Route::patch('/manager-services/{service}/approve', [ServiceManagerController::class, 'approve']);
-    Route::patch('/manager-services/{service}/reject', [ServiceManagerController::class, 'reject']);
+        // Paiements (historique)
+        Route::get('/paiements', [PaiementController::class, 'getPaiements']);
 
-
-
-    // mazal  potection artisan envoi lui meme
-    Route::post('demandes-directes', [DemandeDirecteController::class, 'store']);
-
-    //   mazall  hta hadi potection ,
-    Route::get('offres/me', [OffreTravailController::class, 'mesOffres']);
-
-    //mazal  potection artisan envoi lui meme 
-    Route::apiResource('offres', OffreTravailController::class)->only('store', 'show', 'index', 'update');
-    // /pour client 
-    Route::get('mes-offres/{id}', [OffreTravailController::class, 'getOffreTravailWithPropositions']);
-    //mazal hta hada 
-    Route::post('offres/{offre}/propositions', [PropositionController::class, 'store']);
-
-    //mazal  potection 
-    // /services/${id}/favorie
-    Route::post('services/{id}/favorie', [FavoriController::class, 'favorieService']);
-
-    // mazal  potection 
-    Route::patch('propositions/{id}/accept', [PropositionController::class, 'accept']);
-
-    Route::get('artisans/{artisan}/disponibilites', [DisponibiliteController::class, 'show']);
-    Route::post('artisans/{artisan}/disponibilites', [DisponibiliteController::class, 'store']);
-
-
-    // ('profile/me/counts');
-    Route::get('profile/me/counts', [ProfileController::class, 'counts']);
-
-
-    //    Route::get('/notifications');
-    Route::get('/notifications', [NotificationController::class, 'index']);
-    Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
-
-
-
-    Route::get('/paiements', [PaiementController::class, 'getPaiements']);
-
-
-
-    // Route::get('artisans/{artisanId}/services', [ServiceController::class, 'artisanServices']);
-    // Route::patch('services/{service}/toggle-status', [ServiceController::class, 'toggleStatus']);
+        // Signalements
+        Route::get('/reports',                               [ReportController::class, 'index']);
+        Route::put('/reports/{artisan}/resolve/{client}',    [ReportController::class, 'resolve']);
+        Route::put('/reports/{artisan}/dismiss/{client}',    [ReportController::class, 'dismiss']);
+    });
 });

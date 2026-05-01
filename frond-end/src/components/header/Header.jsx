@@ -273,11 +273,7 @@ const Header = ({
                     )}
                   </button>
 
-                  {typeUtilisateur === 'client' && (
-                    <button onClick={() => window.location.href = '/favorites'} className="p-2 text-[#1B4F72] hover:text-[#D35400] rounded-full transition-all">
-                      <Heart className="w-4 h-4" />
-                    </button>
-                  )}
+                  
 
 
 

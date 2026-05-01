@@ -10,11 +10,11 @@ class CheckRole
 {
     public function handle(Request $request, Closure $next, ...$roles): Response
     {
-        if (!auth()->check()) {
+        if (!auth('api')->check()) {
             return response()->json(['message' => 'Non authentifié'], 401);
         }
 
-        $userRoles = auth()->user()->roles->pluck('name')->toArray();
+        $userRoles = auth('api')->user()->roles->pluck('name')->toArray();
 
         if (empty(array_intersect($userRoles, $roles))) {
             return response()->json(['message' => 'Accès refusé'], 403);
