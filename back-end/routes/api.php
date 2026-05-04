@@ -25,7 +25,7 @@ use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| Routes publiques 
+| Routes publiques (sans authentification)
 |--------------------------------------------------------------------------
 */
 
@@ -81,13 +81,6 @@ Route::middleware('auth:api')->group(function () {
         // Offres de travail
         Route::get('offres/me', [OffreTravailController::class, 'mesOffres']);
         Route::get('mes-offres/{id}', [OffreTravailController::class, 'getOffreTravailWithPropositions']);
-        Route::post('offres', [OffreTravailController::class, 'store']);
-        Route::patch('offres/{id}', [OffreTravailController::class, 'update']);
-        // Demandes directes
-        Route::post('demandes-directes', [DemandeDirecteController::class, 'store']);
-
-        // Propositions
-        Route::patch('propositions/{id}/accept',      [PropositionController::class, 'accept']);
     });
 
     /*
@@ -101,7 +94,6 @@ Route::middleware('auth:api')->group(function () {
         Route::post('/conversations/{conversation_id}/complete-mission', [ConversationController::class, 'completeMission']);
 
         // Services (gestion)
-        Route::post('services',            [ServiceController::class, 'store']);
         Route::get('/services/{id}/edit',  [ServiceController::class, 'edit']);
         Route::put('/services/{id}',       [ServiceController::class, 'update']);
         Route::delete('/services/{id}',    [ServiceController::class, 'destroy']);
@@ -113,15 +105,6 @@ Route::middleware('auth:api')->group(function () {
 
         // Portfolio
         Route::get('/portfolio', [ArtisanController::class, 'getPortfolio']);
-
-        // Offres de travail
-        Route::get('offres', [OffreTravailController::class, 'index']);
-        Route::get('offres/{id}', [OffreTravailController::class, 'show']);
-        // Propositions
-        Route::post('offres/{offre}/propositions',    [PropositionController::class, 'store']);
-
-        // Dashboard artisan (stats propres)
-        Route::get('/dashboard/artisan-stats', [DashboardController::class, 'artisanStats']);
     });
 
     /*
@@ -130,7 +113,9 @@ Route::middleware('auth:api')->group(function () {
     |----------------------------------------------------------------------
     */
     Route::middleware('role:client,artisan')->group(function () {
-        //  profil
+        // Authentification / profil
+        Route::post('logout',                [AuthController::class, 'logout']);
+        Route::post('verifier-email',        [AuthController::class, 'verifierEmail']);
         Route::get('profile/me',             [ProfileController::class, 'show']);
         Route::get('profile/me/counts',      [ProfileController::class, 'counts']);
         Route::patch('profile',              [ProfileController::class, 'update']);
@@ -152,22 +137,39 @@ Route::middleware('auth:api')->group(function () {
 
     /*
     |----------------------------------------------------------------------
-    |  utilisateur connecté (tous rôles confondus)
+    | Partagé (auth requis, sans restriction de rôle stricte)
+    | TODO : affiner la protection de rôle si nécessaire
     |----------------------------------------------------------------------
     */
 
-    // Auth 
-    Route::post('logout',                [AuthController::class, 'logout']);
-    Route::post('verifier-email',        [AuthController::class, 'verifierEmail']);
+    // Services
+    Route::apiResource('services', ServiceController::class)->only('store');
+    Route::get('manager-services', [ServiceManagerController::class, 'index']);
+
+    // Offres de travail
+    Route::apiResource('offres', OffreTravailController::class)->only('store', 'show', 'index', 'update');
+
+    // Propositions
+    Route::post('offres/{offre}/propositions',    [PropositionController::class, 'store']);
+    Route::patch('propositions/{id}/accept',      [PropositionController::class, 'accept']);
+
+    // Demandes directes
+    Route::post('demandes-directes', [DemandeDirecteController::class, 'store']);
+
+    // Paiements (historique)
+    Route::get('/paiements', [PaiementController::class, 'getPaiements']);
+
+    // Dashboard artisan (stats propres)
+    Route::get('/dashboard/artisan-stats', [DashboardController::class, 'artisanStats']);
+
     // Utilisateur courant
     Route::get('/users/me', [UserController::class, 'me']);
 
     /*
     |----------------------------------------------------------------------
     | Admin uniquement
-    |---------------------------------------------------------------------- 
-     */
-
+    |----------------------------------------------------------------------
+    */
     Route::middleware('role:admin')->group(function () {
         // Dashboard
         Route::get('/dashboard/stats', [DashboardController::class, 'stats']);
@@ -190,10 +192,6 @@ Route::middleware('auth:api')->group(function () {
         // Services (modération)
         Route::patch('/manager-services/{service}/approve', [ServiceManagerController::class, 'approve']);
         Route::patch('/manager-services/{service}/reject',  [ServiceManagerController::class, 'reject']);
-        Route::get('manager-services', [ServiceManagerController::class, 'index']);
-
-        // Paiements (historique)
-        Route::get('/paiements', [PaiementController::class, 'getPaiements']);
 
         // Signalements
         Route::get('/reports',                               [ReportController::class, 'index']);
